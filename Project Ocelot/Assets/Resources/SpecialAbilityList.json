@@ -1,0 +1,40 @@
+{
+	"list":
+	[
+		{
+			"id": 1,
+			"name": "Armor",
+			"description": "Insert description here...",
+			"type": 0,
+			"cooldown": 0
+		},
+		{
+			"id": 2,
+			"name": "Catapult",
+			"description": "Insert description here...",
+			"type": 0,
+			"cooldown": 2
+		},
+		{
+			"id": 3,
+			"name": "Pacifist",
+			"description": "Insert description here...",
+			"type": 0,
+			"cooldown": 0
+		},
+		{
+			"id": 4,
+			"name": "Teleport",
+			"description": "Insert description here...",
+			"type": 0,
+			"cooldown": 1
+		},
+		{
+			"id": 5,
+			"name": "Torus",
+			"description": "Insert description here...",
+			"type": 0,
+			"cooldown": 1
+		}
+	]
+}
