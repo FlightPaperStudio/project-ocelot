@@ -6,6 +6,12 @@ using DG.Tweening;
 
 public class Leader : Unit 
 {
+	private void Start ( )
+	{
+		// Set name
+		characterName = team.name + " Leader";
+	}
+
 	/// <summary>
 	/// Calculates all base moves available to a unit.
 	/// </summary>

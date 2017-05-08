@@ -3,8 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class Torus : SpecialUnit
+public class Torus : HeroUnit
 {
+	/// <summary>
+	///
+	/// Hero Ability Information
+	/// 
+	/// Ability 1: Torus
+	/// Type: Special Ability
+	/// Default Cooldown: 2 Turns
+	/// 
+	/// Ability 2: ???
+	/// Type: ???
+	/// 
+	/// </summary>
+
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves.
 	/// </summary>
@@ -13,8 +26,8 @@ public class Torus : SpecialUnit
 		// Get base moves
 		base.FindMoves ( returnOnlyJumps );
 
-		// Get special moves
-		if ( currentCooldown == 0 )
+		// Get torus moves
+		if ( currentAbility1.cooldown == 0 )
 			GetTorus ( returnOnlyJumps );
 	}
 
@@ -122,6 +135,11 @@ public class Torus : SpecialUnit
 	/// </summary>
 	protected override void UseSpecial ( MoveData data )
 	{
+		// Check for jump
+		bool isJump = true;
+		if ( currentTile.neighbors [ (int)data.direction ] == null && data.tile.neighbors [ Util.GetOppositeDirection ( (int)data.direction ) ] == null )
+			isJump = false;
+
 		// Get movement distances
 		Vector3 offOfBoardDistance = Util.GetTileDistance ( data.direction );
 		Vector3 ontoBoardDistance = Util.GetTileDistance ( Util.GetOppositeDirection ( data.direction ) );
@@ -165,15 +183,15 @@ public class Torus : SpecialUnit
 			.Join ( sprite.DOFade ( 1f, 0.25f ) )
 			.OnComplete ( () =>
 			{
-				// Start special ability cooldown
-				StartCooldown ( );
+				// Start torus cooldown
+				StartCooldown ( currentAbility1, info.ability1 );
 
 				// Check for any additional jumps
 				FindMoves ( true );
 				SetMoveList ( );
 
 				// End the player's turn if there are no jumps available
-				if ( moveList.Count > 0 )
+				if ( moveList.Count > 0 && isJump )
 				{
 					// Continue the player's turn
 					GM.ContinueTurn ( );

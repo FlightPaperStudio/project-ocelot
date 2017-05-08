@@ -10,6 +10,6 @@ public class Pawn : Unit
 	private void Start ( )
 	{
 		// Generate random name
-		name = NameGenerator.CreateName ( );
+		characterName = NameGenerator.CreateName ( );
 	}
 }

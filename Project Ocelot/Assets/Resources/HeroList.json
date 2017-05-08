@@ -1,0 +1,110 @@
+{
+	"list":
+	[
+		{
+			"id": 1,
+			"characterName": "Hero 1",
+			"characterDescription": "Insert Hero 1 description here...",
+			"ability1":
+			{
+				"name": "Armor",
+				"description": "Insert Armor description here...",
+				"type": 0,
+				"duration": 1,
+				"cooldown": 0
+			},
+			"ability2":
+			{
+				"name": "???",
+				"description": "???",
+				"type": 0,
+				"duration": 0,
+				"cooldown": 0
+			}
+		},
+		{
+			"id": 2,
+			"characterName": "Hero 2",
+			"characterDescription": "Insert Hero 2 description here...",
+			"ability1":
+			{
+				"name": "Catapult",
+				"description": "Insert Catapult description here...",
+				"type": 1,
+				"duration": 0,
+				"cooldown": 3
+			},
+			"ability2":
+			{
+				"name": "???",
+				"description": "???",
+				"type": 0,
+				"duration": 0,
+				"cooldown": 0
+			}
+		},
+		{
+			"id": 3,
+			"characterName": "Hero 6",
+			"characterDescription": "Insert Hero 6 description here...",
+			"ability1":
+			{
+				"name": "Pacifist",
+				"description": "Insert Pacifist description here...",
+				"type": 0,
+				"duration": 1,
+				"cooldown": 0
+			},
+			"ability2":
+			{
+				"name": "Obstruction",
+				"description": "Insert Obstruction description here...",
+				"type": 3,
+				"duration": 2,
+				"cooldown": 5
+			}
+		},
+		{
+			"id": 4,
+			"characterName": "Hero 8",
+			"characterDescription": "Insert Hero 8 description here...",
+			"ability1":
+			{
+				"name": "Teleport",
+				"description": "Insert Teleport description here...",
+				"type": 1,
+				"duration": 0,
+				"cooldown": 2
+			},
+			"ability2":
+			{
+				"name": "Mad Hatter",
+				"description": "Insert Mad Hatter description here...",
+				"type": 3,
+				"duration": 0,
+				"cooldown": 4
+			}
+		},
+		{
+			"id": 5,
+			"characterName": "Hero 9",
+			"characterDescription": "Insert Hero 9 description here...",
+			"ability1":
+			{
+				"name": "Torus",
+				"description": "Insert Torus description here...",
+				"type": 1,
+				"duration": 0,
+				"cooldown": 2
+			},
+			"ability2":
+			{
+				"name": "???",
+				"description": "???",
+				"type": 0,
+				"duration": 0,
+				"cooldown": 0
+			}
+		}
+	]
+}

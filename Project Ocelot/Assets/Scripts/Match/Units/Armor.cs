@@ -2,10 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Armor : SpecialUnit
+public class Armor : HeroUnit
 {
-	// Armor information
-	private bool isArmorActive = true;
+	/// <summary>
+	///
+	/// Hero Ability Information
+	/// 
+	/// Ability 1: Armor
+	/// Type: Passive Ability
+	/// Default Duration: 1 Attack
+	/// 
+	/// Ability 2: ???
+	/// Type: ???
+	/// 
+	/// </summary>
 
 	/// <summary>
 	/// Removes this unit's armor or captures this unit if armor is no longer available.
@@ -13,20 +23,23 @@ public class Armor : SpecialUnit
 	/// </summary>
 	public override void GetCaptured ( bool lostMatch = false )
 	{
-		// Display that the special is deactivated
-		GM.UI.hudDic [ team ].DisplayDeactivation ( instanceID );
-
-		// Check armor is available
-		if ( isArmorActive && !lostMatch )
+		// Check armor duration
+		if ( currentAbility1.enabled && currentAbility1.duration > 0 && !lostMatch )
 		{
-			// Remove armor
-			isArmorActive = false;
+			// Decrement armor duration
+			currentAbility1.duration--;
 
 			// Set tile as blocked so that the armor ability can't be negated in one turn
 			GM.selectedUnit.AddBlockedTile ( GM.selectedUnit.currentTile, true );
+
+			// Check if armor is destroyed
+			//if ( currentAbility1.duration == 0 )
 		}
 		else
 		{
+			// Display that the special is deactivated
+			GM.UI.hudDic [ team ].DisplayDeactivation ( instanceID );
+
 			// Capture this unit
 			base.GetCaptured ( );
 		}

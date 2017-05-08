@@ -96,7 +96,7 @@ public class TeamSelectionMenu : Menu
 		unselectButton.interactable = false;
 		for ( int i = 0; i < unitButtons.Length; i++ )
 		{
-			if ( MatchSettings.specialSettings [ i ].selection )
+			if ( MatchSettings.heroSettings [ i ].selection )
 			{
 				unitButtons [ i ].interactable = true;
 				unitButtons [ i ].colors = unselected;
@@ -148,7 +148,7 @@ public class TeamSelectionMenu : Menu
 		selectedSpecialID = index + 1;
 
 		// Display unit name
-		unitName.text = SpecialInfo.GetSpecialByID ( selectedSpecialID ).name;
+		unitName.text = HeroInfo.GetHeroByID ( selectedSpecialID ).characterName;
 
 		// Display unit
 		currentUnitSprite.sprite = icons [ index ];

@@ -9,11 +9,8 @@ public class PlayerHUD : MonoBehaviour
 	// UI elements
 	public TextMeshProUGUI playerName;
 	public Image [ ] specialIcons;
-	public TextMeshProUGUI [ ] cooldownCounters;
 
-	// HACK
-	public Sprite [ ] icons;
-
+	// HUD information
 	private Player player;
 	private Dictionary<int, int> indexDic = new Dictionary<int, int> ( );
 
@@ -37,23 +34,20 @@ public class PlayerHUD : MonoBehaviour
 			{
 				// Set icon
 				specialIcons [ i ].gameObject.SetActive ( true );
-				specialIcons [ i ].sprite = icons [ p.specialIDs [ i ] - 1 ];
 				specialIcons [ i ].color = Util.TeamColor ( p.team );
 				foreach ( Unit u in p.units )
 				{
-					if ( u is SpecialUnit )
+					if ( u is HeroUnit )
 					{
-						SpecialUnit s = u as SpecialUnit;
-						if ( s.specialID == p.specialIDs [ i ] && !indexDic.ContainsKey ( s.instanceID ) )
+						HeroUnit h = u as HeroUnit;
+						if ( h.heroID == p.specialIDs [ i ] && !indexDic.ContainsKey ( h.instanceID ) )
 						{
-							indexDic.Add ( s.instanceID, i );
+							specialIcons [ i ].sprite = h.displaySprite;
+							indexDic.Add ( h.instanceID, i );
 							break;
 						}
 					}
 				}
-
-				// Hide cooldown counter
-				cooldownCounters [ i ].gameObject.SetActive ( false );
 			}
 			else
 			{
@@ -64,40 +58,12 @@ public class PlayerHUD : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Displays the cooldown counter for specified special ability by its ID.
-	/// </summary>
-	public void DisplayCooldown ( int id, int cooldown )
-	{
-		// Check cooldown
-		if ( cooldown > 0 )
-		{
-			// Show that special ability is on cooldown
-			specialIcons [ indexDic [ id ] ].color = new Color32 ( 200, 200, 200, 255 );
-
-			// Display cooldown
-			cooldownCounters [ indexDic [ id ] ].gameObject.SetActive ( true );
-			cooldownCounters [ indexDic [ id ] ].text = cooldown.ToString ( );
-		}
-		else
-		{
-			// Show that special ability is no longer on cooldown
-			specialIcons [ indexDic [ id ] ].color = Util.TeamColor ( player.team );
-
-			// Hide cooldown
-			cooldownCounters [ indexDic [ id ] ].gameObject.SetActive ( false );
-		}
-	}
-
-	/// <summary>
 	/// Displays the deactivation of a special ability by its ID.
 	/// </summary>
 	public void DisplayDeactivation ( int id )
 	{
 		// Display deactivation
 		specialIcons [ indexDic [ id ] ].color = new Color32 ( 200, 200, 200, 255 );
-
-		// Hide cooldown
-		cooldownCounters [ indexDic [ id ] ].gameObject.SetActive ( false );
 	}
 
 	/// <summary>

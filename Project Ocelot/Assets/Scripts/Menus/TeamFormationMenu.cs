@@ -109,7 +109,7 @@ public class TeamFormationMenu : Menu
 	private void SetCurrentUnit ( )
 	{
 		// Display name
-		unitName.text = SpecialInfo.GetSpecialByID ( player.specialIDs [ specialIndex ] ).name;
+		unitName.text = HeroInfo.GetHeroByID ( player.specialIDs [ specialIndex ] ).characterName;
 
 		// Display current unit
 		unitPanels [ specialIndex ].color = new Color32 ( 255, 210, 75, 255 );

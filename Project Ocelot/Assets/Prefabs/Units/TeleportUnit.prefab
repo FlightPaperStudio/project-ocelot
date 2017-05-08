@@ -54,12 +54,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GM: {fileID: 0}
   instanceID: 0
-  name: 
-  attackName: 
+  characterName: 
+  displaySprite: {fileID: 21300000, guid: f6155c86d5314024989c1ef8cb0100e5, type: 3}
   currentTile: {fileID: 0}
   team: {fileID: 0}
   sprite: {fileID: 212414013373805162}
-  specialID: 4
+  heroID: 4
+  abilitySprite1: {fileID: 21300000, guid: 57fb11ebdbdec0d4da191bc96289da01, type: 3}
+  abilitySprite2: {fileID: 21300000, guid: dffb77e4777ab854e914e85c4670dbfe, type: 3}
 --- !u!212 &212414013373805162
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -3,15 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class Catapult : SpecialUnit 
+public class Catapult : HeroUnit
 {
+	/// <summary>
+	///
+	/// Hero Ability Information
+	/// 
+	/// Ability 1: Catapult
+	/// Type: Special Ability
+	/// Default Cooldown: 3 Turns
+	/// 
+	/// Ability 2: ???
+	/// Type: ???
+	/// 
+	/// </summary>
+
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves available.
 	/// </summary>
 	public override void FindMoves ( bool returnOnlyJumps = false )
 	{
 		// Check if this unit can move this turn
-		if ( currentCooldown > 0 )
+		if ( currentAbility1.enabled && currentAbility1.cooldown > 0 )
 		{
 			// Clear move list
 			moveList.Clear ( );
@@ -23,7 +36,7 @@ public class Catapult : SpecialUnit
 			base.FindMoves ( returnOnlyJumps );
 
 			// Get special moves
-			if ( !returnOnlyJumps )
+			if ( currentAbility1.enabled && !returnOnlyJumps )
 				GetCatapult ( currentTile, GetBackDirection ( team.direction ) );
 		}
 	}
@@ -89,7 +102,7 @@ public class Catapult : SpecialUnit
 			.OnComplete ( () =>
 			{
 				// Start special ability cooldown
-				StartCooldown ( );
+				StartCooldown ( currentAbility1, info.ability1 );
 
 				// End the player's turn after the unit's move
 				GM.EndTurn ( );

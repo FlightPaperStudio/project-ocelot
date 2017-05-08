@@ -8,13 +8,14 @@ using DG.Tweening;
 public class UIManager : MonoBehaviour 
 {
 	// UI elements
-	public PlayerHUD [ ] huds;
 	public GameObject midTurnControls;
 	public GameObject endOfMatchControls;
+	public GameObject conflictPrompt;
 
 	// UI information
+	public PlayerHUD [ ] huds;
+	public UnitHUD unitHUD;
 	public TurnTimer timer;
-	public GameObject conflictPrompt;
 	public SplashPrompt splash;
 	public PopUpMenu popUp;
 	public LoadingScreen load;
@@ -70,6 +71,9 @@ public class UIManager : MonoBehaviour
 			huds [ i ].Initialize ( players [ i ] );
 			hudDic.Add ( players [ i ], huds [ i ] );
 		}
+
+		// Hide unit HUD
+		unitHUD.HideHUD ( );
 
 		// Hide mid-turn controls
 		ToggleMidTurnControls ( false );

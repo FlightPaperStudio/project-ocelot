@@ -3,8 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class Teleport : SpecialUnit
+public class Teleport : HeroUnit
 {
+	/// <summary>
+	///
+	/// Hero Ability Information
+	/// 
+	/// Ability 1: Teleport
+	/// Type: Special Ability
+	/// Default Cooldown: 2 Turns
+	/// 
+	/// Ability 2: Mad Hatter
+	/// Type: Command
+	/// Default Cooldown: 4 Turns
+	/// 
+	/// </summary>
+
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves.
 	/// </summary>
@@ -13,8 +27,8 @@ public class Teleport : SpecialUnit
 		// Get base moves
 		base.FindMoves ( returnOnlyJumps );
 
-		// Get special moves
-		if ( !returnOnlyJumps && currentCooldown == 0 )
+		// Get teleport moves
+		if ( currentAbility1.enabled && !returnOnlyJumps && currentAbility1.cooldown == 0 )
 			GetTeleport ( currentTile, GetBackDirection ( team.direction ), 2 );
 	}
 
@@ -70,8 +84,8 @@ public class Teleport : SpecialUnit
 			.Append ( sprite.DOFade ( 1, 0.5f ) )
 			.OnComplete ( () =>
 			{
-				// Start special ability cooldown
-				StartCooldown ( );
+				// Start teleport cooldown
+				StartCooldown ( currentAbility1, info.ability1 );
 
 				// End the unit's turn after using its special ability
 				GM.EndTurn ( );

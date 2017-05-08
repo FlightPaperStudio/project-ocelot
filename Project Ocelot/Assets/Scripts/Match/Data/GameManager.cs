@@ -142,10 +142,10 @@ public class GameManager : MonoBehaviour
 			u.AddBlockedTile ( u.currentTile, true );
 
 			// Set cooldowns
-			if ( u is SpecialUnit )
+			if ( u is HeroUnit )
 			{
-				SpecialUnit su = u as SpecialUnit;
-				su.Cooldown ( );
+				HeroUnit h = u as HeroUnit;
+				h.Cooldown ( );
 			}
 
 			// Set move list
@@ -205,6 +205,7 @@ public class GameManager : MonoBehaviour
 	{
 		// Hide mid-turn controls
 		UI.ToggleMidTurnControls ( false );
+		UI.unitHUD.HideHUD ( );
 
 		// Pause turn timer
 		if ( MatchSettings.turnTimer )
@@ -401,6 +402,9 @@ public class GameManager : MonoBehaviour
 
 		// Set unit as the currently selected unit
 		selectedUnit = u;
+		
+		// Display unit HUD
+		UI.unitHUD.DisplayUnit ( selectedUnit );
 
 		// Highlight the tile of the selected unit
 		selectedUnit.currentTile.SetTileState ( TileState.SelectedUnit );

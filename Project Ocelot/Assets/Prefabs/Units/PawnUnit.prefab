@@ -54,8 +54,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GM: {fileID: 0}
   instanceID: 0
-  name: 
-  attackName: 
+  characterName: 
+  displaySprite: {fileID: 21300000, guid: 248e0c0ee3ca1184cae692996a197183, type: 3}
   currentTile: {fileID: 0}
   team: {fileID: 0}
   sprite: {fileID: 212773762917540396}

@@ -16,8 +16,16 @@ public class CustomMatchSettingsMenu : Menu
 	public TextMeshProUGUI sizeDisplay;
 	public TextMeshProUGUI stackingDisplay;
 	public TextMeshProUGUI [ ] selectionDisplay;
-	public Slider [ ] cooldownSlider;
-	public TextMeshProUGUI [ ] cooldownDisplay;
+	public TextMeshProUGUI [ ] enableAbilityDisplay1;
+	public Slider [ ] durationSlider1;
+	public TextMeshProUGUI [ ] durationDisplay1;
+	public Slider [ ] cooldownSlider1;
+	public TextMeshProUGUI [ ] cooldownDisplay1;
+	public TextMeshProUGUI [ ] enableAbilityDisplay2;
+	public Slider [ ] durationSlider2;
+	public TextMeshProUGUI [ ] durationDisplay2;
+	public Slider [ ] cooldownSlider2;
+	public TextMeshProUGUI [ ] cooldownDisplay2;
 
 	// Menu information
 	private MatchType typeValue;
@@ -25,7 +33,7 @@ public class CustomMatchSettingsMenu : Menu
 	private float timeValue;
 	private int sizeValue;
 	private bool stackingValue;
-	private List<SpecialSettings> specialValue = new List<SpecialSettings> ( );
+	private List<HeroSettings> heroValue = new List<HeroSettings> ( );
 	public PopUpMenu popUp;
 	public LoadingScreen load;
 
@@ -55,19 +63,44 @@ public class CustomMatchSettingsMenu : Menu
 		SetAbilityStacking ( false );
 
 		// Set default special ability settings
-		specialValue.Clear ( );
-		for ( int i = 0; i < SpecialInfo.list.Length; i++ )
+		heroValue.Clear ( );
+		for ( int i = 0; i < HeroInfo.list.Length; i++ )
 		{
-			// Set special setting
-			SpecialSettings s = new SpecialSettings ( SpecialInfo.list [ i ].id, true, SpecialInfo.list [ i ].cooldown );
-			specialValue.Add ( s );
+			// Set hero setting
+			HeroSettings h = new HeroSettings ( HeroInfo.list [ i ].id, true, true, (Ability.AbilityType)HeroInfo.list [ i ].ability1.type, HeroInfo.list [ i ].ability1.duration, HeroInfo.list [ i ].ability1.cooldown, false, (Ability.AbilityType)HeroInfo.list [ i ].ability2.type, HeroInfo.list [ i ].ability2.duration, HeroInfo.list [ i ].ability2.cooldown );
+			heroValue.Add ( h );
 
 			// Set selection
-			SetSelection ( s, s.selection, selectionDisplay [ i ] );
+			SetSelection ( h, h.selection, selectionDisplay [ i ] );
 
-			// Set cooldown
-			if ( cooldownSlider [ i ] != null )
-				SetCooldown ( s, s.cooldown, cooldownSlider [ i ], cooldownDisplay [ i ] );
+			// Set ability 1 enabled
+			SetEnableAbility ( h.ability1, true, enableAbilityDisplay1 [ i ] );
+
+			// Set ability 1 duration
+			if ( durationSlider1 [ i ] != null )
+			{
+				// Provide Armor attack prompt
+				if ( i == 0 )
+					SetDuration ( h.ability1, h.ability1.duration, durationSlider1 [ i ], durationDisplay1 [ i ], " Attack", " Attacks" );
+				else
+					SetDuration ( h.ability1, h.ability1.duration, durationSlider1 [ i ], durationDisplay1 [ i ] );
+			}
+
+			// Set ability 1 cooldown
+			if ( cooldownSlider1 [ i ] != null )
+				SetCooldown ( h.ability1, h.ability1.cooldown, cooldownSlider1 [ i ], cooldownDisplay1 [ i ] );
+
+			// Set ability 2 enabled
+			if ( enableAbilityDisplay2 [ i ] != null )
+				SetEnableAbility ( h.ability2, true, enableAbilityDisplay2 [ i ] );
+
+			// Set ability 2 duration
+			if ( durationSlider2 [ i ] != null )
+				SetDuration ( h.ability2, h.ability2.duration, durationSlider2 [ i ], durationDisplay2 [ i ] );
+
+			// Set ability 2 cooldown
+			if ( cooldownSlider2 [ i ] != null )
+				SetCooldown ( h.ability2, h.ability2.cooldown, cooldownSlider2 [ i ], cooldownDisplay2 [ i ] );
 		}
 	}
 
@@ -198,7 +231,6 @@ public class CustomMatchSettingsMenu : Menu
 	/// Sets the current team size setting.
 	/// Does not apply to the actual match setting until the match starts.
 	/// </summary>
-	/// <param name="value">Value.</param>
 	private void SetAbilitiesPerTeam ( int value )
 	{
 		// Store team size
@@ -247,7 +279,7 @@ public class CustomMatchSettingsMenu : Menu
 	}
 
 	/// <summary>
-	/// Toggles the current selection setting for a special ability.
+	/// Toggles the current selection setting for a hero.
 	/// Use this as a button click event wrapper.
 	/// </summary>
 	public void SetSelection ( int index )
@@ -258,7 +290,7 @@ public class CustomMatchSettingsMenu : Menu
 			// Prompt that at least three specials need to be enabled if stacking is not enabled
 			popUp.OpenMenu ( false, true, "At least the number of Special Abilities Per Team needs to be enabled for selection while Special Ability Stacking is disabled.", null, null );
 		}
-		else if ( stackingValue && SelectionCheck ( ) == 1 && specialValue [ index ].selection && sizeValue != 0 )
+		else if ( stackingValue && SelectionCheck ( ) == 1 && heroValue [ index ].selection && sizeValue != 0 )
 		{
 			// Prompt that at least one specials needs to be enabled
 			popUp.OpenMenu ( false, true, "At least one Special Ability needs to be enabled for selection.", null, null );
@@ -266,70 +298,135 @@ public class CustomMatchSettingsMenu : Menu
 		else
 		{
 			// Toggle selection
-			SetSelection ( specialValue [ index ], !specialValue [ index ].selection, selectionDisplay [ index ] );
+			SetSelection ( heroValue [ index ], !heroValue [ index ].selection, selectionDisplay [ index ] );
 		}
 	}
 
 	/// <summary>
-	/// Sets the current selection setting for a special ability.
+	/// Sets the current selection setting for a hero.
 	/// Does not apply to the actual match setting until the match starts.
 	/// </summary>
-	private void SetSelection ( SpecialSettings special, bool value, TextMeshProUGUI display )
+	private void SetSelection ( HeroSettings hero, bool value, TextMeshProUGUI display )
 	{
 		// Store selection setting
-		special.selection = value;
+		hero.selection = value;
 
 		// Display selection
-		if ( special.selection )
+		if ( hero.selection )
 			display.text = "Enabled";
 		else
 			display.text = "Disabled";
 	}
 
 	/// <summary>
-	/// Sets the current cooldown setting for the Catapult unit.
+	/// Toggles the current ability 1 enable setting for a hero.
+	/// Use this as a button click event wrapper.
+	/// </summary>
+	public void SetEnableAbility1 ( int index )
+	{
+		// Set ability 1 enable setting
+		SetEnableAbility ( heroValue [ index ].ability1, !heroValue [ index ].ability1.enabled, enableAbilityDisplay1 [ index ] );
+	}
+
+	/// <summary>
+	/// Toggles the current ability 2 enable setting for a hero.
+	/// Use this as a button click event wrapper.
+	/// </summary>
+	public void SetEnableAbility2 ( int index )
+	{
+		// Set ability 2 enable setting
+		SetEnableAbility ( heroValue [ index ].ability2, !heroValue [ index ].ability2.enabled, enableAbilityDisplay2 [ index ] );
+	}
+
+	/// <summary>
+	/// Sets the current ability enable setting for a hero.
+	/// Does not apply to the actual match setting until the match starts.
+	/// </summary>
+	private void SetEnableAbility ( AbilitySettings ability, bool value, TextMeshProUGUI display )
+	{
+		// Store ability enable setting
+		ability.enabled = value;
+
+		// Display ability enable setting
+		if ( ability.enabled )
+			display.text = "Enabled";
+		else
+			display.text = "Disabled";
+	}
+
+	/// <summary>
+	/// Sets the current duration setting for the Armor ability.
+	/// Use this as a slider update event wrapper.
+	/// </summary>
+	public void SetArmorDuration ( float value )
+	{
+		// Set duration
+		SetDuration ( heroValue [ 0 ].ability1, (int)value, durationSlider1 [ 0 ], durationDisplay1 [ 0 ], " Attack", " Attacks" );
+	}
+
+	/// <summary>
+	/// Sets the current duration setting for an ability.
+	/// Does not apply to the actual match settings until the match starts.
+	/// </summary>
+	private void SetDuration ( AbilitySettings ability, int value, Slider slider, TextMeshProUGUI display, string prompt = " Turn", string prompts = " Turns" )
+	{
+		// Store duration
+		ability.duration = value;
+
+		// Set slider
+		slider.value = (float)value;
+
+		// Display duration
+		if ( ability.duration != 1 )
+			display.text = value + prompts;
+		else
+			display.text = value + prompt;
+	}
+
+	/// <summary>
+	/// Sets the current cooldown setting for the Catapult ability.
 	/// Use this as a slider update event wrapper.
 	/// </summary>
 	public void SetCatapultCooldown ( float value )
 	{
 		// Set cooldown
-		SetCooldown ( specialValue [ 1 ], (int)value, cooldownSlider [ 1 ], cooldownDisplay [ 1 ] );
+		SetCooldown ( heroValue [ 1 ].ability1, (int)value, cooldownSlider1 [ 1 ], cooldownDisplay1 [ 1 ] );
 	}
 
 	/// <summary>
-	/// Sets the current cooldown setting for the Teleport unit.
+	/// Sets the current cooldown setting for the Teleport ability.
 	/// Use this as a slider update event wrapper.
 	/// </summary>
 	public void SetTeleportCooldown ( float value )
 	{
 		// Set cooldown
-		SetCooldown ( specialValue [ 3 ], (int)value, cooldownSlider [ 3 ], cooldownDisplay [ 3 ] );
+		SetCooldown ( heroValue [ 3 ].ability1, (int)value, cooldownSlider1 [ 3 ], cooldownDisplay1 [ 3 ] );
 	}
 
 	/// <summary>
-	/// Sets the current cooldown setting for the Torus unit.
+	/// Sets the current cooldown setting for the Torus ability.
 	/// Use this as a slider update event wrapper.
 	/// </summary>
 	public void SetTorusCooldown ( float value )
 	{
 		// Set cooldown
-		SetCooldown ( specialValue [ 4 ], (int)value, cooldownSlider [ 4 ], cooldownDisplay [ 4 ] );
+		SetCooldown ( heroValue [ 4 ].ability1, (int)value, cooldownSlider1 [ 4 ], cooldownDisplay1 [ 4 ] );
 	}
 
 	/// <summary>
 	/// Sets the current cooldown setting for a special ability.
 	/// Does not apply to the actual match setting until the match starts.
 	/// </summary>
-	private void SetCooldown ( SpecialSettings special, int value, Slider slider, TextMeshProUGUI display )
+	private void SetCooldown ( AbilitySettings ability, int value, Slider slider, TextMeshProUGUI display )
 	{
 		// Store cooldown
-		special.cooldown = value;
+		ability.cooldown = value;
 
 		// Set slider
 		slider.value = (float)value;
 
 		// Display cooldown
-		if ( special.cooldown == 1 )
+		if ( ability.cooldown == 1 )
 			display.text = "1 Turn";
 		else
 			display.text = value + " Turns";
@@ -344,7 +441,7 @@ public class CustomMatchSettingsMenu : Menu
 		load.BeginLoad ( );
 
 		// Set match settings
-		MatchSettings.SetMatchSettings ( typeValue, turnTimerValue, timeValue, sizeValue, stackingValue, specialValue );
+		MatchSettings.SetMatchSettings ( typeValue, turnTimerValue, timeValue, sizeValue, stackingValue, heroValue );
 
 		// Begin the match
 		if ( typeValue == MatchType.CustomMirror )
@@ -373,13 +470,13 @@ public class CustomMatchSettingsMenu : Menu
 	/// </summary>
 	private int SelectionCheck ( )
 	{
-		// Count the number of enabled specials
+		// Count the number of enabled heroes
 		int count = 0;
-		foreach ( SpecialSettings s in specialValue )
-			if ( s.selection )
+		foreach ( HeroSettings h in heroValue )
+			if ( h.selection )
 				count++;
 
-		// Return the number of enabled specials
+		// Return the number of enabled heroes
 		return count;
 	}
 }

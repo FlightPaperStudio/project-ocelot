@@ -31,8 +31,8 @@ public class MainMenu : Menu
 	private void StartUp ( )
 	{
 		// Load special ability data
-		TextAsset special = Resources.Load ( "SpecialAbilityList" ) as TextAsset;
-		SpecialInfo.SetList ( special.text );
+		TextAsset heroes = Resources.Load ( "HeroList" ) as TextAsset;
+		HeroInfo.SetList (heroes.text );
 
 		// Load name generator data
 		TextAsset generator = Resources.Load ( "NameGeneratorList" ) as TextAsset;

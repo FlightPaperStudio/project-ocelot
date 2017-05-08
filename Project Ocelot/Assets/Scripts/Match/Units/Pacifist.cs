@@ -2,8 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pacifist : SpecialUnit 
+public class Pacifist : HeroUnit
 {
+	/// <summary>
+	///
+	/// Hero Ability Information
+	/// 
+	/// Ability 1: Pacifist
+	/// Type: Passive Ability
+	/// 
+	/// Ability 2: Obstruction
+	/// Type: Command
+	/// Default Duration: 2 Turns
+	/// Default Cooldown: 5 Turns
+	/// 
+	/// </summary>
+
 	/// <summary>
 	/// Calculates all base moves available to a unit without marking any potential captures.
 	/// </summary>

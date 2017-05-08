@@ -8,8 +8,8 @@ public class Unit : MonoBehaviour
 	// Unit info
 	public GameManager GM;
 	public int instanceID; // Every unit in a match has a unique instance ID 
-	public string name;
-	public string attackName;
+	public string characterName;
+	public Sprite displaySprite;
 
 	// Instance info
 	public Tile currentTile;
@@ -74,32 +74,32 @@ public class Unit : MonoBehaviour
 		{
 		// Left to right movement
 		case Player.Direction.LeftToRight:
-			back = new IntPair ( 4, 5 );
+			back = new IntPair ( (int)MoveData.MoveDirection.LeftBelow, (int)MoveData.MoveDirection.LeftAbove );
 			break;
 
 			// Right to left movement
 		case Player.Direction.RightToLeft:
-			back = new IntPair ( 1, 2 );
+			back = new IntPair ( (int)MoveData.MoveDirection.RightAbove, (int)MoveData.MoveDirection.RightBelow );
 			break;
 
 			// Top left to bottom right movement
 		case Player.Direction.TopLeftToBottomRight:
-			back = new IntPair ( 0, 5 );
+			back = new IntPair ( (int)MoveData.MoveDirection.Above, (int)MoveData.MoveDirection.LeftAbove );
 			break;
 
 			// Top right to bottom left movement
 		case Player.Direction.TopRightToBottomLeft:
-			back = new IntPair ( 0, 1 );
+			back = new IntPair ( (int)MoveData.MoveDirection.Above, (int)MoveData.MoveDirection.RightAbove );
 			break;
 
 			// Bottom left to top right movement
 		case Player.Direction.BottomLeftToTopRight:
-			back = new IntPair ( 3, 4 );
+			back = new IntPair ( (int)MoveData.MoveDirection.Below, (int)MoveData.MoveDirection.LeftBelow );
 			break;
 
 			// Bottom right to top left movement
 		case Player.Direction.BottomRightToTopLeft:
-			back = new IntPair ( 2, 3 );
+			back = new IntPair ( (int)MoveData.MoveDirection.RightBelow, (int)MoveData.MoveDirection.Below );
 			break;
 		}
 

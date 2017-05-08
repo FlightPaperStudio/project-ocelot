@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,43 +8,78 @@ public class MatchSettings
 	/// <summary>
 	/// This setting determines the game mode for the match.
 	/// </summary>
-	public static MatchType type;
+	public static MatchType type
+	{
+		get;
+		private set;
+	}
 
 	/// <summary>
 	/// This setting determines if the turn timer is active during the match.
 	/// </summary>
-	public static bool turnTimer;
+	public static bool turnTimer
+	{
+		get;
+		private set;
+	}
 
 	/// <summary>
 	/// This setting determines how much time should be allotted per turn if the turn timer is active.
 	/// </summary>
-	public static float timerSetting;
+	public static float timerSetting
+	{
+		get;
+		private set;
+	}
 
 	/// <summary>
 	/// This setting determines how many special abilities each team starts with.
 	/// </summary>
-	public static int teamSize;
+	public static int teamSize
+	{
+		get;
+		private set;
+	}
 
 	/// <summary>
 	/// This setting determines if special ability stacking is allowed.
 	/// </summary>
-	public static bool stacking;
+	public static bool stacking
+	{
+		get;
+		private set;
+	}
 
 	/// <summary>
 	/// This setting determines the starting information for each player in the match.
 	/// </summary>
-	public static List<PlayerSettings> playerSettings = new List<PlayerSettings> ( );
+	private static List<PlayerSettings> actualPlayerSettings = new List<PlayerSettings> ( );
+	public static ReadOnlyCollection<PlayerSettings> playerSettings
+	{
+		get
+		{
+			return actualPlayerSettings.AsReadOnly ( );
+		}
+	}
 
 	/// <summary>
-	/// This setting determines the settings for each of the individual special abilities.
+	/// This setting determines the settings for each of the individual heroes.
 	/// </summary>
-	public static List<SpecialSettings> specialSettings = new List<SpecialSettings> ( );
-	private static Dictionary<int, SpecialSettings> dic = new Dictionary<int, SpecialSettings> ( );
+	private static List<HeroSettings> actualHeroSettings = new List<HeroSettings> ( );
+	public static ReadOnlyCollection<HeroSettings> heroSettings
+	{
+		get
+		{
+			return actualHeroSettings.AsReadOnly ( );
+		}
+	}
+	private static Dictionary<int, HeroSettings> dic = new Dictionary<int, HeroSettings> ( );
+	private static ReadOnlyDictionary<int, HeroSettings> readOnlyDic = new ReadOnlyDictionary<int, HeroSettings> ( dic );
 
 	/// <summary>
 	/// Sets the match settings.
 	/// </summary>
-	public static void SetMatchSettings ( MatchType _type, bool _turnTimer = true, float _timer = 90f, int _teamSize = 3, bool _stacking = false, List<SpecialSettings> _special = null )
+	public static void SetMatchSettings ( MatchType _type, bool _turnTimer = true, float _timer = 90f, int _teamSize = 3, bool _stacking = false, List<HeroSettings> _heroes = null )
 	{
 		// Set the match type
 		type = _type;
@@ -58,23 +94,24 @@ public class MatchSettings
 		// Set stacking
 		stacking = _stacking;
 
-		// Set special abilities
-		if ( _special != null )
+		// Set hero settings
+		if ( _heroes != null )
 		{
 			// Set custom special settings
-			specialSettings = _special;
+			actualHeroSettings.Clear ( );
+			actualHeroSettings = _heroes;
 			dic.Clear ( );
-			foreach ( SpecialSettings s in specialSettings )
-				dic.Add ( s.id, s );
+			foreach ( HeroSettings h in heroSettings )
+				dic.Add ( h.id, h );
 		}
 		else
 		{
-			// Set default special settings
-			SetDefaultSpecialSettings ( );
+			// Set default hero settings
+			SetDefaultHeroSettings ( );
 		}
 
 		// Clear previous player settings
-		playerSettings.Clear ( );
+		actualPlayerSettings.Clear ( );
 
 		// Check match type for adding players
 		switch ( type )
@@ -94,8 +131,8 @@ public class MatchSettings
 			cp2.name = "Orange Team";
 
 			// Add players
-			playerSettings.Add ( cp1 );
-			playerSettings.Add ( cp2 );
+			actualPlayerSettings.Add ( cp1 );
+			actualPlayerSettings.Add ( cp2 );
 
 			break;
 
@@ -120,12 +157,12 @@ public class MatchSettings
 			rp6.name = "Purple Team";
 
 			// Add players
-			playerSettings.Add ( rp1 );
-			playerSettings.Add ( rp2 );
-			playerSettings.Add ( rp3 );
-			playerSettings.Add ( rp4 );
-			playerSettings.Add ( rp5 );
-			playerSettings.Add ( rp6 );
+			actualPlayerSettings.Add ( rp1 );
+			actualPlayerSettings.Add ( rp2 );
+			actualPlayerSettings.Add ( rp3 );
+			actualPlayerSettings.Add ( rp4 );
+			actualPlayerSettings.Add ( rp5 );
+			actualPlayerSettings.Add ( rp6 );
 
 			break;
 		}
@@ -147,9 +184,9 @@ public class MatchSettings
 		{
 			// Store the information for randomly assigning specials
 			List<int> ids = new List<int> ( );
-			foreach ( Special s in SpecialInfo.list )
-				if ( dic [ s.id ].selection )
-					ids.Add ( s.id );
+			foreach ( Hero h in HeroInfo.list )
+				if ( dic [ h.id ].selection )
+					ids.Add ( h.id );
 
 			// Store the information for randomaly assigning starting positions
 			List<int> pos = new List<int> ( );
@@ -184,22 +221,22 @@ public class MatchSettings
 		}
 	}
 
-	private static void SetDefaultSpecialSettings ( )
+	private static void SetDefaultHeroSettings ( )
 	{
-		specialSettings.Clear ( );
+		actualHeroSettings.Clear ( );
 		dic.Clear ( );
 
-		for ( int i = 0; i < SpecialInfo.list.Length; i++ )
+		for ( int i = 0; i < HeroInfo.list.Length; i++ )
 		{
-			SpecialSettings s = new SpecialSettings ( SpecialInfo.list [ i ].id, true, SpecialInfo.list [ i ].cooldown );
-			specialSettings.Add ( s );
-			dic.Add ( specialSettings [ i ].id, specialSettings [ i ] );
+			HeroSettings h = new HeroSettings ( HeroInfo.list [ i ].id, true, true, (Ability.AbilityType)HeroInfo.list [ i ].ability1.type, HeroInfo.list [ i ].ability1.duration, HeroInfo.list [ i ].ability1.cooldown, false, (Ability.AbilityType)HeroInfo.list [ i ].ability2.type, HeroInfo.list [ i ].ability2.duration, HeroInfo.list [ i ].ability2.cooldown );
+			actualHeroSettings.Add ( h );
+			dic.Add ( heroSettings [ i ].id, heroSettings [ i ] );
 		}
 	}
 
-	public static SpecialSettings GetSpecialSettingsByID ( int id )
+	public static HeroSettings GetHeroSettingsByID ( int id )
 	{
-		return dic [ id ];
+		return readOnlyDic [ id ];
 	}
 }
 
@@ -213,16 +250,42 @@ public enum MatchType
 	CustomRumble
 }
 
-public class SpecialSettings
+public class HeroSettings
 {
 	public int id;
 	public bool selection;
-	public int cooldown;
+	public AbilitySettings ability1;
+	public AbilitySettings ability2;
 
-	public SpecialSettings ( int _id = 0, bool _selection = true, int _cooldown = 0 )
+	public HeroSettings ( int _id, bool _selection, bool _enable1, Ability.AbilityType _type1, int _duration1, int _cooldown1, bool _enable2, Ability.AbilityType _type2, int _duration2, int _cooldown2 )
 	{
 		id = _id;
 		selection = _selection;
+		ability1 = new AbilitySettings ( _enable1, _type1, _duration1, _cooldown1 );
+		ability2 = new AbilitySettings ( _enable2, _type2, _duration2, _cooldown2 );
+	}
+
+	public HeroSettings ( int _id, bool _selection, AbilitySettings _ability1, AbilitySettings _ability2 )
+	{
+		id = _id;
+		selection = _selection;
+		ability1 = _ability1;
+		ability2 = _ability2;
+	}
+}
+
+public class AbilitySettings
+{
+	public bool enabled;
+	public Ability.AbilityType type;
+	public int duration;
+	public int cooldown;
+
+	public AbilitySettings ( bool _enabled, Ability.AbilityType _type, int _duration, int _cooldown )
+	{
+		enabled = _enabled;
+		type = _type;
+		duration = _duration;
 		cooldown = _cooldown;
 	}
 }
