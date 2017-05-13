@@ -6,7 +6,27 @@ public class PauseMenu : Menu
 {
 	// Menu information
 	public UIManager UI;
+	public TeamSetup setup;
+	private PopUpMenu popUp;
+	private LoadingScreen load;
 	public PopUpMenu.PopUpDelegate popUpDelegate;
+
+	/// <summary>
+	/// Gets the UI information dependent on the scene.
+	/// </summary>
+	private void Start ( )
+	{
+		if ( UI != null )
+		{
+			popUp = UI.popUp;
+			load = UI.load;
+		}
+		else if ( setup != null )
+		{
+			popUp = setup.popUp;
+			load = setup.load;
+		}
+	}
 
 	/// <summary>
 	/// Closes the pause menu.
@@ -15,7 +35,10 @@ public class PauseMenu : Menu
 	public void Resume ( )
 	{
 		// Mark that the match is no longer paused
-		UI.isPaused = false;
+		if ( UI != null )
+			UI.isPaused = false;
+		else if ( setup != null )
+			setup.isPaused = false;
 
 		// Close the pause menu
 		base.CloseMenu ( );
@@ -31,7 +54,7 @@ public class PauseMenu : Menu
 		popUpDelegate += ReturnToMainMenu;
 
 		// Prompt user
-		UI.popUp.OpenMenu ( false, false, "Are you sure you want to leave the match?\n<size=75%>(All progress in your current match will be lost!)", popUpDelegate, null );
+		popUp.OpenMenu ( false, false, "Are you sure you want to leave the match?\n<size=75%>(All progress in your current match will be lost!)", popUpDelegate, null );
 	}
 
 	/// <summary>
@@ -41,7 +64,7 @@ public class PauseMenu : Menu
 	private void ReturnToMainMenu ( )
 	{
 		// Load the main menu
-		UI.load.LoadScene ( Scenes.Menus );
+		load.LoadScene ( Scenes.Menus );
 	}
 
 	/// <summary>
@@ -54,7 +77,7 @@ public class PauseMenu : Menu
 		popUpDelegate += QuitToDesktop;
 
 		// Prompt user
-		UI.popUp.OpenMenu ( false, false, "Are you sure you want to exit to the desktop?\n<size=75%>(All progress in your current match will be lost!)", popUpDelegate, null );
+		popUp.OpenMenu ( false, false, "Are you sure you want to exit to the desktop?\n<size=75%>(All progress in your current match will be lost!)", popUpDelegate, null );
 	}
 
 	/// <summary>

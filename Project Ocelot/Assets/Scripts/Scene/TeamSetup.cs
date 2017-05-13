@@ -14,9 +14,12 @@ public class TeamSetup : MonoBehaviour
 	public PlayerSettings currentPlayer;
 
 	// Menu information
+	public bool isPaused = false;
 	public Menu teamSelection;
 	public SplashPrompt splash;
+	public PopUpMenu popUp;
 	public LoadingScreen load;
+	public Menu [ ] menus;
 
 	/// <summary>
 	/// Start the team setup menu.
@@ -42,6 +45,43 @@ public class TeamSetup : MonoBehaviour
 
 		// Begin team selection
 		teamSelection.OpenMenu ( false, currentPlayer );
+	}
+
+	/// <summary>
+	/// Listens for the pause button being pressed.
+	/// </summary>
+	private void Update ( )
+	{
+		// Check for the escape button being pressed
+		if ( Input.GetKeyDown ( KeyCode.Escape ) && !popUp.menuContainer.activeSelf )
+		{
+			// Check if the game is paused
+			if ( isPaused )
+			{
+				// Find the current open menu and close it
+				foreach ( Menu m in menus )
+				{
+					if ( m.menuContainer.activeSelf )
+					{
+						// Check if the current menu is the base pause menu
+						if ( m is PauseMenu )
+							isPaused = false;
+
+						// Close the menu
+						m.CloseMenu ( );
+						break;
+					}
+				}
+			}
+			else
+			{
+				// Mark that the game is paused
+				isPaused = true;
+
+				// Open the pause menu
+				menus [ 0 ].OpenMenu ( );
+			}
+		}
 	}
 
 	/// <summary>

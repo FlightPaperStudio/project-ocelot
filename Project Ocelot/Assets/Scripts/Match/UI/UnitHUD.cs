@@ -48,6 +48,7 @@ public class UnitHUD : MonoBehaviour
 
 			// Display ability HUD
 			abilityContainer.SetActive ( true );
+			ability2.container.SetActive ( true );
 			pawnName.gameObject.SetActive ( false );
 
 			// Display ability 1
@@ -56,11 +57,34 @@ public class UnitHUD : MonoBehaviour
 			// Display ability 2
 			SetupAbility ( h.currentAbility2, h.info.ability2, ability2, h.abilitySprite2 );
 		}
-		else
+		else if ( currentUnit is Leader )
 		{
+			// Store unit as a leader
+			Leader l = currentUnit as Leader;
+
+			// Display unit name
+			unitName.gameObject.SetActive ( true );
+			unitName.text = currentUnit.characterName;
+
+			// Display ability HUD
+			abilityContainer.SetActive ( true );
+			ability2.container.SetActive ( false );
+			pawnName.gameObject.SetActive ( false );
+
+			// Display ability icon
+			ability1.icon.sprite = l.abilitySprite;
+
+			// Display ability
+			DisplayPassive ( l.currentAbility, l.ability, ability1 );
+		}
+		else if ( currentUnit is Pawn )
+		{
+			// Store unit as a pawn
+			Pawn p = currentUnit as Pawn;
+
 			// Display unit name
 			pawnName.gameObject.SetActive ( true );
-			pawnName.text = currentUnit.characterName;
+			pawnName.text = p.characterName + "\n" + p.characterNickname;
 
 			// Hide ability HUD
 			unitName.gameObject.SetActive ( false );
@@ -274,6 +298,10 @@ public class UnitHUD : MonoBehaviour
 			// Display that the ability is not on cooldown
 			hud.activityDisplay.gameObject.SetActive ( false );
 			hud.cooldown.gameObject.SetActive ( false );
+
+			// Display if the command is ready for active use
+			if ( current.active )
+				hud.useButton.interactable = true;
 		}
 	}
 
@@ -292,14 +320,58 @@ public class UnitHUD : MonoBehaviour
 		return new Vector2 ( 0, offset );
 	}
 
+	/// <summary>
+	/// Begins the selection phase of using a command.
+	/// </summary>
 	public void UseCommand ( bool isAbility1 )
 	{
+		// Check which ability is being used
+		AbilityHUD hud;
+		if ( isAbility1 )
+			hud = ability1;
+		else
+			hud = ability2;
 
+		// Hide the use button
+		hud.useButton.gameObject.SetActive ( false );
+
+		// Display the cancel button
+		hud.cancelButton.SetActive ( true );
+
+		// Display that the command is in use
+		hud.activityDisplay.gameObject.SetActive ( true );
+		hud.activityDisplay.color = ACTIVE;
+		hud.activityDisplay.rectTransform.offsetMax = Vector2.zero;
+
+		// Start the command setup
+		HeroUnit h = currentUnit as HeroUnit;
+		h.StartCommand ( );
 	}
 
+	/// <summary>
+	/// Cancels the use of the hero's command.
+	/// </summary>
 	public void CancelCommand ( bool isAbility1 )
 	{
+		// Check which ability is being used
+		AbilityHUD hud;
+		if ( isAbility1 )
+			hud = ability1;
+		else
+			hud = ability2;
 
+		// Display the use button
+		hud.useButton.gameObject.SetActive ( true );
+
+		// Hide the cancel button
+		hud.cancelButton.SetActive ( false );
+
+		// Display that the command is not in use
+		hud.activityDisplay.gameObject.SetActive ( false );
+
+		// Cancel the command setup
+		HeroUnit h = currentUnit as HeroUnit;
+		h.EndCommand ( );
 	}
 
 	/// <summary>

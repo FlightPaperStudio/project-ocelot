@@ -26,20 +26,31 @@ public class NameGenerator
 
 	/// <summary>
 	/// Creates a randomly generated name.
-	/// The name consists of a first name, a title, and a last name (e.g. Ethan "Bthan" Caraway).
+	/// The name consists of a first name and a last name only (e.g. Ethan Caraway).
 	/// </summary>
 	public static string CreateName ( )
 	{
 		// Generate first name
 		string first = names.firstNames [ Random.Range ( 0, names.firstNames.Length ) ];
 
-		// Generate title
-		string nick = names.nicknames [ Random.Range ( 0, names.nicknames.Length ) ];
-
 		// Generate last name
 		string last = names.lastNames [ Random.Range ( 0, names.lastNames.Length ) ];
 
-		// Return full name with title
-		return first + " \"" + nick + "\" " + last;
+		// Return full name
+		return first + " " + last;
+	}
+
+	/// <summary>
+	/// Creates a randomly generated nickname.
+	/// The nickname is returned in quotation (e.g. "Bthan").
+	/// </summary>
+	/// <returns></returns>
+	public static string CreateNickname ( )
+	{
+		// Generate nickname
+		string nick = names.nicknames [ Random.Range ( 0, names.nicknames.Length ) ];
+
+		// Return formated nickname
+		return "\"" + nick + "\""; 
 	}
 }

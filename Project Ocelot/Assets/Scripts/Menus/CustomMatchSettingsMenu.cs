@@ -64,10 +64,10 @@ public class CustomMatchSettingsMenu : Menu
 
 		// Set default special ability settings
 		heroValue.Clear ( );
-		for ( int i = 0; i < HeroInfo.list.Length; i++ )
+		for ( int i = 0; i < HeroInfo.list.Count; i++ )
 		{
 			// Set hero setting
-			HeroSettings h = new HeroSettings ( HeroInfo.list [ i ].id, true, true, (Ability.AbilityType)HeroInfo.list [ i ].ability1.type, HeroInfo.list [ i ].ability1.duration, HeroInfo.list [ i ].ability1.cooldown, false, (Ability.AbilityType)HeroInfo.list [ i ].ability2.type, HeroInfo.list [ i ].ability2.duration, HeroInfo.list [ i ].ability2.cooldown );
+			HeroSettings h = new HeroSettings ( HeroInfo.list [ i ].id, true, true, (Ability.AbilityType)HeroInfo.list [ i ].ability1.type, HeroInfo.list [ i ].ability1.duration, HeroInfo.list [ i ].ability1.cooldown, HeroInfo.list [ i ].id == 4, (Ability.AbilityType)HeroInfo.list [ i ].ability2.type, HeroInfo.list [ i ].ability2.duration, HeroInfo.list [ i ].ability2.cooldown );
 			heroValue.Add ( h );
 
 			// Set selection
@@ -401,6 +401,16 @@ public class CustomMatchSettingsMenu : Menu
 	{
 		// Set cooldown
 		SetCooldown ( heroValue [ 3 ].ability1, (int)value, cooldownSlider1 [ 3 ], cooldownDisplay1 [ 3 ] );
+	}
+
+	/// <summary>
+	/// Sets the current cooldown setting for the Mad Hatter ability.
+	/// Use this as a slider update event wrapper.
+	/// </summary>
+	public void SetMadHatterCooldown ( float value )
+	{
+		// Set cooldown
+		SetCooldown ( heroValue [ 3 ].ability2, (int)value, cooldownSlider2 [ 3 ], cooldownDisplay2 [ 3 ] );
 	}
 
 	/// <summary>

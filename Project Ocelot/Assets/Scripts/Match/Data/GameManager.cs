@@ -132,26 +132,8 @@ public class GameManager : MonoBehaviour
 		// Wait until animation is completed
 		yield return UI.splash.Slide ( currentPlayer.name + "'s Turn", Util.TeamColor ( currentPlayer.team ), true ).WaitForCompletion ( );
 
-		// Access each of the player's units
-		foreach ( Unit u in currentPlayer.units )
-		{
-			// Clear previous blocked tiles
-			u.ClearBlockedTiles ( );
-
-			// Add starting tile as a blocked tile
-			u.AddBlockedTile ( u.currentTile, true );
-
-			// Set cooldowns
-			if ( u is HeroUnit )
-			{
-				HeroUnit h = u as HeroUnit;
-				h.Cooldown ( );
-			}
-
-			// Set move list
-			u.FindMoves ( );
-			u.SetMoveList ( );
-		}
+		// Get moves
+		GetTeamMoves ( true );
 
 		// Check to make sure the player has moves available
 		if ( ForfeitCheck ( ) )
@@ -306,6 +288,34 @@ public class GameManager : MonoBehaviour
 	}
 
 	/// <summary>
+	/// Gets all of the available moves for each of the current player's units.
+	/// Set the parameter to true if the units' ability cooldowns and durations should be decremented.
+	/// </summary>
+	public void GetTeamMoves ( bool doCooldowns )
+	{
+		// Access each of the player's units
+		foreach ( Unit u in currentPlayer.units )
+		{
+			// Clear previous blocked tiles
+			u.ClearBlockedTiles ( );
+
+			// Add starting tile as a blocked tile
+			u.AddBlockedTile ( u.currentTile, true );
+
+			// Set cooldowns
+			if ( doCooldowns && u is HeroUnit )
+			{
+				HeroUnit h = u as HeroUnit;
+				h.Cooldown ( );
+			}
+
+			// Set move list
+			u.FindMoves ( );
+			u.SetMoveList ( );
+		}
+	}
+
+	/// <summary>
 	/// Gets the next player the turn order.
 	/// </summary>
 	private Player GetNextPlayer ( )
@@ -341,7 +351,7 @@ public class GameManager : MonoBehaviour
 	/// <summary>
 	/// Displays the available units for the current player.
 	/// </summary>
-	private void DisplayAvailableUnits ( )
+	public void DisplayAvailableUnits ( )
 	{
 		// Highlight each unit
 		foreach ( Unit u in currentPlayer.units )

@@ -109,6 +109,44 @@ public class HeroUnit : Unit
 	}
 
 	/// <summary>
+	/// Sets up the hero's command use.
+	/// Base function clears the board for its command state.
+	/// </summary>
+	public virtual void StartCommand ( )
+	{
+		// Clear the current board
+		GM.board.ResetTiles ( );
+
+		// Highlight current tile
+		currentTile.SetTileState ( TileState.SelectedUnit );
+	}
+
+	/// <summary>
+	/// Selects a particular tile for the setup of a command.
+	/// This function should be called as many times as needed until all necessary tils are selected. The command should execute on the last call of this function.
+	/// </summary>
+	public virtual void SelectCommandTile ( Tile t )
+	{
+
+	}
+
+	/// <summary>
+	/// Cancels the hero's command use.
+	/// Base function returns the board to its non-command state.
+	/// </summary>
+	public virtual void EndCommand ( )
+	{
+		// Clear the current board
+		GM.board.ResetTiles ( );
+
+		// Get available units
+		GM.DisplayAvailableUnits ( );
+
+		// Select current unit
+		GM.SelectUnit ( GM.selectedUnit );
+	}
+
+	/// <summary>
 	/// Starts the cooldown for the unit's special ability.
 	/// </summary>
 	protected void StartCooldown ( AbilitySettings current, Ability setting )

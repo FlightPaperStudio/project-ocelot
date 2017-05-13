@@ -30,6 +30,9 @@ public class Board : MonoBehaviour
 		tileColorDic.Add ( TileState.AvailableSpecialHover,        new Color32 ( 125,   0, 125, 255 ) ); // Purple
 		tileColorDic.Add ( TileState.AvailableSpecialCapture,      new Color32 ( 255, 125, 255, 255 ) ); // Light purple
 		tileColorDic.Add ( TileState.AvailableSpecialCaptureHover, new Color32 ( 125,   0, 125, 255 ) ); // Purple
+		tileColorDic.Add ( TileState.AvailableCommand,             new Color32 ( 255, 125, 255, 255 ) ); // Light purple
+		tileColorDic.Add ( TileState.AvailableCommandHover,        new Color32 ( 125,   0, 125, 255 ) ); // Purple
+		tileColorDic.Add ( TileState.AvailableCommandSelected,     new Color32 ( 125,   0, 125, 255 ) ); // Purple
 		tileColorDic.Add ( TileState.ConflictedTile,               new Color32 ( 202, 190, 255, 255 ) ); // Light lavender
 		tileColorDic.Add ( TileState.ConflictedTileHover,          new Color32 ( 130, 130, 255, 255 ) ); // Dark lavender
 	}

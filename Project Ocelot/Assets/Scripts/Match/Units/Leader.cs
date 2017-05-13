@@ -6,10 +6,32 @@ using DG.Tweening;
 
 public class Leader : Unit 
 {
+	/// <summary>
+	/// 
+	/// Hero Ability Information 
+	/// 
+	/// Ability 1: Smite
+	/// Type: Passive Ability
+	/// 
+	/// </summary>
+
+	// Hero information
+	public Ability ability;
+	public AbilitySettings currentAbility;
+	public Sprite abilitySprite;
+
 	private void Start ( )
 	{
 		// Set name
-		characterName = team.name + " Leader";
+		characterName = NameGenerator.CreateName ( );
+
+		// Set ability information
+		ability.name = "Smite";
+		ability.description = "???";
+		ability.type = 0;
+		ability.duration = 1;
+		ability.cooldown = 0;
+		currentAbility = new AbilitySettings ( true, (Ability.AbilityType)ability.type, ability.duration, ability.cooldown );
 	}
 
 	/// <summary>

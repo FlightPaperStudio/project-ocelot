@@ -59,6 +59,13 @@ MonoBehaviour:
   currentTile: {fileID: 0}
   team: {fileID: 0}
   sprite: {fileID: 212733659000578246}
+  ability:
+    name: 
+    description: 
+    type: 0
+    duration: 0
+    cooldown: 0
+  abilitySprite: {fileID: 21300000, guid: 9b1d4b05415fb74469f74d25958b856b, type: 3}
 --- !u!212 &212733659000578246
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -102,6 +102,11 @@ public class Tile : MonoBehaviour
 				t.HighlightTile ( TileState.AvailableCaptureHover );
 			break;
 
+		// Hover over an available tile usable for a command
+		case TileState.AvailableCommand:
+			HighlightTile ( TileState.AvailableCommandHover );
+			break;
+
 		// Hover over a conflict tile
 		case TileState.ConflictedTile:
 			HighlightTile ( TileState.ConflictedTileHover );
@@ -154,6 +159,13 @@ public class Tile : MonoBehaviour
 		case TileState.AvailableSpecial:
 		case TileState.AvailableSpecialCapture:
 			GM.SelectMove ( this );
+			break;
+
+		// Select a tile for a command
+		case TileState.AvailableCommand:
+			SetTileState ( TileState.AvailableCommandSelected );
+			HeroUnit h = GM.selectedUnit as HeroUnit;
+			h.SelectCommandTile ( this );
 			break;
 
 		// Select conflicted move
@@ -1301,6 +1313,9 @@ public enum TileState
 	AvailableSpecialHover,
 	AvailableSpecialCapture,
 	AvailableSpecialCaptureHover,
+	AvailableCommand,
+	AvailableCommandHover,
+	AvailableCommandSelected,
 	ConflictedTile,
 	ConflictedTileHover,
 	Error

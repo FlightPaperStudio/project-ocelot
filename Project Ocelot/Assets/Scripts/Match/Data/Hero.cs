@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine;
 
 [System.Serializable]
@@ -42,13 +44,17 @@ public class HeroJSONHolder
 public class HeroInfo
 {
 	// Heroes inforomation
-	public static Hero [ ] list
+	private static Hero [ ] actualList;
+	public static ReadOnlyCollection<Hero> list
 	{
-		get;
-		private set;
+		get
+		{
+			return Array.AsReadOnly<Hero> ( actualList );
+		}
 	}
 	private static HeroJSONHolder holder;
 	private static Dictionary<int, Hero> dic = new Dictionary<int, Hero> ( );
+	private static ReadOnlyDictionary<int, Hero> readOnlyDic = new ReadOnlyDictionary<int, Hero> ( dic );
 
 	/// <summary>
 	/// Sets the list storing all of the hero information.
@@ -57,10 +63,10 @@ public class HeroInfo
 	{
 		// Store data from JSON file
 		holder = JsonUtility.FromJson<HeroJSONHolder> ( json );
-		list = holder.list;
+		actualList = holder.list;
 
 		// Set data in dictionary
-		for ( int i = 0; i < list.Length; i++ )
+		for ( int i = 0; i < list.Count; i++ )
 			dic.Add ( list [ i ].id, list [ i ] );
 	}
 
@@ -70,6 +76,6 @@ public class HeroInfo
 	public static Hero GetHeroByID ( int id )
 	{
 		// Return hero information
-		return dic [ id ];
+		return readOnlyDic [ id ];
 	}
 }

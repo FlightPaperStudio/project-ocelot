@@ -226,9 +226,9 @@ public class MatchSettings
 		actualHeroSettings.Clear ( );
 		dic.Clear ( );
 
-		for ( int i = 0; i < HeroInfo.list.Length; i++ )
+		for ( int i = 0; i < HeroInfo.list.Count; i++ )
 		{
-			HeroSettings h = new HeroSettings ( HeroInfo.list [ i ].id, true, true, (Ability.AbilityType)HeroInfo.list [ i ].ability1.type, HeroInfo.list [ i ].ability1.duration, HeroInfo.list [ i ].ability1.cooldown, false, (Ability.AbilityType)HeroInfo.list [ i ].ability2.type, HeroInfo.list [ i ].ability2.duration, HeroInfo.list [ i ].ability2.cooldown );
+			HeroSettings h = new HeroSettings ( HeroInfo.list [ i ].id, true, true, (Ability.AbilityType)HeroInfo.list [ i ].ability1.type, HeroInfo.list [ i ].ability1.duration, HeroInfo.list [ i ].ability1.cooldown, HeroInfo.list [ i ].id == 4, (Ability.AbilityType)HeroInfo.list [ i ].ability2.type, HeroInfo.list [ i ].ability2.duration, HeroInfo.list [ i ].ability2.cooldown );
 			actualHeroSettings.Add ( h );
 			dic.Add ( heroSettings [ i ].id, heroSettings [ i ] );
 		}
@@ -278,6 +278,7 @@ public class AbilitySettings
 {
 	public bool enabled;
 	public Ability.AbilityType type;
+	public bool active;
 	public int duration;
 	public int cooldown;
 
@@ -285,6 +286,7 @@ public class AbilitySettings
 	{
 		enabled = _enabled;
 		type = _type;
+		active = false;
 		duration = _duration;
 		cooldown = _cooldown;
 	}

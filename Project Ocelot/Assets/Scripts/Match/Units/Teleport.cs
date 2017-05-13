@@ -19,6 +19,12 @@ public class Teleport : HeroUnit
 	/// 
 	/// </summary>
 
+	// Ability information
+	private Tile tile1 = null;
+	private Tile tile2 = null;
+	private Unit unit1 = null;
+	private Unit unit2 = null;
+
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves.
 	/// </summary>
@@ -30,6 +36,12 @@ public class Teleport : HeroUnit
 		// Get teleport moves
 		if ( currentAbility1.enabled && !returnOnlyJumps && currentAbility1.cooldown == 0 )
 			GetTeleport ( currentTile, GetBackDirection ( team.direction ), 2 );
+
+		// Get mad hatter availability
+		if ( currentAbility2.enabled && !returnOnlyJumps && currentAbility2.cooldown == 0 )
+			currentAbility2.active = true;
+		else
+			currentAbility2.active = false;
 	}
 
 	/// <summary>
@@ -89,6 +101,115 @@ public class Teleport : HeroUnit
 
 				// End the unit's turn after using its special ability
 				GM.EndTurn ( );
+			} );
+	}
+
+	/// <summary>
+	/// Sets up the hero's command use.
+	/// </summary>
+	public override void StartCommand ( )
+	{
+		// Clear board
+		base.StartCommand ( );
+
+		// Highlight team members
+		foreach ( Unit u in team.units )
+		{
+			if ( u != this && !( u is Leader ) )
+				u.currentTile.SetTileState ( TileState.AvailableCommand );
+		}
+	}
+
+	/// <summary>
+	/// Selects the unit's to swap places.
+	/// </summary>
+	public override void SelectCommandTile ( Tile t )
+	{
+		// Check if any selections have been made
+		if ( tile1 == null )
+		{
+			// Set command data
+			tile1 = t;
+			unit1 = t.currentUnit;
+
+			// Set tile as selected
+			t.SetTileState ( TileState.AvailableCommandSelected );
+		}
+		else
+		{
+			// Set command data
+			tile2 = t;
+			unit2 = t.currentUnit;
+
+			// Set tile as selected
+			t.SetTileState ( TileState.AvailableCommandSelected );
+
+			// Activate Mad Hatter
+			UseMadHatter ( );
+		}
+	}
+
+	/// <summary>
+	/// Cancel's the hero's command use.
+	/// </summary>
+	public override void EndCommand ( )
+	{
+		// Clear command data
+		tile1 = null;
+		tile2 = null;
+		unit1 = null;
+		unit2 = null;
+
+		// Cancel the command
+		base.EndCommand ( );
+	}
+
+	/// <summary>
+	/// Swaps the positions of two teammates.
+	/// </summary>
+	private void UseMadHatter ( )
+	{
+		// Hide cancel button
+		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
+
+		// Set units to their new tiles
+		tile1.currentUnit = unit2;
+		tile2.currentUnit = unit1;
+		unit1.currentTile = tile2;
+		unit2.currentTile = tile1;
+
+		// Clear the board
+		GM.board.ResetTiles ( );
+
+		// Begin animation
+		Sequence s = DOTween.Sequence ( )
+			.Append ( unit1.sprite.DOFade ( 0f, 0.75f ) )
+			.Join ( unit2.sprite.DOFade ( 0f, 0.75f ) )
+			.AppendCallback ( ( ) =>
+			{
+				// Reposition units
+				unit1.transform.position = unit1.currentTile.transform.position;
+				unit2.transform.position = unit2.currentTile.transform.position;
+			} )
+			.Append ( unit1.sprite.DOFade ( 1f, 0.75f ) )
+			.Join ( unit2.sprite.DOFade ( 1f, 0.75f ) )
+			.OnComplete ( ( ) =>
+			{
+				// Clear command data
+				tile1 = null;
+				tile2 = null;
+				unit1 = null;
+				unit2 = null;
+
+				// Start cooldown
+				StartCooldown ( currentAbility2, info.ability2 );
+
+				// Get moves
+				GM.GetTeamMoves ( false );
+
+				// Display team
+				GM.DisplayAvailableUnits ( );
+				GM.SelectUnit ( this );
 			} );
 	}
 }
