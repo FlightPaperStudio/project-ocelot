@@ -29,6 +29,7 @@ public class Tile : MonoBehaviour
 		private set;
 	}
 	public Unit currentUnit;
+	public TileObject currentObject;
 
 	/// <summary>
 	/// Sets the neighbor tiles at the 
@@ -83,11 +84,11 @@ public class Tile : MonoBehaviour
 			HighlightTile ( TileState.AvailableMoveHover );
 			break;
 
-		// Hover over an available move with a potential capture
-		case TileState.AvailableMoveCapture:
-			HighlightTile ( TileState.AvailableMoveCaptureHover );
-			foreach ( Tile t in GM.selectedUnit.moveDic [ this ].capture )
-				t.HighlightTile ( TileState.AvailableCaptureHover );
+		// Hover over an available move with a potential attack
+		case TileState.AvailableMoveAttack:
+			HighlightTile ( TileState.AvailableMoveAttackHover );
+			foreach ( Tile t in GM.selectedUnit.moveDic [ this ].attacks )
+				t.HighlightTile ( TileState.AvailableAttackHover );
 			break;
 
 		// Hover over an available special ability move
@@ -95,11 +96,11 @@ public class Tile : MonoBehaviour
 			HighlightTile ( TileState.AvailableSpecialHover );
 			break;
 
-		// Hover over an available special ability move with a potential capture
-		case TileState.AvailableSpecialCapture:
-			HighlightTile ( TileState.AvailableSpecialCaptureHover );
-			foreach ( Tile t in GM.selectedUnit.moveDic [ this ].capture )
-				t.HighlightTile ( TileState.AvailableCaptureHover );
+		// Hover over an available special ability move with a potential attack
+		case TileState.AvailableSpecialAttack:
+			HighlightTile ( TileState.AvailableSpecialAttackHover );
+			foreach ( Tile t in GM.selectedUnit.moveDic [ this ].attacks )
+				t.HighlightTile ( TileState.AvailableAttackHover );
 			break;
 
 		// Hover over an available tile usable for a command
@@ -112,8 +113,8 @@ public class Tile : MonoBehaviour
 			HighlightTile ( TileState.ConflictedTileHover );
 			GM.UI.conflictPrompt.SetActive ( true );
 			foreach ( MoveData m in GM.selectedUnit.moveList.FindAll ( item => item.tile == this ) )
-				foreach ( Tile t in m.capture )
-					t.HighlightTile ( TileState.AvailableCaptureHover );
+				foreach ( Tile t in m.attacks )
+					t.HighlightTile ( TileState.AvailableAttackHover );
 			break;
 		}
 	}
@@ -126,17 +127,17 @@ public class Tile : MonoBehaviour
 		// Return tile color to current state
 		HighlightTile ( state );
 
-		// Check if other tiles needs to return their tile color to their current state (in case of potential captures)
-		if ( state == TileState.AvailableMoveCapture || state == TileState.AvailableSpecialCapture )
-			foreach ( Tile t in GM.selectedUnit.moveDic [ this ].capture )
-				t.HighlightTile ( TileState.AvailableCapture );
+		// Check if other tiles needs to return their tile color to their current state (in case of potential attacks)
+		if ( state == TileState.AvailableMoveAttack || state == TileState.AvailableSpecialAttack )
+			foreach ( Tile t in GM.selectedUnit.moveDic [ this ].attacks )
+				t.HighlightTile ( TileState.AvailableAttack );
 
 		if ( state == TileState.ConflictedTile )
 		{
 			GM.UI.conflictPrompt.SetActive ( false );
 			foreach ( MoveData m in GM.selectedUnit.moveList.FindAll ( item => item.tile == this ) )
-				foreach ( Tile t in m.capture )
-					t.HighlightTile ( TileState.AvailableCapture );
+				foreach ( Tile t in m.attacks )
+					t.HighlightTile ( TileState.AvailableAttack );
 		}
 	}
 
@@ -155,9 +156,9 @@ public class Tile : MonoBehaviour
 
 		// Select move
 		case TileState.AvailableMove:
-		case TileState.AvailableMoveCapture:
+		case TileState.AvailableMoveAttack:
 		case TileState.AvailableSpecial:
-		case TileState.AvailableSpecialCapture:
+		case TileState.AvailableSpecialAttack:
 			GM.SelectMove ( this );
 			break;
 
@@ -1305,34 +1306,18 @@ public enum TileState
 	SelectedUnit,
 	AvailableMove,
 	AvailableMoveHover,
-	AvailableMoveCapture,
-	AvailableMoveCaptureHover,
-	AvailableCapture,
-	AvailableCaptureHover,
+	AvailableMoveAttack,
+	AvailableMoveAttackHover,
+	AvailableAttack,
+	AvailableAttackHover,
 	AvailableSpecial,
 	AvailableSpecialHover,
-	AvailableSpecialCapture,
-	AvailableSpecialCaptureHover,
+	AvailableSpecialAttack,
+	AvailableSpecialAttackHover,
 	AvailableCommand,
 	AvailableCommandHover,
 	AvailableCommandSelected,
 	ConflictedTile,
 	ConflictedTileHover,
 	Error
-}
-
-public enum TileStateColor
-{
-	Normal,
-	FriendlyPiece,
-	FriendlyPieceHover,
-	SelectedPiece,
-	AvailableMove,
-	AvailableMoveHover,
-	AvailableCapture,
-	AvailableCaptureHover,
-	AbilityMove,
-	AbilityMoveHover,
-	AvailableWin,
-	AvailableWinHover
 }

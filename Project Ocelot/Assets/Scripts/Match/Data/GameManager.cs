@@ -6,6 +6,12 @@ using DG.Tweening;
 
 public class GameManager : MonoBehaviour 
 {
+	// UI information
+	public UIManager UI;
+
+	// Board information
+	public Board board;
+
 	// Player information
 	public Player [ ] players;
 	public Player currentPlayer
@@ -15,25 +21,24 @@ public class GameManager : MonoBehaviour
 	}
 	private int playerIndex = 0;
 
-	// Board information
-	public Board board;
-
-	// UI information
-	public UIManager UI;
-
-	// Unit information
-	public Unit [ ] unitPrefabs;
-	public Unit selectedUnit
+	// Match information
+	public bool isMatchComplete
 	{
 		get;
 		private set;
 	}
+
+	// Turn information
 	public bool isStartOfTurn
 	{
 		get;
 		private set;
 	}
-	public bool isMatchComplete
+	public List<Tween> startOfTurnAnimations = new List<Tween> ( );
+	
+	// Unit information
+	public Unit [ ] unitPrefabs;
+	public Unit selectedUnit
 	{
 		get;
 		private set;
@@ -44,8 +49,6 @@ public class GameManager : MonoBehaviour
 	/// </summary>
 	private void Start ( )
 	{
-		// Initialize the match settings
-
 		// Start the match
 		StartMatch ( );
 	}
@@ -119,6 +122,9 @@ public class GameManager : MonoBehaviour
 	/// </summary>
 	private void StartTurn ( )
 	{
+		// Clear previous animation
+		startOfTurnAnimations.Clear ( );
+
 		// Start new turn animation
 		if ( !isMatchComplete )
 			StartCoroutine ( StartTurnCoroutine ( ) );
@@ -132,8 +138,11 @@ public class GameManager : MonoBehaviour
 		// Wait until animation is completed
 		yield return UI.splash.Slide ( currentPlayer.name + "'s Turn", Util.TeamColor ( currentPlayer.team ), true ).WaitForCompletion ( );
 
+		// Set cooldowns
+		UpdateCooldowns ( );
+
 		// Get moves
-		GetTeamMoves ( true );
+		GetTeamMoves ( );
 
 		// Check to make sure the player has moves available
 		if ( ForfeitCheck ( ) )
@@ -141,6 +150,9 @@ public class GameManager : MonoBehaviour
 			// Have the current player forfeit
 			ForfeitMatch ( );
 		}
+
+		// Wait until the start of turn animations are complete
+		yield return PlayStartTurnAnimations ( ).WaitForCompletion ( );
 
 		// Display units for selection
 		DisplayAvailableUnits ( );
@@ -235,7 +247,7 @@ public class GameManager : MonoBehaviour
 			//	continue;
 
 			// Capture all other units
-			p.units [ i ].GetCaptured ( true );
+			p.units [ i ].GetAttacked ( true );
 		}
 
 		// Check if match has been won
@@ -288,10 +300,26 @@ public class GameManager : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Gets all of the available moves for each of the current player's units.
-	/// Set the parameter to true if the units' ability cooldowns and durations should be decremented.
+	/// Updates all of the player's heroes' cooldowns and durations.
 	/// </summary>
-	public void GetTeamMoves ( bool doCooldowns )
+	private void UpdateCooldowns ( )
+	{
+		// Access each of the player's units
+		foreach ( Unit u in currentPlayer.units )
+		{
+			// Set cooldowns
+			if ( u is HeroUnit )
+			{
+				HeroUnit h = u as HeroUnit;
+				h.Cooldown ( );
+			}
+		}
+	}
+
+	/// <summary>
+	/// Gets all of the available moves for each of the current player's units.
+	/// </summary>
+	public void GetTeamMoves ( )
 	{
 		// Access each of the player's units
 		foreach ( Unit u in currentPlayer.units )
@@ -302,17 +330,26 @@ public class GameManager : MonoBehaviour
 			// Add starting tile as a blocked tile
 			u.AddBlockedTile ( u.currentTile, true );
 
-			// Set cooldowns
-			if ( doCooldowns && u is HeroUnit )
-			{
-				HeroUnit h = u as HeroUnit;
-				h.Cooldown ( );
-			}
-
 			// Set move list
 			u.FindMoves ( );
 			u.SetMoveList ( );
 		}
+	}
+
+	/// <summary>
+	/// Plays all of the start of turn animations before the player's turn begins.
+	/// </summary>
+	private Sequence PlayStartTurnAnimations ( )
+	{
+		// Create the animation
+		Sequence s = DOTween.Sequence ( );
+
+		// Add animations
+		foreach ( Tween t in startOfTurnAnimations )
+			s.Append ( t );
+
+		// Return the sequence so that the code can wait for its completion
+		return s;
 	}
 
 	/// <summary>
@@ -449,14 +486,14 @@ public class GameManager : MonoBehaviour
 					break;
 
 					// Jump and capture enemy
-				case MoveData.MoveType.JumpCapture:
-				case MoveData.MoveType.JumpCaptureToWin:
+				case MoveData.MoveType.Attack:
+				case MoveData.MoveType.AttackToWin:
 					// Set tile state and highlight tile
-					data.tile.SetTileState ( TileState.AvailableMoveCapture );
+					data.tile.SetTileState ( TileState.AvailableMoveAttack );
 
-					// Set tile state and highlight tile for the unit available for capture
-					foreach ( Tile t in data.capture )
-						t.SetTileState ( TileState.AvailableCapture );
+					// Set tile state and highlight tile for the unit available for attack
+					foreach ( Tile t in data.attacks )
+						t.SetTileState ( TileState.AvailableAttack );
 					break;
 
 					// Special ability move
@@ -465,14 +502,14 @@ public class GameManager : MonoBehaviour
 					data.tile.SetTileState ( TileState.AvailableSpecial );
 					break;
 
-					// Special ability move and capture enemy
-				case MoveData.MoveType.SpecialCapture:
+					// Special ability move and attack enemy
+				case MoveData.MoveType.SpecialAttack:
 					// Set tile state and highlight tile
-					data.tile.SetTileState ( TileState.AvailableSpecialCapture );
+					data.tile.SetTileState ( TileState.AvailableSpecialAttack );
 
-					// Set tile state and highlight tile for the unit available for capture
-					foreach ( Tile t in data.capture )
-						t.SetTileState ( TileState.AvailableCapture );
+					// Set tile state and highlight tile for the unit available for attack
+					foreach ( Tile t in data.attacks )
+						t.SetTileState ( TileState.AvailableAttack );
 					break;
 				}
 			}

@@ -125,36 +125,25 @@ public class Unit : MonoBehaviour
 			if ( i == back.FirstInt || i == back.SecondInt )
 				continue;
 
-			// Check for existing tile
-			if ( currentTile.neighbors [ i ] != null && !IsBlockedTile ( currentTile.neighbors [ i ] ) )
+			// Check if this unit can move to the neighboring tile
+			if ( !returnOnlyJumps && OccupyTileCheck ( currentTile.neighbors [ i ] ) )
 			{
-				// Check if tile is occupied by a unit
-				if ( currentTile.neighbors [ i ].currentUnit != null )
+				// Add as an available move
+				moveList.Add ( new MoveData ( currentTile.neighbors [ i ], MoveData.MoveType.Move, i ) );
+			}
+			// Check if this unit can jump the neighboring tile
+			else if ( JumpTileCheck ( currentTile.neighbors [ i ] ) && OccupyTileCheck ( currentTile.neighbors [ i ].neighbors [ i ] ) )
+			{
+				// Check if the neighboring unit can be attacked
+				if ( currentTile.neighbors [ i ].currentUnit != null && currentTile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
 				{
-					// Check if tile is available for a jump
-					if ( currentTile.neighbors [ i ].neighbors [ i ] != null && currentTile.neighbors [ i ].neighbors [ i ].currentUnit == null && !IsBlockedTile ( currentTile.neighbors [ i ].neighbors [ i ] ) )
-					{
-						// Check if the unit being jumped is capable of being captured
-						if ( currentTile.neighbors [ i ].currentUnit.UnitCaptureCheck ( this ) )
-						{
-							// Add as an available capture
-							moveList.Add ( new MoveData ( currentTile.neighbors [ i ].neighbors [ i ], MoveData.MoveType.JumpCapture, i, currentTile.neighbors [ i ] ) );
-						}
-						else
-						{
-							// Add as an available jump
-							moveList.Add ( new MoveData ( currentTile.neighbors [ i ].neighbors [ i ], MoveData.MoveType.Jump, i ) );
-						}
-					}
+					// Add as an available attack
+					moveList.Add ( new MoveData ( currentTile.neighbors [ i ].neighbors [ i ], MoveData.MoveType.Attack, i, currentTile.neighbors [ i ] ) );
 				}
 				else
 				{
-					// Check if moves are being returned
-					if ( !returnOnlyJumps )
-					{
-						// Add as an available move
-						moveList.Add ( new MoveData ( currentTile.neighbors [ i ], MoveData.MoveType.Move, i ) );
-					}
+					// Add as an available jump
+					moveList.Add ( new MoveData ( currentTile.neighbors [ i ].neighbors [ i ], MoveData.MoveType.Jump, i ) );
 				}
 			}
 		}
@@ -187,13 +176,66 @@ public class Unit : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Determines if this unit can be captured by another unit jumping it.
-	/// Returns true if this unit can be captured.
+	/// Determines if a tile can be moved to by this unit.
+	/// Returns true if the tile can be moved to.
 	/// </summary>
-	public virtual bool UnitCaptureCheck ( Unit jumpingUnit )
+	protected virtual bool OccupyTileCheck ( Tile t )
 	{
-		// Check if the jumping unit is on the same team
-		if ( jumpingUnit.team == team )
+		// Check if the tile exists
+		if ( t == null )
+			return false;
+
+		// Check if the tile is blocked
+		if ( IsBlockedTile ( t ) )
+			return false;
+
+		// Check if the tile currently occupied
+		if ( t.currentUnit != null )
+			return false;
+
+		// Check if the tile has a tile object blocking it
+		if ( t.currentObject != null && !t.currentObject.canBeOccupied )
+			return false;
+
+		// Return that the tile can be occupied by this unit
+		return true;
+	}
+
+	/// <summary>
+	/// Determines if a tile can be jumped by this unit.
+	/// Returns true if the tile can be jumped.
+	/// </summary>
+	protected virtual bool JumpTileCheck ( Tile t )
+	{
+		// Check if the tile exists
+		if ( t == null )
+			return false;
+
+		// Check if the tile is blocked
+		if ( IsBlockedTile ( t ) )
+			return false;
+
+		// Check if the tile is occupied
+		if ( t.currentUnit == null )
+			return false;
+
+		// Check fi the tile has a tile object blocking it
+		if ( t.currentObject != null && !t.currentObject.canBeJumped )
+			return false;
+
+		// Return that the tile can be jumped by this unit
+		return true;
+	}
+
+	/// <summary>
+	/// Determines if this unit can be attacked by another unit.
+	/// Call this function on the unit being attacked with the unit that is attacking as the parameter.
+	/// Returns true if this unit can be attacked.
+	/// </summary>
+	public virtual bool UnitAttackCheck ( Unit attacker )
+	{
+		// Check if the unit to be attacked is on the same team
+		if ( attacker.team == team )
 			return false;
 		else
 			return true;
@@ -213,8 +255,8 @@ public class Unit : MonoBehaviour
 		case MoveData.MoveType.Jump:
 			Jump ( data );
 			break;
-		case MoveData.MoveType.JumpCapture:
-			CaptureUnit ( data );
+		case MoveData.MoveType.Attack:
+			AttackUnit ( data );
 			Jump ( data );
 			break;
 		}
@@ -283,24 +325,24 @@ public class Unit : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Captures an adjacent unit from a jump.
-	/// Call this function on the unit that is jumping.
+	/// Attacks the adjacent unit.
+	/// Call this function on the attacking unit.
 	/// </summary>
-	protected virtual void CaptureUnit ( MoveData data )
+	protected virtual void AttackUnit ( MoveData data )
 	{
 		// Mark that the board has been updated
 		ClearBlockedTiles ( );
 
-		// Capture the adjacent unit(s) being jumped
-		foreach ( Tile t in data.capture )
-			t.currentUnit.GetCaptured ( );
+		// K.O. unit(s) being attacked
+		foreach ( Tile t in data.attacks )
+			t.currentUnit.GetAttacked ( );
 	}
 
 	/// <summary>
-	/// Captures this unit.
-	/// Call this function on the unit being captured.
+	/// Attack and K.O. this unit.
+	/// Call this function on the unit being attacked.
 	/// </summary>
-	public virtual void GetCaptured ( bool lostMatch = false )
+	public virtual void GetAttacked ( bool lostMatch = false )
 	{
 		// Remove unit from the team
 		team.units.Remove ( this );
@@ -308,7 +350,7 @@ public class Unit : MonoBehaviour
 		// Remove unit reference from the tile
 		currentTile.currentUnit = null;
 
-		// Animate this unit being captured
+		// Animate this unit being attacked
 		Sequence s = DOTween.Sequence ( )
 			.AppendInterval ( 0.5f )
 			.Append ( transform.DOScale ( new Vector3 ( 5, 5, 5 ), 0.5f ) )

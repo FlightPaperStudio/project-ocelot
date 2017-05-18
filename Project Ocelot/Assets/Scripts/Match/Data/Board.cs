@@ -16,25 +16,25 @@ public class Board : MonoBehaviour
 	private void Start ( )
 	{
 		// Set tile colors to their associated tile state
-		tileColorDic.Add ( TileState.Default,                      new Color32 ( 200, 200, 200, 255 ) ); // Light grey
-		tileColorDic.Add ( TileState.AvailableUnit,                new Color32 ( 255, 255, 200, 255 ) ); // Light yellow
-		tileColorDic.Add ( TileState.AvailableUnitHover,           new Color32 ( 255, 210,  75, 255 ) ); // Gold
-		tileColorDic.Add ( TileState.SelectedUnit,                 new Color32 ( 255, 210,  75, 255 ) ); // Gold
-		tileColorDic.Add ( TileState.AvailableMove,                new Color32 ( 150, 255, 255, 255 ) ); // Light cyan
-		tileColorDic.Add ( TileState.AvailableMoveHover,           new Color32 (   0, 165, 255, 255 ) ); // Dark cyan
-		tileColorDic.Add ( TileState.AvailableMoveCapture,         new Color32 ( 150, 255, 255, 255 ) ); // Light cyan
-		tileColorDic.Add ( TileState.AvailableMoveCaptureHover,    new Color32 (   0, 165, 255, 255 ) ); // Dark cyan
-		tileColorDic.Add ( TileState.AvailableCapture,             new Color32 ( 255, 150, 150, 255 ) ); // Light red
-		tileColorDic.Add ( TileState.AvailableCaptureHover,        new Color32 ( 200,  50,  50, 255 ) ); // Dark red
-		tileColorDic.Add ( TileState.AvailableSpecial,             new Color32 ( 255, 125, 255, 255 ) ); // Light purple
-		tileColorDic.Add ( TileState.AvailableSpecialHover,        new Color32 ( 125,   0, 125, 255 ) ); // Purple
-		tileColorDic.Add ( TileState.AvailableSpecialCapture,      new Color32 ( 255, 125, 255, 255 ) ); // Light purple
-		tileColorDic.Add ( TileState.AvailableSpecialCaptureHover, new Color32 ( 125,   0, 125, 255 ) ); // Purple
-		tileColorDic.Add ( TileState.AvailableCommand,             new Color32 ( 255, 125, 255, 255 ) ); // Light purple
-		tileColorDic.Add ( TileState.AvailableCommandHover,        new Color32 ( 125,   0, 125, 255 ) ); // Purple
-		tileColorDic.Add ( TileState.AvailableCommandSelected,     new Color32 ( 125,   0, 125, 255 ) ); // Purple
-		tileColorDic.Add ( TileState.ConflictedTile,               new Color32 ( 202, 190, 255, 255 ) ); // Light lavender
-		tileColorDic.Add ( TileState.ConflictedTileHover,          new Color32 ( 130, 130, 255, 255 ) ); // Dark lavender
+		tileColorDic.Add ( TileState.Default,                     new Color32 ( 200, 200, 200, 255 ) ); // Light grey
+		tileColorDic.Add ( TileState.AvailableUnit,               new Color32 ( 255, 255, 200, 255 ) ); // Light yellow
+		tileColorDic.Add ( TileState.AvailableUnitHover,          new Color32 ( 255, 210,  75, 255 ) ); // Gold
+		tileColorDic.Add ( TileState.SelectedUnit,                new Color32 ( 255, 210,  75, 255 ) ); // Gold
+		tileColorDic.Add ( TileState.AvailableMove,               new Color32 ( 150, 255, 255, 255 ) ); // Light cyan
+		tileColorDic.Add ( TileState.AvailableMoveHover,          new Color32 (   0, 165, 255, 255 ) ); // Dark cyan
+		tileColorDic.Add ( TileState.AvailableMoveAttack,         new Color32 ( 150, 255, 255, 255 ) ); // Light cyan
+		tileColorDic.Add ( TileState.AvailableMoveAttackHover,    new Color32 (   0, 165, 255, 255 ) ); // Dark cyan
+		tileColorDic.Add ( TileState.AvailableAttack,             new Color32 ( 255, 150, 150, 255 ) ); // Light red
+		tileColorDic.Add ( TileState.AvailableAttackHover,        new Color32 ( 200,  50,  50, 255 ) ); // Dark red
+		tileColorDic.Add ( TileState.AvailableSpecial,            new Color32 ( 255, 125, 255, 255 ) ); // Light purple
+		tileColorDic.Add ( TileState.AvailableSpecialHover,       new Color32 ( 125,   0, 125, 255 ) ); // Purple
+		tileColorDic.Add ( TileState.AvailableSpecialAttack,      new Color32 ( 255, 125, 255, 255 ) ); // Light purple
+		tileColorDic.Add ( TileState.AvailableSpecialAttackHover, new Color32 ( 125,   0, 125, 255 ) ); // Purple
+		tileColorDic.Add ( TileState.AvailableCommand,            new Color32 ( 255, 125, 255, 255 ) ); // Light purple
+		tileColorDic.Add ( TileState.AvailableCommandHover,       new Color32 ( 125,   0, 125, 255 ) ); // Purple
+		tileColorDic.Add ( TileState.AvailableCommandSelected,    new Color32 ( 125,   0, 125, 255 ) ); // Purple
+		tileColorDic.Add ( TileState.ConflictedTile,              new Color32 ( 202, 190, 255, 255 ) ); // Light lavender
+		tileColorDic.Add ( TileState.ConflictedTileHover,         new Color32 ( 130, 130, 255, 255 ) ); // Dark lavender
 	}
 
 	/// <summary>

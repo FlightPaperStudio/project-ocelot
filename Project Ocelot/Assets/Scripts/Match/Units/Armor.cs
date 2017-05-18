@@ -18,10 +18,10 @@ public class Armor : HeroUnit
 	/// </summary>
 
 	/// <summary>
-	/// Removes this unit's armor or captures this unit if armor is no longer available.
-	/// Call this function on the unit being captured.
+	/// Attack this unit and remove this unit's armor if it's available or K.O. this unit if it's not.
+	/// Call this function on the unit being attack.
 	/// </summary>
-	public override void GetCaptured ( bool lostMatch = false )
+	public override void GetAttacked ( bool lostMatch = false )
 	{
 		// Check armor duration
 		if ( currentAbility1.enabled && currentAbility1.duration > 0 && !lostMatch )
@@ -40,8 +40,8 @@ public class Armor : HeroUnit
 			// Display that the special is deactivated
 			GM.UI.hudDic [ team ].DisplayDeactivation ( instanceID );
 
-			// Capture this unit
-			base.GetCaptured ( );
+			// K.O. this unit
+			base.GetAttacked ( );
 		}
 	}
 }

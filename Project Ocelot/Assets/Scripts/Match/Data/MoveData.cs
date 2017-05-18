@@ -10,10 +10,10 @@ public class MoveData
 		MoveToWin,
 		Jump,
 		JumpToWin,
-		JumpCapture,
-		JumpCaptureToWin,
+		Attack,
+		AttackToWin,
 		Special,
-		SpecialCapture
+		SpecialAttack
 	}
 
 	public enum MoveDirection
@@ -48,8 +48,8 @@ public class MoveData
 		private set;
 	}
 
-	// Tracks the tiles of units that could be captured from this move.
-	public Tile [ ] capture
+	// Tracks the tiles of units that could be attacked from this move.
+	public Tile [ ] attacks
 	{
 		get;
 		private set;
@@ -70,7 +70,7 @@ public class MoveData
 		tile = _tile;
 		type = _type;
 		direction = _dir;
-		capture = _capture;
+		attacks = _capture;
 		isConflicted = false;
 		value = 0;
 	}
@@ -80,7 +80,7 @@ public class MoveData
 		tile = _tile;
 		type = _type;
 		direction = ( MoveDirection )_dir;
-		capture = _capture;
+		attacks = _capture;
 		isConflicted = false;
 		value = 0;
 	}

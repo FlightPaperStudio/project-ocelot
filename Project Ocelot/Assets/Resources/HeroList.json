@@ -31,7 +31,7 @@
 				"name": "Catapult",
 				"description": "Insert Catapult description here...",
 				"type": 1,
-				"duration": 0,
+				"duration": 2,
 				"cooldown": 3
 			},
 			"ability2":

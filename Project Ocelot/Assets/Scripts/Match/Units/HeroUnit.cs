@@ -72,31 +72,31 @@ public class HeroUnit : Unit
 		case MoveData.MoveType.Jump:
 			Jump ( data );
 			break;
-		case MoveData.MoveType.JumpCapture:
-			CaptureUnit ( data );
+		case MoveData.MoveType.Attack:
+			AttackUnit ( data );
 			Jump ( data );
 			break;
 		case MoveData.MoveType.Special:
 			UseSpecial ( data );
 			break;
-		case MoveData.MoveType.SpecialCapture:
-			CaptureUnit ( data );
+		case MoveData.MoveType.SpecialAttack:
+			AttackUnit ( data );
 			UseSpecial ( data );
 			break;
 		}
 	}
 
 	/// <summary>
-	/// Captures this unit.
-	/// Call this function on the unit being captured.
+	/// Attack and K.O. this unit.
+	/// Call this function on the unit being attacked.
 	/// </summary>
-	public override void GetCaptured ( bool lostMatch = false )
+	public override void GetAttacked ( bool lostMatch = false )
 	{
 		// Display deactivation
 		GM.UI.hudDic [ team ].DisplayDeactivation ( instanceID );
 
-		// Get captured
-		base.GetCaptured ( lostMatch );
+		// K.O. this unit
+		base.GetAttacked ( lostMatch );
 	}
 
 	/// <summary>
@@ -176,7 +176,8 @@ public class HeroUnit : Unit
 				currentAbility1.duration--;
 
 				// Check if duration is complete
-				//if ( currentAbility1.duration == 0 )
+				if ( currentAbility1.duration == 0 )
+					OnDurationComplete ( currentAbility1 );
 			}
 
 			// Check if current cooldown is active
@@ -197,7 +198,8 @@ public class HeroUnit : Unit
 				currentAbility2.duration--;
 
 				// Check if duration is complete
-				//if ( currentAbility2.duration == 0 )
+				if ( currentAbility2.duration == 0 )
+					OnDurationComplete ( currentAbility2 );
 			}
 
 			// Check if current cooldown is active
@@ -207,5 +209,13 @@ public class HeroUnit : Unit
 				currentAbility2.cooldown--;
 			}
 		}
+	}
+
+	/// <summary>
+	/// Callback for when the duration of an ability has expired.
+	/// </summary>
+	protected virtual void OnDurationComplete ( AbilitySettings current )
+	{
+
 	}
 }

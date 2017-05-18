@@ -55,36 +55,30 @@ public class Torus : HeroUnit
 				// Get opposite edge tile
 				Tile t = GetEdgeTile ( currentTile, direction );
 
-				// Check if tile is occupied by a unit
-				if ( t.currentUnit != null && !IsBlockedTile ( t ) )
+				// Check if this unit can move to the edge tile
+				if ( !returnOnlyJumps && OccupyTileCheck ( t ) )
 				{
-					// Check if tile is available for a jump and if it overlaps with a base move
-					if ( t.neighbors [ i ] != null && t.neighbors [ i ].currentUnit == null && !IsBlockedTile ( t.neighbors [ i ] ) )
-					{
-						// Check if the unit being jumped is capable of being captured
-						if ( t.currentUnit.UnitCaptureCheck ( this ) )
-						{
-							// Add as an available capture
-							moveList.Add ( new MoveData ( t.neighbors [ i ], MoveData.MoveType.SpecialCapture, i, t ) );
-						}
-						else
-						{
-							// Add as an available jump
-							moveList.Add ( new MoveData ( t.neighbors [ i ], MoveData.MoveType.Special, i ) );
-						}
-					}
+					// Add as an available move
+					moveList.Add ( new MoveData ( t, MoveData.MoveType.Special, i ) );
 				}
-				else
+				// Check if this unit can jump the edge tile
+				else if ( JumpTileCheck ( t ) && OccupyTileCheck ( t.neighbors [ i ] ) )
 				{
-					// Check if moves are being returned and if it overlaps with a base move
-					if ( !returnOnlyJumps )
+					// Check if the unit can be attacked
+					if ( t.currentUnit.UnitAttackCheck ( this ) )
 					{
-						// Add as an available move
-						moveList.Add ( new MoveData ( t, MoveData.MoveType.Special, i ) );
+						// Add as an available capture
+						moveList.Add ( new MoveData ( t.neighbors [ i ], MoveData.MoveType.SpecialAttack, i, t ) );
+					}
+					else
+					{
+						// Add as an available jump
+						moveList.Add ( new MoveData ( t.neighbors [ i ], MoveData.MoveType.Special, i ) );
 					}
 				}
 			}
-			else if ( currentTile.neighbors [ i ] != null && !IsBlockedTile ( currentTile.neighbors [ i ] ) && currentTile.neighbors [ i ].currentUnit != null && currentTile.neighbors [ i ].neighbors [ i ] == null )
+			// Check for neighboring edge tiles
+			else if ( JumpTileCheck ( currentTile.neighbors [ i ] ) && currentTile.neighbors [ i ].neighbors [ i ] == null )
 			{
 				// Get opposite direction
 				int direction = Util.GetOppositeDirection ( i );
@@ -92,14 +86,14 @@ public class Torus : HeroUnit
 				// Get opposite edge tile
 				Tile t = GetEdgeTile ( currentTile, direction );
 
-				// Check if tile is occupied by a unit and if it overlaps with a base move
-				if ( t.currentUnit == null && !IsBlockedTile ( t ) )
+				// Check if this unit can move to the edge tile
+				if ( OccupyTileCheck ( t ) )
 				{
-					// Check if the unit being jumped is capable of being captured
-					if ( currentTile.neighbors [ i ].currentUnit.UnitCaptureCheck ( this ) )
+					// Check if the unit can be attacked
+					if ( currentTile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
 					{
 						// Add as an available capture
-						moveList.Add ( new MoveData ( t, MoveData.MoveType.SpecialCapture, i, currentTile.neighbors [ i ] ) );
+						moveList.Add ( new MoveData ( t, MoveData.MoveType.SpecialAttack, i, currentTile.neighbors [ i ] ) );
 					}
 					else
 					{

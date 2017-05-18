@@ -60,7 +60,7 @@ public class Teleport : HeroUnit
 			if ( t.neighbors [ i ] != null )
 			{
 				// Check if tile already has a move associated with it
-				if ( t.neighbors [ i ].currentUnit == null && !IsBlockedTile ( t.neighbors [ i ] ) && !moveList.Exists ( match => match.tile == t.neighbors [ i ] ) )
+				if ( OccupyTileCheck ( t.neighbors [ i ] ) && !moveList.Exists ( match => match.tile == t.neighbors [ i ] ) )
 				{
 					// Add as an available special move
 					moveList.Add ( new MoveData ( t.neighbors [ i ], MoveData.MoveType.Special, i ) );
@@ -205,7 +205,7 @@ public class Teleport : HeroUnit
 				StartCooldown ( currentAbility2, info.ability2 );
 
 				// Get moves
-				GM.GetTeamMoves ( false );
+				GM.GetTeamMoves ( );
 
 				// Display team
 				GM.DisplayAvailableUnits ( );
