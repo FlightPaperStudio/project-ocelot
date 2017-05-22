@@ -26,40 +26,48 @@ public class Pacifist : HeroUnit
 	/// <summary>
 	/// Calculates all base moves available to a unit without marking any potential captures.
 	/// </summary>
-	public override void FindMoves ( bool returnOnlyJumps = false )
+	public override void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Cleare previous move list
-		moveList.Clear ( );
+		if ( !returnOnlyJumps )
+			moveList.Clear ( );
 
 		// Store which tiles are to be ignored
 		IntPair back = GetBackDirection ( team.direction );
 
 		// Check each neighboring tile
-		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
+		for ( int i = 0; i < t.neighbors.Length; i++ )
 		{
 			// Ignore tiles that would allow for backward movement
 			if ( i == back.FirstInt || i == back.SecondInt )
 				continue;
 
 			// Check if this unit can move to the neighboring tile
-			if ( !returnOnlyJumps && OccupyTileCheck ( currentTile.neighbors [ i ] ) )
+			if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
 			{
 				// Add as an available move
-				moveList.Add ( new MoveData ( currentTile.neighbors [ i ], MoveData.MoveType.Move, i ) );
+				moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.Move, i ) );
 			}
 			// Check if this unit can jump the neighboring tile
-			else if ( JumpTileCheck ( currentTile.neighbors [ i ] ) && OccupyTileCheck ( currentTile.neighbors [ i ].neighbors [ i ] ) )
+			else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
 			{
 				// Add as an available jump
-				moveList.Add ( new MoveData ( currentTile.neighbors [ i ].neighbors [ i ], MoveData.MoveType.Jump, i ) );
+				MoveData m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Jump, i );
+				moveList.Add ( m );
+
+				// Find additional jumps
+				FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
 			}
 		}
 
 		// Get obstruction availability
-		if ( currentAbility2.enabled && !returnOnlyJumps && currentAbility2.cooldown == 0 )
-			currentAbility2.active = true;
-		else
-			currentAbility2.active = false;
+		if ( !returnOnlyJumps )
+		{
+			if ( currentAbility2.enabled && currentAbility2.cooldown == 0 )
+				currentAbility2.active = true;
+			else
+				currentAbility2.active = false;
+		}
 	}
 
 	/// <summary>
@@ -80,10 +88,27 @@ public class Pacifist : HeroUnit
 		// Clear the board
 		base.StartCommand ( );
 
-		// Highlight empty tiles
-		foreach ( Tile t in GM.board.tiles )
-			if ( t.currentUnit == null && t.currentObject == null )
-				t.SetTileState ( TileState.AvailableCommand );
+		// Highlight empty tiles within a 3 tile radius of the hero
+		GetObstruction ( currentTile, 2 );
+	}
+
+	private void GetObstruction ( Tile t, int count )
+	{
+		// Check each adjacent tile
+		for ( int i = 0; i < t.neighbors.Length; i++ )
+		{
+			// Check for tile
+			if ( t.neighbors [ i ] != null )
+			{
+				// Mark as available if unoccupied and not previously marked
+				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && t.neighbors [ i ].state == TileState.Default )
+					t.neighbors [ i ].SetTileState ( TileState.AvailableCommand );
+
+				// Continue navigation
+				if ( count > 0 )
+					GetObstruction ( t.neighbors [ i ], count - 1 );
+			}
+		}
 	}
 
 	/// <summary>
@@ -99,6 +124,10 @@ public class Pacifist : HeroUnit
 			Destroy ( currentObstruction.gameObject );
 			currentObstruction = null;
 		}
+
+		// Pause turn timer
+		if ( MatchSettings.turnTimer )
+			GM.UI.timer.PauseTimer ( );
 
 		// Create new obstruction
 		currentObstruction = Instantiate ( obstructionPrefab, team.transform );
@@ -121,6 +150,10 @@ public class Pacifist : HeroUnit
 				// Start cooldown
 				StartCooldown ( currentAbility2, info.ability2 );
 
+				// Pause turn timer
+				if ( MatchSettings.turnTimer )
+					GM.UI.timer.ResumeTimer ( );
+
 				// Get moves
 				GM.GetTeamMoves ( );
 
@@ -136,9 +169,6 @@ public class Pacifist : HeroUnit
 	/// </summary>
 	protected override void OnDurationComplete ( AbilitySettings current )
 	{
-		// Remove obstruction from the board
-		currentObstruction.tile.currentObject = null;
-
 		// Create animation
 		Tween t = currentObstruction.sprite.DOFade ( 0f, 0.75f )
 			.OnComplete ( ( ) =>
@@ -146,6 +176,9 @@ public class Pacifist : HeroUnit
 				// Check for Obstruciton ability
 				if ( current == currentAbility2 )
 				{
+					// Remove obstruction from the board
+					currentObstruction.tile.currentObject = null;
+
 					// Remove obstruction
 					Destroy ( currentObstruction.gameObject );
 					currentObstruction = null;
@@ -153,6 +186,6 @@ public class Pacifist : HeroUnit
 			} );
 
 		// Add animation to queue
-		GM.startOfTurnAnimations.Add ( t );
+		GM.startOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 }

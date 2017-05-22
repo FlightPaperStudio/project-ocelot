@@ -29,9 +29,6 @@ public class Armor : HeroUnit
 			// Decrement armor duration
 			currentAbility1.duration--;
 
-			// Set tile as blocked so that the armor ability can't be negated in one turn
-			GM.selectedUnit.AddBlockedTile ( GM.selectedUnit.currentTile, true );
-
 			// Check if armor is destroyed
 			//if ( currentAbility1.duration == 0 )
 		}

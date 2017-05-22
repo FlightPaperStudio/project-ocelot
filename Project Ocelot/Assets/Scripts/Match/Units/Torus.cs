@@ -21,85 +21,103 @@ public class Torus : HeroUnit
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves.
 	/// </summary>
-	public override void FindMoves ( bool returnOnlyJumps = false )
+	public override void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Get base moves
-		base.FindMoves ( returnOnlyJumps );
+		base.FindMoves ( t, prerequisite, returnOnlyJumps );
 
 		// Get torus moves
-		if ( currentAbility1.cooldown == 0 )
-			GetTorus ( returnOnlyJumps );
+		if ( currentAbility1.cooldown == 0 && !CheckPrequisiteType ( prerequisite ) )
+			GetTorus ( t, prerequisite, returnOnlyJumps );
 	}
 
 	/// <summary>
 	/// Marks every tiles this unit could use its Torus special ability to get to.
 	/// </summary>
-	private void GetTorus ( bool returnOnlyJumps )
+	private void GetTorus ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Store which tiles are to be ignored
 		IntPair back = GetBackDirection ( team.direction );
 
 		// Check each neighboring tile
-		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
+		for ( int i = 0; i < t.neighbors.Length; i++ )
 		{
 			// Ignore tiles that would allow for backward movement
 			if ( i == back.FirstInt || i == back.SecondInt )
 				continue;
 
 			// Check for edge tiles
-			if ( currentTile.neighbors [ i ] == null )
+			if ( t.neighbors [ i ] == null )
 			{
 				// Get opposite direction
 				int direction = Util.GetOppositeDirection ( i );
 
 				// Get opposite edge tile
-				Tile t = GetEdgeTile ( currentTile, direction );
+				Tile torusTile = GetEdgeTile ( t, direction );
 
 				// Check if this unit can move to the edge tile
-				if ( !returnOnlyJumps && OccupyTileCheck ( t ) )
+				if ( !returnOnlyJumps && OccupyTileCheck ( torusTile, prerequisite ) )
 				{
 					// Add as an available move
-					moveList.Add ( new MoveData ( t, MoveData.MoveType.Special, i ) );
+					moveList.Add ( new MoveData ( torusTile, prerequisite, MoveData.MoveType.Special, i ) );
 				}
 				// Check if this unit can jump the edge tile
-				else if ( JumpTileCheck ( t ) && OccupyTileCheck ( t.neighbors [ i ] ) )
+				else if ( JumpTileCheck ( torusTile ) && OccupyTileCheck ( torusTile.neighbors [ i ], prerequisite ) )
 				{
+					// Track move data
+					MoveData m;
+
 					// Check if the unit can be attacked
-					if ( t.currentUnit.UnitAttackCheck ( this ) )
+					if ( torusTile.currentUnit.UnitAttackCheck ( this ) )
 					{
-						// Add as an available capture
-						moveList.Add ( new MoveData ( t.neighbors [ i ], MoveData.MoveType.SpecialAttack, i, t ) );
+						// Add as an available attack
+						m = new MoveData ( torusTile.neighbors [ i ], prerequisite, MoveData.MoveType.SpecialAttack, i, torusTile );
 					}
 					else
 					{
 						// Add as an available jump
-						moveList.Add ( new MoveData ( t.neighbors [ i ], MoveData.MoveType.Special, i ) );
+						m = new MoveData ( torusTile.neighbors [ i ], prerequisite, MoveData.MoveType.Special, i );
 					}
+
+					// Add move to the move list
+					moveList.Add ( m );
+
+					// Find additional jumps
+					FindMoves ( torusTile.neighbors [ i ], m, true );
 				}
 			}
 			// Check for neighboring edge tiles
-			else if ( JumpTileCheck ( currentTile.neighbors [ i ] ) && currentTile.neighbors [ i ].neighbors [ i ] == null )
+			else if ( JumpTileCheck ( t.neighbors [ i ] ) && t.neighbors [ i ].neighbors [ i ] == null )
 			{
 				// Get opposite direction
 				int direction = Util.GetOppositeDirection ( i );
 
 				// Get opposite edge tile
-				Tile t = GetEdgeTile ( currentTile, direction );
+				Tile torusTile = GetEdgeTile ( t, direction );
 
 				// Check if this unit can move to the edge tile
-				if ( OccupyTileCheck ( t ) )
+				if ( OccupyTileCheck ( torusTile, prerequisite ) )
 				{
+					// Track move data
+					MoveData m;
+
 					// Check if the unit can be attacked
-					if ( currentTile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
+					if ( t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
 					{
-						// Add as an available capture
-						moveList.Add ( new MoveData ( t, MoveData.MoveType.SpecialAttack, i, currentTile.neighbors [ i ] ) );
+						// Add as an available attack
+						m = new MoveData ( torusTile, prerequisite, MoveData.MoveType.SpecialAttack, i, t.neighbors [ i ] );
 					}
 					else
 					{
 						// Add as an available jump
-						moveList.Add ( new MoveData ( t, MoveData.MoveType.Special, i ) );
+						m = new MoveData ( torusTile, prerequisite, MoveData.MoveType.Special, i );
 					}
+
+					// Add move to the move list
+					moveList.Add ( m );
+
+					// Find additional jumps
+					FindMoves ( torusTile, m, true );
 				}
 			}
 		}
@@ -124,16 +142,37 @@ public class Torus : HeroUnit
 	}
 
 	/// <summary>
+	/// Determines if any of the prerequisite moves used abilities.
+	/// Returns true if an ability was used.
+	/// </summary>
+	private bool CheckPrequisiteType ( MoveData m )
+	{
+		// Check for prerequisite move
+		if ( m != null )
+		{
+			// Check if the type matches
+			if ( m.type == MoveData.MoveType.Special || m.type == MoveData.MoveType.SpecialAttack )
+			{
+				// Return that an ability has been used
+				return true;
+			}
+			else
+			{
+				// Check prerequisite move's type
+				return CheckPrequisiteType ( m.prerequisite );
+			}
+		}
+
+		// Return that no abilities were used in previous moves
+		return false;
+	}
+
+	/// <summary>
 	/// Uses the unit's special ability.
 	/// Override this function to call specific special ability functions for a hero unit.
 	/// </summary>
 	protected override void UseSpecial ( MoveData data )
 	{
-		// Check for jump
-		bool isJump = true;
-		if ( currentTile.neighbors [ (int)data.direction ] == null && data.tile.neighbors [ Util.GetOppositeDirection ( (int)data.direction ) ] == null )
-			isJump = false;
-
 		// Get movement distances
 		Vector3 offOfBoardDistance = Util.GetTileDistance ( data.direction );
 		Vector3 ontoBoardDistance = Util.GetTileDistance ( Util.GetOppositeDirection ( data.direction ) );
@@ -160,42 +199,29 @@ public class Torus : HeroUnit
 		if ( data.tile.neighbors [ Util.GetOppositeDirection ( (int)data.direction ) ] != null )
 			ontoBoardTime *= 2;
 
-		// Set unit and tile data
-		SetUnitToTile ( data.tile );
-
-		// Animate torus
-		Sequence s = DOTween.Sequence ( )
-			.Append ( transform.DOMove ( offOfBoardPos, offOfBoardTime ) )
-			.Join ( sprite.DOFade ( 0, 0.25f ).SetDelay ( offOfBoardTime - 0.25f ) )
-			.AppendCallback ( () =>
+		// Create animations
+		Tween t1 = transform.DOMove ( offOfBoardPos, offOfBoardTime )
+			.OnComplete ( ( ) =>
 			{
 				// Move unit instantly
 				transform.position = ontoBoardPos;
-			} )
-			.AppendInterval ( 0.01f )
-			.Append ( transform.DOMove ( data.tile.transform.position, ontoBoardTime ) )
-			.Join ( sprite.DOFade ( 1f, 0.25f ) )
-			.OnComplete ( () =>
+			} );
+		Tween t2 = sprite.DOFade ( 0, 0.25f ).SetDelay ( offOfBoardTime - 0.25f );
+		Tween t3 = transform.DOMove ( data.tile.transform.position, ontoBoardTime )
+			.OnComplete ( ( ) =>
 			{
 				// Start torus cooldown
 				StartCooldown ( currentAbility1, info.ability1 );
 
-				// Check for any additional jumps
-				FindMoves ( true );
-				SetMoveList ( );
+				// Set unit and tile data
+				SetUnitToTile ( data.tile );
+			} );
+		Tween t4 = sprite.DOFade ( 1f, 0.25f );
 
-				// End the player's turn if there are no jumps available
-				if ( moveList.Count > 0 && isJump )
-				{
-					// Continue the player's turn
-					GM.ContinueTurn ( );
-				}
-				else
-				{
-					// End the player's turn after the unit's jump
-					GM.EndTurn ( );
-				}	
-			} )
-			.Play ( );
+		// Add animations to queue
+		GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t1, true ) );
+		GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t2, false ) );
+		GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t3, true ) );
+		GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t4, false ) );
 	}
 }

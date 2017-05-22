@@ -67,6 +67,27 @@ public class Tile : MonoBehaviour
 	}
 
 	/// <summary>
+	/// Highlights the tiles of each attack for a particular move. 
+	/// </summary>
+	private void HighlightAttacks ( Tile t, TileState state, bool setTile = false )
+	{
+		// Get a list of moves for this tile
+		List<MoveData> moves = GM.selectedUnit.moveList.FindAll ( x => x.tile == t && x.prerequisite == GM.selectedMove );
+
+		// Highlight each attack tile
+		foreach ( MoveData m in moves )
+		{
+			foreach ( Tile a in m.attacks )
+			{
+				if ( setTile )
+					a.SetTileState ( state );
+				else
+					a.HighlightTile ( state );
+			}
+		}
+	}
+
+	/// <summary>
 	/// Highlights the tile to display potential actions when the mouse starts hovering over the tile.
 	/// </summary>
 	public void MouseEnter ( )
@@ -87,8 +108,7 @@ public class Tile : MonoBehaviour
 		// Hover over an available move with a potential attack
 		case TileState.AvailableMoveAttack:
 			HighlightTile ( TileState.AvailableMoveAttackHover );
-			foreach ( Tile t in GM.selectedUnit.moveDic [ this ].attacks )
-				t.HighlightTile ( TileState.AvailableAttackHover );
+			HighlightAttacks ( this, TileState.AvailableAttackHover );
 			break;
 
 		// Hover over an available special ability move
@@ -99,8 +119,7 @@ public class Tile : MonoBehaviour
 		// Hover over an available special ability move with a potential attack
 		case TileState.AvailableSpecialAttack:
 			HighlightTile ( TileState.AvailableSpecialAttackHover );
-			foreach ( Tile t in GM.selectedUnit.moveDic [ this ].attacks )
-				t.HighlightTile ( TileState.AvailableAttackHover );
+			HighlightAttacks ( this, TileState.AvailableAttackHover );
 			break;
 
 		// Hover over an available tile usable for a command
@@ -111,10 +130,8 @@ public class Tile : MonoBehaviour
 		// Hover over a conflict tile
 		case TileState.ConflictedTile:
 			HighlightTile ( TileState.ConflictedTileHover );
+			HighlightAttacks ( this, TileState.AvailableAttackHover );
 			GM.UI.conflictPrompt.SetActive ( true );
-			foreach ( MoveData m in GM.selectedUnit.moveList.FindAll ( item => item.tile == this ) )
-				foreach ( Tile t in m.attacks )
-					t.HighlightTile ( TileState.AvailableAttackHover );
 			break;
 		}
 	}
@@ -129,15 +146,12 @@ public class Tile : MonoBehaviour
 
 		// Check if other tiles needs to return their tile color to their current state (in case of potential attacks)
 		if ( state == TileState.AvailableMoveAttack || state == TileState.AvailableSpecialAttack )
-			foreach ( Tile t in GM.selectedUnit.moveDic [ this ].attacks )
-				t.HighlightTile ( TileState.AvailableAttack );
+			HighlightAttacks ( this, TileState.AvailableAttack );
 
 		if ( state == TileState.ConflictedTile )
 		{
 			GM.UI.conflictPrompt.SetActive ( false );
-			foreach ( MoveData m in GM.selectedUnit.moveList.FindAll ( item => item.tile == this ) )
-				foreach ( Tile t in m.attacks )
-					t.HighlightTile ( TileState.AvailableAttack );
+			HighlightAttacks ( this, TileState.AvailableAttack );
 		}
 	}
 
@@ -156,15 +170,33 @@ public class Tile : MonoBehaviour
 
 		// Select move
 		case TileState.AvailableMove:
+			SetTileState ( TileState.SelectedMove );
+			GM.SelectMove ( this );
+			break;
+
+		// Select attack move
 		case TileState.AvailableMoveAttack:
+			SetTileState ( TileState.SelectedMoveAttack );
+			HighlightAttacks ( this, TileState.SelectedAttack, true );
+			GM.SelectMove ( this );
+			break;
+
+		// Select special move
 		case TileState.AvailableSpecial:
+			SetTileState ( TileState.SelectedSpecial );
+			GM.SelectMove ( this );
+			break;
+
+		// Select special attack move
 		case TileState.AvailableSpecialAttack:
+			SetTileState ( TileState.SelectedSpecialAttack );
+			HighlightAttacks ( this, TileState.SelectedAttack, true );
 			GM.SelectMove ( this );
 			break;
 
 		// Select a tile for a command
 		case TileState.AvailableCommand:
-			SetTileState ( TileState.AvailableCommandSelected );
+			SetTileState ( TileState.SelectedCommand );
 			HeroUnit h = GM.selectedUnit as HeroUnit;
 			h.SelectCommandTile ( this );
 			break;
@@ -174,9 +206,38 @@ public class Tile : MonoBehaviour
 			GM.UI.conflictPrompt.SetActive ( false );
 			PointerEventData pointerEventData = data as PointerEventData;
 			if ( pointerEventData.button == PointerEventData.InputButton.Left )
-				GM.SelectMove ( this, true );
+			{
+				MoveData md = GM.selectedUnit.moveList.Find ( x => x.tile == this && x.prerequisite == GM.selectedMove && ( x.type != MoveData.MoveType.Special && x.type != MoveData.MoveType.SpecialAttack ) );
+				switch ( md.type )
+				{
+				case MoveData.MoveType.Move:
+				case MoveData.MoveType.MoveToWin:
+				case MoveData.MoveType.Jump:
+				case MoveData.MoveType.JumpToWin:
+					SetTileState ( TileState.SelectedMove );
+					break;
+				case MoveData.MoveType.Attack:
+				case MoveData.MoveType.AttackToWin:
+					SetTileState ( TileState.SelectedMoveAttack );
+					HighlightAttacks ( this, TileState.SelectedAttack, true );
+					break;
+				}
+				GM.SelectMove ( this, true, true );
+			}
 			else if ( pointerEventData.button == PointerEventData.InputButton.Right )
-				GM.SelectMove ( this, false );
+			{
+				MoveData md = GM.selectedUnit.moveList.Find ( x => x.tile == this && x.prerequisite == GM.selectedMove && ( x.type == MoveData.MoveType.Special || x.type == MoveData.MoveType.SpecialAttack ) );
+				if ( md.type == MoveData.MoveType.Special )
+				{
+					SetTileState ( TileState.SelectedSpecial );
+				}
+				else
+				{
+					SetTileState ( TileState.SelectedSpecialAttack );
+					HighlightAttacks ( this, TileState.SelectedAttack, true );
+				}
+				GM.SelectMove ( this, true, false );
+			}
 			break;
 		}
 	}
@@ -1306,17 +1367,22 @@ public enum TileState
 	SelectedUnit,
 	AvailableMove,
 	AvailableMoveHover,
+	SelectedMove,
 	AvailableMoveAttack,
 	AvailableMoveAttackHover,
+	SelectedMoveAttack,
 	AvailableAttack,
 	AvailableAttackHover,
+	SelectedAttack,
 	AvailableSpecial,
 	AvailableSpecialHover,
+	SelectedSpecial,
 	AvailableSpecialAttack,
 	AvailableSpecialAttackHover,
+	SelectedSpecialAttack,
 	AvailableCommand,
 	AvailableCommandHover,
-	AvailableCommandSelected,
+	SelectedCommand,
 	ConflictedTile,
 	ConflictedTileHover,
 	Error

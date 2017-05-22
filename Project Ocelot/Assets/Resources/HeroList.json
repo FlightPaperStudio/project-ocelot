@@ -15,11 +15,11 @@
 			},
 			"ability2":
 			{
-				"name": "???",
-				"description": "???",
-				"type": 0,
-				"duration": 0,
-				"cooldown": 0
+				"name": "Self-Destruct/Recall",
+				"description": "Insert Self-Destruct/Recall description here...",
+				"type": 2,
+				"duration": 2,
+				"cooldown": 8
 			}
 		},
 		{
@@ -32,15 +32,15 @@
 				"description": "Insert Catapult description here...",
 				"type": 1,
 				"duration": 2,
-				"cooldown": 3
+				"cooldown": 5
 			},
 			"ability2":
 			{
-				"name": "???",
-				"description": "???",
-				"type": 0,
-				"duration": 0,
-				"cooldown": 0
+				"name": "Grapple",
+				"description": "Insert Grapple description here...",
+				"type": 2,
+				"duration": 2,
+				"cooldown": 4
 			}
 		},
 		{
@@ -49,8 +49,8 @@
 			"characterDescription": "Insert Hero 6 description here...",
 			"ability1":
 			{
-				"name": "Pacifist",
-				"description": "Insert Pacifist description here...",
+				"name": "Ghost",
+				"description": "Insert Ghost description here...",
 				"type": 0,
 				"duration": 1,
 				"cooldown": 0
@@ -70,16 +70,16 @@
 			"characterDescription": "Insert Hero 8 description here...",
 			"ability1":
 			{
-				"name": "Teleport",
-				"description": "Insert Teleport description here...",
+				"name": "Blink",
+				"description": "Insert Blink description here...",
 				"type": 1,
 				"duration": 0,
 				"cooldown": 2
 			},
 			"ability2":
 			{
-				"name": "Mad Hatter",
-				"description": "Insert Mad Hatter description here...",
+				"name": "Translocator",
+				"description": "Insert Translocator description here...",
 				"type": 2,
 				"duration": 0,
 				"cooldown": 4
@@ -91,8 +91,8 @@
 			"characterDescription": "Insert Hero 9 description here...",
 			"ability1":
 			{
-				"name": "Torus",
-				"description": "Insert Torus description here...",
+				"name": "Run the Ropes",
+				"description": "Insert Run the Ropes description here...",
 				"type": 1,
 				"duration": 0,
 				"cooldown": 2

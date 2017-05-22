@@ -375,6 +375,28 @@ public class UnitHUD : MonoBehaviour
 	}
 
 	/// <summary>
+	/// Sets any and all command buttons to be disabled.
+	/// Call this function once moves have been selected and would no longer constitute the beginning of a turn.
+	/// </summary>
+	public void DisableCommandButtons ( )
+	{
+		// Check if the unit is a hero
+		if ( currentUnit is HeroUnit )
+		{
+			// Store hero
+			HeroUnit h = currentUnit as HeroUnit;
+
+			// Check if ability 1 is a command and disable the use button
+			if ( h.currentAbility1.type == Ability.AbilityType.Command )
+				ability1.useButton.interactable = false;
+
+			// Check if ability 2 is a command and disable the use button
+			if ( h.currentAbility2.type == Ability.AbilityType.Command )
+				ability2.useButton.interactable = false;
+		}
+	}
+
+	/// <summary>
 	/// Hides the Unit HUD.
 	/// </summary>
 	public void HideHUD ( )

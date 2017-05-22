@@ -21,20 +21,27 @@ public class GameManager : MonoBehaviour
 	}
 	private int playerIndex = 0;
 
-	// Match information
-	public bool isMatchComplete
-	{
-		get;
-		private set;
-	}
-
 	// Turn information
 	public bool isStartOfTurn
 	{
 		get;
 		private set;
 	}
-	public List<Tween> startOfTurnAnimations = new List<Tween> ( );
+	public struct TurnAnimation
+	{
+		public Tween tween;
+		public bool isAppend;
+
+		public TurnAnimation ( Tween _tween, bool _isAppend )
+		{
+			tween = _tween;
+			isAppend = _isAppend;
+		}
+	}
+	public List<TurnAnimation> startOfTurnAnimations = new List<TurnAnimation> ( );
+	public List<TurnAnimation> endOfTurnAnimations = new List<TurnAnimation> ( );
+	public List<TurnAnimation> postTurnAnimations = new List<TurnAnimation> ( );
+	private const float ANIMATION_BUFFER = 0.1f;
 	
 	// Unit information
 	public Unit [ ] unitPrefabs;
@@ -43,6 +50,13 @@ public class GameManager : MonoBehaviour
 		get;
 		private set;
 	}
+	public MoveData selectedMove
+	{
+		get;
+		private set;
+	}
+
+	#region Start of Match Setup
 
 	/// <summary>
 	/// Sets up the proper data structures before the match begins.
@@ -113,9 +127,12 @@ public class GameManager : MonoBehaviour
 		UI.Initialize ( players );
 
 		// Begin match
-		isMatchComplete = false;
 		StartTurn ( );
 	}
+
+	#endregion
+
+	#region Start of Turn Setup
 
 	/// <summary>
 	/// Starts a player's turn.
@@ -126,8 +143,7 @@ public class GameManager : MonoBehaviour
 		startOfTurnAnimations.Clear ( );
 
 		// Start new turn animation
-		if ( !isMatchComplete )
-			StartCoroutine ( StartTurnCoroutine ( ) );
+		StartCoroutine ( StartTurnCoroutine ( ) );
 	}
 
 	/// <summary>
@@ -152,7 +168,7 @@ public class GameManager : MonoBehaviour
 		}
 
 		// Wait until the start of turn animations are complete
-		yield return PlayStartTurnAnimations ( ).WaitForCompletion ( );
+		yield return PlayStartOfTurnAnimations ( ).WaitForCompletion ( );
 
 		// Display units for selection
 		DisplayAvailableUnits ( );
@@ -165,6 +181,237 @@ public class GameManager : MonoBehaviour
 
 		// Begin turn
 		isStartOfTurn = true;
+	}
+
+	/// <summary>
+	/// Updates all of the player's heroes' cooldowns and durations.
+	/// </summary>
+	private void UpdateCooldowns ( )
+	{
+		// Access each of the player's units
+		foreach ( Unit u in currentPlayer.units )
+		{
+			// Set cooldowns
+			if ( u is HeroUnit )
+			{
+				HeroUnit h = u as HeroUnit;
+				h.Cooldown ( );
+			}
+		}
+	}
+
+	/// <summary>
+	/// Gets all of the available moves for each of the current player's units before any moves have been made.
+	/// </summary>
+	public void GetTeamMoves ( )
+	{
+		// Access each of the player's units
+		foreach ( Unit u in currentPlayer.units )
+		{
+			// Set move list
+			u.FindMoves ( u.currentTile, null, false );
+			u.MoveConflictCheck ( );
+		}
+	}
+
+	/// <summary>
+	/// Plays all of the start of turn animations before the player's turn begins.
+	/// </summary>
+	private Sequence PlayStartOfTurnAnimations ( )
+	{
+		// Create the animation
+		Sequence s = DOTween.Sequence ( );
+
+		// Add animations
+		for ( int i = 0; i < startOfTurnAnimations.Count; i++ )
+		{
+			// Check animation join type and add animation to the queue
+			if ( startOfTurnAnimations [ i ].isAppend )
+				s.Append ( startOfTurnAnimations [ i ].tween );
+			else
+				s.Join ( startOfTurnAnimations [ i ].tween );
+
+			// Check for next animation and add a buffer between
+			if ( i + 1 < startOfTurnAnimations.Count && startOfTurnAnimations [ i + 1 ].isAppend )
+				s.AppendInterval ( ANIMATION_BUFFER );
+		}
+
+		// Add delay at the end of the animation
+		s.AppendInterval ( ANIMATION_BUFFER );
+
+		// Return the sequence so that the code can wait for its completion
+		return s;
+	}
+
+	/// <summary>
+	/// Displays the available units for the current player.
+	/// </summary>
+	public void DisplayAvailableUnits ( )
+	{
+		// Highlight each unit
+		foreach ( Unit u in currentPlayer.units )
+		{
+			u.currentTile.SetTileState ( TileState.AvailableUnit );
+		}
+	}
+
+	#endregion
+
+	#region Mid-Turn Controls
+
+	/// <summary>
+	/// Selects the current unit and displays any and all available moves for the unit.
+	/// </summary>
+	public void SelectUnit ( Unit u )
+	{
+		// Check for previously selected unit
+		if ( selectedUnit != null && isStartOfTurn && !UI.timer.isOutOfTime )
+		{
+			// Reset any previous selected units
+			board.ResetTiles ( );
+			DisplayAvailableUnits ( );
+		}
+
+		// Set unit as the currently selected unit
+		selectedUnit = u;
+
+		// Set that there are no currently selected moves
+		selectedMove = null;
+
+		// Display unit HUD
+		UI.unitHUD.DisplayUnit ( selectedUnit );
+
+		// Highlight the tile of the selected unit
+		selectedUnit.currentTile.SetTileState ( TileState.SelectedUnit );
+		BringUnitToTheFront ( selectedUnit );
+
+		// Display the unit's available moves
+		DisplayAvailableMoves ( null );
+	}
+
+	/// <summary>
+	/// Displays the available moves for the selected unit and any selected prerequisite moves.
+	/// </summary>
+	private void DisplayAvailableMoves ( MoveData prerequisite )
+	{
+		// Get only the moves for the prerequisite
+		foreach ( MoveData m in selectedUnit.moveList.FindAll ( x => x.prerequisite == prerequisite ) )
+		{
+			// Check if conflicted
+			if ( m.isConflicted )
+			{
+				// Set tile state and highlight tile
+				m.tile.SetTileState ( TileState.ConflictedTile );
+			}
+			else
+			{
+				// Check move type
+				switch ( m.type )
+				{
+				// Basic moves
+				case MoveData.MoveType.Move:
+				case MoveData.MoveType.MoveToWin:
+					// Set tile state and highlight tile
+					m.tile.SetTileState ( TileState.AvailableMove );
+					break;
+
+				// Basic jump
+				case MoveData.MoveType.Jump:
+				case MoveData.MoveType.JumpToWin:
+					// Set tile state and highlight tile
+					m.tile.SetTileState ( TileState.AvailableMove );
+					break;
+
+				// Jump and capture enemy
+				case MoveData.MoveType.Attack:
+				case MoveData.MoveType.AttackToWin:
+					// Set tile state and highlight tile
+					m.tile.SetTileState ( TileState.AvailableMoveAttack );
+
+					// Set tile state and highlight tile for the unit available for attack
+					foreach ( Tile t in m.attacks )
+						t.SetTileState ( TileState.AvailableAttack );
+					break;
+
+				// Special ability move
+				case MoveData.MoveType.Special:
+					// Set tile state and highlight tile
+					m.tile.SetTileState ( TileState.AvailableSpecial );
+					break;
+
+				// Special ability move and attack enemy
+				case MoveData.MoveType.SpecialAttack:
+					// Set tile state and highlight tile
+					m.tile.SetTileState ( TileState.AvailableSpecialAttack );
+
+					// Set tile state and highlight tile for the unit available for attack
+					foreach ( Tile t in m.attacks )
+						t.SetTileState ( TileState.AvailableAttack );
+					break;
+				}
+			}
+		}
+	}
+
+	/// <summary>
+	/// Selects the move for the currently selected unit to make.
+	/// </summary>
+	public void SelectMove ( Tile t, bool isConflict = false, bool isLeftClick = true )
+	{
+		// Hide mid-turn controls
+		UI.ToggleMidTurnControls ( true );
+
+		// Prevent any command usage
+		UI.unitHUD.DisableCommandButtons ( );
+
+		// Clear previous moves and units
+		board.ResetTiles ( selectedUnit.currentTile );
+
+		// Get move data
+		MoveData data;
+		if ( isConflict )
+		{
+			if ( isLeftClick )
+				data = selectedUnit.moveList.Find ( x => x.tile == t && x.prerequisite == selectedMove && ( x.type != MoveData.MoveType.Special && x.type != MoveData.MoveType.SpecialAttack ) );
+			else
+				data = selectedUnit.moveList.Find ( x => x.tile == t && x.prerequisite == selectedMove && ( x.type == MoveData.MoveType.Special || x.type == MoveData.MoveType.SpecialAttack ) );
+		}
+		else
+		{
+			data = selectedUnit.moveList.Find ( x => x.tile == t && x.prerequisite == selectedMove );
+		}
+
+		// Store selected move
+		selectedMove = data;
+
+		// Display any additional moves
+		DisplayAvailableMoves ( selectedMove );
+	}
+
+	/// <summary>
+	/// Executes all of the current moves selected.
+	/// Use this as a button click event wrapper.
+	/// </summary>
+	public void ExecuteMove ( )
+	{
+		// End the player's turn
+		EndTurn ( );
+	}
+
+	/// <summary>
+	/// Removes all current moves selected.
+	/// Use this as a button click event wrapper.
+	/// </summary>
+	public void CancelMove ( )
+	{
+		// Hide mid-turn controls
+		UI.ToggleMidTurnControls ( false );
+
+		// Remove selected move
+		selectedMove = null;
+
+		// Reset board
+		SelectUnit ( selectedUnit );
 	}
 
 	/// <summary>
@@ -192,161 +439,108 @@ public class GameManager : MonoBehaviour
 		SelectUnit ( selectedUnit );
 	}
 
+	#endregion
+
+	#region End of Turn Setup
+
 	/// <summary>
-	/// Ends the current player's turn and begins the next player's turn.
+	/// Ends the current player's turn.
 	/// </summary>
-	public void EndTurn ( )
+	private void EndTurn ( )
 	{
+		// Clear animations
+		endOfTurnAnimations.Clear ( );
+		postTurnAnimations.Clear ( );
+
+		// Create moves list
+		GetMoves ( selectedMove );
+
+		// Clear board
+		board.ResetTiles ( );
+
 		// Hide mid-turn controls
 		UI.ToggleMidTurnControls ( false );
-		UI.unitHUD.HideHUD ( );
 
 		// Pause turn timer
 		if ( MatchSettings.turnTimer )
 			UI.timer.PauseTimer ( );
 
+		// Play animations
+		StartCoroutine ( EndTurnCoroutine ( ) );
+	}
+
+	/// <summary>
+	/// Ends the current player's turn and begins the next player's turn with an animation.
+	/// </summary>
+	/// <returns></returns>
+	private IEnumerator EndTurnCoroutine ( )
+	{
+		// Play move animations
+		yield return PlayEndOfTurnAnimations ( ).WaitForCompletion ( );
+
+		// Play post-turn animations
+		yield return PlayPostTurnAnimations ( ).WaitForCompletion ( );
+
+		// Hide unit HUD
+		UI.unitHUD.HideHUD ( );
+
 		// Reset tiles from previous turn
 		board.ResetTiles ( );
 
-		// Start the next player's turn
-		currentPlayer = GetNextPlayer ( );
-		StartTurn ( );
-	}
-
-	/// <summary>
-	/// Checks to make sure that the player has at least one available move.
-	/// Returns true if the player has no available moves and is forced to forfeit.
-	/// </summary>
-	private bool ForfeitCheck ( )
-	{
-		// Check each unit's move list until at least one move is found
-		foreach ( Unit u in currentPlayer.units )
-			if ( u.moveList.Count > 0 )
-				return false;
-
-		// Return that no moves were found
-		return true;
-	}
-
-	private void ForfeitMatch ( )
-	{
-		LoseMatch ( currentPlayer );
-		EndTurn ( );
-	}
-
-	public void LoseMatch ( Player p )
-	{
-		// Display the player being eliminated
-		UI.hudDic [ p ].DisplayElimination ( );
-
-		// Remove player from match
-		for ( int i = p.units.Count - 1; i >= 0; i-- )
+		// Check for winner
+		if ( WinnerCheck ( ) )
 		{
-			// Ignore the leader unit
-			//if ( u is Leader )
-			//	continue;
-
-			// Capture all other units
-			p.units [ i ].GetAttacked ( true );
-		}
-
-		// Check if match has been won
-		Player winner = WinnerCheck ( );
-		if ( winner != null )
-			WinMatch ( winner );
-	}
-
-	/// <summary>
-	/// Checks if there are multiple players still competing in the match.
-	/// Returns null if more than one player is still competing. Returns the winning player if only one player remains.
-	/// </summary>
-	private Player WinnerCheck ( )
-	{
-		// Tracking info
-		int playerCount = 0;
-		Player winner = null;
-
-		// Check each player to see if they have units remaining
-		foreach ( Player p in players )
-		{
-			if ( p.units.Count > 0 )
-			{
-				// Track remaining players
-				winner = p;
-				playerCount++;
-			}
-		}
-
-		// Check if there is a winner
-		if ( playerCount == 1 )
-		{
-			// Return the winning player
-			return winner;
+			// Display the winner
+			UI.WinPrompt ( currentPlayer );
 		}
 		else
 		{
-			// Return that there is no winning player yet
-			return null;
-		}
-	}
-
-	public void WinMatch ( Player p )
-	{
-		isMatchComplete = true;
-		if ( MatchSettings.turnTimer )
-			UI.timer.PauseTimer ( );
-		board.ResetTiles ( );
-		UI.WinPrompt ( p );
-	}
-
-	/// <summary>
-	/// Updates all of the player's heroes' cooldowns and durations.
-	/// </summary>
-	private void UpdateCooldowns ( )
-	{
-		// Access each of the player's units
-		foreach ( Unit u in currentPlayer.units )
-		{
-			// Set cooldowns
-			if ( u is HeroUnit )
-			{
-				HeroUnit h = u as HeroUnit;
-				h.Cooldown ( );
-			}
+			// Start the next player's turn
+			currentPlayer = GetNextPlayer ( );
+			StartTurn ( );
 		}
 	}
 
 	/// <summary>
-	/// Gets all of the available moves for each of the current player's units.
+	/// Creates the list of animations to play during a unit's move.
 	/// </summary>
-	public void GetTeamMoves ( )
+	private void GetMoves ( MoveData move )
 	{
-		// Access each of the player's units
-		foreach ( Unit u in currentPlayer.units )
-		{
-			// Clear previous blocked tiles
-			u.ClearBlockedTiles ( );
+		// Check for previous moves
+		if ( move.prerequisite != null )
+			GetMoves ( move.prerequisite );
 
-			// Add starting tile as a blocked tile
-			u.AddBlockedTile ( u.currentTile, true );
-
-			// Set move list
-			u.FindMoves ( );
-			u.SetMoveList ( );
-		}
+		// Get the move
+		selectedUnit.MoveUnit ( move );
 	}
 
 	/// <summary>
-	/// Plays all of the start of turn animations before the player's turn begins.
+	/// Plays all of the end of turn animations before the player's turn begins.
 	/// </summary>
-	private Sequence PlayStartTurnAnimations ( )
+	private Sequence PlayEndOfTurnAnimations ( )
 	{
 		// Create the animation
 		Sequence s = DOTween.Sequence ( );
 
+		// Add delay at the start of the animation
+		s.AppendInterval ( ANIMATION_BUFFER );
+
 		// Add animations
-		foreach ( Tween t in startOfTurnAnimations )
-			s.Append ( t );
+		for ( int i = 0; i < endOfTurnAnimations.Count; i++ )
+		{
+			// Check animation join type and add animation to the queue
+			if ( endOfTurnAnimations [ i ].isAppend )
+				s.Append ( endOfTurnAnimations [ i ].tween );
+			else
+				s.Join ( endOfTurnAnimations [ i ].tween );
+
+			// Check for next animation and add a buffer between
+			if ( i + 1 < endOfTurnAnimations.Count && endOfTurnAnimations [ i + 1 ].isAppend )
+				s.AppendInterval ( ANIMATION_BUFFER );
+		}
+
+		// Add delay at the end of the animation
+		s.AppendInterval ( ANIMATION_BUFFER );
 
 		// Return the sequence so that the code can wait for its completion
 		return s;
@@ -385,17 +579,112 @@ public class GameManager : MonoBehaviour
 		return null;
 	}
 
+	#endregion
+
+	#region End of Match Setup
+
 	/// <summary>
-	/// Displays the available units for the current player.
+	/// Checks to make sure that the player has at least one available move.
+	/// Returns true if the player has no available moves and is forced to forfeit.
 	/// </summary>
-	public void DisplayAvailableUnits ( )
+	private bool ForfeitCheck ( )
 	{
-		// Highlight each unit
+		// Check each unit's move list until at least one move is found
 		foreach ( Unit u in currentPlayer.units )
+			if ( u.moveList.Count > 0 )
+				return false;
+
+		// Return that no moves were found
+		return true;
+	}
+
+	private void ForfeitMatch ( )
+	{
+		LoseMatch ( currentPlayer );
+		EndTurn ( );
+	}
+
+	/// <summary>
+	/// Eliminates a player from the match.
+	/// </summary>
+	public void LoseMatch ( Player p )
+	{
+		// Display the player being eliminated
+		UI.hudDic [ p ].DisplayElimination ( );
+
+		// Remove player from match
+		foreach ( Unit u in p.units )
 		{
-			u.currentTile.SetTileState ( TileState.AvailableUnit );
+			// Capture all other units
+			u.GetAttacked ( true );
 		}
 	}
+
+	/// <summary>
+	/// Checks if there are multiple players still competing in the match.
+	/// Returns false if more than one player is still competing.
+	/// </summary>
+	private bool WinnerCheck ( )
+	{
+		// Tracking info
+		int playerCount = 0;
+
+		// Check each player to see if they have units remaining
+		foreach ( Player p in players )
+			if ( p.units.Count > 0 )
+				playerCount++;
+
+		// Return if there is a winner
+		return playerCount == 1;
+	}
+
+	/// <summary>
+	/// Eliminates all other players then the provided winner.
+	/// </summary>
+	public void WinMatch ( Player winner )
+	{
+		// Eliminate each player
+		foreach ( Player p in players )
+			if ( p != winner )
+				LoseMatch ( p );
+	}
+
+	/// <summary>
+	/// Plays any and all of the after turn animations before the next player's turn begins.
+	/// </summary>
+	private Sequence PlayPostTurnAnimations ( )
+	{
+		// Create the animation
+		Sequence s = DOTween.Sequence ( );
+
+		// Add delay at the start of the animation
+		s.AppendInterval ( ANIMATION_BUFFER );
+
+		// Add additional "delay" for the tweens to join at
+		s.AppendInterval ( 0f );
+
+		// Add animations
+		for ( int i = 0; i < postTurnAnimations.Count; i++ )
+		{
+			// Check animation join type and add animation to the queue
+			if ( postTurnAnimations [ i ].isAppend )
+				s.Append ( postTurnAnimations [ i ].tween );
+			else
+				s.Join ( postTurnAnimations [ i ].tween );
+
+			// Check for next animation and add a buffer between
+			if ( i + 1 < postTurnAnimations.Count && postTurnAnimations [ i + 1 ].isAppend )
+				s.AppendInterval ( ANIMATION_BUFFER );
+		}
+
+		// Add delay at the end of the animation
+		s.AppendInterval ( ANIMATION_BUFFER );
+
+		// Return the sequence so that the code can wait for its completion
+		return s;
+	}
+
+	#endregion
 
 	/// <summary>
 	/// Brings a player's unit sprites to the front layer.
@@ -432,116 +721,5 @@ public class GameManager : MonoBehaviour
 
 		// Bring the specified unit's sprite to the front layer
 		u.sprite.sortingOrder = 2;
-	}
-
-	/// <summary>
-	/// Selects the current unit and displays any and all available moves for the unit.
-	/// </summary>
-	public void SelectUnit ( Unit u )
-	{
-		// Check for previously selected unit
-		if ( selectedUnit != null && isStartOfTurn && !UI.timer.isOutOfTime )
-		{
-			// Reset any previous selected units
-			board.ResetTiles ( );
-			DisplayAvailableUnits ( );
-		}
-
-		// Set unit as the currently selected unit
-		selectedUnit = u;
-		
-		// Display unit HUD
-		UI.unitHUD.DisplayUnit ( selectedUnit );
-
-		// Highlight the tile of the selected unit
-		selectedUnit.currentTile.SetTileState ( TileState.SelectedUnit );
-		BringUnitToTheFront ( selectedUnit );
-
-		// Display each available move in the selected unit's move list
-		foreach ( MoveData data in selectedUnit.moveList )
-		{
-			// Check if conflicted
-			if ( data.isConflicted )
-			{
-				// Set tile state and highlight tile
-				data.tile.SetTileState ( TileState.ConflictedTile );
-			}
-			else
-			{
-				// Check move type
-				switch ( data.type )
-				{
-				// Basic moves
-				case MoveData.MoveType.Move:
-				case MoveData.MoveType.MoveToWin:
-					// Set tile state and highlight tile
-					data.tile.SetTileState ( TileState.AvailableMove );
-					break;
-
-					// Basic jump
-				case MoveData.MoveType.Jump:
-				case MoveData.MoveType.JumpToWin:
-					// Set tile state and highlight tile
-					data.tile.SetTileState ( TileState.AvailableMove );
-					break;
-
-					// Jump and capture enemy
-				case MoveData.MoveType.Attack:
-				case MoveData.MoveType.AttackToWin:
-					// Set tile state and highlight tile
-					data.tile.SetTileState ( TileState.AvailableMoveAttack );
-
-					// Set tile state and highlight tile for the unit available for attack
-					foreach ( Tile t in data.attacks )
-						t.SetTileState ( TileState.AvailableAttack );
-					break;
-
-					// Special ability move
-				case MoveData.MoveType.Special:
-					// Set tile state and highlight tile
-					data.tile.SetTileState ( TileState.AvailableSpecial );
-					break;
-
-					// Special ability move and attack enemy
-				case MoveData.MoveType.SpecialAttack:
-					// Set tile state and highlight tile
-					data.tile.SetTileState ( TileState.AvailableSpecialAttack );
-
-					// Set tile state and highlight tile for the unit available for attack
-					foreach ( Tile t in data.attacks )
-						t.SetTileState ( TileState.AvailableAttack );
-					break;
-				}
-			}
-		}
-	}
-
-	/// <summary>
-	/// Selects the move for the currently selected unit to make.
-	/// </summary>
-	public void SelectMove ( Tile t, bool isLeftClick = true )
-	{
-		// Mark that the turn has progressed
-		isStartOfTurn = false;
-
-		// Hide mid-turn controls
-		UI.ToggleMidTurnControls ( false );
-
-		// Pause timer
-		if ( MatchSettings.turnTimer )
-			UI.timer.PauseTimer ( );
-
-		// Get move data
-		MoveData data;
-		if ( isLeftClick )
-			data = selectedUnit.moveDic [ t ];
-		else
-			data = selectedUnit.moveList.Find ( item => item.tile == t && item != selectedUnit.moveDic [ t ] );
-		
-		// Reset tiles
-		board.ResetTiles ( selectedUnit.currentTile, t );
-
-		// Move the unit to this tile
-		selectedUnit.MoveUnit ( data );
 	}
 }

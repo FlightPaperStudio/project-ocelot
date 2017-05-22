@@ -28,20 +28,24 @@ public class Teleport : HeroUnit
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves.
 	/// </summary>
-	public override void FindMoves ( bool returnOnlyJumps = false )
+	public override void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Get base moves
-		base.FindMoves ( returnOnlyJumps );
+		base.FindMoves ( t, prerequisite, returnOnlyJumps );
 
-		// Get teleport moves
-		if ( currentAbility1.enabled && !returnOnlyJumps && currentAbility1.cooldown == 0 )
-			GetTeleport ( currentTile, GetBackDirection ( team.direction ), 2 );
+		// Check if it's the start of turn
+		if ( !returnOnlyJumps )
+		{
+			// Get teleport moves
+			if ( currentAbility1.enabled && !returnOnlyJumps && currentAbility1.cooldown == 0 )
+				GetTeleport ( t, GetBackDirection ( team.direction ), 2 );
 
-		// Get mad hatter availability
-		if ( currentAbility2.enabled && !returnOnlyJumps && currentAbility2.cooldown == 0 )
-			currentAbility2.active = true;
-		else
-			currentAbility2.active = false;
+			// Get mad hatter availability
+			if ( currentAbility2.enabled && !returnOnlyJumps && currentAbility2.cooldown == 0 )
+				currentAbility2.active = true;
+			else
+				currentAbility2.active = false;
+		}
 	}
 
 	/// <summary>
@@ -60,10 +64,10 @@ public class Teleport : HeroUnit
 			if ( t.neighbors [ i ] != null )
 			{
 				// Check if tile already has a move associated with it
-				if ( OccupyTileCheck ( t.neighbors [ i ] ) && !moveList.Exists ( match => match.tile == t.neighbors [ i ] ) )
+				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && !moveList.Exists ( match => match.tile == t.neighbors [ i ] ) )
 				{
 					// Add as an available special move
-					moveList.Add ( new MoveData ( t.neighbors [ i ], MoveData.MoveType.Special, i ) );
+					moveList.Add ( new MoveData ( t.neighbors [ i ], null, MoveData.MoveType.Special, i ) );
 				}
 
 				// Check if the maximum range for teleport has been reached
@@ -82,26 +86,26 @@ public class Teleport : HeroUnit
 	/// </summary>
 	protected override void UseSpecial ( MoveData data )
 	{
-		// Set unit and tile data
-		SetUnitToTile ( data.tile );
-
-		// Animate teleport
-		Sequence s = DOTween.Sequence ( )
-			.Append ( sprite.DOFade ( 0, 0.5f ) )
-			.AppendCallback ( () =>
+		// Create animation
+		Tween t1 = sprite.DOFade ( 0, MOVE_ANIMATION_TIME )
+			.OnComplete ( ( ) =>
 			{
 				// Move unit instantly
 				transform.position = data.tile.transform.position;
-			} )
-			.Append ( sprite.DOFade ( 1, 0.5f ) )
-			.OnComplete ( () =>
+			} );
+		Tween t2 = sprite.DOFade ( 1, MOVE_ANIMATION_TIME )
+			.OnComplete ( ( ) =>
 			{
 				// Start teleport cooldown
 				StartCooldown ( currentAbility1, info.ability1 );
 
-				// End the unit's turn after using its special ability
-				GM.EndTurn ( );
+				// Set unit and tile data
+				SetUnitToTile ( data.tile );
 			} );
+
+		// Add animations to queue
+		GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t1, true ) );
+		GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t2, true ) );
 	}
 
 	/// <summary>
@@ -133,7 +137,7 @@ public class Teleport : HeroUnit
 			unit1 = t.currentUnit;
 
 			// Set tile as selected
-			t.SetTileState ( TileState.AvailableCommandSelected );
+			t.SetTileState ( TileState.SelectedCommand );
 		}
 		else
 		{
@@ -142,7 +146,7 @@ public class Teleport : HeroUnit
 			unit2 = t.currentUnit;
 
 			// Set tile as selected
-			t.SetTileState ( TileState.AvailableCommandSelected );
+			t.SetTileState ( TileState.SelectedCommand );
 
 			// Activate Mad Hatter
 			UseMadHatter ( );
@@ -171,6 +175,10 @@ public class Teleport : HeroUnit
 	{
 		// Hide cancel button
 		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
+
+		// Pause turn timer
+		if ( MatchSettings.turnTimer )
+			GM.UI.timer.PauseTimer ( );
 
 		// Set units to their new tiles
 		tile1.currentUnit = unit2;
@@ -203,6 +211,10 @@ public class Teleport : HeroUnit
 
 				// Start cooldown
 				StartCooldown ( currentAbility2, info.ability2 );
+
+				// Pause turn timer
+				if ( MatchSettings.turnTimer )
+					GM.UI.timer.ResumeTimer ( );
 
 				// Get moves
 				GM.GetTeamMoves ( );

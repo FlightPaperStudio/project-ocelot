@@ -107,46 +107,25 @@ public class TurnTimer : MonoBehaviour
 		isTimerActive = false;
 		isOutOfTime = true;
 
-		// Check if any moves have been made this turn
-		if ( GM.isStartOfTurn )
-		{
-			// Create list of possible units
-			List<Unit> units = new List<Unit> ( );
-			foreach ( Unit u in GM.currentPlayer.units )
-				if ( u.moveList.Count > 0 )
-					units.Add ( u );
+		// Create list of possible units
+		List<Unit> units = GM.currentPlayer.units.FindAll ( x => x.moveList.Count > 0 );
 
-			// Select a random unit
-			int unitIndex = Random.Range ( 0, units.Count );
-			Unit unit = units [ unitIndex ];
+		// Select a random unit
+		int unitIndex = Random.Range ( 0, units.Count );
+		Unit unit = units [ unitIndex ];
 
-			// Select a random move
-			int moveIndex = Random.Range ( 0, unit.moveList.Count );
-			MoveData move = unit.moveList [ moveIndex ];
+		// Create list of possible moves
+		List<MoveData> moves = unit.moveList.FindAll ( x => x.prerequisite == null );
 
-			// Clear board
-			GM.board.ResetTiles ( );
+		// Select a random move
+		int moveIndex = Random.Range ( 0, moves.Count );
+		MoveData move = unit.moveList [ moveIndex ];
 
-			// Force a panic move and end the player's turn
-			StartCoroutine ( PanicMove ( unit, move.tile ) );
-		}
-		else
-		{
-			// End the player's turn
-			StartCoroutine ( EndTurn ( ) );
-		}
-	}
+		// Clear board
+		GM.board.ResetTiles ( );
 
-	/// <summary>
-	/// Ends the current player's turn early for running out of time.
-	/// </summary>
-	private IEnumerator EndTurn ( )
-	{
-		// Wait for slide animation
-		yield return GM.UI.splash.Slide ( "Time's Up!", new Color32 ( 200, 50, 50, 255 ), true ).WaitForCompletion ( );
-
-		// End the current player's turn
-		GM.EndTurn ( );
+		// Force a panic move and end the player's turn
+		StartCoroutine ( PanicMove ( unit, move.tile ) );
 	}
 
 	/// <summary>
@@ -162,5 +141,8 @@ public class TurnTimer : MonoBehaviour
 
 		// Select move
 		GM.SelectMove ( t );
+
+		// Execute move
+		GM.ExecuteMove ( );
 	}
 }

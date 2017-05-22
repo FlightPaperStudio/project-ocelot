@@ -18,48 +18,7 @@ public class Unit : MonoBehaviour
 
 	// Turn info
 	public List<MoveData> moveList = new List<MoveData> ( );
-	public Dictionary<Tile, MoveData> moveDic = new Dictionary<Tile, MoveData> ( );
-	public struct BlockedTile
-	{
-		public Tile blockedTile;
-		public bool clearOnUpdate;
-
-		public BlockedTile ( Tile _blockedTile, bool _clearOnUpdate )
-		{
-			blockedTile = _blockedTile;
-			clearOnUpdate = _clearOnUpdate;
-		}
-	}
-	public List<BlockedTile> blockedTiles = new List<BlockedTile> ( );
-
-	/// <summary>
-	/// Determines if a tile is the previous tile the unit occupied.
-	/// This is used to prevent a unit from endlessly jumping the same tile on one turn.
-	/// </summary>
-	protected bool IsBlockedTile ( Tile t )
-	{
-		// Return if the tile is blocked
-		return blockedTiles.Exists ( item => item.blockedTile == t );
-	}
-
-	/// <summary>
-	/// Adds a tile to the list of blocked tiles for this unit's turn.
-	/// clearOnUpdate determines if the blocked tiles should be removed once the board has been updated (i.e. a unit has been captured).
-	/// </summary>
-	public void AddBlockedTile ( Tile t, bool clearOnUpdate )
-	{
-		// Add new blocked tile
-		blockedTiles.Add ( new BlockedTile ( t, clearOnUpdate ) );
-	}
-
-	/// <summary>
-	/// Clears the designated blocked tiles on a board update.
-	/// </summary>
-	public void ClearBlockedTiles ( )
-	{
-		// Remove all blocked tiles on a board update
-		blockedTiles.RemoveAll ( item => item.clearOnUpdate == true );
-	}
+	protected const float MOVE_ANIMATION_TIME = 0.5f;
 
 	/// <summary>
 	/// Returns the two directions that are considered backwards movement for the unit.
@@ -110,67 +69,72 @@ public class Unit : MonoBehaviour
 	/// <summary>
 	/// Calculates all base moves available to a unit.
 	/// </summary>
-	public virtual void FindMoves ( bool returnOnlyJumps = false )
+	public virtual void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
 	{
-		// Cleare previous move list
-		moveList.Clear ( );
+		// Clear previous move list
+		if ( !returnOnlyJumps )
+			moveList.Clear ( );
 
 		// Store which tiles are to be ignored
 		IntPair back = GetBackDirection ( team.direction );
 
 		// Check each neighboring tile
-		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
+		for ( int i = 0; i < t.neighbors.Length; i++ )
 		{
 			// Ignore tiles that would allow for backward movement
 			if ( i == back.FirstInt || i == back.SecondInt )
 				continue;
 
 			// Check if this unit can move to the neighboring tile
-			if ( !returnOnlyJumps && OccupyTileCheck ( currentTile.neighbors [ i ] ) )
+			if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
 			{
 				// Add as an available move
-				moveList.Add ( new MoveData ( currentTile.neighbors [ i ], MoveData.MoveType.Move, i ) );
+				moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.Move, i ) );
 			}
 			// Check if this unit can jump the neighboring tile
-			else if ( JumpTileCheck ( currentTile.neighbors [ i ] ) && OccupyTileCheck ( currentTile.neighbors [ i ].neighbors [ i ] ) )
+			else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
 			{
+				// Track move data
+				MoveData m;
+
 				// Check if the neighboring unit can be attacked
-				if ( currentTile.neighbors [ i ].currentUnit != null && currentTile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
+				if ( t.neighbors [ i ].currentUnit != null && t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
 				{
 					// Add as an available attack
-					moveList.Add ( new MoveData ( currentTile.neighbors [ i ].neighbors [ i ], MoveData.MoveType.Attack, i, currentTile.neighbors [ i ] ) );
+					m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Attack, i, t.neighbors [ i ] );
 				}
 				else
 				{
 					// Add as an available jump
-					moveList.Add ( new MoveData ( currentTile.neighbors [ i ].neighbors [ i ], MoveData.MoveType.Jump, i ) );
+					m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Jump, i );
 				}
+
+				// Add move to the move list
+				moveList.Add ( m );
+
+				// Find additional jumps
+				FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
 			}
 		}
 	}
 
 	/// <summary>
-	/// Sets the list of available move for this unit for the current stage of the turn.
+	/// Checks the entire list of potential moves for any conflicts by having the same tile being reached in multiple ways with the same prerequisite moves.
 	/// </summary>
-	public void SetMoveList ( )
+	public void MoveConflictCheck ( )
 	{
-		// Clear previous list
-		moveDic.Clear ( );
-
 		// Set the list to be accessible by the tile of each potential move
 		foreach ( MoveData move in moveList )
 		{
 			// Check for conflicted tiles
-			if ( moveDic.ContainsKey ( move.tile ) )
+			if ( moveList.Exists ( x => x.tile == move.tile && x.prerequisite == move.prerequisite && !x.isConflicted && x != move ) )
 			{
-				// Mark tile as conflicted
-				move.isConflicted = true;
-				moveDic [ move.tile ].isConflicted = true;
-			}
-			else
-			{
-				// Add move to list
-				moveDic.Add ( move.tile, move );
+				// Create list of conflicted moves 
+				List<MoveData> conflicts = moveList.FindAll ( x => x.tile == move.tile && x.prerequisite == move.prerequisite && !x.isConflicted );
+
+				// Mark moves as conflicted
+				foreach ( MoveData m in conflicts )
+					m.isConflicted = true;
 			}
 		}
 	}
@@ -179,14 +143,14 @@ public class Unit : MonoBehaviour
 	/// Determines if a tile can be moved to by this unit.
 	/// Returns true if the tile can be moved to.
 	/// </summary>
-	protected virtual bool OccupyTileCheck ( Tile t )
+	protected virtual bool OccupyTileCheck ( Tile t, MoveData prerequisite )
 	{
 		// Check if the tile exists
 		if ( t == null )
 			return false;
 
-		// Check if the tile is blocked
-		if ( IsBlockedTile ( t ) )
+		// Check if the tile is blocked by a previous move that turn
+		if ( CheckPrequisiteTiles ( t, prerequisite ) )
 			return false;
 
 		// Check if the tile currently occupied
@@ -202,6 +166,32 @@ public class Unit : MonoBehaviour
 	}
 
 	/// <summary>
+	/// Determines if a tile matches any of the tiles in the prerequisite moves.
+	/// Returns true if a match is found.
+	/// </summary>
+	protected bool CheckPrequisiteTiles ( Tile t, MoveData m )
+	{
+		// Check for prerequisite move
+		if ( m != null )
+		{
+			// Check if the tile matches
+			if ( t == m.tile )
+			{
+				// Return that a match has been found
+				return true;
+			}
+			else
+			{
+				// Check prerequisite move's tile
+				return CheckPrequisiteTiles ( t, m.prerequisite );
+			}
+		}
+
+		// Return that no matches were found
+		return false;
+	}
+
+	/// <summary>
 	/// Determines if a tile can be jumped by this unit.
 	/// Returns true if the tile can be jumped.
 	/// </summary>
@@ -209,10 +199,6 @@ public class Unit : MonoBehaviour
 	{
 		// Check if the tile exists
 		if ( t == null )
-			return false;
-
-		// Check if the tile is blocked
-		if ( IsBlockedTile ( t ) )
 			return false;
 
 		// Check if the tile is occupied
@@ -256,8 +242,8 @@ public class Unit : MonoBehaviour
 			Jump ( data );
 			break;
 		case MoveData.MoveType.Attack:
-			AttackUnit ( data );
 			Jump ( data );
+			AttackUnit ( data );
 			break;
 		}
 	}
@@ -280,17 +266,16 @@ public class Unit : MonoBehaviour
 	/// </summary>
 	protected virtual void Move ( MoveData data )
 	{
-		// Set unit and tile data
-		SetUnitToTile ( data.tile );
-
-		// Animate the unit's move
-		transform.DOMove ( data.tile.transform.position, 0.5f )
-			.SetRecyclable ( )
+		// Create animation
+		Tween t = transform.DOMove ( data.tile.transform.position, MOVE_ANIMATION_TIME )
 			.OnComplete ( () =>
 			{
-				// End the player's turn after the unit's move
-				GM.EndTurn ( );
+				// Set unit and tile data
+				SetUnitToTile ( data.tile );
 			} );
+
+		// Add animation to queue
+		GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 
 	/// <summary>
@@ -298,30 +283,16 @@ public class Unit : MonoBehaviour
 	/// </summary>
 	protected virtual void Jump ( MoveData data )
 	{
-		// Set unit and tile data
-		SetUnitToTile ( data.tile );
-
-		// Animate the unit's jump
-		transform.DOMove ( data.tile.transform.position, 1.0f )
-			.SetRecyclable ( )
-			.OnComplete ( () =>
+		// Create animation
+		Tween t = transform.DOMove ( data.tile.transform.position, MOVE_ANIMATION_TIME * 2 )
+			.OnComplete ( ( ) =>
 			{
-				// Check for any additional jumps
-				FindMoves ( true );
-				SetMoveList ( );
-
-				// End the player's turn if there are no jumps available
-				if ( moveList.Count > 0 )
-				{
-					// Continue the player's turn
-					GM.ContinueTurn ( );
-				}
-				else
-				{
-					// End the player's turn after the unit's jump
-					GM.EndTurn ( );
-				}				
+				// Set unit and tile data
+				SetUnitToTile ( data.tile );
 			} );
+
+		// Add animation to queue
+		GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 
 	/// <summary>
@@ -330,9 +301,6 @@ public class Unit : MonoBehaviour
 	/// </summary>
 	protected virtual void AttackUnit ( MoveData data )
 	{
-		// Mark that the board has been updated
-		ClearBlockedTiles ( );
-
 		// K.O. unit(s) being attacked
 		foreach ( Tile t in data.attacks )
 			t.currentUnit.GetAttacked ( );
@@ -344,24 +312,32 @@ public class Unit : MonoBehaviour
 	/// </summary>
 	public virtual void GetAttacked ( bool lostMatch = false )
 	{
-		// Remove unit from the team
-		team.units.Remove ( this );
-
-		// Remove unit reference from the tile
-		currentTile.currentUnit = null;
-
-		// Animate this unit being attacked
-		Sequence s = DOTween.Sequence ( )
-			.AppendInterval ( 0.5f )
-			.Append ( transform.DOScale ( new Vector3 ( 5, 5, 5 ), 0.5f ) )
-			.Insert ( 0.5f, sprite.DOFade ( 0, 0.5f ) )
-			.SetRecyclable ( )
-			.OnComplete ( () =>
+		// Create animation
+		Tween t1 = transform.DOScale ( new Vector3 ( 5, 5, 5 ), MOVE_ANIMATION_TIME )
+			.OnComplete ( ( ) =>
 			{
+				// Remove unit from the team
+				team.units.Remove ( this );
+
+				// Remove unit reference from the tile
+				currentTile.currentUnit = null;
+
 				// Delete the unit
 				Destroy ( this.gameObject );
-			} )
-			.Play ( );
+			} );
+		Tween t2 = sprite.DOFade ( 0, MOVE_ANIMATION_TIME );
+
+		// Add animations to queue
+		if ( lostMatch )
+		{
+			GM.postTurnAnimations.Add ( new GameManager.TurnAnimation ( t1, false ) );
+			GM.postTurnAnimations.Add ( new GameManager.TurnAnimation ( t2, false ) );
+		}
+		else
+		{
+			GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t1, true ) );
+			GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t2, false ) );
+		}
 	}
 
 	public void SetTeamColor ( Player.TeamColor color )

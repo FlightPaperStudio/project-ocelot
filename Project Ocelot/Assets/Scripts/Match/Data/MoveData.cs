@@ -33,6 +33,13 @@ public class MoveData
 		private set;
 	}
 
+	// Tracks the move required to make this move
+	public MoveData prerequisite
+	{
+		get;
+		private set;
+	}
+
 	// Tracks what type of move is available
 	public MoveType type
 	{
@@ -65,9 +72,10 @@ public class MoveData
 		private set;
 	}
 
-	public MoveData ( Tile _tile, MoveType _type, MoveDirection _dir, params Tile [ ] _capture )
+	public MoveData ( Tile _tile, MoveData _prereq, MoveType _type, MoveDirection _dir, params Tile [ ] _capture )
 	{
 		tile = _tile;
+		prerequisite = _prereq;
 		type = _type;
 		direction = _dir;
 		attacks = _capture;
@@ -75,9 +83,10 @@ public class MoveData
 		value = 0;
 	}
 
-	public MoveData ( Tile _tile, MoveType _type, int _dir, params Tile [ ] _capture )
+	public MoveData ( Tile _tile, MoveData _prereq, MoveType _type, int _dir, params Tile [ ] _capture )
 	{
 		tile = _tile;
+		prerequisite = _prereq;
 		type = _type;
 		direction = ( MoveDirection )_dir;
 		attacks = _capture;

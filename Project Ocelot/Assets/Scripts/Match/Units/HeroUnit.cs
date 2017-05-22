@@ -73,15 +73,15 @@ public class HeroUnit : Unit
 			Jump ( data );
 			break;
 		case MoveData.MoveType.Attack:
-			AttackUnit ( data );
 			Jump ( data );
+			AttackUnit ( data );
 			break;
 		case MoveData.MoveType.Special:
 			UseSpecial ( data );
 			break;
 		case MoveData.MoveType.SpecialAttack:
-			AttackUnit ( data );
 			UseSpecial ( data );
+			AttackUnit ( data );
 			break;
 		}
 	}
