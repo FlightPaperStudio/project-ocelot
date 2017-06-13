@@ -44,7 +44,7 @@ public class Leader : Unit
 			moveList.Clear ( );
 
 		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( team.direction );
+		IntPair back = GetBackDirection ( owner.direction );
 
 		// Check each neighboring tile
 		for ( int i = 0; i < t.neighbors.Length; i++ )
@@ -57,7 +57,7 @@ public class Leader : Unit
 			if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
 			{
 				// Check for goal tile
-				if ( team.startArea.IsGoalTile ( t.neighbors [ i ] ) )
+				if ( owner.startArea.IsGoalTile ( t.neighbors [ i ] ) )
 				{
 					// Add as an available move to win
 					moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MoveToWin, i ) );
@@ -78,7 +78,7 @@ public class Leader : Unit
 				if ( t.neighbors [ i ].currentUnit != null && t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
 				{
 					// Check for goal tile
-					if ( team.startArea.IsGoalTile ( t.neighbors [ i ].neighbors [ i ] ) )
+					if ( owner.startArea.IsGoalTile ( t.neighbors [ i ].neighbors [ i ] ) )
 					{
 						// Add as an available attack to win
 						m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.AttackToWin, i, t.neighbors [ i ] );
@@ -92,7 +92,7 @@ public class Leader : Unit
 				else
 				{
 					// Check for goal tile
-					if ( team.startArea.IsGoalTile ( t.neighbors [ i ].neighbors [ i ] ) )
+					if ( owner.startArea.IsGoalTile ( t.neighbors [ i ].neighbors [ i ] ) )
 					{
 						// Add as an available jump to win
 						m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.JumpToWin, i );
@@ -146,11 +146,11 @@ public class Leader : Unit
 		// Create animation
 		base.Move ( data );
 
-		// Check if tile is a goal tile
-		if ( team.startArea.IsGoalTile ( data.tile ) )
+		// Check if tile is a goal tile and if tile is the final destination
+		if ( owner.startArea.IsGoalTile ( data.tile ) && data == GM.selectedMove )
 		{
 			// Have the player win the match
-			GM.WinMatch ( team );
+			GM.WinMatch ( owner );
 		}
 	}
 
@@ -162,17 +162,17 @@ public class Leader : Unit
 		// Create animation
 		base.Jump ( data );
 
-		// Check if tile is a goal tile
-		if ( team.startArea.IsGoalTile ( data.tile ) )
+		// Check if tile is a goal tile and if tile is the final destination
+		if ( owner.startArea.IsGoalTile ( data.tile ) && data == GM.selectedMove )
 		{
 			// Have the player win the match
-			GM.WinMatch ( team );
+			GM.WinMatch ( owner );
 		}
 	}
 
 	/// <summary>
-	/// Attack and K.O. this unit.
-	/// If the Leader is K.O.-ed, then all remaining units are removed from the match.
+	/// Attack and KO this unit.
+	/// If the Leader is KOed, then all remaining units are removed from the match.
 	/// </summary>
 	public override void GetAttacked ( bool lostMatch = false )
 	{
@@ -181,6 +181,6 @@ public class Leader : Unit
 
 		// Have the player lose the match
 		if ( !lostMatch )
-			GM.LoseMatch ( team );
+			GM.LoseMatch ( owner );
 	}
 }

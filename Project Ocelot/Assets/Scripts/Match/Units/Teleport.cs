@@ -9,12 +9,12 @@ public class Teleport : HeroUnit
 	///
 	/// Hero Ability Information
 	/// 
-	/// Ability 1: Teleport
+	/// Ability 1: Blink
 	/// Type: Special Ability
 	/// Default Cooldown: 2 Turns
 	/// 
-	/// Ability 2: Mad Hatter
-	/// Type: Command
+	/// Ability 2: Translocator
+	/// Type: Command Ability
 	/// Default Cooldown: 4 Turns
 	/// 
 	/// </summary>
@@ -38,7 +38,7 @@ public class Teleport : HeroUnit
 		{
 			// Get teleport moves
 			if ( currentAbility1.enabled && !returnOnlyJumps && currentAbility1.cooldown == 0 )
-				GetTeleport ( t, GetBackDirection ( team.direction ), 2 );
+				GetTeleport ( t, GetBackDirection ( owner.direction ), 2 );
 
 			// Get mad hatter availability
 			if ( currentAbility2.enabled && !returnOnlyJumps && currentAbility2.cooldown == 0 )
@@ -104,8 +104,8 @@ public class Teleport : HeroUnit
 			} );
 
 		// Add animations to queue
-		GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t1, true ) );
-		GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t2, true ) );
+		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, true ) );
 	}
 
 	/// <summary>
@@ -117,7 +117,7 @@ public class Teleport : HeroUnit
 		base.StartCommand ( );
 
 		// Highlight team members
-		foreach ( Unit u in team.units )
+		foreach ( Unit u in owner.units )
 		{
 			if ( u != this && !( u is Leader ) )
 				u.currentTile.SetTileState ( TileState.AvailableCommand );

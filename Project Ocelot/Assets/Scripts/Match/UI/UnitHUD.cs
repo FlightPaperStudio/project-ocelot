@@ -34,7 +34,7 @@ public class UnitHUD : MonoBehaviour
 
 		// Display unit icon
 		unitIcon.sprite = currentUnit.displaySprite;
-		unitIcon.color = Util.TeamColor ( currentUnit.team.team );
+		unitIcon.color = Util.TeamColor ( currentUnit.owner.team );
 
 		// Check unit type
 		if ( currentUnit is HeroUnit )

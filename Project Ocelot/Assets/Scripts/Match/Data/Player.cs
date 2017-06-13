@@ -35,14 +35,15 @@ public class Player : MonoBehaviour
 
 	// Player info
 	public PlayerControl control;
-	public string name;
+	public string playerName;
 
 	// Team info
 	public TeamColor team;
 	public Direction direction;
+	public int [ ] specialIDs;
 	public StartArea startArea;
 	public List<Unit> units = new List<Unit> ( );
-	public int [ ] specialIDs;
+	public List<TileObject> tileObjects = new List<TileObject> ( );
 
 // ---------------------------------------------------------------DELETE EVERYTHING BELOW THIS LINE------------------------------------------------------------------------
 //

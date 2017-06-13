@@ -9,8 +9,9 @@ public class Pacifist : HeroUnit
 	///
 	/// Hero Ability Information
 	/// 
-	/// Ability 1: Pacifist
+	/// Ability 1: Ghost
 	/// Type: Passive Ability
+	/// Default Duration: Permanent
 	/// 
 	/// Ability 2: Obstruction
 	/// Type: Command
@@ -33,7 +34,7 @@ public class Pacifist : HeroUnit
 			moveList.Clear ( );
 
 		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( team.direction );
+		IntPair back = GetBackDirection ( owner.direction );
 
 		// Check each neighboring tile
 		for ( int i = 0; i < t.neighbors.Length; i++ )
@@ -92,6 +93,9 @@ public class Pacifist : HeroUnit
 		GetObstruction ( currentTile, 2 );
 	}
 
+	/// <summary>
+	/// Marks every unoccupied tile in a 3 tile radius as available for selection for Obstruction.
+	/// </summary>
 	private void GetObstruction ( Tile t, int count )
 	{
 		// Check each adjacent tile
@@ -119,22 +123,16 @@ public class Pacifist : HeroUnit
 		// Check for previous obstruction
 		if ( currentObstruction != null )
 		{
-			// Remove previous obstruction
-			currentObstruction.tile.currentObject = null;
-			Destroy ( currentObstruction.gameObject );
-			currentObstruction = null;
+			// Remove previous Obstruction
+			DestroyTileObject ( currentObstruction );
 		}
 
 		// Pause turn timer
 		if ( MatchSettings.turnTimer )
 			GM.UI.timer.PauseTimer ( );
 
-		// Create new obstruction
-		currentObstruction = Instantiate ( obstructionPrefab, team.transform );
-		currentObstruction.transform.position = t.transform.position;
-		currentObstruction.tile = t;
-		currentObstruction.owner = this;
-		t.currentObject = currentObstruction;
+		// Create Obstruction
+		currentObstruction = CreateTileOject ( obstructionPrefab, t, info.ability2.duration, ObstructionDurationComplete );
 
 		// Hide cancel button
 		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
@@ -164,28 +162,26 @@ public class Pacifist : HeroUnit
 	}
 
 	/// <summary>
-	/// Callback for when the duration of an ability has expired.
-	/// Use this for when obstructions have expired.
+	/// Delegate for when the duration of the tile object for Obstruction expires.
 	/// </summary>
-	protected override void OnDurationComplete ( AbilitySettings current )
+	private void ObstructionDurationComplete ( )
 	{
 		// Create animation
 		Tween t = currentObstruction.sprite.DOFade ( 0f, 0.75f )
 			.OnComplete ( ( ) =>
 			{
-				// Check for Obstruciton ability
-				if ( current == currentAbility2 )
-				{
-					// Remove obstruction from the board
-					currentObstruction.tile.currentObject = null;
+				// Remove obstruction from player data
+				owner.tileObjects.Remove ( currentObstruction );
 
-					// Remove obstruction
-					Destroy ( currentObstruction.gameObject );
-					currentObstruction = null;
-				}
+				// Remove obstruction from the board
+				currentObstruction.tile.currentObject = null;
+
+				// Remove obstruction
+				Destroy ( currentObstruction.gameObject );
+				currentObstruction = null;
 			} );
 
 		// Add animation to queue
-		GM.startOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t, true ) );
+		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 }

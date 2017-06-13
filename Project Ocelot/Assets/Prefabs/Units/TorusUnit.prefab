@@ -61,7 +61,7 @@ MonoBehaviour:
   sprite: {fileID: 212536744725501994}
   heroID: 5
   abilitySprite1: {fileID: 21300000, guid: b10df667b6e466a459bcd579f2592e51, type: 3}
-  abilitySprite2: {fileID: 21300000, guid: dce521e7d57c16f43bfa8733b2148d0c, type: 3}
+  abilitySprite2: {fileID: 21300000, guid: 1fdbff7b3e0de574892e45d1afa6012c, type: 3}
 --- !u!212 &212536744725501994
 SpriteRenderer:
   m_ObjectHideFlags: 1

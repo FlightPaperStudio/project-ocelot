@@ -87,21 +87,9 @@ public class HeroUnit : Unit
 	}
 
 	/// <summary>
-	/// Attack and K.O. this unit.
-	/// Call this function on the unit being attacked.
-	/// </summary>
-	public override void GetAttacked ( bool lostMatch = false )
-	{
-		// Display deactivation
-		GM.UI.hudDic [ team ].DisplayDeactivation ( instanceID );
-
-		// K.O. this unit
-		base.GetAttacked ( lostMatch );
-	}
-
-	/// <summary>
 	/// Uses the unit's special ability.
 	/// Override this function to call specific special ability functions for a hero unit.
+	/// This function builds the animation queue from the move data.
 	/// </summary>
 	protected virtual void UseSpecial ( MoveData data )
 	{
@@ -149,7 +137,7 @@ public class HeroUnit : Unit
 	/// <summary>
 	/// Starts the cooldown for the unit's special ability.
 	/// </summary>
-	protected void StartCooldown ( AbilitySettings current, Ability setting )
+	protected void StartCooldown ( AbilitySettings current, Ability setting, bool updateHUD = true )
 	{
 		// Set duration
 		current.duration = setting.duration;
@@ -158,7 +146,8 @@ public class HeroUnit : Unit
 		current.cooldown = setting.cooldown;
 
 		// Display cooldown
-		GM.UI.unitHUD.DisplayAbility ( current );
+		if ( updateHUD )
+			GM.UI.unitHUD.DisplayAbility ( current );
 	}
 
 	/// <summary>
@@ -217,5 +206,48 @@ public class HeroUnit : Unit
 	protected virtual void OnDurationComplete ( AbilitySettings current )
 	{
 
+	}
+
+	/// <summary>
+	/// Creates the hero's tile object in the arena.
+	/// </summary>
+	protected TileObject CreateTileOject ( TileObject prefab, Tile t, int duration, TileObject.TileObjectDelegate tileObjectDelegate )
+	{
+		// Create game object
+		TileObject obj = Instantiate ( prefab, owner.transform );
+
+		// Set tile object information
+		obj.SetTileObject ( this, t, duration, tileObjectDelegate );
+
+		// Add tile object to player's list
+		owner.tileObjects.Add ( obj );
+
+		// Add tile object to tile
+		t.currentObject = obj;
+
+		// Set sprite direction
+		if ( owner.direction == Player.Direction.RightToLeft || owner.direction == Player.Direction.BottomRightToTopLeft || owner.direction == Player.Direction.TopRightToBottomLeft )
+			obj.sprite.flipX = true;
+
+		// Return the newly created tile object
+		return obj;
+	}
+
+	/// <summary>
+	/// Removes the hero's tile object from the arena.
+	/// </summary>
+	protected void DestroyTileObject ( TileObject current )
+	{
+		// Remove tile object from player's list
+		owner.tileObjects.Remove ( current );
+
+		// Remove tile object from tile
+		current.tile.currentObject = null;
+
+		// Destroy game object
+		Destroy ( current.gameObject );
+
+		// Remove tile object reference
+		current = null;
 	}
 }

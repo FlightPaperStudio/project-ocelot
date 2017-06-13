@@ -18,7 +18,7 @@
 				"name": "Self-Destruct/Recall",
 				"description": "Insert Self-Destruct/Recall description here...",
 				"type": 2,
-				"duration": 2,
+				"duration": 1,
 				"cooldown": 8
 			}
 		},
@@ -91,19 +91,19 @@
 			"characterDescription": "Insert Hero 9 description here...",
 			"ability1":
 			{
-				"name": "Run the Ropes",
-				"description": "Insert Run the Ropes description here...",
+				"name": "Run The Ropes",
+				"description": "Insert Run The Ropes description here...",
 				"type": 1,
 				"duration": 0,
 				"cooldown": 2
 			},
 			"ability2":
 			{
-				"name": "???",
-				"description": "???",
-				"type": 0,
+				"name": "Taunt",
+				"description": "Insert Taunt description here...",
+				"type": 2,
 				"duration": 0,
-				"cooldown": 0
+				"cooldown": 6
 			}
 		}
 	]

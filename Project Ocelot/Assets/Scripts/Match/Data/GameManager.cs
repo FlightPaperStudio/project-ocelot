@@ -38,9 +38,8 @@ public class GameManager : MonoBehaviour
 			isAppend = _isAppend;
 		}
 	}
-	public List<TurnAnimation> startOfTurnAnimations = new List<TurnAnimation> ( );
-	public List<TurnAnimation> endOfTurnAnimations = new List<TurnAnimation> ( );
-	public List<TurnAnimation> postTurnAnimations = new List<TurnAnimation> ( );
+	public List<TurnAnimation> animationQueue = new List<TurnAnimation> ( );
+	public List<TurnAnimation> postAnimationQueue = new List<TurnAnimation> ( );
 	private const float ANIMATION_BUFFER = 0.1f;
 	
 	// Unit information
@@ -76,7 +75,7 @@ public class GameManager : MonoBehaviour
 		for ( int i = 0; i < players.Length; i++ )
 		{
 			// Set team name
-			players [ i ].name = MatchSettings.playerSettings [ i ].name;
+			players [ i ].playerName = MatchSettings.playerSettings [ i ].name;
 
 			// Set team color
 			players [ i ].team = MatchSettings.playerSettings [ i ].teamColor;
@@ -96,7 +95,7 @@ public class GameManager : MonoBehaviour
 				// Set unit info
 				u.GM = this;
 				u.instanceID = ( i * 10 ) + j; // Create a unique instance ID for this unit
-				u.team = players [ i ];
+				u.owner = players [ i ];
 
 				// Set unit team color
 				u.SetTeamColor ( players [ i ].team );
@@ -139,8 +138,9 @@ public class GameManager : MonoBehaviour
 	/// </summary>
 	private void StartTurn ( )
 	{
-		// Clear previous animation
-		startOfTurnAnimations.Clear ( );
+		// Clear previous animation queues
+		animationQueue.Clear ( );
+		postAnimationQueue.Clear ( );
 
 		// Start new turn animation
 		StartCoroutine ( StartTurnCoroutine ( ) );
@@ -152,23 +152,33 @@ public class GameManager : MonoBehaviour
 	private IEnumerator StartTurnCoroutine ( )
 	{
 		// Wait until animation is completed
-		yield return UI.splash.Slide ( currentPlayer.name + "'s Turn", Util.TeamColor ( currentPlayer.team ), true ).WaitForCompletion ( );
+		yield return UI.splash.Slide ( currentPlayer.playerName + "'s Turn", Util.TeamColor ( currentPlayer.team ), true ).WaitForCompletion ( );
 
 		// Set cooldowns
-		UpdateCooldowns ( );
+		UpdateAbilityCooldowns ( );
+
+		// Set durations
+		UpdateTileObjectDurations ( );
+
+		// Wait until the start of turn animations are complete
+		yield return PlayAnimationQueue ( ).WaitForCompletion ( );
+		
+		// Wait until the post-start of turn animations are complete
+		//yield return PlayPostAnimationQueue ( ).WaitForCompletion ( );
+
+		// Clear previous animation queues
+		animationQueue.Clear ( );
+		postAnimationQueue.Clear ( );
+
+		// Check for winner
+		if ( WinnerCheck ( ) )
+		{
+			// Display the winner
+			UI.WinPrompt ( currentPlayer );
+		}
 
 		// Get moves
 		GetTeamMoves ( );
-
-		// Check to make sure the player has moves available
-		if ( ForfeitCheck ( ) )
-		{
-			// Have the current player forfeit
-			ForfeitMatch ( );
-		}
-
-		// Wait until the start of turn animations are complete
-		yield return PlayStartOfTurnAnimations ( ).WaitForCompletion ( );
 
 		// Display units for selection
 		DisplayAvailableUnits ( );
@@ -186,7 +196,7 @@ public class GameManager : MonoBehaviour
 	/// <summary>
 	/// Updates all of the player's heroes' cooldowns and durations.
 	/// </summary>
-	private void UpdateCooldowns ( )
+	private void UpdateAbilityCooldowns ( )
 	{
 		// Access each of the player's units
 		foreach ( Unit u in currentPlayer.units )
@@ -198,6 +208,16 @@ public class GameManager : MonoBehaviour
 				h.Cooldown ( );
 			}
 		}
+	}
+
+	/// <summary>
+	/// Updates all of the player's tile objects' durations.
+	/// </summary>
+	private void UpdateTileObjectDurations ( )
+	{
+		// Access each of the player's tile objects
+		foreach ( TileObject o in currentPlayer.tileObjects )
+			o.Duration ( );
 	}
 
 	/// <summary>
@@ -215,33 +235,96 @@ public class GameManager : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Plays all of the start of turn animations before the player's turn begins.
+	/// Plays any and all animations for a player's turn.
+	/// The Animation Queue is used at the start of a player's turn for any ability duration related animations and again at the end of a player's turn for any unit action related animations.
 	/// </summary>
-	private Sequence PlayStartOfTurnAnimations ( )
+	private Sequence PlayAnimationQueue ( )
 	{
 		// Create the animation
 		Sequence s = DOTween.Sequence ( );
 
 		// Add animations
-		for ( int i = 0; i < startOfTurnAnimations.Count; i++ )
+		for ( int i = 0; i < animationQueue.Count; i++ )
 		{
 			// Check animation join type and add animation to the queue
-			if ( startOfTurnAnimations [ i ].isAppend )
-				s.Append ( startOfTurnAnimations [ i ].tween );
+			if ( animationQueue [ i ].isAppend )
+				s.Append ( animationQueue [ i ].tween );
 			else
-				s.Join ( startOfTurnAnimations [ i ].tween );
+				s.Join ( animationQueue [ i ].tween );
 
 			// Check for next animation and add a buffer between
-			if ( i + 1 < startOfTurnAnimations.Count && startOfTurnAnimations [ i + 1 ].isAppend )
+			if ( i + 1 < animationQueue.Count && animationQueue [ i + 1 ].isAppend )
 				s.AppendInterval ( ANIMATION_BUFFER );
 		}
 
 		// Add delay at the end of the animation
 		s.AppendInterval ( ANIMATION_BUFFER );
 
+		// Add animations
+		for ( int i = 0; i < postAnimationQueue.Count; i++ )
+		{
+			// Check animation join type and add animation to the queue
+			if ( postAnimationQueue [ i ].isAppend )
+				s.Append ( postAnimationQueue [ i ].tween );
+			else
+				s.Join ( postAnimationQueue [ i ].tween );
+
+			// Check for next animation and add a buffer between
+			if ( i + 1 < postAnimationQueue.Count && postAnimationQueue [ i + 1 ].isAppend )
+				s.AppendInterval ( ANIMATION_BUFFER );
+		}
+
+		// Add delay at the end of the animation
+		s.AppendInterval ( ANIMATION_BUFFER );
+		s.OnComplete ( ( ) =>
+		{
+			Debug.Log ( "sequence complete" );
+		} );
+		// Play animation queue
+		s.Play ( );
+
 		// Return the sequence so that the code can wait for its completion
 		return s;
 	}
+
+	/// <summary>
+	/// Plays any and all of the animations that need to be played after the Animation Queue.
+	/// The Post Animation Queue is primarily used for K.O. animations for when a team has been eliminated during the Animation Queue.
+	/// </summary>
+	//private Sequence PlayPostAnimationQueue ( )
+	//{
+	//	// Create the animation
+	//	Sequence s = DOTween.Sequence ( );
+
+	//	// Add delay at the start of the animation
+	//	s.AppendInterval ( ANIMATION_BUFFER );
+
+	//	// Add additional "delay" for the tweens to join at
+	//	s.AppendInterval ( 0f );
+
+	//	// Add animations
+	//	for ( int i = 0; i < postAnimationQueue.Count; i++ )
+	//	{
+	//		// Check animation join type and add animation to the queue
+	//		if ( postAnimationQueue [ i ].isAppend )
+	//			s.Append ( postAnimationQueue [ i ].tween );
+	//		else
+	//			s.Join ( postAnimationQueue [ i ].tween );
+
+	//		// Check for next animation and add a buffer between
+	//		if ( i + 1 < postAnimationQueue.Count && postAnimationQueue [ i + 1 ].isAppend )
+	//			s.AppendInterval ( ANIMATION_BUFFER );
+	//	}
+
+	//	// Add delay at the end of the animation
+	//	s.AppendInterval ( ANIMATION_BUFFER );
+
+	//	// Play animation queue
+	//	s.Play ( );
+
+	//	// Return the sequence so that the code can wait for its completion
+	//	return s;
+	//}
 
 	/// <summary>
 	/// Displays the available units for the current player.
@@ -448,9 +531,9 @@ public class GameManager : MonoBehaviour
 	/// </summary>
 	private void EndTurn ( )
 	{
-		// Clear animations
-		endOfTurnAnimations.Clear ( );
-		postTurnAnimations.Clear ( );
+		// Clear previous animation queues
+		animationQueue.Clear ( );
+		postAnimationQueue.Clear ( );
 
 		// Create moves list
 		GetMoves ( selectedMove );
@@ -476,10 +559,14 @@ public class GameManager : MonoBehaviour
 	private IEnumerator EndTurnCoroutine ( )
 	{
 		// Play move animations
-		yield return PlayEndOfTurnAnimations ( ).WaitForCompletion ( );
-
+		yield return PlayAnimationQueue ( ).WaitForCompletion ( );
+		Debug.Log ( "next line of code" );
 		// Play post-turn animations
-		yield return PlayPostTurnAnimations ( ).WaitForCompletion ( );
+		//yield return PlayPostAnimationQueue ( ).WaitForCompletion ( );
+
+		// Clear previous animation queues
+		animationQueue.Clear ( );
+		postAnimationQueue.Clear ( );
 
 		// Hide unit HUD
 		UI.unitHUD.HideHUD ( );
@@ -512,38 +599,6 @@ public class GameManager : MonoBehaviour
 
 		// Get the move
 		selectedUnit.MoveUnit ( move );
-	}
-
-	/// <summary>
-	/// Plays all of the end of turn animations before the player's turn begins.
-	/// </summary>
-	private Sequence PlayEndOfTurnAnimations ( )
-	{
-		// Create the animation
-		Sequence s = DOTween.Sequence ( );
-
-		// Add delay at the start of the animation
-		s.AppendInterval ( ANIMATION_BUFFER );
-
-		// Add animations
-		for ( int i = 0; i < endOfTurnAnimations.Count; i++ )
-		{
-			// Check animation join type and add animation to the queue
-			if ( endOfTurnAnimations [ i ].isAppend )
-				s.Append ( endOfTurnAnimations [ i ].tween );
-			else
-				s.Join ( endOfTurnAnimations [ i ].tween );
-
-			// Check for next animation and add a buffer between
-			if ( i + 1 < endOfTurnAnimations.Count && endOfTurnAnimations [ i + 1 ].isAppend )
-				s.AppendInterval ( ANIMATION_BUFFER );
-		}
-
-		// Add delay at the end of the animation
-		s.AppendInterval ( ANIMATION_BUFFER );
-
-		// Return the sequence so that the code can wait for its completion
-		return s;
 	}
 
 	/// <summary>
@@ -626,6 +681,14 @@ public class GameManager : MonoBehaviour
 	/// </summary>
 	private bool WinnerCheck ( )
 	{
+		// Check each player to see if their Leader has reached the goal
+		foreach ( Player p in players )
+		{
+			Unit l = p.units.Find ( x => x is Leader );
+			if ( l != null && p.startArea.IsGoalTile ( l.currentTile ) )
+				return true;
+		}
+
 		// Tracking info
 		int playerCount = 0;
 
@@ -647,41 +710,6 @@ public class GameManager : MonoBehaviour
 		foreach ( Player p in players )
 			if ( p != winner )
 				LoseMatch ( p );
-	}
-
-	/// <summary>
-	/// Plays any and all of the after turn animations before the next player's turn begins.
-	/// </summary>
-	private Sequence PlayPostTurnAnimations ( )
-	{
-		// Create the animation
-		Sequence s = DOTween.Sequence ( );
-
-		// Add delay at the start of the animation
-		s.AppendInterval ( ANIMATION_BUFFER );
-
-		// Add additional "delay" for the tweens to join at
-		s.AppendInterval ( 0f );
-
-		// Add animations
-		for ( int i = 0; i < postTurnAnimations.Count; i++ )
-		{
-			// Check animation join type and add animation to the queue
-			if ( postTurnAnimations [ i ].isAppend )
-				s.Append ( postTurnAnimations [ i ].tween );
-			else
-				s.Join ( postTurnAnimations [ i ].tween );
-
-			// Check for next animation and add a buffer between
-			if ( i + 1 < postTurnAnimations.Count && postTurnAnimations [ i + 1 ].isAppend )
-				s.AppendInterval ( ANIMATION_BUFFER );
-		}
-
-		// Add delay at the end of the animation
-		s.AppendInterval ( ANIMATION_BUFFER );
-
-		// Return the sequence so that the code can wait for its completion
-		return s;
 	}
 
 	#endregion

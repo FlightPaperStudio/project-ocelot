@@ -12,10 +12,12 @@ public class Catapult : HeroUnit
 	/// Ability 1: Catapult
 	/// Type: Special Ability
 	/// Default Duration: 2 Turns
-	/// Default Cooldown: 3 Turns
+	/// Default Cooldown: 5 Turns
 	/// 
-	/// Ability 2: ???
-	/// Type: ???
+	/// Ability 2: Grapple
+	/// Type: Command Ability
+	/// Default Duration: 2 Turns
+	/// Default Cooldown: 4 Turns
 	/// 
 	/// </summary>
 
@@ -32,13 +34,12 @@ public class Catapult : HeroUnit
 		}
 		else
 		{
-			// Get base moves
 			// Cleare previous move list
 			if ( !returnOnlyJumps )
 				moveList.Clear ( );
 
 			// Store which tiles are to be ignored
-			IntPair back = GetBackDirection ( team.direction );
+			IntPair back = GetBackDirection ( owner.direction );
 
 			// Check each neighboring tile
 			for ( int i = 0; i < t.neighbors.Length; i++ )
@@ -81,7 +82,7 @@ public class Catapult : HeroUnit
 
 			// Get special moves
 			if ( currentAbility1.enabled && !returnOnlyJumps && currentAbility1.cooldown == 0 )
-				GetCatapult ( t, GetBackDirection ( team.direction ) );
+				GetCatapult ( t, GetBackDirection ( owner.direction ) );
 		}
 	}
 
@@ -168,6 +169,6 @@ public class Catapult : HeroUnit
 			} );
 
 		// Add animation to queue
-		GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t, true ) );
+		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 }

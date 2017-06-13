@@ -13,7 +13,7 @@ public class Unit : MonoBehaviour
 
 	// Instance info
 	public Tile currentTile;
-	public Player team;
+	public Player owner;
 	public SpriteRenderer sprite;
 
 	// Turn info
@@ -76,7 +76,7 @@ public class Unit : MonoBehaviour
 			moveList.Clear ( );
 
 		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( team.direction );
+		IntPair back = GetBackDirection ( owner.direction );
 
 		// Check each neighboring tile
 		for ( int i = 0; i < t.neighbors.Length; i++ )
@@ -202,10 +202,10 @@ public class Unit : MonoBehaviour
 			return false;
 
 		// Check if the tile is occupied
-		if ( t.currentUnit == null )
+		if ( t.currentUnit == null && t.currentObject == null )
 			return false;
 
-		// Check fi the tile has a tile object blocking it
+		// Check if the tile has a tile object blocking it
 		if ( t.currentObject != null && !t.currentObject.canBeJumped )
 			return false;
 
@@ -221,7 +221,7 @@ public class Unit : MonoBehaviour
 	public virtual bool UnitAttackCheck ( Unit attacker )
 	{
 		// Check if the unit to be attacked is on the same team
-		if ( attacker.team == team )
+		if ( attacker.owner == owner )
 			return false;
 		else
 			return true;
@@ -263,6 +263,7 @@ public class Unit : MonoBehaviour
 
 	/// <summary>
 	/// Moves the unit to an adjecent tile.
+	/// This function builds the animation queue from the move data.
 	/// </summary>
 	protected virtual void Move ( MoveData data )
 	{
@@ -275,11 +276,12 @@ public class Unit : MonoBehaviour
 			} );
 
 		// Add animation to queue
-		GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t, true ) );
+		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 
 	/// <summary>
-	/// Has the unit jump an adjacent unit.
+	/// Have the unit jump an adjacent unit.
+	/// This function builds the animation queue from the move data.
 	/// </summary>
 	protected virtual void Jump ( MoveData data )
 	{
@@ -292,23 +294,25 @@ public class Unit : MonoBehaviour
 			} );
 
 		// Add animation to queue
-		GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t, true ) );
+		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 
 	/// <summary>
 	/// Attacks the adjacent unit.
 	/// Call this function on the attacking unit.
+	/// This function builds the animation queue from the move data.
 	/// </summary>
 	protected virtual void AttackUnit ( MoveData data )
 	{
-		// K.O. unit(s) being attacked
+		// KO unit(s) being attacked
 		foreach ( Tile t in data.attacks )
 			t.currentUnit.GetAttacked ( );
 	}
 
 	/// <summary>
-	/// Attack and K.O. this unit.
+	/// Attack and KO this unit.
 	/// Call this function on the unit being attacked.
+	/// This function builds the animation queue from the move data.
 	/// </summary>
 	public virtual void GetAttacked ( bool lostMatch = false )
 	{
@@ -316,8 +320,11 @@ public class Unit : MonoBehaviour
 		Tween t1 = transform.DOScale ( new Vector3 ( 5, 5, 5 ), MOVE_ANIMATION_TIME )
 			.OnComplete ( ( ) =>
 			{
+				// Display deactivation
+				GM.UI.hudDic [ owner ].DisplayDeactivation ( instanceID );
+
 				// Remove unit from the team
-				team.units.Remove ( this );
+				owner.units.Remove ( this );
 
 				// Remove unit reference from the tile
 				currentTile.currentUnit = null;
@@ -330,13 +337,13 @@ public class Unit : MonoBehaviour
 		// Add animations to queue
 		if ( lostMatch )
 		{
-			GM.postTurnAnimations.Add ( new GameManager.TurnAnimation ( t1, false ) );
-			GM.postTurnAnimations.Add ( new GameManager.TurnAnimation ( t2, false ) );
+			GM.postAnimationQueue.Add ( new GameManager.TurnAnimation ( t1, false ) );
+			GM.postAnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
 		}
 		else
 		{
-			GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t1, true ) );
-			GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t2, false ) );
+			GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+			GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
 		}
 	}
 

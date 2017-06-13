@@ -9,12 +9,13 @@ public class Torus : HeroUnit
 	///
 	/// Hero Ability Information
 	/// 
-	/// Ability 1: Torus
+	/// Ability 1: Run The Ropes
 	/// Type: Special Ability
 	/// Default Cooldown: 2 Turns
 	/// 
-	/// Ability 2: ???
-	/// Type: ???
+	/// Ability 2: Taunt
+	/// Type: Command Ability
+	/// Default Cooldown: 6 Turns
 	/// 
 	/// </summary>
 
@@ -37,7 +38,7 @@ public class Torus : HeroUnit
 	private void GetTorus ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( team.direction );
+		IntPair back = GetBackDirection ( owner.direction );
 
 		// Check each neighboring tile
 		for ( int i = 0; i < t.neighbors.Length; i++ )
@@ -219,9 +220,9 @@ public class Torus : HeroUnit
 		Tween t4 = sprite.DOFade ( 1f, 0.25f );
 
 		// Add animations to queue
-		GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t1, true ) );
-		GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t2, false ) );
-		GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t3, true ) );
-		GM.endOfTurnAnimations.Add ( new GameManager.TurnAnimation ( t4, false ) );
+		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t3, true ) );
+		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t4, false ) );
 	}
 }

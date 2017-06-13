@@ -67,7 +67,7 @@ public class CustomMatchSettingsMenu : Menu
 		for ( int i = 0; i < HeroInfo.list.Count; i++ )
 		{
 			// Set hero setting
-			HeroSettings h = new HeroSettings ( HeroInfo.list [ i ].id, true, true, (Ability.AbilityType)HeroInfo.list [ i ].ability1.type, HeroInfo.list [ i ].ability1.duration, HeroInfo.list [ i ].ability1.cooldown, ( HeroInfo.list [ i ].id == 3 || HeroInfo.list [ i ].id == 4 ), (Ability.AbilityType)HeroInfo.list [ i ].ability2.type, HeroInfo.list [ i ].ability2.duration, HeroInfo.list [ i ].ability2.cooldown );
+			HeroSettings h = new HeroSettings ( HeroInfo.list [ i ].id, true, true, (Ability.AbilityType)HeroInfo.list [ i ].ability1.type, HeroInfo.list [ i ].ability1.duration, HeroInfo.list [ i ].ability1.cooldown, ( HeroInfo.list [ i ].id == 1 || HeroInfo.list [ i ].id == 3 || HeroInfo.list [ i ].id == 4 ), (Ability.AbilityType)HeroInfo.list [ i ].ability2.type, HeroInfo.list [ i ].ability2.duration, HeroInfo.list [ i ].ability2.cooldown );
 			heroValue.Add ( h );
 
 			// Set selection
@@ -355,7 +355,7 @@ public class CustomMatchSettingsMenu : Menu
 	}
 
 	/// <summary>
-	/// Sets the current duration setting for the Armor ability.
+	/// Sets the current duration setting for Hero 1's Armor ability.
 	/// Use this as a slider update event wrapper.
 	/// </summary>
 	public void SetArmorDuration ( float value )
@@ -384,7 +384,17 @@ public class CustomMatchSettingsMenu : Menu
 	}
 
 	/// <summary>
-	/// Sets the current cooldown setting for the Catapult ability.
+	/// Sets the current cooldown setting for Hero 1's Self-Destruct/Recall ability.
+	/// Use this as a slider update event wrapper.
+	/// </summary>
+	public void SetSelfDestructRecallCooldown ( float value )
+	{
+		// Set cooldown
+		SetCooldown ( heroValue [ 0 ].ability2, (int)value, cooldownSlider2 [ 0 ], cooldownDisplay2 [ 0 ] );
+	}
+
+	/// <summary>
+	/// Sets the current cooldown setting for Hero 2's Catapult ability.
 	/// Use this as a slider update event wrapper.
 	/// </summary>
 	public void SetCatapultCooldown ( float value )
@@ -394,7 +404,7 @@ public class CustomMatchSettingsMenu : Menu
 	}
 
 	/// <summary>
-	/// Sets the current cooldown setting for the Obstruction ability.
+	/// Sets the current cooldown setting for Hero 6's Obstruction ability.
 	/// Use this as a slider update event wrapper.
 	/// </summary>
 	public void SetObstuctionCooldown ( float value )
@@ -404,30 +414,30 @@ public class CustomMatchSettingsMenu : Menu
 	}
 
 	/// <summary>
-	/// Sets the current cooldown setting for the Teleport ability.
+	/// Sets the current cooldown setting for Hero 8's Blink ability.
 	/// Use this as a slider update event wrapper.
 	/// </summary>
-	public void SetTeleportCooldown ( float value )
+	public void SetBlinkCooldown ( float value )
 	{
 		// Set cooldown
 		SetCooldown ( heroValue [ 3 ].ability1, (int)value, cooldownSlider1 [ 3 ], cooldownDisplay1 [ 3 ] );
 	}
 
 	/// <summary>
-	/// Sets the current cooldown setting for the Mad Hatter ability.
+	/// Sets the current cooldown setting for Hero 8's Translocator ability.
 	/// Use this as a slider update event wrapper.
 	/// </summary>
-	public void SetMadHatterCooldown ( float value )
+	public void SetTranslocatorCooldown ( float value )
 	{
 		// Set cooldown
 		SetCooldown ( heroValue [ 3 ].ability2, (int)value, cooldownSlider2 [ 3 ], cooldownDisplay2 [ 3 ] );
 	}
 
 	/// <summary>
-	/// Sets the current cooldown setting for the Torus ability.
+	/// Sets the current cooldown setting for Hero 9's Run The Ropes ability.
 	/// Use this as a slider update event wrapper.
 	/// </summary>
-	public void SetTorusCooldown ( float value )
+	public void SetRunTheRopesCooldown ( float value )
 	{
 		// Set cooldown
 		SetCooldown ( heroValue [ 4 ].ability1, (int)value, cooldownSlider1 [ 4 ], cooldownDisplay1 [ 4 ] );

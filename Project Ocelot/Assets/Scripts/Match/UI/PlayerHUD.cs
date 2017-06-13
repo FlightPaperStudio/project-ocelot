@@ -8,7 +8,7 @@ public class PlayerHUD : MonoBehaviour
 {
 	// UI elements
 	public TextMeshProUGUI playerName;
-	public Image [ ] specialIcons;
+	public Image [ ] unitIcons;
 
 	// HUD information
 	private Player player;
@@ -23,47 +23,38 @@ public class PlayerHUD : MonoBehaviour
 		player = p;
 
 		// Set team name
-		playerName.text = p.name;
+		playerName.text = p.playerName;
 		playerName.color = Util.TeamColor ( p.team );
 
 		// Set special icons
-		for ( int i = 0; i < specialIcons.Length; i++ )
+		for ( int i = 0; i < unitIcons.Length; i++ )
 		{
 			// Set starter icons
-			if ( i < p.specialIDs.Length )
+			if ( i < p.units.Count )
 			{
 				// Set icon
-				specialIcons [ i ].gameObject.SetActive ( true );
-				specialIcons [ i ].color = Util.TeamColor ( p.team );
-				foreach ( Unit u in p.units )
-				{
-					if ( u is HeroUnit )
-					{
-						HeroUnit h = u as HeroUnit;
-						if ( h.heroID == p.specialIDs [ i ] && !indexDic.ContainsKey ( h.instanceID ) )
-						{
-							specialIcons [ i ].sprite = h.displaySprite;
-							indexDic.Add ( h.instanceID, i );
-							break;
-						}
-					}
-				}
+				unitIcons [ i ].gameObject.SetActive ( true );
+				unitIcons [ i ].sprite = p.units [ i ].displaySprite;
+				unitIcons [ i ].color = Util.TeamColor ( p.team );
+
+				// Add unit to the index
+				indexDic.Add ( p.units [ i ].instanceID, i );
 			}
 			else
 			{
 				// Hide extra icons
-				specialIcons [ i ].gameObject.SetActive ( false );
+				unitIcons [ i ].gameObject.SetActive ( false );
 			}
 		}
 	}
 
 	/// <summary>
-	/// Displays the deactivation of a special ability by its ID.
+	/// Displays the deactivation of a unit by its ID.
 	/// </summary>
 	public void DisplayDeactivation ( int id )
 	{
 		// Display deactivation
-		specialIcons [ indexDic [ id ] ].color = new Color32 ( 200, 200, 200, 255 );
+		unitIcons [ indexDic [ id ] ].color = new Color32 ( 200, 200, 200, 255 );
 	}
 
 	/// <summary>
@@ -75,7 +66,16 @@ public class PlayerHUD : MonoBehaviour
 		playerName.color = new Color32 ( 200, 200, 200, 255 );
 
 		// Display deactivation of each special ability
-		foreach ( int id in indexDic.Keys )
-			DisplayDeactivation ( id );
+		//foreach ( int id in indexDic.Keys )
+		//	DisplayDeactivation ( id );
+	}
+
+	/// <summary>
+	/// Updates a unit's icon to a new sprite. 
+	/// </summary>
+	public void UpdateIcon ( int id, Sprite sprite )
+	{
+		// Change icon
+		unitIcons [ indexDic [ id ] ].sprite = sprite;
 	}
 }
