@@ -20,6 +20,13 @@ public class Unit : MonoBehaviour
 	public List<MoveData> moveList = new List<MoveData> ( );
 	protected const float MOVE_ANIMATION_TIME = 0.5f;
 
+	// Status info
+	public bool canMove = true;
+	public bool canBeMoved = true;
+	public bool canUseAbility = true;
+	public bool canReceiveAbilityEffectsFriendly = true;
+	public bool canReceiveAbilityEffectsHostile = true;
+
 	/// <summary>
 	/// Returns the two directions that are considered backwards movement for the unit.
 	/// </summary>
@@ -72,48 +79,52 @@ public class Unit : MonoBehaviour
 	public virtual void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Clear previous move list
-		if ( !returnOnlyJumps )
+		if ( prerequisite == null )
 			moveList.Clear ( );
 
-		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.direction );
-
-		// Check each neighboring tile
-		for ( int i = 0; i < t.neighbors.Length; i++ )
+		// Check status effects
+		if ( canMove )
 		{
-			// Ignore tiles that would allow for backward movement
-			if ( i == back.FirstInt || i == back.SecondInt )
-				continue;
+			// Store which tiles are to be ignored
+			IntPair back = GetBackDirection ( owner.direction );
 
-			// Check if this unit can move to the neighboring tile
-			if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
+			// Check each neighboring tile
+			for ( int i = 0; i < t.neighbors.Length; i++ )
 			{
-				// Add as an available move
-				moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.Move, i ) );
-			}
-			// Check if this unit can jump the neighboring tile
-			else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
-			{
-				// Track move data
-				MoveData m;
+				// Ignore tiles that would allow for backward movement
+				if ( i == back.FirstInt || i == back.SecondInt )
+					continue;
 
-				// Check if the neighboring unit can be attacked
-				if ( t.neighbors [ i ].currentUnit != null && t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
+				// Check if this unit can move to the neighboring tile
+				if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
 				{
-					// Add as an available attack
-					m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Attack, i, t.neighbors [ i ] );
+					// Add as an available move
+					moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.Move, i ) );
 				}
-				else
+				// Check if this unit can jump the neighboring tile
+				else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
 				{
-					// Add as an available jump
-					m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Jump, i );
+					// Track move data
+					MoveData m;
+
+					// Check if the neighboring unit can be attacked
+					if ( t.neighbors [ i ].currentUnit != null && t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
+					{
+						// Add as an available attack
+						m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Attack, i, t.neighbors [ i ] );
+					}
+					else
+					{
+						// Add as an available jump
+						m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Jump, i );
+					}
+
+					// Add move to the move list
+					moveList.Add ( m );
+
+					// Find additional jumps
+					FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
 				}
-
-				// Add move to the move list
-				moveList.Add ( m );
-
-				// Find additional jumps
-				FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
 			}
 		}
 	}
@@ -306,7 +317,13 @@ public class Unit : MonoBehaviour
 	{
 		// KO unit(s) being attacked
 		foreach ( Tile t in data.attacks )
+		{
+			// Interupt unit
+			t.currentUnit.InteruptUnit ( );
+
+			// Attack unit
 			t.currentUnit.GetAttacked ( );
+		}
 	}
 
 	/// <summary>
@@ -345,6 +362,16 @@ public class Unit : MonoBehaviour
 			GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
 			GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
 		}
+	}
+
+	/// <summary>
+	/// Interupts any actions that take more than one turn to complete that this unit is in the process of doing.
+	/// Call this function when this unit is being attacked or being affected by some interupting ability.
+	/// IMPORTANT: Be sure to call this function first before the interupting action since Interupts change the status effects of the action being interupted and the interupting action may apply new status effects.
+	/// </summary>
+	public virtual void InteruptUnit ( )
+	{
+
 	}
 
 	public void SetTeamColor ( Player.TeamColor color )

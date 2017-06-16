@@ -20,9 +20,10 @@ public class Pacifist : HeroUnit
 	/// 
 	/// </summary>
 
-	// Command information
+	// Ability information
 	public TileObject obstructionPrefab;
 	public TileObject currentObstruction;
+	private const float OBSTRUCTION_ANIMATION_TIME = 0.75f;
 
 	/// <summary>
 	/// Calculates all base moves available to a unit without marking any potential captures.
@@ -30,45 +31,43 @@ public class Pacifist : HeroUnit
 	public override void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Cleare previous move list
-		if ( !returnOnlyJumps )
+		if ( prerequisite == null )
 			moveList.Clear ( );
 
-		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.direction );
-
-		// Check each neighboring tile
-		for ( int i = 0; i < t.neighbors.Length; i++ )
+		// Check status effects
+		if ( canMove )
 		{
-			// Ignore tiles that would allow for backward movement
-			if ( i == back.FirstInt || i == back.SecondInt )
-				continue;
+			// Store which tiles are to be ignored
+			IntPair back = GetBackDirection ( owner.direction );
 
-			// Check if this unit can move to the neighboring tile
-			if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
+			// Check each neighboring tile
+			for ( int i = 0; i < t.neighbors.Length; i++ )
 			{
-				// Add as an available move
-				moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.Move, i ) );
-			}
-			// Check if this unit can jump the neighboring tile
-			else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
-			{
-				// Add as an available jump
-				MoveData m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Jump, i );
-				moveList.Add ( m );
+				// Ignore tiles that would allow for backward movement
+				if ( i == back.FirstInt || i == back.SecondInt )
+					continue;
 
-				// Find additional jumps
-				FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
+				// Check if this unit can move to the neighboring tile
+				if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
+				{
+					// Add as an available move
+					moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.Move, i ) );
+				}
+				// Check if this unit can jump the neighboring tile
+				else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
+				{
+					// Add as an available jump
+					MoveData m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Jump, i );
+					moveList.Add ( m );
+
+					// Find additional jumps
+					FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
+				}
 			}
 		}
 
 		// Get obstruction availability
-		if ( !returnOnlyJumps )
-		{
-			if ( currentAbility2.enabled && currentAbility2.cooldown == 0 )
-				currentAbility2.active = true;
-			else
-				currentAbility2.active = false;
-		}
+		currentAbility2.active = CommandAvailabilityCheck ( currentAbility2, prerequisite );
 	}
 
 	/// <summary>
@@ -77,8 +76,12 @@ public class Pacifist : HeroUnit
 	/// </summary>
 	public override bool UnitAttackCheck ( Unit attacker )
 	{
-		// Prevent any attacks
-		return false;
+		// Prevent any attacks with the Ghost ability
+		if ( currentAbility1.enabled )
+			return false;
+
+		// Return normal values if the Ghost ability is disabled
+		return base.UnitAttackCheck ( attacker );
 	}
 
 	/// <summary>
@@ -142,7 +145,7 @@ public class Pacifist : HeroUnit
 
 		// Begin animation
 		Sequence s = DOTween.Sequence ( )
-			.Append ( currentObstruction.sprite.DOFade ( 0f, 0.75f ).From ( ) )
+			.Append ( currentObstruction.sprite.DOFade ( 0f, OBSTRUCTION_ANIMATION_TIME ).From ( ) )
 			.OnComplete ( ( ) =>
 			{
 				// Start cooldown
@@ -167,7 +170,7 @@ public class Pacifist : HeroUnit
 	private void ObstructionDurationComplete ( )
 	{
 		// Create animation
-		Tween t = currentObstruction.sprite.DOFade ( 0f, 0.75f )
+		Tween t = currentObstruction.sprite.DOFade ( 0f, OBSTRUCTION_ANIMATION_TIME )
 			.OnComplete ( ( ) =>
 			{
 				// Remove obstruction from player data

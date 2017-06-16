@@ -19,6 +19,10 @@ public class Torus : HeroUnit
 	/// 
 	/// </summary>
 
+	// Ability information
+	private Dictionary<Tile, int> tauntTargetDirection = new Dictionary<Tile, int> ( );
+	private const int TAUNT_RANGE = 4;
+
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves.
 	/// </summary>
@@ -27,15 +31,66 @@ public class Torus : HeroUnit
 		// Get base moves
 		base.FindMoves ( t, prerequisite, returnOnlyJumps );
 
-		// Get torus moves
-		if ( currentAbility1.cooldown == 0 && !CheckPrequisiteType ( prerequisite ) )
-			GetTorus ( t, prerequisite, returnOnlyJumps );
+		// Get Run The Ropes moves
+		if ( SpecialAvailabilityCheck ( currentAbility1, prerequisite ) )
+			GetRunTheRopes ( t, prerequisite, returnOnlyJumps );
+
+		// Get Taunt availability
+		currentAbility2.active = CommandAvailabilityCheck ( currentAbility2, prerequisite );
 	}
 
 	/// <summary>
-	/// Marks every tiles this unit could use its Torus special ability to get to.
+	/// Checks if the hero is capable of using a special ability.
+	/// Returns true if the special ability is available.
 	/// </summary>
-	private void GetTorus ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
+	protected override bool SpecialAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
+	{
+		// Check base conditions
+		if ( !base.SpecialAvailabilityCheck ( current, prerequisite ) )
+			return false;
+
+		// Check status effects
+		if ( !canMove )
+			return false;
+
+		// Check previous moves
+		if ( CheckPrequisiteType ( prerequisite ) )
+			return false;
+
+		// Return that the ability is available
+		return true;
+	}
+
+	/// <summary>
+	/// Determines if any of the prerequisite moves used abilities.
+	/// Returns true if an ability was used.
+	/// </summary>
+	private bool CheckPrequisiteType ( MoveData m )
+	{
+		// Check for prerequisite move
+		if ( m != null )
+		{
+			// Check if the type matches
+			if ( m.type == MoveData.MoveType.Special || m.type == MoveData.MoveType.SpecialAttack )
+			{
+				// Return that an ability has been used
+				return true;
+			}
+			else
+			{
+				// Check prerequisite move's type
+				return CheckPrequisiteType ( m.prerequisite );
+			}
+		}
+
+		// Return that no abilities were used in previous moves
+		return false;
+	}
+
+	/// <summary>
+	/// Marks every tiles available to the Run The Ropes ability.
+	/// </summary>
+	private void GetRunTheRopes ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Store which tiles are to be ignored
 		IntPair back = GetBackDirection ( owner.direction );
@@ -143,86 +198,202 @@ public class Torus : HeroUnit
 	}
 
 	/// <summary>
-	/// Determines if any of the prerequisite moves used abilities.
-	/// Returns true if an ability was used.
-	/// </summary>
-	private bool CheckPrequisiteType ( MoveData m )
-	{
-		// Check for prerequisite move
-		if ( m != null )
-		{
-			// Check if the type matches
-			if ( m.type == MoveData.MoveType.Special || m.type == MoveData.MoveType.SpecialAttack )
-			{
-				// Return that an ability has been used
-				return true;
-			}
-			else
-			{
-				// Check prerequisite move's type
-				return CheckPrequisiteType ( m.prerequisite );
-			}
-		}
-
-		// Return that no abilities were used in previous moves
-		return false;
-	}
-
-	/// <summary>
 	/// Uses the unit's special ability.
 	/// Override this function to call specific special ability functions for a hero unit.
 	/// </summary>
 	protected override void UseSpecial ( MoveData data )
 	{
-		// Get movement distances
-		Vector3 offOfBoardDistance = Util.GetTileDistance ( data.direction );
-		Vector3 ontoBoardDistance = Util.GetTileDistance ( Util.GetOppositeDirection ( data.direction ) );
-
-		// Set off of board movement position
-		Vector3 offOfBoardPos = currentTile.transform.position;
-		if ( currentTile.neighbors [ (int)data.direction ] == null )
-			offOfBoardPos += offOfBoardDistance;
+		// Get tiles
+		Tile startTile;
+		Tile endTile = data.tile;
+		if ( data.prerequisite == null )
+			startTile = currentTile;
 		else
-			offOfBoardPos += ( 2 * offOfBoardDistance );
+			startTile = data.prerequisite.tile;
 
-		// Set onto board movement position
-		Vector3 ontoBoardPos = data.tile.transform.position;
-		if ( data.tile.neighbors [ Util.GetOppositeDirection ( (int)data.direction ) ] == null )
-			ontoBoardPos += ontoBoardDistance;
+		// Get rope positions
+		Vector3 ropesPos1 = startTile.transform.position;
+		if ( startTile.neighbors [ (int)data.direction ] != null )
+			ropesPos1 = startTile.neighbors [ (int)data.direction ].transform.position + Util.GetTileDistance ( data.direction );
 		else
-			ontoBoardPos += ( 2 * ontoBoardDistance );
-
-		// Set animation times
-		float offOfBoardTime = 0.5f;
-		if ( currentTile.neighbors [ (int)data.direction ] != null )
-			offOfBoardTime *= 2;
-		float ontoBoardTime = 0.5f;
-		if ( data.tile.neighbors [ Util.GetOppositeDirection ( (int)data.direction ) ] != null )
-			ontoBoardTime *= 2;
+			ropesPos1 += Util.GetTileDistance ( data.direction );
+		Vector3 ropesPos2 = endTile.transform.position;
+		if ( endTile.neighbors [ Util.GetOppositeDirection ( (int)data.direction ) ] != null )
+			ropesPos2 = endTile.neighbors [ Util.GetOppositeDirection ( (int)data.direction ) ].transform.position + Util.GetTileDistance ( Util.GetOppositeDirection ( (int)data.direction ) );
+		else
+			ropesPos2 += Util.GetTileDistance ( Util.GetOppositeDirection ( (int)data.direction ) );
 
 		// Create animations
-		Tween t1 = transform.DOMove ( offOfBoardPos, offOfBoardTime )
+		Tween t1 = transform.DOMove ( ropesPos1, NumberOfTilesToEdge ( startTile, (int)data.direction, 1 ) * MOVE_ANIMATION_TIME ); // Move from the start position to the first ropes
+		Tween t2 = transform.DOMove ( ropesPos2, ( NumberOfTilesToEdge ( startTile, (int)data.direction, 1 ) + NumberOfTilesToEdge ( startTile, Util.GetOppositeDirection ( (int)data.direction ), 1 ) ) * MOVE_ANIMATION_TIME ); // Move across the arena from the first ropes to the second ropes
+		Tween t3 = transform.DOMove ( endTile.transform.position, NumberOfTilesToEdge ( endTile, Util.GetOppositeDirection ( (int)data.direction ), 1 ) * MOVE_ANIMATION_TIME ) // Move from the second ropes to the end position
 			.OnComplete ( ( ) =>
 			{
-				// Move unit instantly
-				transform.position = ontoBoardPos;
-			} );
-		Tween t2 = sprite.DOFade ( 0, 0.25f ).SetDelay ( offOfBoardTime - 0.25f );
-		Tween t3 = transform.DOMove ( data.tile.transform.position, ontoBoardTime )
-			.OnComplete ( ( ) =>
-			{
-				// Start torus cooldown
+				// Start Run The Ropes cooldown
 				StartCooldown ( currentAbility1, info.ability1 );
 
 				// Set unit and tile data
 				SetUnitToTile ( data.tile );
 			} );
-		Tween t4 = sprite.DOFade ( 1f, 0.25f );
 
-		// Add animations to queue
+		// Add animation to queue
 		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, true ) );
 		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t3, true ) );
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t4, false ) );
+	}
+
+	/// <summary>
+	/// Calculates the number of tiles between the hero and the edge of the arena in a given direction.
+	/// </summary>
+	private int NumberOfTilesToEdge ( Tile t, int direction, int count )
+	{
+		// Check for edge
+		if ( t.neighbors [ direction ] != null )
+			return NumberOfTilesToEdge ( t.neighbors [ direction ], direction, count + 1 );
+
+		// Return count
+		return count;
+	}
+
+	/// <summary>
+	/// Checks if there adjacent unoccupied tiles available for the Self-Destruct/Recall Ability.
+	/// Returns true if at least one adjacent tile is unoccupied.
+	/// </summary>
+	protected override bool CommandAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
+	{
+		// Get base conditions
+		if ( !base.CommandAvailabilityCheck ( current, prerequisite ) )
+			return false;
+
+		// Check if a target is within range
+		if ( !TauntCheck ( ) )
+			return false;
+
+		// Return that ability is available
+		return true;
+	}
+
+	/// <summary>
+	/// Checks to see if an enemy unit is within range of and capable of being targeted by the Taunt ability.
+	/// Returns true if at least one unit can be targeted by the Taunt ability.
+	/// </summary>
+	private bool TauntCheck ( )
+	{
+		// Track potential target
+		bool targetFound = false;
+
+		// Check every direction
+		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
+		{
+			// Search for target
+			if ( GetTaunt ( currentTile.neighbors [ i ], i, 1 ) != null )
+			{
+				// Mark that a target was found
+				targetFound = true;
+				break;
+			}
+		}
+
+		// Return if target was found
+		return targetFound;
+	}
+
+	/// <summary>
+	/// Finds an enemy unit that is within the 2 to 4 tile range and can be moved to an unoccupied tile toward the hero by the Taunt ability.
+	/// Only returns the closest available target.
+	/// </summary>
+	private Tile GetTaunt ( Tile t, int direction, int count )
+	{
+		// Check tile
+		if ( t != null && count <= TAUNT_RANGE )
+		{
+			// Check target and move location
+			if ( t.currentUnit != null && t.currentUnit.owner != owner && t.currentUnit.canBeMoved && t.currentUnit.canReceiveAbilityEffectsHostile && OccupyTileCheck ( t.neighbors [ Util.GetOppositeDirection ( direction ) ], null ) )
+				return t;
+			else
+				return GetTaunt ( t.neighbors [ direction ], direction, count + 1 );
+		}
+
+		// Return that no target was found
+		return null;
+	}
+
+	/// <summary>
+	/// Sets up the hero's command use.
+	/// </summary>
+	public override void StartCommand ( )
+	{
+		// Clear the board
+		base.StartCommand ( );
+
+		// Clear previous targets
+		tauntTargetDirection.Clear ( );
+
+		// Get every Taunt target
+		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
+		{
+			// Get target
+			Tile t = GetTaunt ( currentTile.neighbors [ i ], i, 1 );
+
+			// Check if target was found
+			if ( t != null )
+			{
+				// Mark target
+				t.SetTileState ( TileState.AvailableCommand );
+
+				// Store target and direction
+				tauntTargetDirection.Add ( t, i );
+			}
+		}
+	}
+
+	/// <summary>
+	/// Select the tile for Taunt.
+	/// </summary>
+	public override void SelectCommandTile ( Tile t )
+	{
+		// Pause turn timer
+		if ( MatchSettings.turnTimer )
+			GM.UI.timer.PauseTimer ( );
+
+		// Hide cancel button
+		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
+
+		// Clear board
+		GM.board.ResetTiles ( );
+
+		// Store target and destination
+		Unit u = t.currentUnit;
+		Tile destination = t.neighbors [ Util.GetOppositeDirection ( tauntTargetDirection [ t ] ) ];
+
+		// Interupt target
+		u.InteruptUnit ( );
+
+		// Begin animation
+		Sequence s = DOTween.Sequence ( )
+			.Append ( u.transform.DOMove ( destination.transform.position, MOVE_ANIMATION_TIME ) )
+			.OnComplete ( ( ) =>
+			{
+				// Remove target from previous tile
+				t.currentUnit = null;
+
+				// Set the target's new current tile
+				u.currentTile = destination;
+				destination.currentUnit = u;
+
+				// Start cooldown
+				StartCooldown ( currentAbility2, info.ability2 );
+
+				// Pause turn timer
+				if ( MatchSettings.turnTimer )
+					GM.UI.timer.ResumeTimer ( );
+
+				// Get moves
+				GM.GetTeamMoves ( );
+
+				// Display team
+				GM.DisplayAvailableUnits ( );
+				GM.SelectUnit ( this );
+			} );
 	}
 }

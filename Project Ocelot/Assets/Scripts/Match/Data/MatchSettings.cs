@@ -228,7 +228,7 @@ public class MatchSettings
 
 		for ( int i = 0; i < HeroInfo.list.Count; i++ )
 		{
-			HeroSettings h = new HeroSettings ( HeroInfo.list [ i ].id, true, true, (Ability.AbilityType)HeroInfo.list [ i ].ability1.type, HeroInfo.list [ i ].ability1.duration, HeroInfo.list [ i ].ability1.cooldown, ( HeroInfo.list [ i ].id == 1 || HeroInfo.list [ i ].id == 3 || HeroInfo.list [ i ].id == 4 ), (Ability.AbilityType)HeroInfo.list [ i ].ability2.type, HeroInfo.list [ i ].ability2.duration, HeroInfo.list [ i ].ability2.cooldown );
+			HeroSettings h = new HeroSettings ( HeroInfo.list [ i ].id, true, true, (Ability.AbilityType)HeroInfo.list [ i ].ability1.type, HeroInfo.list [ i ].ability1.duration, HeroInfo.list [ i ].ability1.cooldown, ( HeroInfo.list [ i ].id == 1 || HeroInfo.list [ i ].id == 3 || HeroInfo.list [ i ].id == 4 || HeroInfo.list [ i ].id == 5 ), (Ability.AbilityType)HeroInfo.list [ i ].ability2.type, HeroInfo.list [ i ].ability2.duration, HeroInfo.list [ i ].ability2.cooldown );
 			actualHeroSettings.Add ( h );
 			dic.Add ( heroSettings [ i ].id, heroSettings [ i ] );
 		}

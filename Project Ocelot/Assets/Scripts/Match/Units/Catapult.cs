@@ -26,18 +26,13 @@ public class Catapult : HeroUnit
 	/// </summary>
 	public override void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
 	{
-		// Check if this unit can move this turn
-		if ( currentAbility1.enabled && currentAbility1.duration > 0 )
-		{
-			// Clear move list
+		// Clear previous move list
+		if ( prerequisite == null )
 			moveList.Clear ( );
-		}
-		else
-		{
-			// Cleare previous move list
-			if ( !returnOnlyJumps )
-				moveList.Clear ( );
 
+		// Check status effects
+		if ( canMove )
+		{
 			// Store which tiles are to be ignored
 			IntPair back = GetBackDirection ( owner.direction );
 
@@ -79,11 +74,33 @@ public class Catapult : HeroUnit
 					FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
 				}
 			}
-
-			// Get special moves
-			if ( currentAbility1.enabled && !returnOnlyJumps && currentAbility1.cooldown == 0 )
-				GetCatapult ( t, GetBackDirection ( owner.direction ) );
 		}
+
+		// Get special moves
+		if ( SpecialAvailabilityCheck ( currentAbility1, prerequisite ) )
+			GetCatapult ( t, GetBackDirection ( owner.direction ) );
+	}
+
+	/// <summary>
+	/// Checks if the hero is capable of using a special ability.
+	/// Returns true if the special ability is available.
+	/// </summary>
+	protected override bool SpecialAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
+	{
+		// Check base conditions
+		if ( !base.SpecialAvailabilityCheck ( current, prerequisite ) )
+			return false;
+
+		// Check status effects
+		if ( !canMove )
+			return false;
+
+		// Check if any moves have been made
+		if ( prerequisite != null )
+			return false;
+
+		// Return that the ability is available
+		return true;
 	}
 
 	/// <summary>
@@ -164,11 +181,31 @@ public class Catapult : HeroUnit
 				// Start special ability cooldown
 				StartCooldown ( currentAbility1, info.ability1 );
 
+				// Change status
+				canMove = false;
+
 				// Set unit and tile data
 				SetUnitToTile ( data.tile );
 			} );
 
 		// Add animation to queue
 		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+	}
+
+	/// <summary>
+	/// Callback for when the duration of an ability has expired.
+	/// </summary>
+	protected override void OnDurationComplete ( AbilitySettings current )
+	{
+		// Check ability
+		if ( current == currentAbility1 )
+		{
+			// End the status effect
+			canMove = true;
+		}
+		else
+		{
+
+		}
 	}
 }

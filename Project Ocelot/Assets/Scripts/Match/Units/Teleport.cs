@@ -24,6 +24,7 @@ public class Teleport : HeroUnit
 	private Tile tile2 = null;
 	private Unit unit1 = null;
 	private Unit unit2 = null;
+	private const float BLINK_ANIMATION_TIME = 0.75f;
 
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves.
@@ -33,25 +34,40 @@ public class Teleport : HeroUnit
 		// Get base moves
 		base.FindMoves ( t, prerequisite, returnOnlyJumps );
 
-		// Check if it's the start of turn
-		if ( !returnOnlyJumps )
-		{
-			// Get teleport moves
-			if ( currentAbility1.enabled && !returnOnlyJumps && currentAbility1.cooldown == 0 )
-				GetTeleport ( t, GetBackDirection ( owner.direction ), 2 );
+		// Get Blink moves
+		if ( SpecialAvailabilityCheck ( currentAbility1, prerequisite ) )
+			GetBlink ( t, GetBackDirection ( owner.direction ), 2 );
 
-			// Get mad hatter availability
-			if ( currentAbility2.enabled && !returnOnlyJumps && currentAbility2.cooldown == 0 )
-				currentAbility2.active = true;
-			else
-				currentAbility2.active = false;
-		}
+		// Get Translocator availability
+		currentAbility2.active = CommandAvailabilityCheck ( currentAbility2, prerequisite );
 	}
 
 	/// <summary>
-	/// Marks every tile this unit could teleport to.
+	/// Checks if the hero is capable of using a special ability.
+	/// Returns true if the special ability is available.
 	/// </summary>
-	private void GetTeleport ( Tile t, IntPair back, int count )
+	protected override bool SpecialAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
+	{
+		// Check base conditions
+		if ( !base.SpecialAvailabilityCheck ( current, prerequisite ) )
+			return false;
+
+		// Check status effects
+		if ( !canMove )
+			return false;
+
+		// Check if any moves have been made
+		if ( prerequisite != null )
+			return false;
+
+		// Return that the ability is available
+		return true;
+	}
+
+	/// <summary>
+	/// Marks every tile within range of the Blink ability.
+	/// </summary>
+	private void GetBlink ( Tile t, IntPair back, int count )
 	{
 		// Check each neighbor tile
 		for ( int i = 0; i < t.neighbors.Length; i++ )
@@ -64,7 +80,7 @@ public class Teleport : HeroUnit
 			if ( t.neighbors [ i ] != null )
 			{
 				// Check if tile already has a move associated with it
-				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && !moveList.Exists ( match => match.tile == t.neighbors [ i ] ) )
+				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && !moveList.Exists ( match => match.tile == t.neighbors [ i ] && match.prerequisite == null ) )
 				{
 					// Add as an available special move
 					moveList.Add ( new MoveData ( t.neighbors [ i ], null, MoveData.MoveType.Special, i ) );
@@ -74,7 +90,7 @@ public class Teleport : HeroUnit
 				if ( count > 0 )
 				{
 					// Continue search
-					GetTeleport ( t.neighbors [ i ], back, count - 1 );
+					GetBlink ( t.neighbors [ i ], back, count - 1 );
 				}
 			}
 		}
@@ -119,7 +135,8 @@ public class Teleport : HeroUnit
 		// Highlight team members
 		foreach ( Unit u in owner.units )
 		{
-			if ( u != this && !( u is Leader ) )
+			// Check status effects
+			if ( u != this && !( u is Leader ) && u.canBeMoved && u.canReceiveAbilityEffectsFriendly )
 				u.currentTile.SetTileState ( TileState.AvailableCommand );
 		}
 	}
@@ -149,7 +166,7 @@ public class Teleport : HeroUnit
 			t.SetTileState ( TileState.SelectedCommand );
 
 			// Activate Mad Hatter
-			UseMadHatter ( );
+			UseTranslocator ( );
 		}
 	}
 
@@ -171,8 +188,12 @@ public class Teleport : HeroUnit
 	/// <summary>
 	/// Swaps the positions of two teammates.
 	/// </summary>
-	private void UseMadHatter ( )
+	private void UseTranslocator ( )
 	{
+		// Interupt both units
+		unit1.InteruptUnit ( );
+		unit2.InteruptUnit ( );
+
 		// Hide cancel button
 		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
 
@@ -191,16 +212,16 @@ public class Teleport : HeroUnit
 
 		// Begin animation
 		Sequence s = DOTween.Sequence ( )
-			.Append ( unit1.sprite.DOFade ( 0f, 0.75f ) )
-			.Join ( unit2.sprite.DOFade ( 0f, 0.75f ) )
+			.Append ( unit1.sprite.DOFade ( 0f, BLINK_ANIMATION_TIME ) )
+			.Join ( unit2.sprite.DOFade ( 0f, BLINK_ANIMATION_TIME ) )
 			.AppendCallback ( ( ) =>
 			{
 				// Reposition units
 				unit1.transform.position = unit1.currentTile.transform.position;
 				unit2.transform.position = unit2.currentTile.transform.position;
 			} )
-			.Append ( unit1.sprite.DOFade ( 1f, 0.75f ) )
-			.Join ( unit2.sprite.DOFade ( 1f, 0.75f ) )
+			.Append ( unit1.sprite.DOFade ( 1f, BLINK_ANIMATION_TIME ) )
+			.Join ( unit2.sprite.DOFade ( 1f, BLINK_ANIMATION_TIME ) )
 			.OnComplete ( ( ) =>
 			{
 				// Clear command data

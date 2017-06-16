@@ -142,6 +142,9 @@ public class GameManager : MonoBehaviour
 		animationQueue.Clear ( );
 		postAnimationQueue.Clear ( );
 
+		// Begin turn
+		isStartOfTurn = true;
+
 		// Start new turn animation
 		StartCoroutine ( StartTurnCoroutine ( ) );
 	}
@@ -188,9 +191,6 @@ public class GameManager : MonoBehaviour
 		// Start turn timer
 		if ( MatchSettings.turnTimer )
 			UI.timer.StartTimer ( );
-
-		// Begin turn
-		isStartOfTurn = true;
 	}
 
 	/// <summary>
@@ -477,6 +477,9 @@ public class GameManager : MonoBehaviour
 	/// </summary>
 	public void ExecuteMove ( )
 	{
+		// Mark that it is no longer the beginning phase of a turn
+		isStartOfTurn = false;
+
 		// End the player's turn
 		EndTurn ( );
 	}

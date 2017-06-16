@@ -87,6 +87,28 @@ public class HeroUnit : Unit
 	}
 
 	/// <summary>
+	/// Checks if the hero is capable of using a special ability.
+	/// Returns true if the special ability is available.
+	/// </summary>
+	protected virtual bool SpecialAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
+	{
+		// Check status effects
+		if ( !canUseAbility )
+			return false;
+
+		// Check if the ability is enabled
+		if ( !current.enabled )
+			return false;
+
+		// Check if the ability is on cooldown
+		if ( current.cooldown > 0 )
+			return false;
+
+		// Return that the ability is available
+		return true;
+	}
+
+	/// <summary>
 	/// Uses the unit's special ability.
 	/// Override this function to call specific special ability functions for a hero unit.
 	/// This function builds the animation queue from the move data.
@@ -94,6 +116,36 @@ public class HeroUnit : Unit
 	protected virtual void UseSpecial ( MoveData data )
 	{
 
+	}
+
+	/// <summary>
+	/// Checks if the hero is capable of using a command ability.
+	/// Returns true if the command ability is available.
+	/// </summary>
+	protected virtual bool CommandAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
+	{
+		// Check if its the beginning of a player's turn
+		if ( !GM.isStartOfTurn )
+			return false;
+
+		// Check if moves have been plotted
+		if ( prerequisite != null )
+			return false;
+
+		// Check status effects
+		if ( !canUseAbility )
+			return false;
+
+		// Check if the ability is enabled
+		if ( !current.enabled )
+			return false;
+
+		// Check if the ability is on cooldown
+		if ( current.cooldown > 0 )
+			return false;
+
+		// Return that the ability is available
+		return true;
 	}
 
 	/// <summary>

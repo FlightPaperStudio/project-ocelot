@@ -40,75 +40,79 @@ public class Leader : Unit
 	public override void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Cleare previous move list
-		if ( !returnOnlyJumps )
+		if ( prerequisite == null )
 			moveList.Clear ( );
 
-		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.direction );
-
-		// Check each neighboring tile
-		for ( int i = 0; i < t.neighbors.Length; i++ )
+		// Check status effects
+		if ( canMove )
 		{
-			// Ignore tiles that would allow for backward movement
-			if ( i == back.FirstInt || i == back.SecondInt )
-				continue;
+			// Store which tiles are to be ignored
+			IntPair back = GetBackDirection ( owner.direction );
 
-			// Check if this unit can move to the neighboring tile
-			if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
+			// Check each neighboring tile
+			for ( int i = 0; i < t.neighbors.Length; i++ )
 			{
-				// Check for goal tile
-				if ( owner.startArea.IsGoalTile ( t.neighbors [ i ] ) )
-				{
-					// Add as an available move to win
-					moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MoveToWin, i ) );
-				}
-				else
-				{
-					// Add as an available move
-					moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.Move, i ) );
-				}
-			}
-			// Check if this unit can jump the neighboring tile
-			else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
-			{
-				// Track move data
-				MoveData m;
+				// Ignore tiles that would allow for backward movement
+				if ( i == back.FirstInt || i == back.SecondInt )
+					continue;
 
-				// Check if the neighboring unit can be attacked
-				if ( t.neighbors [ i ].currentUnit != null && t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
+				// Check if this unit can move to the neighboring tile
+				if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
 				{
 					// Check for goal tile
-					if ( owner.startArea.IsGoalTile ( t.neighbors [ i ].neighbors [ i ] ) )
+					if ( owner.startArea.IsGoalTile ( t.neighbors [ i ] ) )
 					{
-						// Add as an available attack to win
-						m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.AttackToWin, i, t.neighbors [ i ] );
+						// Add as an available move to win
+						moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MoveToWin, i ) );
 					}
 					else
 					{
-						// Add as an available attack
-						m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Attack, i, t.neighbors [ i ] );
+						// Add as an available move
+						moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.Move, i ) );
 					}
 				}
-				else
+				// Check if this unit can jump the neighboring tile
+				else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
 				{
-					// Check for goal tile
-					if ( owner.startArea.IsGoalTile ( t.neighbors [ i ].neighbors [ i ] ) )
+					// Track move data
+					MoveData m;
+
+					// Check if the neighboring unit can be attacked
+					if ( t.neighbors [ i ].currentUnit != null && t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
 					{
-						// Add as an available jump to win
-						m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.JumpToWin, i );
+						// Check for goal tile
+						if ( owner.startArea.IsGoalTile ( t.neighbors [ i ].neighbors [ i ] ) )
+						{
+							// Add as an available attack to win
+							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.AttackToWin, i, t.neighbors [ i ] );
+						}
+						else
+						{
+							// Add as an available attack
+							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Attack, i, t.neighbors [ i ] );
+						}
 					}
 					else
 					{
-						// Add as an available jump
-						m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Jump, i );
+						// Check for goal tile
+						if ( owner.startArea.IsGoalTile ( t.neighbors [ i ].neighbors [ i ] ) )
+						{
+							// Add as an available jump to win
+							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.JumpToWin, i );
+						}
+						else
+						{
+							// Add as an available jump
+							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Jump, i );
+						}
 					}
+
+					// Add move to the move list
+					moveList.Add ( m );
+
+					// Find additional jumps
+					FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
 				}
-
-				// Add move to the move list
-				moveList.Add ( m );
-
-				// Find additional jumps
-				FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
 			}
 		}
 	}

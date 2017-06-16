@@ -30,6 +30,8 @@ public class Armor : HeroUnit
 	public TileObject currentSelfDestruct;
 	public TileObject recallPrefab;
 	public TileObject currentRecall;
+	private const float ARMOR_ATTACK_ANIMATION_TIME = 0.75f;
+	private const float RECALL_ANIMATION_TIME = 0.75f;
 
 	// Game objects
 	public SpriteRenderer mechAnimation;
@@ -39,21 +41,11 @@ public class Armor : HeroUnit
 	/// </summary>
 	public override void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
 	{
-		// Check for Recall
-		if ( !isRecalling )
-		{
-			// Find base moves
-			base.FindMoves ( t, prerequisite, returnOnlyJumps );
+		// Find base moves
+		base.FindMoves ( t, prerequisite, returnOnlyJumps );
 
-			// Get Self-Destruct/Recall availability
-			if ( !returnOnlyJumps )
-			{
-				if ( currentAbility2.enabled && currentAbility2.cooldown == 0 && SelfDestructRecallCheck ( ) )
-					currentAbility2.active = true;
-				else
-					currentAbility2.active = false;
-			}
-		}
+		// Get Self-Destruct/Recall availability
+		currentAbility2.active = CommandAvailabilityCheck ( currentAbility2, prerequisite );
 	}
 
 	/// <summary>
@@ -98,7 +90,7 @@ public class Armor : HeroUnit
 			else
 			{
 				// Create animation
-				Tween t = transform.DOShakePosition ( 0.75f, 0.5f );
+				Tween t = transform.DOShakePosition ( ARMOR_ATTACK_ANIMATION_TIME, 0.5f );
 
 				// Add animation to queue
 				GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
@@ -106,13 +98,27 @@ public class Armor : HeroUnit
 		}
 		else
 		{
-			// Check for Recall
-			if ( isRecalling )
-				EndRecall ( );
-
 			// KO this unit
 			base.GetAttacked ( lostMatch );
 		}
+	}
+
+	/// <summary>
+	/// Checks if the hero is capable of using a command ability.
+	/// Returns true if the command ability is availability.
+	/// </summary>
+	protected override bool CommandAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
+	{
+		// Check base conditions
+		if ( !base.CommandAvailabilityCheck ( current, prerequisite ) )
+			return false;
+
+		// Check for available tiles
+		if ( !SelfDestructRecallCheck ( ) )
+			return false;
+
+		// Return that the ability is available
+		return true;
 	}
 
 	/// <summary>
@@ -203,7 +209,7 @@ public class Armor : HeroUnit
 
 			// Begin animation
 			Sequence s = DOTween.Sequence ( )
-				.Append ( currentRecall.sprite.DOFade ( 0, 0.75f ).From ( ) )
+				.Append ( currentRecall.sprite.DOFade ( 0, RECALL_ANIMATION_TIME ).From ( ) )
 				.OnComplete ( ( ) =>
 				{
 					// Set that Recall is active
@@ -212,6 +218,9 @@ public class Armor : HeroUnit
 
 					// Start cooldown
 					StartCooldown ( currentAbility2, info.ability2 );
+
+					// Change status
+					canMove = false;
 
 					// Pause turn timer
 					if ( MatchSettings.turnTimer )
@@ -338,6 +347,18 @@ public class Armor : HeroUnit
 	}
 
 	/// <summary>
+	/// Interupts any actions that take more than one turn to complete that this unit is in the process of doing.
+	/// Call this function when this unit is being attacked or being affected by some interupting ability.
+	/// IMPORTANT: Be sure to call this function first before the interupting action since Interupts change the status effects of the action being interupted and the interupting action may apply new status effects.
+	/// </summary>
+	public override void InteruptUnit ( )
+	{
+		// Check if hero can be interupted
+		if ( isRecalling )
+			EndRecall ( );
+	}
+
+	/// <summary>
 	/// Reomves Hero 1's Recall.
 	/// </summary>
 	private void EndRecall ( )
@@ -347,5 +368,8 @@ public class Armor : HeroUnit
 
 		// Cancel Recall
 		isRecalling = false;
+
+		// End the status effect
+		canMove = true;
 	}
 }
