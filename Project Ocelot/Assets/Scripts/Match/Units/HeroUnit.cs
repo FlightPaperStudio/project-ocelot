@@ -92,8 +92,12 @@ public class HeroUnit : Unit
 	/// </summary>
 	protected virtual bool SpecialAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
 	{
-		// Check status effects
-		if ( !canUseAbility )
+		// Check movement status effect
+		if ( !status.canMove )
+			return false;
+
+		// Check ability status effect
+		if ( !status.canUseAbility )
 			return false;
 
 		// Check if the ability is enabled
@@ -133,7 +137,7 @@ public class HeroUnit : Unit
 			return false;
 
 		// Check status effects
-		if ( !canUseAbility )
+		if ( !status.canUseAbility )
 			return false;
 
 		// Check if the ability is enabled

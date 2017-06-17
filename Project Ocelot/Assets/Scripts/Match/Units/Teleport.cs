@@ -52,10 +52,6 @@ public class Teleport : HeroUnit
 		if ( !base.SpecialAvailabilityCheck ( current, prerequisite ) )
 			return false;
 
-		// Check status effects
-		if ( !canMove )
-			return false;
-
 		// Check if any moves have been made
 		if ( prerequisite != null )
 			return false;
@@ -136,7 +132,7 @@ public class Teleport : HeroUnit
 		foreach ( Unit u in owner.units )
 		{
 			// Check status effects
-			if ( u != this && !( u is Leader ) && u.canBeMoved && u.canReceiveAbilityEffectsFriendly )
+			if ( u != this && !( u is Leader ) && u.status.canBeMoved && u.status.canReceiveAbilityEffectsFriendly )
 				u.currentTile.SetTileState ( TileState.AvailableCommand );
 		}
 	}

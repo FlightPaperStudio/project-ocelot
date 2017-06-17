@@ -67,7 +67,7 @@ public class CustomMatchSettingsMenu : Menu
 		for ( int i = 0; i < HeroInfo.list.Count; i++ )
 		{
 			// Set hero setting
-			HeroSettings h = new HeroSettings ( HeroInfo.list [ i ].id, true, true, (Ability.AbilityType)HeroInfo.list [ i ].ability1.type, HeroInfo.list [ i ].ability1.duration, HeroInfo.list [ i ].ability1.cooldown, ( HeroInfo.list [ i ].id == 1 || HeroInfo.list [ i ].id == 3 || HeroInfo.list [ i ].id == 4 || HeroInfo.list [ i ].id == 5 ), (Ability.AbilityType)HeroInfo.list [ i ].ability2.type, HeroInfo.list [ i ].ability2.duration, HeroInfo.list [ i ].ability2.cooldown );
+			HeroSettings h = new HeroSettings ( HeroInfo.list [ i ].id, true, true, (Ability.AbilityType)HeroInfo.list [ i ].ability1.type, HeroInfo.list [ i ].ability1.duration, HeroInfo.list [ i ].ability1.cooldown, true, (Ability.AbilityType)HeroInfo.list [ i ].ability2.type, HeroInfo.list [ i ].ability2.duration, HeroInfo.list [ i ].ability2.cooldown );
 			heroValue.Add ( h );
 
 			// Set selection
@@ -401,6 +401,16 @@ public class CustomMatchSettingsMenu : Menu
 	{
 		// Set cooldown
 		SetCooldown ( heroValue [ 1 ].ability1, (int)value, cooldownSlider1 [ 1 ], cooldownDisplay1 [ 1 ] );
+	}
+
+	/// <summary>
+	/// Sets the current cooldown setting for Hero 2's Grapple ability.
+	/// Use this as a slider update event wrapper.
+	/// </summary>
+	public void SetGrappleCooldown ( float value )
+	{
+		// Set cooldown
+		SetCooldown ( heroValue [ 1 ].ability2, (int)value, cooldownSlider2 [ 1 ], cooldownDisplay2 [ 1 ] );
 	}
 
 	/// <summary>

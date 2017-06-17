@@ -5,27 +5,27 @@ using DG.Tweening;
 
 public class Unit : MonoBehaviour 
 {
-	// Unit info
+	// Unit information
 	public GameManager GM;
 	public int instanceID; // Every unit in a match has a unique instance ID 
 	public string characterName;
 	public Sprite displaySprite;
 
-	// Instance info
+	// Instance information
 	public Tile currentTile;
 	public Player owner;
 	public SpriteRenderer sprite;
+	public delegate void KOdelegate ( );
+	public KOdelegate koDelegate;
 
-	// Turn info
+	// Turn information
 	public List<MoveData> moveList = new List<MoveData> ( );
 	protected const float MOVE_ANIMATION_TIME = 0.5f;
 
-	// Status info
-	public bool canMove = true;
-	public bool canBeMoved = true;
-	public bool canUseAbility = true;
-	public bool canReceiveAbilityEffectsFriendly = true;
-	public bool canReceiveAbilityEffectsHostile = true;
+	// Status information
+	public StatusEffects status = new StatusEffects ( );
+	public List<Sprite> statusIcons = new List<Sprite> ( );
+	public List<string> statusTexts = new List<string> ( );
 
 	/// <summary>
 	/// Returns the two directions that are considered backwards movement for the unit.
@@ -83,7 +83,7 @@ public class Unit : MonoBehaviour
 			moveList.Clear ( );
 
 		// Check status effects
-		if ( canMove )
+		if ( status.canMove )
 		{
 			// Store which tiles are to be ignored
 			IntPair back = GetBackDirection ( owner.direction );
@@ -333,6 +333,10 @@ public class Unit : MonoBehaviour
 	/// </summary>
 	public virtual void GetAttacked ( bool lostMatch = false )
 	{
+		// Call KO delegate
+		if ( koDelegate != null )
+			koDelegate ( );
+
 		// Create animation
 		Tween t1 = transform.DOScale ( new Vector3 ( 5, 5, 5 ), MOVE_ANIMATION_TIME )
 			.OnComplete ( ( ) =>
@@ -372,6 +376,30 @@ public class Unit : MonoBehaviour
 	public virtual void InteruptUnit ( )
 	{
 
+	}
+
+	/// <summary>
+	/// Adds a new status effect prompt to be displayed in the Unit HUD.
+	/// </summary>
+	public void AddStatusPrompt ( Sprite icon, string text )
+	{
+		// Add icon
+		statusIcons.Add ( icon );
+
+		// Add text
+		statusTexts.Add ( text );
+	}
+
+	/// <summary>
+	/// Removes a status effect prompt to no longer be displayed in the Unit HUD.
+	/// </summary>
+	public void RemoveStatusPrompt ( Sprite icon, string text )
+	{
+		// Remove icon
+		statusIcons.Remove ( icon );
+
+		// Remove text
+		statusTexts.Remove ( text );
 	}
 
 	public void SetTeamColor ( Player.TeamColor color )

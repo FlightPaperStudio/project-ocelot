@@ -32,6 +32,7 @@ public class Armor : HeroUnit
 	public TileObject currentRecall;
 	private const float ARMOR_ATTACK_ANIMATION_TIME = 0.75f;
 	private const float RECALL_ANIMATION_TIME = 0.75f;
+	private const string RECALL_STATUS_PROMPT = "Recall";
 
 	// Game objects
 	public SpriteRenderer mechAnimation;
@@ -220,7 +221,8 @@ public class Armor : HeroUnit
 					StartCooldown ( currentAbility2, info.ability2 );
 
 					// Change status
-					canMove = false;
+					status.UpdateStatus ( StatusEffects.StatusType.Off, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral );
+					AddStatusPrompt ( withMechSprite, RECALL_STATUS_PROMPT );
 
 					// Pause turn timer
 					if ( MatchSettings.turnTimer )
@@ -284,7 +286,7 @@ public class Armor : HeroUnit
 
 		// Attack any adjacent enemy units
 		foreach ( Tile t in currentSelfDestruct.tile.neighbors )
-			if ( t.currentUnit != null && t.currentUnit.UnitAttackCheck ( this ) )
+			if ( t != null && t.currentUnit != null && t.currentUnit.UnitAttackCheck ( this ) )
 				t.currentUnit.GetAttacked ( );
 	}
 
@@ -370,6 +372,7 @@ public class Armor : HeroUnit
 		isRecalling = false;
 
 		// End the status effect
-		canMove = true;
+		status.UpdateStatus ( StatusEffects.StatusType.On, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral );
+		RemoveStatusPrompt ( withMechSprite, RECALL_STATUS_PROMPT );
 	}
 }

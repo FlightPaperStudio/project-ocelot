@@ -15,6 +15,9 @@ public class UnitHUD : MonoBehaviour
 	public AbilityHUD ability2;
 	public TextMeshProUGUI pawnName;
 	public RectTransform heightReference;
+	public GameObject [ ] statusPrompts;
+	public Image [ ] statusIcons;
+	public TextMeshProUGUI [ ] statusTexts;
 
 	// HUD information
 	private Unit currentUnit;
@@ -35,6 +38,28 @@ public class UnitHUD : MonoBehaviour
 		// Display unit icon
 		unitIcon.sprite = currentUnit.displaySprite;
 		unitIcon.color = Util.TeamColor ( currentUnit.owner.team );
+
+		// Display status prompts
+		for ( int i = 0; i < statusPrompts.Length; i++ )
+		{
+			// Check for status prompt
+			if ( i < u.statusIcons.Count && i < u.statusTexts.Count )
+			{
+				// Display prompt
+				statusPrompts [ i ].SetActive ( true );
+
+				// Display icon
+				statusIcons [ i ].sprite = u.statusIcons [ i ];
+
+				// Display text
+				statusTexts [ i ].text = u.statusTexts [ i ];
+			}
+			else
+			{
+				// Hide prompt
+				statusPrompts [ i ].SetActive ( false );
+			}
+		}
 
 		// Check unit type
 		if ( currentUnit is HeroUnit )

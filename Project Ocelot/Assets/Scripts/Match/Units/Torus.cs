@@ -49,10 +49,6 @@ public class Torus : HeroUnit
 		if ( !base.SpecialAvailabilityCheck ( current, prerequisite ) )
 			return false;
 
-		// Check status effects
-		if ( !canMove )
-			return false;
-
 		// Check previous moves
 		if ( CheckPrequisiteType ( prerequisite ) )
 			return false;
@@ -261,7 +257,7 @@ public class Torus : HeroUnit
 	/// </summary>
 	protected override bool CommandAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
 	{
-		// Get base conditions
+		// Check base conditions
 		if ( !base.CommandAvailabilityCheck ( current, prerequisite ) )
 			return false;
 
@@ -269,7 +265,7 @@ public class Torus : HeroUnit
 		if ( !TauntCheck ( ) )
 			return false;
 
-		// Return that ability is available
+		// Return that the ability is available
 		return true;
 	}
 
@@ -308,7 +304,7 @@ public class Torus : HeroUnit
 		if ( t != null && count <= TAUNT_RANGE )
 		{
 			// Check target and move location
-			if ( t.currentUnit != null && t.currentUnit.owner != owner && t.currentUnit.canBeMoved && t.currentUnit.canReceiveAbilityEffectsHostile && OccupyTileCheck ( t.neighbors [ Util.GetOppositeDirection ( direction ) ], null ) )
+			if ( t.currentUnit != null && t.currentUnit.owner != owner && t.currentUnit.status.canBeMoved && t.currentUnit.status.canReceiveAbilityEffectsHostile && OccupyTileCheck ( t.neighbors [ Util.GetOppositeDirection ( direction ) ], null ) )
 				return t;
 			else
 				return GetTaunt ( t.neighbors [ direction ], direction, count + 1 );

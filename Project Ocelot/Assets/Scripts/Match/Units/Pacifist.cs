@@ -35,7 +35,7 @@ public class Pacifist : HeroUnit
 			moveList.Clear ( );
 
 		// Check status effects
-		if ( canMove )
+		if ( status.canMove )
 		{
 			// Store which tiles are to be ignored
 			IntPair back = GetBackDirection ( owner.direction );
