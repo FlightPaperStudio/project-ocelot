@@ -212,7 +212,7 @@ public class HeroUnit : Unit
 	public virtual void Cooldown ( )
 	{
 		// Check for active ability type for ability 1
-		if ( currentAbility1.type != Ability.AbilityType.Passive )
+		if ( currentAbility1.enabled && currentAbility1.type != Ability.AbilityType.Passive )
 		{
 			// Check if current duration is active
 			if ( currentAbility1.duration > 0 )
@@ -234,7 +234,7 @@ public class HeroUnit : Unit
 		}
 
 		// Check for active ability type for ability 2
-		if ( currentAbility2.type != Ability.AbilityType.Passive )
+		if ( currentAbility2.enabled && currentAbility2.type != Ability.AbilityType.Passive )
 		{
 			// Check if current duration is active
 			if ( currentAbility2.duration > 0 )

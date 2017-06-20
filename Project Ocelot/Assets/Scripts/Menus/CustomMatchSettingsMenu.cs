@@ -365,6 +365,16 @@ public class CustomMatchSettingsMenu : Menu
 	}
 
 	/// <summary>
+	/// Sets the current duration setting for Hero 4's Life Drain ability.
+	/// Use this as a slider update event wrapper.
+	/// </summary>
+	public void SetLifeDrainDuration ( float value )
+	{
+		// Set duration
+		SetDuration ( heroValue [ 5 ].ability1, (int)value, durationSlider1 [ 5 ], durationDisplay1 [ 5 ] );
+	}
+
+	/// <summary>
 	/// Sets the current duration setting for an ability.
 	/// Does not apply to the actual match settings until the match starts.
 	/// </summary>
@@ -461,6 +471,16 @@ public class CustomMatchSettingsMenu : Menu
 	{
 		// Set cooldown
 		SetCooldown ( heroValue [ 4 ].ability2, (int)value, cooldownSlider2 [ 4 ], cooldownDisplay2 [ 4 ] );
+	}
+
+	/// <summary>
+	/// Sets the current cooldown setting for Hero 4's Grim Reaper ability.
+	/// Use this as a slider update event wrapper.
+	/// </summary>
+	public void SetGrimReaperCooldown ( float value )
+	{
+		// Set cooldown
+		SetCooldown ( heroValue [ 5 ].ability2, (int)value, cooldownSlider2 [ 5 ], cooldownDisplay2 [ 5 ] );
 	}
 
 	/// <summary>

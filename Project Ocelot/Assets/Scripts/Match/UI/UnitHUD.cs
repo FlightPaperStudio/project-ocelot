@@ -239,27 +239,36 @@ public class UnitHUD : MonoBehaviour
 		if ( current.duration > 0 )
 		{
 			// Check if the ability's duration is full
-			if ( current.duration != setting.duration )
+			if ( current.duration == setting.duration && !current.active )
 			{
-				// Display that that the ability's duration is not full
+				// Display the ability normally
+				hud.activityDisplay.gameObject.SetActive ( false );
+			}
+			else
+			{
+				// Display that that the ability is active
 				hud.activityDisplay.gameObject.SetActive ( true );
 				hud.activityDisplay.color = ACTIVE;
 
 				// Calculate percentage
 				hud.activityDisplay.rectTransform.offsetMax = CalculateCountSize ( (float)current.duration, (float)setting.duration, heightReference.sizeDelta.y );
 			}
-			else
-			{
-				// Display that the ability is active
-				hud.activityDisplay.gameObject.SetActive ( false );
-			}
 		}
 		else
 		{
-			// Display that the ability is inactive
-			hud.activityDisplay.gameObject.SetActive ( true );
-			hud.activityDisplay.rectTransform.offsetMax = Vector2.zero;
-			hud.activityDisplay.color = INACTIVE;
+			// Check if the ability is still active once the duration has expired
+			if ( current.active )
+			{
+				// Display the ability normally
+				hud.activityDisplay.gameObject.SetActive ( false );
+			}
+			else
+			{
+				// Display that the ability is inactive
+				hud.activityDisplay.gameObject.SetActive ( true );
+				hud.activityDisplay.rectTransform.offsetMax = Vector2.zero;
+				hud.activityDisplay.color = INACTIVE;
+			}
 		}
 	}
 

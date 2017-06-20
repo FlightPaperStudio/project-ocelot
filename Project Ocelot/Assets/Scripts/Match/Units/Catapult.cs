@@ -27,8 +27,8 @@ public class Catapult : HeroUnit
 	private Unit grappleTarget;
 	private const float GRAPPLE_ANIMATION_TIME = 0.25f;
 	private const string CATAPULT_STATUS_PROMPT = "Exhausted";
-	private const string GRAPPLE_STATUS_PROMPT = "Grappling";
-	private const string GRAPPLE_TARGET_STATUS_PROMPT = "Grappled";
+	private const string GRAPPLE_STATUS_PROMPT = "Grapple";
+	private const string GRAPPLE_TARGET_STATUS_PROMPT = "Restrained";
 
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves available.
@@ -333,7 +333,7 @@ public class Catapult : HeroUnit
 				grappleTarget.AddStatusPrompt ( abilitySprite2, GRAPPLE_TARGET_STATUS_PROMPT );
 
 				// Set target's KO delegate for interupts
-				grappleTarget.koDelegate += EndGrapple;
+				grappleTarget.koDelegate += EndGrappleDelegate;
 
 				// Pause turn timer
 				if ( MatchSettings.turnTimer )
@@ -388,7 +388,7 @@ public class Catapult : HeroUnit
 				grappleTarget.RemoveStatusPrompt ( abilitySprite2, GRAPPLE_TARGET_STATUS_PROMPT );
 
 				// Remove target's KO delegate
-				grappleTarget.koDelegate -= EndGrapple;
+				grappleTarget.koDelegate -= EndGrappleDelegate;
 
 				// Clear target
 				grappleTarget = null;
@@ -397,5 +397,16 @@ public class Catapult : HeroUnit
 		// Add animations to queue
 		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
 		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+	}
+
+	/// <summary>
+	/// Ends the effects of the Grapple ability.
+	/// This function builds the animation queue.
+	/// Use this function as a KO delegate wrapper.
+	/// </summary>
+	private void EndGrappleDelegate ( Unit u )
+	{
+		// End Grapple
+		EndGrapple ( );
 	}
 }

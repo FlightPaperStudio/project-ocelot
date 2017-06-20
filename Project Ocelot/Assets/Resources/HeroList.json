@@ -105,6 +105,27 @@
 				"duration": 0,
 				"cooldown": 6
 			}
+		},
+		{
+			"id": 6,
+			"characterName": "Hero 4",
+			"characterDescription": "Insert Hero 4 description here...",
+			"ability1":
+			{
+				"name": "Life Drain",
+				"description": "Insert Life Drain description here...",
+				"type": 0,
+				"duration": 1,
+				"cooldown": 0
+			},
+			"ability2":
+			{
+				"name": "Grim Reaper",
+				"description": "Insert Grim Reaper description here...",
+				"type": 1,
+				"duration": 0,
+				"cooldown": 5
+			}
 		}
 	]
 }

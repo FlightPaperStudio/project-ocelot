@@ -15,7 +15,7 @@ public class Unit : MonoBehaviour
 	public Tile currentTile;
 	public Player owner;
 	public SpriteRenderer sprite;
-	public delegate void KOdelegate ( );
+	public delegate void KOdelegate ( Unit u );
 	public KOdelegate koDelegate;
 
 	// Turn information
@@ -335,7 +335,7 @@ public class Unit : MonoBehaviour
 	{
 		// Call KO delegate
 		if ( koDelegate != null )
-			koDelegate ( );
+			koDelegate ( this );
 
 		// Create animation
 		Tween t1 = transform.DOScale ( new Vector3 ( 5, 5, 5 ), MOVE_ANIMATION_TIME )

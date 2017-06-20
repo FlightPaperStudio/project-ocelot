@@ -276,10 +276,7 @@ public class GameManager : MonoBehaviour
 
 		// Add delay at the end of the animation
 		s.AppendInterval ( ANIMATION_BUFFER );
-		s.OnComplete ( ( ) =>
-		{
-			Debug.Log ( "sequence complete" );
-		} );
+
 		// Play animation queue
 		s.Play ( );
 
@@ -563,7 +560,7 @@ public class GameManager : MonoBehaviour
 	{
 		// Play move animations
 		yield return PlayAnimationQueue ( ).WaitForCompletion ( );
-		Debug.Log ( "next line of code" );
+
 		// Play post-turn animations
 		//yield return PlayPostAnimationQueue ( ).WaitForCompletion ( );
 
