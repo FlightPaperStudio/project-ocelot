@@ -220,9 +220,8 @@ public class Armor : HeroUnit
 					// Start cooldown
 					StartCooldown ( currentAbility2, info.ability2 );
 
-					// Change status
-					status.UpdateStatus ( StatusEffects.StatusType.Off, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral );
-					AddStatusPrompt ( withMechSprite, RECALL_STATUS_PROMPT );
+					// Apply status effect
+					status.AddStatusEffect ( withMechSprite, RECALL_STATUS_PROMPT, currentAbility2.duration, StatusEffects.StatusType.CanMove );
 
 					// Pause turn timer
 					if ( MatchSettings.turnTimer )
@@ -357,7 +356,13 @@ public class Armor : HeroUnit
 	{
 		// Check if hero can be interupted
 		if ( isRecalling )
+		{
+			// End recall
 			EndRecall ( );
+
+			// Interupt status effect
+			status.RemoveStatusEffect ( withMechSprite, RECALL_STATUS_PROMPT, StatusEffects.StatusType.CanMove );
+		}
 	}
 
 	/// <summary>
@@ -370,9 +375,5 @@ public class Armor : HeroUnit
 
 		// Cancel Recall
 		isRecalling = false;
-
-		// End the status effect
-		status.UpdateStatus ( StatusEffects.StatusType.On, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral );
-		RemoveStatusPrompt ( withMechSprite, RECALL_STATUS_PROMPT );
 	}
 }

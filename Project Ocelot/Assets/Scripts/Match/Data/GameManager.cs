@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
 	}
 	public List<TurnAnimation> animationQueue = new List<TurnAnimation> ( );
 	public List<TurnAnimation> postAnimationQueue = new List<TurnAnimation> ( );
+	public List<Unit> unitQueue = new List<Unit> ( );
 	private const float ANIMATION_BUFFER = 0.1f;
 	
 	// Unit information
@@ -158,7 +159,7 @@ public class GameManager : MonoBehaviour
 		yield return UI.splash.Slide ( currentPlayer.playerName + "'s Turn", Util.TeamColor ( currentPlayer.team ), true ).WaitForCompletion ( );
 
 		// Set cooldowns
-		UpdateAbilityCooldowns ( );
+		UpdateUnitCountdowns ( );
 
 		// Set durations
 		UpdateTileObjectDurations ( );
@@ -187,6 +188,7 @@ public class GameManager : MonoBehaviour
 		DisplayAvailableUnits ( );
 		BringPlayerToTheFront ( currentPlayer );
 		selectedUnit = null;
+		selectedMove = null;
 
 		// Start turn timer
 		if ( MatchSettings.turnTimer )
@@ -194,13 +196,16 @@ public class GameManager : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Updates all of the player's heroes' cooldowns and durations.
+	/// Updates all of the player's unit's status effects, ability cooldowns, and ability durations.
 	/// </summary>
-	private void UpdateAbilityCooldowns ( )
+	private void UpdateUnitCountdowns ( )
 	{
 		// Access each of the player's units
 		foreach ( Unit u in currentPlayer.units )
 		{
+			// Set status effects
+			u.status.UpdateDurations ( );
+
 			// Set cooldowns
 			if ( u is HeroUnit )
 			{
@@ -438,8 +443,8 @@ public class GameManager : MonoBehaviour
 	/// </summary>
 	public void SelectMove ( Tile t, bool isConflict = false, bool isLeftClick = true )
 	{
-		// Hide mid-turn controls
-		UI.ToggleMidTurnControls ( true );
+		// Display mid-turn controls
+		UI.ToggleMidTurnControls ( true, false );
 
 		// Prevent any command usage
 		UI.unitHUD.DisableCommandButtons ( );
@@ -470,15 +475,21 @@ public class GameManager : MonoBehaviour
 
 	/// <summary>
 	/// Executes all of the current moves selected.
-	/// Use this as a button click event wrapper.
 	/// </summary>
-	public void ExecuteMove ( )
+	public void ExecuteMove ( bool isPanicMove )
 	{
-		// Mark that it is no longer the beginning phase of a turn
-		isStartOfTurn = false;
+		// Check for the start of turn
+		if ( isStartOfTurn )
+		{
+			// Add selected unit to unit queue
+			unitQueue.Add ( selectedUnit );
 
-		// End the player's turn
-		EndTurn ( );
+			// Mark that it is no longer the beginning phase of a turn
+			isStartOfTurn = false;
+		}
+
+		// End the unit's turn
+		EndTurn ( isPanicMove );
 	}
 
 	/// <summary>
@@ -488,7 +499,7 @@ public class GameManager : MonoBehaviour
 	public void CancelMove ( )
 	{
 		// Hide mid-turn controls
-		UI.ToggleMidTurnControls ( false );
+		UI.ToggleMidTurnControls ( false, !isStartOfTurn );
 
 		// Remove selected move
 		selectedMove = null;
@@ -498,25 +509,65 @@ public class GameManager : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Continues a player's turn after a unit jumps.
+	/// Forfeits the unit's movement and moves to the next unit in the unit queue or ends the player's turn.
+	/// </summary>
+	public void SkipUnit ( bool absoluteEnd )
+	{
+		// Clear previous animation queues
+		animationQueue.Clear ( );
+		postAnimationQueue.Clear ( );
+
+		// Hide unit HUD
+		UI.unitHUD.HideHUD ( );
+
+		// Hide mid-turn controls
+		UI.ToggleMidTurnControls ( false, false );
+
+		// Reset tiles from previous turn
+		board.ResetTiles ( );
+
+		// Remove selected unit from the unit queue
+		unitQueue.Remove ( selectedUnit );
+
+		// Check unit queue
+		if ( unitQueue.Count > 0 && !absoluteEnd )
+		{
+			// Continue the player's turn
+			ContinueTurn ( );
+		}
+		else
+		{
+			// Clear unit queue
+			if ( absoluteEnd )
+				unitQueue.Clear ( );
+
+			// Start the next player's turn
+			currentPlayer = GetNextPlayer ( );
+			StartTurn ( );
+		}
+	}
+
+	/// <summary>
+	/// Continues a player's turn when units still remain in the unit queue.
 	/// </summary>
 	public void ContinueTurn ( )
 	{
+		// Select the next unit in the unit queue
+		selectedUnit = unitQueue [ 0 ];
+
+		// Clear selected move
+		selectedMove = null;
+
+		// Find unit moves
+		selectedUnit.FindMoves ( selectedUnit.currentTile, null, false );
+		selectedUnit.MoveConflictCheck ( );
+
 		// Hide mid-turn controls
-		UI.ToggleMidTurnControls ( true );
+		UI.ToggleMidTurnControls ( false, true );
 
 		// Resume turn timer
 		if ( MatchSettings.turnTimer )
-		{
-			// Check if out of time
-			if ( UI.timer.isOutOfTime )
-				EndTurn ( );
-			else
-				UI.timer.ResumeTimer ( );
-		}
-
-		// Reset board to make only the selected unit interactable
-		board.ResetTiles ( );
+			UI.timer.ResumeTimer ( );
 
 		// Continue the selected unit's turn
 		SelectUnit ( selectedUnit );
@@ -527,9 +578,10 @@ public class GameManager : MonoBehaviour
 	#region End of Turn Setup
 
 	/// <summary>
-	/// Ends the current player's turn.
+	/// Plays the animations at the end of a unit's turn, and then either ends the player's turn or begins the next unit's turn.
+	/// Absolute End will end the player's turn regardless of remaining unit turns.
 	/// </summary>
-	private void EndTurn ( )
+	private void EndTurn ( bool absoluteEnd )
 	{
 		// Clear previous animation queues
 		animationQueue.Clear ( );
@@ -542,21 +594,20 @@ public class GameManager : MonoBehaviour
 		board.ResetTiles ( );
 
 		// Hide mid-turn controls
-		UI.ToggleMidTurnControls ( false );
+		UI.ToggleMidTurnControls ( false, false );
 
 		// Pause turn timer
 		if ( MatchSettings.turnTimer )
 			UI.timer.PauseTimer ( );
 
 		// Play animations
-		StartCoroutine ( EndTurnCoroutine ( ) );
+		StartCoroutine ( EndTurnCoroutine ( absoluteEnd ) );
 	}
 
 	/// <summary>
 	/// Ends the current player's turn and begins the next player's turn with an animation.
 	/// </summary>
-	/// <returns></returns>
-	private IEnumerator EndTurnCoroutine ( )
+	private IEnumerator EndTurnCoroutine ( bool absoluteEnd )
 	{
 		// Play move animations
 		yield return PlayAnimationQueue ( ).WaitForCompletion ( );
@@ -582,9 +633,25 @@ public class GameManager : MonoBehaviour
 		}
 		else
 		{
-			// Start the next player's turn
-			currentPlayer = GetNextPlayer ( );
-			StartTurn ( );
+			// Remove selected unit from the unit queue
+			unitQueue.Remove ( selectedUnit );
+
+			// Check unit queue
+			if ( unitQueue.Count > 0 && !absoluteEnd )
+			{
+				// Continue the player's turn
+				ContinueTurn ( );
+			}
+			else
+			{
+				// Clear unit queue
+				if ( absoluteEnd )
+					unitQueue.Clear ( );
+
+				// Start the next player's turn
+				currentPlayer = GetNextPlayer ( );
+				StartTurn ( );
+			}
 		}
 	}
 
@@ -656,7 +723,7 @@ public class GameManager : MonoBehaviour
 	private void ForfeitMatch ( )
 	{
 		LoseMatch ( currentPlayer );
-		EndTurn ( );
+		EndTurn ( true );
 	}
 
 	/// <summary>

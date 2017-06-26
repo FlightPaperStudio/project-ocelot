@@ -189,9 +189,9 @@ public class Catapult : HeroUnit
 				// Start special ability cooldown
 				StartCooldown ( currentAbility1, info.ability1 );
 
-				// Change status
-				status.UpdateStatus ( StatusEffects.StatusType.Off, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral );
-				AddStatusPrompt ( abilitySprite1, CATAPULT_STATUS_PROMPT );
+				// Add status effect
+				status.AddStatusEffect ( abilitySprite1, CATAPULT_STATUS_PROMPT, currentAbility1.duration, StatusEffects.StatusType.CanMove );
+				GM.UI.unitHUD.UpdateStatusEffects ( );
 
 				// Set unit and tile data
 				SetUnitToTile ( data.tile );
@@ -207,13 +207,7 @@ public class Catapult : HeroUnit
 	protected override void OnDurationComplete ( AbilitySettings current )
 	{
 		// Check ability
-		if ( current == currentAbility1 )
-		{
-			// End the status effect
-			status.UpdateStatus ( StatusEffects.StatusType.On, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral );
-			RemoveStatusPrompt ( abilitySprite1, CATAPULT_STATUS_PROMPT );
-		}
-		else
+		if ( current == currentAbility2 )
 		{
 			// End the grapple
 			EndGrapple ( );
@@ -324,13 +318,11 @@ public class Catapult : HeroUnit
 				// Start cooldown
 				StartCooldown ( currentAbility2, info.ability2 );
 
-				// Change hero's status
-				status.UpdateStatus ( StatusEffects.StatusType.Off, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Off, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral );
-				AddStatusPrompt ( abilitySprite2, GRAPPLE_STATUS_PROMPT );
+				// Apply hero's status effect
+				status.AddStatusEffect ( abilitySprite2, GRAPPLE_STATUS_PROMPT, currentAbility2.duration, StatusEffects.StatusType.CanMove, StatusEffects.StatusType.CanUseAbility );
 
-				// Change target's status
-				grappleTarget.status.UpdateStatus ( StatusEffects.StatusType.Off, StatusEffects.StatusType.Off, StatusEffects.StatusType.Off, StatusEffects.StatusType.Off, StatusEffects.StatusType.Off );
-				grappleTarget.AddStatusPrompt ( abilitySprite2, GRAPPLE_TARGET_STATUS_PROMPT );
+				// Apply target's status effect
+				grappleTarget.status.AddStatusEffect ( abilitySprite2, GRAPPLE_TARGET_STATUS_PROMPT, currentAbility2.duration, StatusEffects.StatusType.CanMove, StatusEffects.StatusType.CanBeMoved, StatusEffects.StatusType.CanUseAbility, StatusEffects.StatusType.CanReceiveAbilityEffectsFriendly, StatusEffects.StatusType.CanReceiveAbilityEffectsHostile );
 
 				// Set target's KO delegate for interupts
 				grappleTarget.koDelegate += EndGrappleDelegate;
@@ -357,7 +349,13 @@ public class Catapult : HeroUnit
 	{
 		// Check if currently grappling
 		if ( grappleTarget != null )
+		{
+			// End Grapple
 			EndGrapple ( );
+
+			// Remove the hero's status effect
+			status.RemoveStatusEffect ( abilitySprite2, GRAPPLE_STATUS_PROMPT, StatusEffects.StatusType.CanMove );
+		}
 	}
 
 	/// <summary>
@@ -379,13 +377,8 @@ public class Catapult : HeroUnit
 			.SetLoops ( 2, LoopType.Yoyo )
 			.OnComplete ( ( ) =>
 			{
-				// End the hero's status effect
-				status.UpdateStatus ( StatusEffects.StatusType.On, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.On, StatusEffects.StatusType.Neutral, StatusEffects.StatusType.Neutral );
-				RemoveStatusPrompt ( abilitySprite2, GRAPPLE_STATUS_PROMPT );
-
-				// End the unit's status effect
-				grappleTarget.status.UpdateStatus ( StatusEffects.StatusType.On, StatusEffects.StatusType.On, StatusEffects.StatusType.On, StatusEffects.StatusType.On, StatusEffects.StatusType.On );
-				grappleTarget.RemoveStatusPrompt ( abilitySprite2, GRAPPLE_TARGET_STATUS_PROMPT );
+				// Remove the target's status effect
+				grappleTarget.status.RemoveStatusEffect ( abilitySprite2, GRAPPLE_TARGET_STATUS_PROMPT, StatusEffects.StatusType.CanMove, StatusEffects.StatusType.CanBeMoved, StatusEffects.StatusType.CanUseAbility, StatusEffects.StatusType.CanReceiveAbilityEffectsFriendly, StatusEffects.StatusType.CanReceiveAbilityEffectsHostile );
 
 				// Remove target's KO delegate
 				grappleTarget.koDelegate -= EndGrappleDelegate;
@@ -408,5 +401,8 @@ public class Catapult : HeroUnit
 	{
 		// End Grapple
 		EndGrapple ( );
+
+		// Remove the hero's status effect
+		status.RemoveStatusEffect ( abilitySprite2, GRAPPLE_STATUS_PROMPT, StatusEffects.StatusType.CanMove );
 	}
 }

@@ -24,8 +24,6 @@ public class Unit : MonoBehaviour
 
 	// Status information
 	public StatusEffects status = new StatusEffects ( );
-	public List<Sprite> statusIcons = new List<Sprite> ( );
-	public List<string> statusTexts = new List<string> ( );
 
 	/// <summary>
 	/// Returns the two directions that are considered backwards movement for the unit.
@@ -376,30 +374,6 @@ public class Unit : MonoBehaviour
 	public virtual void InteruptUnit ( )
 	{
 
-	}
-
-	/// <summary>
-	/// Adds a new status effect prompt to be displayed in the Unit HUD.
-	/// </summary>
-	public void AddStatusPrompt ( Sprite icon, string text )
-	{
-		// Add icon
-		statusIcons.Add ( icon );
-
-		// Add text
-		statusTexts.Add ( text );
-	}
-
-	/// <summary>
-	/// Removes a status effect prompt to no longer be displayed in the Unit HUD.
-	/// </summary>
-	public void RemoveStatusPrompt ( Sprite icon, string text )
-	{
-		// Remove icon
-		statusIcons.Remove ( icon );
-
-		// Remove text
-		statusTexts.Remove ( text );
 	}
 
 	public void SetTeamColor ( Player.TeamColor color )

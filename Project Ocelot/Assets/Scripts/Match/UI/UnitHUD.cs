@@ -40,26 +40,7 @@ public class UnitHUD : MonoBehaviour
 		unitIcon.color = Util.TeamColor ( currentUnit.owner.team );
 
 		// Display status prompts
-		for ( int i = 0; i < statusPrompts.Length; i++ )
-		{
-			// Check for status prompt
-			if ( i < u.statusIcons.Count && i < u.statusTexts.Count )
-			{
-				// Display prompt
-				statusPrompts [ i ].SetActive ( true );
-
-				// Display icon
-				statusIcons [ i ].sprite = u.statusIcons [ i ];
-
-				// Display text
-				statusTexts [ i ].text = u.statusTexts [ i ];
-			}
-			else
-			{
-				// Hide prompt
-				statusPrompts [ i ].SetActive ( false );
-			}
-		}
+		UpdateStatusEffects ( );
 
 		// Check unit type
 		if ( currentUnit is HeroUnit )
@@ -114,6 +95,34 @@ public class UnitHUD : MonoBehaviour
 			// Hide ability HUD
 			unitName.gameObject.SetActive ( false );
 			abilityContainer.SetActive ( false );
+		}
+	}
+
+	/// <summary>
+	/// Displays all of the current status effects applied to the unit.
+	/// </summary>
+	public void UpdateStatusEffects ( )
+	{
+		// Check each status prompt
+		for ( int i = 0; i < statusPrompts.Length; i++ )
+		{
+			// Check for status prompt
+			if ( i < currentUnit.status.effects.Count )
+			{
+				// Display prompt
+				statusPrompts [ i ].SetActive ( true );
+
+				// Display icon
+				statusIcons [ i ].sprite = currentUnit.status.effects [ i ].icon;
+
+				// Display text
+				statusTexts [ i ].text = currentUnit.status.effects [ i ].text;
+			}
+			else
+			{
+				// Hide prompt
+				statusPrompts [ i ].SetActive ( false );
+			}
 		}
 	}
 

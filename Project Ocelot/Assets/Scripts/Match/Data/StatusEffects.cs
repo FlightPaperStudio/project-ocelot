@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class StatusEffects
 {
-	// Status effect type
+	// Status effect information
 	public enum StatusType
 	{
-		On,
-		Neutral,
-		Off
+		CanMove,
+		CanBeMoved,
+		CanUseAbility,
+		CanReceiveAbilityEffectsFriendly,
+		CanReceiveAbilityEffectsHostile
 	}
 
 	// Determines if the unit can move
@@ -18,7 +20,7 @@ public class StatusEffects
 		get;
 		private set;
 	}
-	private int canMoveCount = 0;
+	private int canMoveStack = 0;
 
 	// Determines if the unit can be moved by abilities
 	public bool canBeMoved
@@ -26,7 +28,7 @@ public class StatusEffects
 		get;
 		private set;
 	}
-	private int canBeMovedCount = 0;
+	private int canBeMovedStack = 0;
 
 	// Determines if the unit can use abilities
 	public bool canUseAbility
@@ -34,7 +36,7 @@ public class StatusEffects
 		get;
 		private set;
 	}
-	private int canUseAbilityCount = 0;
+	private int canUseAbilityStack = 0;
 
 	// Determines if the unit can receive the effects of abilities from ally untis
 	public bool canReceiveAbilityEffectsFriendly
@@ -42,7 +44,7 @@ public class StatusEffects
 		get;
 		private set;
 	}
-	private int canReceiveAbilityEffectsFriendlyCount = 0;
+	private int canReceiveAbilityEffectsFriendlyStack = 0;
 
 	// Determines if the unit can receive the effects of abilities from enemy units
 	public bool canReceiveAbilityEffectsHostile
@@ -50,7 +52,25 @@ public class StatusEffects
 		get;
 		private set;
 	}
-	private int canReceiveAbilityEffectsHostileCount = 0;
+	private int canReceiveAbilityEffectsHostileStack = 0;
+
+	// All of the information to needed to add a new status effect to a unit.
+	public class StatusEffect
+	{
+		public Sprite icon;
+		public string text;
+		public int duration;
+		public StatusType [ ] effects;
+
+		public StatusEffect ( Sprite _icon, string _text, int _duration, params StatusType [ ] _effects )
+		{
+			icon = _icon;
+			text = _text;
+			duration = _duration;
+			effects = _effects;
+		}
+	}
+	public List<StatusEffect> effects = new List<StatusEffect> ( );
 
 	public StatusEffects ( )
 	{
@@ -63,51 +83,171 @@ public class StatusEffects
 	}
 
 	/// <summary>
-	/// Updates the current status by adding new status effects to the stack.
-	/// On adds a positive effect to the stack.
-	/// Off adds a negative effect to the stack.
-	/// Neutral adds no effect to the stack.
-	/// The default state of a status is true, which is when the stack is empty at 0.
+	/// Adds a new status effect to the stack.
 	/// </summary>
-	public void UpdateStatus ( StatusType _canMove, StatusType _canBeMoved, StatusType _canUseAbility, StatusType _canReceiveAbilityEffectsFriendly, StatusType _canReceiveAbilityEffectsHostile )
+	public void AddStatusEffect ( Sprite _icon, string _text, int _duration, params StatusType [ ] _effects )
 	{
-		// Set Can Move status
-		canMoveCount = CalculateStatus ( canMoveCount, _canMove );
-		canMove = canMoveCount == 0;
+		// Create new status effect
+		StatusEffect e = new StatusEffect ( _icon, _text, _duration, _effects );
 
-		// Set Can Be Moved status
-		canBeMovedCount = CalculateStatus ( canBeMovedCount, _canBeMoved );
-		canBeMoved = canBeMovedCount == 0;
+		// Check for existing status effect
+		if ( effects.Exists ( match => match.icon == _icon && match.text == _text && match.effects == _effects ) )
+		{
+			// Refressh status effect
+			effects.Find ( match => match.icon == _icon && match.text == _text && match.effects == _effects ).duration = _duration;
+		}
+		else
+		{
+			// Apply status effect
+			effects.Add ( e );
 
-		// Set Can Use Ability status
-		canUseAbilityCount = CalculateStatus ( canUseAbilityCount, _canUseAbility );
-		canUseAbility = canUseAbilityCount == 0;
+			// Increment each effect
+			foreach ( StatusType type in e.effects )
+				IncrementEffect ( type );
 
-		// Set Can Receive Friendly Ability Effects status
-		canReceiveAbilityEffectsFriendlyCount = CalculateStatus ( canReceiveAbilityEffectsFriendlyCount, _canReceiveAbilityEffectsFriendly );
-		canReceiveAbilityEffectsFriendly = canReceiveAbilityEffectsFriendlyCount == 0;
-
-		// Set Can Receive Hostile Ability Effects status
-		canReceiveAbilityEffectsHostileCount = CalculateStatus ( canReceiveAbilityEffectsHostileCount, _canReceiveAbilityEffectsHostile );
-		canReceiveAbilityEffectsHostile = canReceiveAbilityEffectsHostileCount == 0;
+			// Update the current status
+			UpdateStatus ( );
+		}
 	}
 
 	/// <summary>
-	/// Calculates how a new status effect adds to the current status stack.
+	/// Increments the current stack of a particular status type.
 	/// </summary>
-	private int CalculateStatus ( int _count, StatusType _type )
+	private void IncrementEffect ( StatusType _type )
 	{
-		// Check type
-		if ( _type == StatusType.On )
-			_count++;
-		else if ( _type == StatusType.Off )
-			_count--;
+		// Check type and increment the corrisponding stack
+		switch ( _type )
+		{
+		case StatusType.CanMove:
+			canMoveStack++;
+			break;
+		case StatusType.CanBeMoved:
+			canBeMovedStack++;
+			break;
+		case StatusType.CanUseAbility:
+			canUseAbilityStack++;
+			break;
+		case StatusType.CanReceiveAbilityEffectsFriendly:
+			canReceiveAbilityEffectsFriendlyStack++;
+			break;
+		case StatusType.CanReceiveAbilityEffectsHostile:
+			canReceiveAbilityEffectsHostileStack++;
+			break;
+		}
+	}
 
-		// Check for positive values
-		if ( _count > 0 )
-			_count = 0;
+	/// <summary>
+	/// Updates the current status by calculating the current stack of each status.
+	/// The default state of each status is true, which is when its current stack is empty at 0.
+	/// </summary>
+	private void UpdateStatus ( )
+	{
+		// Set Can Move status
+		canMove = canMoveStack == 0;
 
-		// Return status
-		return _count;
+		// Set Can Be Moved status
+		canBeMoved = canBeMovedStack == 0;
+
+		// Set Can Use Ability status
+		canUseAbility = canUseAbilityStack == 0;
+
+		// Set Can Receive Friendly Ability Effects status
+		canReceiveAbilityEffectsFriendly = canReceiveAbilityEffectsFriendlyStack == 0;
+
+		// Set Can Receive Hostile Ability Effects status
+		canReceiveAbilityEffectsHostile = canReceiveAbilityEffectsHostileStack == 0;
+	}
+
+	/// <summary>
+	/// Decrements the duration of each status effect currently applied.
+	/// </summary>
+	public void UpdateDurations ( )
+	{
+		// Check each applied status effect
+		foreach ( StatusEffect e in effects )
+		{
+			// Decrement duration
+			e.duration--;
+
+			// Check for expired duration
+			if ( e.duration <= 0 )
+			{
+				// Decrement each effect for the expired status effect
+				foreach ( StatusType type in e.effects )
+					DecrementEffect ( type );
+			}
+		}
+
+		// Remove any expired status effects
+		effects.RemoveAll ( match => match.duration == 0 );
+
+		// Update the current status
+		UpdateStatus ( );
+	}
+
+	/// <summary>
+	/// Decrements the current stack of a particular status type.
+	/// </summary>
+	private void DecrementEffect ( StatusType _type )
+	{
+		// Check type and decrement the corrisponding stack
+		switch ( _type )
+		{
+		case StatusType.CanMove:
+			canMoveStack = DecrementStack ( canMoveStack );
+			break;
+		case StatusType.CanBeMoved:
+			canBeMovedStack = DecrementStack ( canBeMovedStack );
+			break;
+		case StatusType.CanUseAbility:
+			canUseAbilityStack = DecrementStack ( canUseAbilityStack );
+			break;
+		case StatusType.CanReceiveAbilityEffectsFriendly:
+			canReceiveAbilityEffectsFriendlyStack = DecrementStack ( canReceiveAbilityEffectsFriendlyStack );
+			break;
+		case StatusType.CanReceiveAbilityEffectsHostile:
+			canReceiveAbilityEffectsHostileStack = DecrementStack ( canReceiveAbilityEffectsHostileStack );
+			break;
+		}
+	}
+
+	/// <summary>
+	/// Decrements a stack and checks for negative overflow.
+	/// </summary>
+	private int DecrementStack ( int _stack )
+	{
+		// Decrement stack
+		_stack--;
+
+		// Check for negative overflow
+		if ( _stack < 0 )
+			_stack = 0;
+
+		// Return stack value
+		return _stack;
+	}
+
+	/// <summary>
+	/// Finds and removes an applied status effect.
+	/// Use this in case of interupts.
+	/// </summary>
+	public void RemoveStatusEffect ( Sprite _icon, string _text, params StatusType [ ] _effects )
+	{
+		// Find status effect
+		if ( effects.Exists ( match => match.icon == _icon && match.text == _text && match.effects == _effects ) )
+		{
+			// Get the status effect
+			StatusEffect e = effects.Find ( match => match.icon == _icon && match.text == _text && match.effects == _effects );
+
+			// Decrement each effect for status effect
+			foreach ( StatusType type in e.effects )
+				DecrementEffect ( type );
+
+			// Update the current status
+			UpdateStatus ( );
+
+			// Remove the status effect
+			effects.Remove ( e );
+		}
 	}
 }

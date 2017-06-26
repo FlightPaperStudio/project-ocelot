@@ -373,6 +373,16 @@ public class CustomMatchSettingsMenu : Menu
 		// Set duration
 		SetDuration ( heroValue [ 5 ].ability1, (int)value, durationSlider1 [ 5 ], durationDisplay1 [ 5 ] );
 	}
+	
+	/// <summary>
+	/// Sets the current duration setting for Hero 5's Rally ability.
+	/// Use this as a slider update event wrapper.
+	/// </summary>
+	public void SetRallyDuration ( float value )
+	{
+		// Set duration
+		SetDuration ( heroValue [ 6 ].ability1, (int)value, durationSlider1 [ 6 ], durationDisplay1 [ 6 ], "Use", "Uses" );
+	}
 
 	/// <summary>
 	/// Sets the current duration setting for an ability.
@@ -481,6 +491,16 @@ public class CustomMatchSettingsMenu : Menu
 	{
 		// Set cooldown
 		SetCooldown ( heroValue [ 5 ].ability2, (int)value, cooldownSlider2 [ 5 ], cooldownDisplay2 [ 5 ] );
+	}
+
+	/// <summary>
+	/// Sets the current cooldown setting for Hero 5's Backflip ability.
+	/// Use this as a slider update event wrapper.
+	/// </summary>
+	public void SetBackflipCooldown ( float value )
+	{
+		// Set cooldown
+		SetCooldown ( heroValue [ 6 ].ability2, (int)value, cooldownSlider2 [ 6 ], cooldownDisplay2 [ 6 ] );
 	}
 
 	/// <summary>

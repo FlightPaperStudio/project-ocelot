@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour
 	public GameObject midTurnControls;
 	public GameObject endOfMatchControls;
 	public GameObject conflictPrompt;
+	public GameObject skipControls;
 
 	// UI information
 	public PlayerHUD [ ] huds;
@@ -76,7 +77,7 @@ public class UIManager : MonoBehaviour
 		unitHUD.HideHUD ( );
 
 		// Hide mid-turn controls
-		ToggleMidTurnControls ( false );
+		ToggleMidTurnControls ( false, false );
 
 		// Hide prompts
 		conflictPrompt.SetActive ( false );
@@ -85,10 +86,13 @@ public class UIManager : MonoBehaviour
 	/// <summary>
 	/// Toggles the mid-turn controls on and off.
 	/// </summary>
-	public void ToggleMidTurnControls ( bool isVisible )
+	public void ToggleMidTurnControls ( bool moveControls, bool skipUnitControls )
 	{
-		// Toggle controls
-		midTurnControls.SetActive ( isVisible );
+		// Toggle movement controls
+		midTurnControls.SetActive ( moveControls );
+
+		// Toggle skip controls
+		skipControls.SetActive ( skipUnitControls );
 	}
 
 	/// <summary>

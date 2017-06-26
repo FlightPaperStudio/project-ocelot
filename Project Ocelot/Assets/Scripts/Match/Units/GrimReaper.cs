@@ -22,7 +22,7 @@ public class GrimReaper : HeroUnit
 	// Ability information
 	public SpriteRenderer barrier;
 	public List<Tile> grimReaperTiles = new List<Tile> ( );
-	private float LIFE_DRAIN_FADE = 200f / 255f;
+	private const float LIFE_DRAIN_FADE = 200f / 255f;
 	private const float LIFE_DRAIN_ANIMATION_TIME = 0.75f;
 	private const string LIFE_DRAIN_STATUS_PROMPT = "Life Drain";
 
@@ -164,54 +164,31 @@ public class GrimReaper : HeroUnit
 	/// </summary>
 	private void ActivateLifeDrain ( )
 	{
-		// Check if Life Drain is active
-		if ( currentAbility1.duration == 0 )
-		{
-			// Display barrier
-			barrier.gameObject.SetActive ( true );
-			barrier.color = new Color32 ( 255, 255, 255, 0 );
+		// Display barrier
+		barrier.gameObject.SetActive ( true );
+		barrier.color = new Color32 ( 255, 255, 255, 0 );
 
-			// Create animation
-			Tween t = barrier.DOFade ( LIFE_DRAIN_FADE, LIFE_DRAIN_ANIMATION_TIME )
-				.OnComplete ( ( ) =>
-				{
-					// Refresh abilities
-					currentAbility1.duration = info.ability1.duration;
-					if ( currentAbility2.enabled )
+		// Create animation
+		Tween t = barrier.DOFade ( LIFE_DRAIN_FADE, LIFE_DRAIN_ANIMATION_TIME )
+			.OnComplete ( ( ) =>
+			{
+				// Refresh abilities
+				currentAbility1.duration = info.ability1.duration;
+				if ( currentAbility2.enabled )
 						currentAbility2.cooldown = 0;
 
-					// Update HUD
-					GM.UI.unitHUD.DisplayAbility ( currentAbility1 );
-					if ( currentAbility2.enabled )
-						GM.UI.unitHUD.DisplayAbility ( currentAbility2 );
+				// Update HUD
+				GM.UI.unitHUD.DisplayAbility ( currentAbility1 );
+				if ( currentAbility2.enabled )
+					GM.UI.unitHUD.DisplayAbility ( currentAbility2 );
 
-					// Update status
-					AddStatusPrompt ( abilitySprite1, LIFE_DRAIN_STATUS_PROMPT );
-				} );
+				// Apply status effect
+				status.AddStatusEffect ( abilitySprite1, LIFE_DRAIN_STATUS_PROMPT, currentAbility1.duration );
+				GM.UI.unitHUD.UpdateStatusEffects ( );
+			} );
 
-			// Add animation to queue
-			GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
-		}
-		else
-		{
-			// Create animation
-			Tween t = barrier.DOFade ( LIFE_DRAIN_FADE, 0 )
-				.OnComplete ( ( ) =>
-				{
-					// Refresh abilities
-					currentAbility1.duration = info.ability1.duration;
-					if ( currentAbility2.enabled )
-						currentAbility2.cooldown = 0;
-
-					// Update HUD
-					GM.UI.unitHUD.DisplayAbility ( currentAbility1 );
-					if ( currentAbility2.enabled )
-						GM.UI.unitHUD.DisplayAbility ( currentAbility2 );
-				} );
-
-			// Add animation to queue
-			GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
-		}
+		// Add animation to queue
+		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 
 	/// <summary>
@@ -225,6 +202,9 @@ public class GrimReaper : HeroUnit
 		{
 			// Remove barrier
 			DeactivateLifeDrain ( );
+
+			// Remove status effect
+			status.RemoveStatusEffect ( abilitySprite1, LIFE_DRAIN_STATUS_PROMPT );
 		}
 		else
 		{
@@ -254,9 +234,6 @@ public class GrimReaper : HeroUnit
 
 				// End ability duration
 				currentAbility1.duration = 0;
-
-				// Update status
-				RemoveStatusPrompt ( abilitySprite1, LIFE_DRAIN_STATUS_PROMPT );
 			} );
 
 		// Add animation to queue

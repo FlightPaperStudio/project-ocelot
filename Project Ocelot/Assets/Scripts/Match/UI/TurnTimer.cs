@@ -107,25 +107,34 @@ public class TurnTimer : MonoBehaviour
 		isTimerActive = false;
 		isOutOfTime = true;
 
-		// Create list of possible units
-		List<Unit> units = GM.currentPlayer.units.FindAll ( x => x.moveList.Count > 0 );
+		// Check for start of turn
+		if ( GM.isStartOfTurn )
+		{
+			// Create list of possible units
+			List<Unit> units = GM.currentPlayer.units.FindAll ( x => x.moveList.Count > 0 );
 
-		// Select a random unit
-		int unitIndex = Random.Range ( 0, units.Count );
-		Unit unit = units [ unitIndex ];
+			// Select a random unit
+			int unitIndex = Random.Range ( 0, units.Count );
+			Unit unit = units [ unitIndex ];
 
-		// Create list of possible moves
-		List<MoveData> moves = unit.moveList.FindAll ( x => x.prerequisite == null );
+			// Create list of possible moves
+			List<MoveData> moves = unit.moveList.FindAll ( x => x.prerequisite == null );
 
-		// Select a random move
-		int moveIndex = Random.Range ( 0, moves.Count );
-		MoveData move = unit.moveList [ moveIndex ];
+			// Select a random move
+			int moveIndex = Random.Range ( 0, moves.Count );
+			MoveData move = unit.moveList [ moveIndex ];
 
-		// Clear board
-		GM.board.ResetTiles ( );
+			// Clear board
+			GM.board.ResetTiles ( );
 
-		// Force a panic move and end the player's turn
-		StartCoroutine ( PanicMove ( unit, move.tile ) );
+			// Force a panic move and end the player's turn
+			StartCoroutine ( PanicMove ( unit, move.tile ) );
+		}
+		else
+		{
+			// Skip all remaining units
+			GM.SkipUnit ( true );
+		}
 	}
 
 	/// <summary>
@@ -143,6 +152,6 @@ public class TurnTimer : MonoBehaviour
 		GM.SelectMove ( t );
 
 		// Execute move
-		GM.ExecuteMove ( );
+		GM.ExecuteMove ( true );
 	}
 }

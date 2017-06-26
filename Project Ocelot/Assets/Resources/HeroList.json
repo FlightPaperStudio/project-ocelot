@@ -126,6 +126,27 @@
 				"duration": 0,
 				"cooldown": 5
 			}
+		},
+		{
+			"id": 7,
+			"characterName": "Hero 5",
+			"characterDescription": "Insert Hero 5 description here...",
+			"ability1":
+			{
+				"name": "Rally",
+				"description": "Insert Rally description here...",
+				"type": 0,
+				"duration": 3,
+				"cooldown": 0
+			},
+			"ability2":
+			{
+				"name": "Backflip",
+				"description": "Insert Backflip description here...",
+				"type": 1,
+				"duration": 0,
+				"cooldown": 3
+			}
 		}
 	]
 }
