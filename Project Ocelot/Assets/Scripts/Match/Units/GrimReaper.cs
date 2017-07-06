@@ -183,7 +183,7 @@ public class GrimReaper : HeroUnit
 					GM.UI.unitHUD.DisplayAbility ( currentAbility2 );
 
 				// Apply status effect
-				status.AddStatusEffect ( abilitySprite1, LIFE_DRAIN_STATUS_PROMPT, currentAbility1.duration );
+				status.AddStatusEffect ( abilitySprite1, LIFE_DRAIN_STATUS_PROMPT, this, currentAbility1.duration );
 				GM.UI.unitHUD.UpdateStatusEffects ( );
 			} );
 
@@ -195,27 +195,64 @@ public class GrimReaper : HeroUnit
 	/// Attack this unit and remove this unit's barrier if it's available or KO this unit if it's not.
 	/// Call this function on the unit being attack.
 	/// </summary>
-	public override void GetAttacked ( bool lostMatch = false )
+	public override void GetAttacked ( bool usePostAnimationQueue = false )
 	{
 		// Check for barrier
-		if ( !lostMatch && currentAbility1.enabled && currentAbility1.duration > 0 )
+		if ( !usePostAnimationQueue && currentAbility1.enabled && currentAbility1.duration > 0 )
 		{
 			// Remove barrier
 			DeactivateLifeDrain ( );
 
 			// Remove status effect
-			status.RemoveStatusEffect ( abilitySprite1, LIFE_DRAIN_STATUS_PROMPT );
+			status.RemoveStatusEffect ( abilitySprite1, LIFE_DRAIN_STATUS_PROMPT, this );
 		}
 		else
 		{
-			// Remove delegates
-			if ( currentAbility2.enabled )
-				foreach ( Unit u in owner.units )
-					if ( u != this )
-						u.koDelegate -= AddGrimReaperTile;
+			// Call KO delegate
+			if ( koDelegate != null )
+				koDelegate ( this );
 
-			// KO the unit
-			base.GetAttacked ( lostMatch );
+			// Create animation
+			Tween t1 = transform.DOScale ( new Vector3 ( 5, 5, 5 ), KO_ANIMATION_TIME )
+				.OnStart ( ( ) =>
+				{
+					// Remove delegates
+					if ( currentAbility2.enabled )
+						foreach ( Unit u in owner.units )
+							if ( u != this )
+								u.koDelegate -= AddGrimReaperTile;
+
+					// Hide barrier
+					barrier.gameObject.SetActive ( false );
+				} )
+				.OnComplete ( ( ) =>
+				{
+				// Display deactivation
+				GM.UI.GetPlayerHUD ( this ).DisplayDeactivation ( instanceID );
+
+				// Remove unit from the team
+				owner.units.Remove ( this );
+
+				// Remove unit reference from the tile
+				currentTile.currentUnit = null;
+
+				// Delete the unit
+				Destroy ( this.gameObject );
+				} )
+				.Pause ( );
+			Tween t2 = sprite.DOFade ( 0, MOVE_ANIMATION_TIME )
+				.Pause ( );
+
+			// Add animations to queue
+			if ( usePostAnimationQueue )
+			{
+				GM.postAnimationQueue.Add ( new GameManager.PostTurnAnimation ( this, owner, new GameManager.TurnAnimation ( t1, false ), new GameManager.TurnAnimation ( t2, false ) ) );
+			}
+			else
+			{
+				GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+				GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+			}
 		}
 	}
 

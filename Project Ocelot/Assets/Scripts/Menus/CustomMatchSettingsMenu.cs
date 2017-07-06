@@ -385,6 +385,16 @@ public class CustomMatchSettingsMenu : Menu
 	}
 
 	/// <summary>
+	/// Sets the current duration setting for Hero 3's Mind Control ability.
+	/// Use this as a slider update event wrapper.
+	/// </summary>
+	public void SetMindControlDuration ( float value )
+	{
+		// Set duration
+		SetDuration ( heroValue [ 7 ].ability1, (int)value, durationSlider1 [ 7 ], durationDisplay1 [ 7 ] );
+	}
+
+	/// <summary>
 	/// Sets the current duration setting for an ability.
 	/// Does not apply to the actual match settings until the match starts.
 	/// </summary>
@@ -501,6 +511,16 @@ public class CustomMatchSettingsMenu : Menu
 	{
 		// Set cooldown
 		SetCooldown ( heroValue [ 6 ].ability2, (int)value, cooldownSlider2 [ 6 ], cooldownDisplay2 [ 6 ] );
+	}
+
+	/// <summary>
+	/// Sets the current cooldown setting for Hero 3's Clone Assist ability.
+	/// Use this as a slider update event wrapper.
+	/// </summary>
+	public void SetCloneAssistCooldown ( float value )
+	{
+		// Set cooldown
+		SetCooldown ( heroValue [ 7 ].ability2, (int)value, cooldownSlider2 [ 7 ], cooldownDisplay2 [ 7 ] );
 	}
 
 	/// <summary>

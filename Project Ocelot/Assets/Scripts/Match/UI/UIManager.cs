@@ -20,7 +20,6 @@ public class UIManager : MonoBehaviour
 	public SplashPrompt splash;
 	public PopUpMenu popUp;
 	public LoadingScreen load;
-	public Dictionary<Player, PlayerHUD> hudDic = new Dictionary<Player, PlayerHUD> ( );
 	public bool isPaused = false;
 	public Menu [ ] menus;
 
@@ -68,10 +67,7 @@ public class UIManager : MonoBehaviour
 	{
 		// Set up player HUDs
 		for ( int i = 0; i < players.Length; i++ )
-		{
 			huds [ i ].Initialize ( players [ i ] );
-			hudDic.Add ( players [ i ], huds [ i ] );
-		}
 
 		// Hide unit HUD
 		unitHUD.HideHUD ( );
@@ -81,6 +77,36 @@ public class UIManager : MonoBehaviour
 
 		// Hide prompts
 		conflictPrompt.SetActive ( false );
+	}
+
+	/// <summary>
+	/// Gets the Player HUD for a particular player.
+	/// Returns null if a match is not found.
+	/// </summary>
+	public PlayerHUD GetPlayerHUD ( Player p )
+	{
+		// Return the matching HUD
+		foreach ( PlayerHUD h in huds )
+			if ( h.player == p )
+				return h;
+
+		// Return that the HUD was not found
+		return null;
+	}
+
+	/// <summary>
+	/// Gets the Player HUD for a particular unit.
+	/// Returns null if a match is not found.
+	/// </summary>
+	public PlayerHUD GetPlayerHUD ( Unit u )
+	{
+		// Return the matching HUD
+		foreach ( PlayerHUD h in huds )
+			if ( h.CheckForIcon ( u.instanceID ) )
+				return h;
+
+		// Return that the HUD was not found
+		return null;
 	}
 
 	/// <summary>

@@ -132,7 +132,7 @@ public class Teleport : HeroUnit
 		foreach ( Unit u in owner.units )
 		{
 			// Check status effects
-			if ( u != this && !( u is Leader ) && u.status.canBeMoved && u.status.canReceiveAbilityEffectsFriendly )
+			if ( u != this && !( u is Leader ) && u.status.canBeMoved )
 				u.currentTile.SetTileState ( TileState.AvailableCommand );
 		}
 	}

@@ -147,6 +147,27 @@
 				"duration": 0,
 				"cooldown": 3
 			}
+		},
+		{
+			"id": 8,
+			"characterName": "Hero 3",
+			"characterDescription": "Insert Hero 3 description here...",
+			"ability1":
+			{
+				"name": "Mind Control",
+				"description": "Insert Mind Control description here...",
+				"type": 0,
+				"duration": 3,
+				"cooldown": 0
+			},
+			"ability2":
+			{
+				"name": "Clone Assist",
+				"description": "Insert Clone Assist description here...",
+				"type": 1,
+				"duration": 0,
+				"cooldown": 4
+			}
 		}
 	]
 }

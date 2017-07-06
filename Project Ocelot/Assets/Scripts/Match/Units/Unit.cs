@@ -21,6 +21,7 @@ public class Unit : MonoBehaviour
 	// Turn information
 	public List<MoveData> moveList = new List<MoveData> ( );
 	protected const float MOVE_ANIMATION_TIME = 0.5f;
+	protected const float KO_ANIMATION_TIME = 0.5f;
 
 	// Status information
 	public StatusEffects status = new StatusEffects ( );
@@ -329,18 +330,18 @@ public class Unit : MonoBehaviour
 	/// Call this function on the unit being attacked.
 	/// This function builds the animation queue from the move data.
 	/// </summary>
-	public virtual void GetAttacked ( bool lostMatch = false )
+	public virtual void GetAttacked ( bool usePostAnimationQueue = false )
 	{
 		// Call KO delegate
 		if ( koDelegate != null )
 			koDelegate ( this );
 
 		// Create animation
-		Tween t1 = transform.DOScale ( new Vector3 ( 5, 5, 5 ), MOVE_ANIMATION_TIME )
+		Tween t1 = transform.DOScale ( new Vector3 ( 5, 5, 5 ), KO_ANIMATION_TIME )
 			.OnComplete ( ( ) =>
 			{
 				// Display deactivation
-				GM.UI.hudDic [ owner ].DisplayDeactivation ( instanceID );
+				GM.UI.GetPlayerHUD ( this ).DisplayDeactivation ( instanceID );
 
 				// Remove unit from the team
 				owner.units.Remove ( this );
@@ -350,14 +351,15 @@ public class Unit : MonoBehaviour
 
 				// Delete the unit
 				Destroy ( this.gameObject );
-			} );
-		Tween t2 = sprite.DOFade ( 0, MOVE_ANIMATION_TIME );
+			} )
+			.Pause ( );
+		Tween t2 = sprite.DOFade ( 0, MOVE_ANIMATION_TIME )
+			.Pause ( );
 
 		// Add animations to queue
-		if ( lostMatch )
+		if ( usePostAnimationQueue )
 		{
-			GM.postAnimationQueue.Add ( new GameManager.TurnAnimation ( t1, false ) );
-			GM.postAnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+			GM.postAnimationQueue.Add ( new GameManager.PostTurnAnimation ( this, owner, new GameManager.TurnAnimation ( t1, false ), new GameManager.TurnAnimation ( t2, false ) ) );
 		}
 		else
 		{

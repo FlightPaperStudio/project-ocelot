@@ -88,49 +88,45 @@ public class Rally : HeroUnit
 	/// </summary>
 	private void GetBackflip ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
 	{
-		// Check status effects
-		if ( status.canMove )
+		// Store which tiles are to be ignored
+		IntPair back = GetBackDirection ( owner.direction );
+
+		// Check each neighboring tile
+		for ( int i = 0; i < t.neighbors.Length; i++ )
 		{
-			// Store which tiles are to be ignored
-			IntPair back = GetBackDirection ( owner.direction );
+			// Ignore tiles that would allow for backward movement
+			if ( i != back.FirstInt && i != back.SecondInt )
+				continue;
 
-			// Check each neighboring tile
-			for ( int i = 0; i < t.neighbors.Length; i++ )
+			// Check if this unit can move to the neighboring tile
+			if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
 			{
-				// Ignore tiles that would allow for backward movement
-				if ( i != back.FirstInt && i != back.SecondInt )
-					continue;
+				// Add as an available move
+				moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.Special, i ) );
+			}
+			// Check if this unit can jump the neighboring tile
+			else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
+			{
+				// Track move data
+				MoveData m;
 
-				// Check if this unit can move to the neighboring tile
-				if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
+				// Check if the neighboring unit can be attacked
+				if ( t.neighbors [ i ].currentUnit != null && t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
 				{
-					// Add as an available move
-					moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.Special, i ) );
+					// Add as an available attack
+					m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.SpecialAttack, i, t.neighbors [ i ] );
 				}
-				// Check if this unit can jump the neighboring tile
-				else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
+				else
 				{
-					// Track move data
-					MoveData m;
-
-					// Check if the neighboring unit can be attacked
-					if ( t.neighbors [ i ].currentUnit != null && t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
-					{
-						// Add as an available attack
-						m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.SpecialAttack, i, t.neighbors [ i ] );
-					}
-					else
-					{
-						// Add as an available jump
-						m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Special, i );
-					}
-
-					// Add move to the move list
-					moveList.Add ( m );
-
-					// Find additional jumps
-					FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
+					// Add as an available jump
+					m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Special, i );
 				}
+
+				// Add move to the move list
+				moveList.Add ( m );
+
+				// Find additional jumps
+				FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
 			}
 		}
 	}
@@ -207,7 +203,7 @@ public class Rally : HeroUnit
 						u = data.prerequisite.tile.neighbors [ (int)data.direction ].currentUnit;
 
 					// Check unit status
-					if ( u.status.canReceiveAbilityEffectsFriendly )
+					if ( u.status.canMove )
 						ActivateRally ( u );
 				}
 			}
@@ -234,7 +230,7 @@ public class Rally : HeroUnit
 				u = data.prerequisite.tile.neighbors [ (int)data.direction ].currentUnit;
 
 			// Check unit status
-			if ( u.status.canReceiveAbilityEffectsFriendly )
+			if ( u.status.canMove )
 				ActivateRally ( u );
 		}
 	}
@@ -257,7 +253,7 @@ public class Rally : HeroUnit
 				GM.unitQueue.Add ( u );
 
 				// Apply the unit's status effect
-				u.status.AddStatusEffect ( abilitySprite1, RALLY_STATUS_PROMPT, 1 );
+				u.status.AddStatusEffect ( abilitySprite1, RALLY_STATUS_PROMPT, this, 1 );
 
 				// Update HUD
 				GM.UI.unitHUD.DisplayAbility ( currentAbility1 );

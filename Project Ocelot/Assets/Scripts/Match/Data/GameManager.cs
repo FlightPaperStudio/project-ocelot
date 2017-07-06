@@ -39,7 +39,20 @@ public class GameManager : MonoBehaviour
 		}
 	}
 	public List<TurnAnimation> animationQueue = new List<TurnAnimation> ( );
-	public List<TurnAnimation> postAnimationQueue = new List<TurnAnimation> ( );
+	public struct PostTurnAnimation
+	{
+		public Unit unit;
+		public Player owner;
+		public TurnAnimation [ ] animation;
+
+		public PostTurnAnimation ( Unit _unit, Player _owner, params TurnAnimation [ ] _animation )
+		{
+			unit = _unit;
+			owner = _owner;
+			animation = _animation;
+		}
+	}
+	public List<PostTurnAnimation> postAnimationQueue = new List<PostTurnAnimation> ( );
 	public List<Unit> unitQueue = new List<Unit> ( );
 	private const float ANIMATION_BUFFER = 0.1f;
 	
@@ -102,8 +115,7 @@ public class GameManager : MonoBehaviour
 				u.SetTeamColor ( players [ i ].team );
 
 				// Set unit direction
-				if ( players [ i ].direction == Player.Direction.RightToLeft || players [ i ].direction == Player.Direction.BottomRightToTopLeft || players [ i ].direction == Player.Direction.TopRightToBottomLeft )
-					u.sprite.flipX = true;
+				Util.OrientSpriteToDirection ( u.sprite, players [ i ].direction );
 
 				// Position unit to starting tile
 				u.transform.position = players [ i ].startArea.tiles [ j ].transform.position;
@@ -168,7 +180,7 @@ public class GameManager : MonoBehaviour
 		yield return PlayAnimationQueue ( ).WaitForCompletion ( );
 		
 		// Wait until the post-start of turn animations are complete
-		//yield return PlayPostAnimationQueue ( ).WaitForCompletion ( );
+		yield return PlayPostAnimationQueue ( ).WaitForCompletion ( );
 
 		// Clear previous animation queues
 		animationQueue.Clear ( );
@@ -265,18 +277,48 @@ public class GameManager : MonoBehaviour
 		// Add delay at the end of the animation
 		s.AppendInterval ( ANIMATION_BUFFER );
 
+		// Play animation queue
+		s.Play ( );
+
+		// Return the sequence so that the code can wait for its completion
+		return s;
+	}
+
+	/// <summary>
+	/// Plays any and all of the animations that need to be played after the Animation Queue.
+	/// The Post Animation Queue is not created or evaluated until after the completion of the Animation Queue.
+	/// </summary>
+	private Sequence PlayPostAnimationQueue ( )
+	{
+		// Create the animation
+		Sequence s = DOTween.Sequence ( );
+
+		// Add delay at the start of the animation
+		s.AppendInterval ( ANIMATION_BUFFER );
+
+		// Add additional "delay" for the tweens to join at
+		s.AppendInterval ( 0f );
+
 		// Add animations
 		for ( int i = 0; i < postAnimationQueue.Count; i++ )
 		{
-			// Check animation join type and add animation to the queue
-			if ( postAnimationQueue [ i ].isAppend )
-				s.Append ( postAnimationQueue [ i ].tween );
-			else
-				s.Join ( postAnimationQueue [ i ].tween );
+			// Check if animation is still valid after the animation queue
+			if ( postAnimationQueue [ i ].unit != null && postAnimationQueue [ i ].owner.units.Contains ( postAnimationQueue [ i ].unit ) && postAnimationQueue.Find ( match => match.unit == postAnimationQueue [ i ].unit ).Equals ( postAnimationQueue [ i ] ) )
+			{
+				// Add each in animation in post-animation series
+				foreach ( TurnAnimation a in postAnimationQueue [ i ].animation )
+				{
+					// Check animation join type and add animation to the queue
+					if ( a.isAppend )
+						s.Append ( a.tween );
+					else
+						s.Join ( a.tween );
+				}
 
-			// Check for next animation and add a buffer between
-			if ( i + 1 < postAnimationQueue.Count && postAnimationQueue [ i + 1 ].isAppend )
-				s.AppendInterval ( ANIMATION_BUFFER );
+				// Check for next animation and add a buffer between
+				if ( i + 1 < postAnimationQueue.Count && postAnimationQueue [ i + 1 ].animation [ 0 ].isAppend )
+					s.AppendInterval ( ANIMATION_BUFFER );
+			}
 		}
 
 		// Add delay at the end of the animation
@@ -288,45 +330,6 @@ public class GameManager : MonoBehaviour
 		// Return the sequence so that the code can wait for its completion
 		return s;
 	}
-
-	/// <summary>
-	/// Plays any and all of the animations that need to be played after the Animation Queue.
-	/// The Post Animation Queue is primarily used for K.O. animations for when a team has been eliminated during the Animation Queue.
-	/// </summary>
-	//private Sequence PlayPostAnimationQueue ( )
-	//{
-	//	// Create the animation
-	//	Sequence s = DOTween.Sequence ( );
-
-	//	// Add delay at the start of the animation
-	//	s.AppendInterval ( ANIMATION_BUFFER );
-
-	//	// Add additional "delay" for the tweens to join at
-	//	s.AppendInterval ( 0f );
-
-	//	// Add animations
-	//	for ( int i = 0; i < postAnimationQueue.Count; i++ )
-	//	{
-	//		// Check animation join type and add animation to the queue
-	//		if ( postAnimationQueue [ i ].isAppend )
-	//			s.Append ( postAnimationQueue [ i ].tween );
-	//		else
-	//			s.Join ( postAnimationQueue [ i ].tween );
-
-	//		// Check for next animation and add a buffer between
-	//		if ( i + 1 < postAnimationQueue.Count && postAnimationQueue [ i + 1 ].isAppend )
-	//			s.AppendInterval ( ANIMATION_BUFFER );
-	//	}
-
-	//	// Add delay at the end of the animation
-	//	s.AppendInterval ( ANIMATION_BUFFER );
-
-	//	// Play animation queue
-	//	s.Play ( );
-
-	//	// Return the sequence so that the code can wait for its completion
-	//	return s;
-	//}
 
 	/// <summary>
 	/// Displays the available units for the current player.
@@ -613,7 +616,7 @@ public class GameManager : MonoBehaviour
 		yield return PlayAnimationQueue ( ).WaitForCompletion ( );
 
 		// Play post-turn animations
-		//yield return PlayPostAnimationQueue ( ).WaitForCompletion ( );
+		yield return PlayPostAnimationQueue ( ).WaitForCompletion ( );
 
 		// Clear previous animation queues
 		animationQueue.Clear ( );
@@ -732,7 +735,7 @@ public class GameManager : MonoBehaviour
 	public void LoseMatch ( Player p )
 	{
 		// Display the player being eliminated
-		UI.hudDic [ p ].DisplayElimination ( );
+		UI.GetPlayerHUD ( p ).DisplayElimination ( );
 
 		// Remove player from match
 		foreach ( Unit u in p.units )

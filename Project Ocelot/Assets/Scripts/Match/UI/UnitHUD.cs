@@ -113,10 +113,10 @@ public class UnitHUD : MonoBehaviour
 				statusPrompts [ i ].SetActive ( true );
 
 				// Display icon
-				statusIcons [ i ].sprite = currentUnit.status.effects [ i ].icon;
+				statusIcons [ i ].sprite = currentUnit.status.effects [ i ].info.icon;
 
 				// Display text
-				statusTexts [ i ].text = currentUnit.status.effects [ i ].text;
+				statusTexts [ i ].text = currentUnit.status.effects [ i ].info.text;
 			}
 			else
 			{

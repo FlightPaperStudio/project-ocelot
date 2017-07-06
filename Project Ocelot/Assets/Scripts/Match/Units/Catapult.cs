@@ -190,7 +190,7 @@ public class Catapult : HeroUnit
 				StartCooldown ( currentAbility1, info.ability1 );
 
 				// Add status effect
-				status.AddStatusEffect ( abilitySprite1, CATAPULT_STATUS_PROMPT, currentAbility1.duration, StatusEffects.StatusType.CanMove );
+				status.AddStatusEffect ( abilitySprite1, CATAPULT_STATUS_PROMPT, this, currentAbility1.duration, StatusEffects.StatusType.CanMove );
 				GM.UI.unitHUD.UpdateStatusEffects ( );
 
 				// Set unit and tile data
@@ -207,7 +207,7 @@ public class Catapult : HeroUnit
 	protected override void OnDurationComplete ( AbilitySettings current )
 	{
 		// Check ability
-		if ( current == currentAbility2 )
+		if ( current == currentAbility2 && grappleTarget != null )
 		{
 			// End the grapple
 			EndGrapple ( );
@@ -248,7 +248,7 @@ public class Catapult : HeroUnit
 				continue;
 
 			// Check for target
-			if ( currentTile.neighbors [ i ] != null && currentTile.neighbors [ i ].currentUnit != null && currentTile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) && currentTile.neighbors [ i ].currentUnit.status.canReceiveAbilityEffectsHostile )
+			if ( currentTile.neighbors [ i ] != null && currentTile.neighbors [ i ].currentUnit != null && currentTile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
 				return true;
 		}
 
@@ -275,7 +275,7 @@ public class Catapult : HeroUnit
 				continue;
 
 			// Check for target
-			if ( currentTile.neighbors [ i ].currentUnit != null && currentTile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) && currentTile.neighbors [ i ].currentUnit.status.canReceiveAbilityEffectsHostile )
+			if ( currentTile.neighbors [ i ].currentUnit != null && currentTile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
 				currentTile.neighbors [ i ].SetTileState ( TileState.AvailableCommand );
 		}
 	}
@@ -312,17 +312,16 @@ public class Catapult : HeroUnit
 				currentGrappleDisplay.transform.position = Vector3.Lerp ( transform.position, grappleTarget.transform.position, 0.5f );
 				Color32 c = Util.TeamColor ( owner.team );
 				currentGrappleDisplay.color = new Color32 ( c.r, c.g, c.b, 150 );
-				if ( owner.direction == Player.Direction.RightToLeft || owner.direction == Player.Direction.BottomRightToTopLeft || owner.direction == Player.Direction.TopRightToBottomLeft )
-					currentGrappleDisplay.flipX = true;
+				Util.OrientSpriteToDirection ( currentGrappleDisplay, owner.direction );
 
 				// Start cooldown
 				StartCooldown ( currentAbility2, info.ability2 );
 
 				// Apply hero's status effect
-				status.AddStatusEffect ( abilitySprite2, GRAPPLE_STATUS_PROMPT, currentAbility2.duration, StatusEffects.StatusType.CanMove, StatusEffects.StatusType.CanUseAbility );
+				status.AddStatusEffect ( abilitySprite2, GRAPPLE_STATUS_PROMPT, this, currentAbility2.duration, StatusEffects.StatusType.CanMove, StatusEffects.StatusType.CanUseAbility );
 
 				// Apply target's status effect
-				grappleTarget.status.AddStatusEffect ( abilitySprite2, GRAPPLE_TARGET_STATUS_PROMPT, currentAbility2.duration, StatusEffects.StatusType.CanMove, StatusEffects.StatusType.CanBeMoved, StatusEffects.StatusType.CanUseAbility, StatusEffects.StatusType.CanReceiveAbilityEffectsFriendly, StatusEffects.StatusType.CanReceiveAbilityEffectsHostile );
+				grappleTarget.status.AddStatusEffect ( abilitySprite2, GRAPPLE_TARGET_STATUS_PROMPT, this, currentAbility2.duration, StatusEffects.StatusType.CanMove, StatusEffects.StatusType.CanBeMoved, StatusEffects.StatusType.CanUseAbility );
 
 				// Set target's KO delegate for interupts
 				grappleTarget.koDelegate += EndGrappleDelegate;
@@ -354,7 +353,7 @@ public class Catapult : HeroUnit
 			EndGrapple ( );
 
 			// Remove the hero's status effect
-			status.RemoveStatusEffect ( abilitySprite2, GRAPPLE_STATUS_PROMPT, StatusEffects.StatusType.CanMove );
+			status.RemoveStatusEffect ( abilitySprite2, GRAPPLE_STATUS_PROMPT, this, StatusEffects.StatusType.CanMove );
 		}
 	}
 
@@ -378,7 +377,7 @@ public class Catapult : HeroUnit
 			.OnComplete ( ( ) =>
 			{
 				// Remove the target's status effect
-				grappleTarget.status.RemoveStatusEffect ( abilitySprite2, GRAPPLE_TARGET_STATUS_PROMPT, StatusEffects.StatusType.CanMove, StatusEffects.StatusType.CanBeMoved, StatusEffects.StatusType.CanUseAbility, StatusEffects.StatusType.CanReceiveAbilityEffectsFriendly, StatusEffects.StatusType.CanReceiveAbilityEffectsHostile );
+				grappleTarget.status.RemoveStatusEffect ( abilitySprite2, GRAPPLE_TARGET_STATUS_PROMPT, this, StatusEffects.StatusType.CanMove, StatusEffects.StatusType.CanBeMoved, StatusEffects.StatusType.CanUseAbility );
 
 				// Remove target's KO delegate
 				grappleTarget.koDelegate -= EndGrappleDelegate;
@@ -403,6 +402,6 @@ public class Catapult : HeroUnit
 		EndGrapple ( );
 
 		// Remove the hero's status effect
-		status.RemoveStatusEffect ( abilitySprite2, GRAPPLE_STATUS_PROMPT, StatusEffects.StatusType.CanMove );
+		status.RemoveStatusEffect ( abilitySprite2, GRAPPLE_STATUS_PROMPT, this, StatusEffects.StatusType.CanMove );
 	}
 }

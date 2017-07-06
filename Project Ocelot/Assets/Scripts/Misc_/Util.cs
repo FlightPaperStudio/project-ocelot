@@ -111,6 +111,18 @@ public class Util
 		// Return error
 		return Vector3.zero;
 	}
+
+	/// <summary>
+	/// Orients a sprite to be inverted or not inverted to face the appropriate direction.
+	/// </summary>
+	public static void OrientSpriteToDirection ( SpriteRenderer sprite, Player.Direction direction )
+	{
+		// Check the direction
+		if ( direction == Player.Direction.RightToLeft || direction == Player.Direction.BottomRightToTopLeft || direction == Player.Direction.TopRightToBottomLeft )
+			sprite.flipX = true;
+		else
+			sprite.flipX = false;
+	}
 }
 
 public class IntPair

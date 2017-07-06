@@ -178,13 +178,13 @@ public class Leader : Unit
 	/// Attack and KO this unit.
 	/// If the Leader is KOed, then all remaining units are removed from the match.
 	/// </summary>
-	public override void GetAttacked ( bool lostMatch = false )
+	public override void GetAttacked ( bool usePostAnimationQueue = false )
 	{
 		// Create animation
-		base.GetAttacked ( lostMatch );
+		base.GetAttacked ( usePostAnimationQueue );
 
 		// Have the player lose the match
-		if ( !lostMatch )
+		if ( !usePostAnimationQueue )
 			GM.LoseMatch ( owner );
 	}
 }

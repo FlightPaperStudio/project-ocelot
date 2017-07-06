@@ -282,8 +282,7 @@ public class HeroUnit : Unit
 		t.currentObject = obj;
 
 		// Set sprite direction
-		if ( owner.direction == Player.Direction.RightToLeft || owner.direction == Player.Direction.BottomRightToTopLeft || owner.direction == Player.Direction.TopRightToBottomLeft )
-			obj.sprite.flipX = true;
+		Util.OrientSpriteToDirection ( obj.sprite, owner.direction );
 
 		// Return the newly created tile object
 		return obj;

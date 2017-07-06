@@ -11,7 +11,11 @@ public class PlayerHUD : MonoBehaviour
 	public Image [ ] unitIcons;
 
 	// HUD information
-	private Player player;
+	public Player player
+	{
+		get;
+		private set;
+	}
 	private Dictionary<int, int> indexDic = new Dictionary<int, int> ( );
 
 	/// <summary>
@@ -77,5 +81,24 @@ public class PlayerHUD : MonoBehaviour
 	{
 		// Change icon
 		unitIcons [ indexDic [ id ] ].sprite = sprite;
+	}
+
+	/// <summary>
+	/// Updates a unit's icon to a new color.
+	/// </summary>
+	public void UpdateIconColor ( int id, Color32 c )
+	{
+		// Change color
+		unitIcons [ indexDic [ id ] ].color = c;
+	}
+
+	/// <summary>
+	/// Checks if this Player HUD displays the icon for a unit by its instance ID.
+	/// Returns true if this HUD displays the icon.
+	/// </summary>
+	public bool CheckForIcon ( int id )
+	{
+		// Check if the instance ID for a unit is included in this HUD
+		return indexDic.ContainsKey ( id );
 	}
 }

@@ -53,10 +53,10 @@ public class Armor : HeroUnit
 	/// Attack this unit and remove this unit's armor if it's available or KO this unit if it's not.
 	/// Call this function on the unit being attack.
 	/// </summary>
-	public override void GetAttacked ( bool lostMatch = false )
+	public override void GetAttacked ( bool usePostAnimationQueue = false )
 	{
 		// Check armor duration
-		if ( currentAbility1.enabled && currentAbility1.duration > 0 && !lostMatch )
+		if ( currentAbility1.enabled && currentAbility1.duration > 0 && !usePostAnimationQueue )
 		{
 			// Decrement armor duration
 			currentAbility1.duration--;
@@ -77,7 +77,7 @@ public class Armor : HeroUnit
 					.OnComplete ( ( ) =>
 					{
 						// Update player HUD
-						GM.UI.hudDic [ owner ].UpdateIcon ( instanceID, displaySprite );
+						GM.UI.GetPlayerHUD ( this ).UpdateIcon ( instanceID, displaySprite );
 
 						// Hide animation sprite
 						mechAnimation.gameObject.SetActive ( false );
@@ -100,7 +100,7 @@ public class Armor : HeroUnit
 		else
 		{
 			// KO this unit
-			base.GetAttacked ( lostMatch );
+			base.GetAttacked ( usePostAnimationQueue );
 		}
 	}
 
@@ -221,7 +221,7 @@ public class Armor : HeroUnit
 					StartCooldown ( currentAbility2, info.ability2 );
 
 					// Apply status effect
-					status.AddStatusEffect ( withMechSprite, RECALL_STATUS_PROMPT, currentAbility2.duration, StatusEffects.StatusType.CanMove );
+					status.AddStatusEffect ( withMechSprite, RECALL_STATUS_PROMPT, this, currentAbility2.duration, StatusEffects.StatusType.CanMove );
 
 					// Pause turn timer
 					if ( MatchSettings.turnTimer )
@@ -323,7 +323,7 @@ public class Armor : HeroUnit
 
 		// Update player HUD
 		if ( !isFromAttack )
-			GM.UI.hudDic [ owner ].UpdateIcon ( instanceID, displaySprite );
+			GM.UI.GetPlayerHUD ( this ).UpdateIcon ( instanceID, displaySprite );
 
 		// Expire Armor's duration
 		if ( !isFromAttack )
@@ -341,7 +341,7 @@ public class Armor : HeroUnit
 		// Change sprite
 		displaySprite = withMechSprite;
 		sprite.sprite = displaySprite;
-		GM.UI.hudDic [ owner ].UpdateIcon ( instanceID, displaySprite );
+		GM.UI.GetPlayerHUD ( this ).UpdateIcon ( instanceID, displaySprite );
 
 		// Replenish Armor's duration
 		currentAbility1.duration = info.ability1.duration;
@@ -361,7 +361,7 @@ public class Armor : HeroUnit
 			EndRecall ( );
 
 			// Interupt status effect
-			status.RemoveStatusEffect ( withMechSprite, RECALL_STATUS_PROMPT, StatusEffects.StatusType.CanMove );
+			status.RemoveStatusEffect ( withMechSprite, RECALL_STATUS_PROMPT, this, StatusEffects.StatusType.CanMove );
 		}
 	}
 

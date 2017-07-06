@@ -304,7 +304,7 @@ public class Torus : HeroUnit
 		if ( t != null && count <= TAUNT_RANGE )
 		{
 			// Check target and move location
-			if ( t.currentUnit != null && t.currentUnit.owner != owner && t.currentUnit.status.canBeMoved && t.currentUnit.status.canReceiveAbilityEffectsHostile && OccupyTileCheck ( t.neighbors [ Util.GetOppositeDirection ( direction ) ], null ) )
+			if ( t.currentUnit != null && t.currentUnit.owner != owner && t.currentUnit.status.canBeMoved && OccupyTileCheck ( t.neighbors [ Util.GetOppositeDirection ( direction ) ], null ) )
 				return t;
 			else
 				return GetTaunt ( t.neighbors [ direction ], direction, count + 1 );
