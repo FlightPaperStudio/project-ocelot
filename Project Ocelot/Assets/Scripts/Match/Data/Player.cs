@@ -43,6 +43,7 @@ public class Player : MonoBehaviour
 	public int [ ] specialIDs;
 	public StartArea startArea;
 	public List<Unit> units = new List<Unit> ( );
+	public Unit.KOdelegate standardKOdelegate;
 	public List<TileObject> tileObjects = new List<TileObject> ( );
 
 // ---------------------------------------------------------------DELETE EVERYTHING BELOW THIS LINE------------------------------------------------------------------------

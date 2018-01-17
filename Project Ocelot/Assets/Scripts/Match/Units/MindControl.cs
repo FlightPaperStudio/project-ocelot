@@ -20,20 +20,21 @@ public class MindControl : HeroUnit
 	/// </summary>
 
 	// Ability information
-	private class MindControlledUnit
-	{
-		public Unit unit;
-		public Player originalOwner;
-		public int duration;
+	//private class MindControlledUnit
+	//{
+	//	public Unit unit;
+	//	public Player originalOwner;
+	//	public int duration;
 
-		public MindControlledUnit ( Unit _unit, Player _originalOwner, int _duration )
-		{
-			unit = _unit;
-			originalOwner = _originalOwner;
-			duration = _duration;
-		}
-	}
-	private List<MindControlledUnit> mindControlledUnits = new List<MindControlledUnit> ( );
+	//	public MindControlledUnit ( Unit _unit, Player _originalOwner, int _duration )
+	//	{
+	//		unit = _unit;
+	//		originalOwner = _originalOwner;
+	//		duration = _duration;
+	//	}
+	//}
+	//private List<MindControlledUnit> mindControlledUnits = new List<MindControlledUnit> ( );
+	private List<Unit> mindControlledUnits = new List<Unit> ( );
 	public SpriteRenderer cloneDisplayPrefab;
 	private SpriteRenderer currentCloneDisplay;
 	private const float MIND_CONTROL_ANIMATION_TIME = 0.75f;
@@ -48,7 +49,7 @@ public class MindControl : HeroUnit
 		base.FindMoves ( t, prerequisite, returnOnlyJumps );
 
 		// Get Clone Assist moves
-		if ( SpecialAvailabilityCheck ( currentAbility2, prerequisite ) )
+		if ( SpecialAvailabilityCheck ( CurrentAbility2, prerequisite ) )
 			GetCloneAssist ( t, prerequisite );
 	}
 
@@ -71,32 +72,6 @@ public class MindControl : HeroUnit
 	}
 
 	/// <summary>
-	/// Determines if any of the prerequisite moves used abilities.
-	/// Returns true if an ability was used.
-	/// </summary>
-	private bool CheckPrequisiteType ( MoveData m )
-	{
-		// Check for prerequisite move
-		if ( m != null )
-		{
-			// Check if the type matches
-			if ( m.type == MoveData.MoveType.Special )
-			{
-				// Return that an ability has been used
-				return true;
-			}
-			else
-			{
-				// Check prerequisite move's type
-				return CheckPrequisiteType ( m.prerequisite );
-			}
-		}
-
-		// Return that no abilities were used in previous moves
-		return false;
-	}
-
-	/// <summary>
 	/// Marks every tile available to the Clone Assist ability.
 	/// </summary>
 	private void GetCloneAssist ( Tile t, MoveData prerequisite )
@@ -115,7 +90,7 @@ public class MindControl : HeroUnit
 			if ( OccupyTileCheck ( t.neighbors [ i ], prerequisite ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
 			{
 				// Add as an available jump
-				MoveData m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Special, i );
+				MoveData m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i );
 
 				// Add move to the move list
 				moveList.Add ( m );
@@ -134,27 +109,27 @@ public class MindControl : HeroUnit
 	{
 		// Create clone
 		currentCloneDisplay = Instantiate ( cloneDisplayPrefab, owner.transform );
-		currentCloneDisplay.transform.position = data.tile.neighbors [ Util.GetOppositeDirection ( (int)data.direction ) ].neighbors [ Util.GetOppositeDirection ( (int)data.direction ) ].transform.position;
+		currentCloneDisplay.transform.position = data.Tile.neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].transform.position;
 		Color32 c = Util.TeamColor ( owner.team );
 		currentCloneDisplay.color = new Color32 ( c.r, c.g, c.b, 150 );
 		Util.OrientSpriteToDirection ( currentCloneDisplay, owner.direction );
 		currentCloneDisplay.gameObject.SetActive ( false );
 
 		// Create animations
-		Tween t1 = currentCloneDisplay.transform.DOMove ( data.tile.neighbors [ Util.GetOppositeDirection ( (int)data.direction ) ].transform.position, MOVE_ANIMATION_TIME )
+		Tween t1 = currentCloneDisplay.transform.DOMove ( data.Tile.neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].transform.position, MOVE_ANIMATION_TIME )
 			.OnStart ( ( ) =>
 			{
 				// Display clone
 				currentCloneDisplay.gameObject.SetActive ( true );
 			} );
-		Tween t2 = transform.DOMove ( data.tile.transform.position, MOVE_ANIMATION_TIME * 2 )
+		Tween t2 = transform.DOMove ( data.Tile.transform.position, MOVE_ANIMATION_TIME * 2 )
 			.OnComplete ( ( ) =>
 			{
 				// Start teleport cooldown
-				StartCooldown ( currentAbility2, info.ability2 );
+				StartCooldown ( CurrentAbility2, Info.Ability2 );
 
 				// Set unit and tile data
-				SetUnitToTile ( data.tile );
+				SetUnitToTile ( data.Tile );
 			} );
 		Tween t3 = currentCloneDisplay.transform.DOScale ( new Vector3 ( 5, 5, 5 ), KO_ANIMATION_TIME )
 			.OnComplete ( ( ) =>
@@ -180,10 +155,10 @@ public class MindControl : HeroUnit
 	protected override void AttackUnit ( MoveData data )
 	{
 		// Check Mind Control conditions
-		if ( MindControlCheck ( data ) )
+		if ( PassiveAvailabilityCheck ( CurrentAbility1, data ) )
 		{
 			// Mind Control the opponent
-			foreach ( Tile t in data.attacks )
+			foreach ( Tile t in data.Attacks )
 			{
 				// Interupt unit
 				t.currentUnit.InteruptUnit ( );
@@ -207,7 +182,7 @@ public class MindControl : HeroUnit
 	public override void GetAttacked ( bool usePostAnimationQueue = false )
 	{
 		// Check if post-animation queue is being used to prevent animation queue sync issues and check if the Mind Control ability is active
-		if ( !usePostAnimationQueue && currentAbility1.enabled )
+		if ( !usePostAnimationQueue && CurrentAbility1.enabled )
 		{
 			// Remove all Mind Controlled units
 			DeactivateMindControl ( );
@@ -218,17 +193,17 @@ public class MindControl : HeroUnit
 	}
 
 	/// <summary>
-	/// Determines if the Mind Control ability can be used on an enemy unit.
-	/// Returns true if Mind Control can be used.
+	/// Checks if the hero is capable of using a passive ability.
+	/// Returns true if the passive ability is available.
 	/// </summary>
-	private bool MindControlCheck ( MoveData data )
+	protected override bool PassiveAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
 	{
-		// Check if ability is enabled
-		if ( !currentAbility1.enabled )
+		// Check base conditions
+		if ( !base.PassiveAvailabilityCheck ( current, prerequisite ) )
 			return false;
 
 		// Check the opponent
-		foreach ( Tile t in data.attacks )
+		foreach ( Tile t in prerequisite.Attacks )
 		{
 			// Check for Leader
 			if ( t.currentUnit is Leader )
@@ -238,12 +213,12 @@ public class MindControl : HeroUnit
 			if ( t.currentUnit is Pacifist )
 			{
 				HeroUnit h = t.currentUnit as HeroUnit;
-				if ( h.currentAbility1.enabled )
+				if ( h.CurrentAbility1.enabled )
 					return false;
 			}
 		}
 
-		// Return that the ability can be used
+		// Return that the ability is available
 		return true;
 	}
 
@@ -276,26 +251,31 @@ public class MindControl : HeroUnit
 			.OnComplete ( ( ) =>
 			{
 				// Store unit
-				mindControlledUnits.Add ( new MindControlledUnit ( u, u.owner, currentAbility1.duration ) );
+				//mindControlledUnits.Add ( new MindControlledUnit ( u, u.owner, currentAbility1.duration ) );
 
 				// Remove unit from unit's player's team
 				u.owner.units.Remove ( u );
+				if ( u.owner.standardKOdelegate != null )
+					u.koDelegate -= u.owner.standardKOdelegate;
 
 				// Add unit to player's team
 				owner.units.Add ( u );
 				u.owner = owner;
+				if ( owner.standardKOdelegate != null )
+					u.koDelegate += owner.standardKOdelegate;
 
 				// Apply status effect
-				u.status.AddStatusEffect ( abilitySprite1, MIND_CONTROL_STATUS_PROMPT, this, currentAbility1.duration );
+				u.status.AddStatusEffect ( abilitySprite1, MIND_CONTROL_STATUS_PROMPT, this, CurrentAbility1.duration );
 
 				// Add KO delegate
-				u.koDelegate += MindControlKO;
+				//u.koDelegate += MindControlKO;
 
 				// Face unit in correct direction
 				Util.OrientSpriteToDirection ( u.sprite, u.owner.direction );
 
 				// Update HUD
-				GM.UI.GetPlayerHUD ( u ).UpdateIconColor ( u.instanceID, Util.TeamColor ( owner.team ) );
+				GM.UI.matchInfoMenu.GetPlayerHUD ( u ).UpdateStatusEffects ( u.instanceID, u.status );
+				GM.UI.matchInfoMenu.GetPlayerHUD ( u ).UpdatePortrait ( u.instanceID, Util.TeamColor ( owner.team ) );
 			} );
 
 		// Add animation to queue
@@ -318,7 +298,7 @@ public class MindControl : HeroUnit
 	private void RemoveMindControlledUnit ( Unit u )
 	{
 		// Remove unit from list of Mind Controlled units
-		mindControlledUnits.RemoveAll ( match => match.unit == u );
+		mindControlledUnits.RemoveAll ( match => match == u );
 
 		// Remove KO delegate
 		u.koDelegate -= MindControlKO;
@@ -329,13 +309,13 @@ public class MindControl : HeroUnit
 	/// </summary>
 	private void DeactivateMindControl ( )
 	{
-		foreach ( MindControlledUnit u in mindControlledUnits )
+		foreach ( Unit u in mindControlledUnits )
 		{
 			// Remove KO delegate to prevent list removal errors during a loop
-			u.unit.koDelegate -= MindControlKO;
+			//u.unit.koDelegate -= MindControlKO;
 
 			// KO unit
-			u.unit.GetAttacked ( true );
+			u.GetAttacked ( true );
 		}
 
 		// Clear list of Mind Controlled units
@@ -345,42 +325,42 @@ public class MindControl : HeroUnit
 	/// <summary>
 	/// Decrements the cooldown for the unit's special ability.
 	/// </summary>
-	public override void Cooldown ( )
-	{
-		// Check for active ability type for ability 1
-		if ( currentAbility1.enabled )
-		{
-			// Check each unit currently Mind Controlled
-			foreach ( MindControlledUnit u in mindControlledUnits )
-			{
-				// Check if the unit is still on the team
-				if ( owner.units.Contains ( u.unit ) )
-				{
-					// Decrement duration
-					u.duration--;
+	//public override void Cooldown ( )
+	//{
+	//	// Check for active ability type for ability 1
+	//	if ( currentAbility1.enabled )
+	//	{
+	//		// Check each unit currently Mind Controlled
+	//		foreach ( MindControlledUnit u in mindControlledUnits )
+	//		{
+	//			// Check if the unit is still on the team
+	//			if ( owner.units.Contains ( u.unit ) )
+	//			{
+	//				// Decrement duration
+	//				u.duration--;
 
-					// Check if the unit has expired
-					if ( u.duration == 0 )
-					{
-						// Remove KO delegate
-						u.unit.koDelegate -= MindControlKO;
+	//				// Check if the unit has expired
+	//				if ( u.duration == 0 )
+	//				{
+	//					// Remove KO delegate
+	//					u.unit.koDelegate -= MindControlKO;
 
-						// KO unit
-						u.unit.GetAttacked ( true );
-					}					
-				}
-				else
-				{
-					// Expire the unit
-					u.duration = 0;
-				}
-			}
+	//					// KO unit
+	//					u.unit.GetAttacked ( true );
+	//				}					
+	//			}
+	//			else
+	//			{
+	//				// Expire the unit
+	//				u.duration = 0;
+	//			}
+	//		}
 
-			// Remove any expired units
-			mindControlledUnits.RemoveAll ( match => match.duration == 0 );
-		}
+	//		// Remove any expired units
+	//		mindControlledUnits.RemoveAll ( match => match.duration == 0 );
+	//	}
 
-		// Set cooldown for ability 2
-		base.Cooldown ( );
-	}
+	//	// Set cooldown for ability 2
+	//	base.Cooldown ( );
+	//}
 }

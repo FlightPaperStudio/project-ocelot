@@ -26,12 +26,12 @@ public class Leader : Unit
 		characterName = NameGenerator.CreateName ( );
 
 		// Set ability information
-		ability.name = "Smite";
-		ability.description = "???";
-		ability.type = 0;
-		ability.duration = 1;
-		ability.cooldown = 0;
-		currentAbility = new AbilitySettings ( true, (Ability.AbilityType)ability.type, ability.duration, ability.cooldown );
+		ability.Name = "Smite";
+		ability.Description = "???";
+		ability.Type = 0;
+		ability.Duration = 1;
+		ability.Cooldown = 0;
+		currentAbility = new AbilitySettings ( true, (Ability.AbilityType)ability.Type, ability.Duration, ability.Cooldown );
 	}
 
 	/// <summary>
@@ -44,7 +44,7 @@ public class Leader : Unit
 			moveList.Clear ( );
 
 		// Check status effects
-		if ( status.canMove )
+		if ( status.CanMove )
 		{
 			// Store which tiles are to be ignored
 			IntPair back = GetBackDirection ( owner.direction );
@@ -63,12 +63,12 @@ public class Leader : Unit
 					if ( owner.startArea.IsGoalTile ( t.neighbors [ i ] ) )
 					{
 						// Add as an available move to win
-						moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MoveToWin, i ) );
+						moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE_TO_WIN, i ) );
 					}
 					else
 					{
 						// Add as an available move
-						moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.Move, i ) );
+						moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
 					}
 				}
 				// Check if this unit can jump the neighboring tile
@@ -84,12 +84,12 @@ public class Leader : Unit
 						if ( owner.startArea.IsGoalTile ( t.neighbors [ i ].neighbors [ i ] ) )
 						{
 							// Add as an available attack to win
-							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.AttackToWin, i, t.neighbors [ i ] );
+							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.ATTACK_TO_WIN, i, t.neighbors [ i ] );
 						}
 						else
 						{
 							// Add as an available attack
-							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Attack, i, t.neighbors [ i ] );
+							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.ATTACK, i, t.neighbors [ i ] );
 						}
 					}
 					else
@@ -98,12 +98,12 @@ public class Leader : Unit
 						if ( owner.startArea.IsGoalTile ( t.neighbors [ i ].neighbors [ i ] ) )
 						{
 							// Add as an available jump to win
-							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.JumpToWin, i );
+							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.JUMP_TO_WIN, i );
 						}
 						else
 						{
 							// Add as an available jump
-							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Jump, i );
+							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.JUMP, i );
 						}
 					}
 
@@ -123,18 +123,18 @@ public class Leader : Unit
 	public override void MoveUnit ( MoveData data )
 	{
 		// Check move data
-		switch ( data.type )
+		switch ( data.Type )
 		{
-		case MoveData.MoveType.Move:
-		case MoveData.MoveType.MoveToWin:
+		case MoveData.MoveType.MOVE:
+		case MoveData.MoveType.MOVE_TO_WIN:
 			Move ( data );
 			break;
-		case MoveData.MoveType.Jump:
-		case MoveData.MoveType.JumpToWin:
+		case MoveData.MoveType.JUMP:
+		case MoveData.MoveType.JUMP_TO_WIN:
 			Jump ( data );
 			break;
-		case MoveData.MoveType.Attack:
-		case MoveData.MoveType.AttackToWin:
+		case MoveData.MoveType.ATTACK:
+		case MoveData.MoveType.ATTACK_TO_WIN:
 			Jump ( data );
 			AttackUnit ( data );
 			break;
@@ -151,7 +151,7 @@ public class Leader : Unit
 		base.Move ( data );
 
 		// Check if tile is a goal tile and if tile is the final destination
-		if ( owner.startArea.IsGoalTile ( data.tile ) && data == GM.selectedMove )
+		if ( owner.startArea.IsGoalTile ( data.Tile ) && data == GM.selectedMove )
 		{
 			// Have the player win the match
 			GM.WinMatch ( owner );
@@ -167,7 +167,7 @@ public class Leader : Unit
 		base.Jump ( data );
 
 		// Check if tile is a goal tile and if tile is the final destination
-		if ( owner.startArea.IsGoalTile ( data.tile ) && data == GM.selectedMove )
+		if ( owner.startArea.IsGoalTile ( data.Tile ) && data == GM.selectedMove )
 		{
 			// Have the player win the match
 			GM.WinMatch ( owner );

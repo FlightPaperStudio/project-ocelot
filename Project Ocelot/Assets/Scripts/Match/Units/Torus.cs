@@ -32,11 +32,11 @@ public class Torus : HeroUnit
 		base.FindMoves ( t, prerequisite, returnOnlyJumps );
 
 		// Get Run The Ropes moves
-		if ( SpecialAvailabilityCheck ( currentAbility1, prerequisite ) )
+		if ( SpecialAvailabilityCheck ( CurrentAbility1, prerequisite ) )
 			GetRunTheRopes ( t, prerequisite, returnOnlyJumps );
 
 		// Get Taunt availability
-		currentAbility2.active = CommandAvailabilityCheck ( currentAbility2, prerequisite );
+		CurrentAbility2.active = CommandAvailabilityCheck ( CurrentAbility2, prerequisite );
 	}
 
 	/// <summary>
@@ -55,32 +55,6 @@ public class Torus : HeroUnit
 
 		// Return that the ability is available
 		return true;
-	}
-
-	/// <summary>
-	/// Determines if any of the prerequisite moves used abilities.
-	/// Returns true if an ability was used.
-	/// </summary>
-	private bool CheckPrequisiteType ( MoveData m )
-	{
-		// Check for prerequisite move
-		if ( m != null )
-		{
-			// Check if the type matches
-			if ( m.type == MoveData.MoveType.Special || m.type == MoveData.MoveType.SpecialAttack )
-			{
-				// Return that an ability has been used
-				return true;
-			}
-			else
-			{
-				// Check prerequisite move's type
-				return CheckPrequisiteType ( m.prerequisite );
-			}
-		}
-
-		// Return that no abilities were used in previous moves
-		return false;
 	}
 
 	/// <summary>
@@ -111,7 +85,7 @@ public class Torus : HeroUnit
 				if ( !returnOnlyJumps && OccupyTileCheck ( torusTile, prerequisite ) )
 				{
 					// Add as an available move
-					moveList.Add ( new MoveData ( torusTile, prerequisite, MoveData.MoveType.Special, i ) );
+					moveList.Add ( new MoveData ( torusTile, prerequisite, MoveData.MoveType.SPECIAL, i ) );
 				}
 				// Check if this unit can jump the edge tile
 				else if ( JumpTileCheck ( torusTile ) && OccupyTileCheck ( torusTile.neighbors [ i ], prerequisite ) )
@@ -123,12 +97,12 @@ public class Torus : HeroUnit
 					if ( torusTile.currentUnit.UnitAttackCheck ( this ) )
 					{
 						// Add as an available attack
-						m = new MoveData ( torusTile.neighbors [ i ], prerequisite, MoveData.MoveType.SpecialAttack, i, torusTile );
+						m = new MoveData ( torusTile.neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL_ATTACK, i, torusTile );
 					}
 					else
 					{
 						// Add as an available jump
-						m = new MoveData ( torusTile.neighbors [ i ], prerequisite, MoveData.MoveType.Special, i );
+						m = new MoveData ( torusTile.neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i );
 					}
 
 					// Add move to the move list
@@ -157,12 +131,12 @@ public class Torus : HeroUnit
 					if ( t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
 					{
 						// Add as an available attack
-						m = new MoveData ( torusTile, prerequisite, MoveData.MoveType.SpecialAttack, i, t.neighbors [ i ] );
+						m = new MoveData ( torusTile, prerequisite, MoveData.MoveType.SPECIAL_ATTACK, i, t.neighbors [ i ] );
 					}
 					else
 					{
 						// Add as an available jump
-						m = new MoveData ( torusTile, prerequisite, MoveData.MoveType.Special, i );
+						m = new MoveData ( torusTile, prerequisite, MoveData.MoveType.SPECIAL, i );
 					}
 
 					// Add move to the move list
@@ -201,35 +175,35 @@ public class Torus : HeroUnit
 	{
 		// Get tiles
 		Tile startTile;
-		Tile endTile = data.tile;
-		if ( data.prerequisite == null )
+		Tile endTile = data.Tile;
+		if ( data.Prerequisite == null )
 			startTile = currentTile;
 		else
-			startTile = data.prerequisite.tile;
+			startTile = data.Prerequisite.Tile;
 
 		// Get rope positions
 		Vector3 ropesPos1 = startTile.transform.position;
-		if ( startTile.neighbors [ (int)data.direction ] != null )
-			ropesPos1 = startTile.neighbors [ (int)data.direction ].transform.position + Util.GetTileDistance ( data.direction );
+		if ( startTile.neighbors [ (int)data.Direction ] != null )
+			ropesPos1 = startTile.neighbors [ (int)data.Direction ].transform.position + Util.GetTileDistance ( data.Direction );
 		else
-			ropesPos1 += Util.GetTileDistance ( data.direction );
+			ropesPos1 += Util.GetTileDistance ( data.Direction );
 		Vector3 ropesPos2 = endTile.transform.position;
-		if ( endTile.neighbors [ Util.GetOppositeDirection ( (int)data.direction ) ] != null )
-			ropesPos2 = endTile.neighbors [ Util.GetOppositeDirection ( (int)data.direction ) ].transform.position + Util.GetTileDistance ( Util.GetOppositeDirection ( (int)data.direction ) );
+		if ( endTile.neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ] != null )
+			ropesPos2 = endTile.neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].transform.position + Util.GetTileDistance ( Util.GetOppositeDirection ( (int)data.Direction ) );
 		else
-			ropesPos2 += Util.GetTileDistance ( Util.GetOppositeDirection ( (int)data.direction ) );
+			ropesPos2 += Util.GetTileDistance ( Util.GetOppositeDirection ( (int)data.Direction ) );
 
 		// Create animations
-		Tween t1 = transform.DOMove ( ropesPos1, NumberOfTilesToEdge ( startTile, (int)data.direction, 1 ) * MOVE_ANIMATION_TIME ); // Move from the start position to the first ropes
-		Tween t2 = transform.DOMove ( ropesPos2, ( NumberOfTilesToEdge ( startTile, (int)data.direction, 1 ) + NumberOfTilesToEdge ( startTile, Util.GetOppositeDirection ( (int)data.direction ), 1 ) ) * MOVE_ANIMATION_TIME ); // Move across the arena from the first ropes to the second ropes
-		Tween t3 = transform.DOMove ( endTile.transform.position, NumberOfTilesToEdge ( endTile, Util.GetOppositeDirection ( (int)data.direction ), 1 ) * MOVE_ANIMATION_TIME ) // Move from the second ropes to the end position
+		Tween t1 = transform.DOMove ( ropesPos1, NumberOfTilesToEdge ( startTile, (int)data.Direction, 1 ) * MOVE_ANIMATION_TIME ); // Move from the start position to the first ropes
+		Tween t2 = transform.DOMove ( ropesPos2, ( NumberOfTilesToEdge ( startTile, (int)data.Direction, 1 ) + NumberOfTilesToEdge ( startTile, Util.GetOppositeDirection ( (int)data.Direction ), 1 ) ) * MOVE_ANIMATION_TIME ); // Move across the arena from the first ropes to the second ropes
+		Tween t3 = transform.DOMove ( endTile.transform.position, NumberOfTilesToEdge ( endTile, Util.GetOppositeDirection ( (int)data.Direction ), 1 ) * MOVE_ANIMATION_TIME ) // Move from the second ropes to the end position
 			.OnComplete ( ( ) =>
 			{
 				// Start Run The Ropes cooldown
-				StartCooldown ( currentAbility1, info.ability1 );
+				StartCooldown ( CurrentAbility1, Info.Ability1 );
 
 				// Set unit and tile data
-				SetUnitToTile ( data.tile );
+				SetUnitToTile ( data.Tile );
 			} );
 
 		// Add animation to queue
@@ -304,7 +278,7 @@ public class Torus : HeroUnit
 		if ( t != null && count <= TAUNT_RANGE )
 		{
 			// Check target and move location
-			if ( t.currentUnit != null && t.currentUnit.owner != owner && t.currentUnit.status.canBeMoved && OccupyTileCheck ( t.neighbors [ Util.GetOppositeDirection ( direction ) ], null ) )
+			if ( t.currentUnit != null && t.currentUnit.owner != owner && t.currentUnit.status.CanBeMoved && OccupyTileCheck ( t.neighbors [ Util.GetOppositeDirection ( direction ) ], null ) )
 				return t;
 			else
 				return GetTaunt ( t.neighbors [ direction ], direction, count + 1 );
@@ -378,7 +352,7 @@ public class Torus : HeroUnit
 				destination.currentUnit = u;
 
 				// Start cooldown
-				StartCooldown ( currentAbility2, info.ability2 );
+				StartCooldown ( CurrentAbility2, Info.Ability2 );
 
 				// Pause turn timer
 				if ( MatchSettings.turnTimer )

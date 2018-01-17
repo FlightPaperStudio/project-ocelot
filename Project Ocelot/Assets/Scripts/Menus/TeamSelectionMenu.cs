@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -7,39 +8,41 @@ using TMPro;
 
 public class TeamSelectionMenu : Menu 
 {
-	// UI elements
+	#region UI Elements
+
 	public TextMeshProUGUI teamName;
-	public Image [ ] teamIcons;
-	public Button randomButton;
-	public Button unselectButton;
-	public TextMeshProUGUI unitName;
-	public Button [ ] unitButtons;
-	public GameObject unitInfoPanel;
-	public GameObject unitSelectionPanel;
+	public TeamSlotMeter slotMeter;
+	public HeroCard [ ] cards;
+	public GameObject selectPanel;
 	public GameObject confirmPanel;
+	public UnitPortrait [ ] heroPortraits;
 
-	// Game objects
-	public GameObject teamSelectionObjs;
-	public SpriteRenderer currentUnitSprite;
-	public SpriteRenderer [ ] teamDisplaySprites;
+	#endregion // UI Elements
 
-	// Player information
-	private PlayerSettings player;
-	private int specialIndex = 0;
+	#region Menu Data
 
-	// Menu information
 	public TeamSetup setup;
 	public Menu teamFormation;
-	private int selectedSpecialID;
-	private int randomStartIndex;
+	private int selectedHeroID;
+	private UnitPortrait selectedPortrait;
+	private int heroIndex;
+	private int heroTotal;
+	private int disabledCardIndex;
+	private List<Tween> slotAnimations = new List<Tween> ( );
+	private Color32 slotColor = new Color32 ( 255, 210, 75, 255 );
 
-	// UI information
-	private ColorBlock selected = new ColorBlock ( );
-	private ColorBlock unselected = new ColorBlock ( );
-	private ColorBlock inactive = new ColorBlock ( );
+	#endregion // Menu Data
+
+	#region Player Data
+
+	private PlayerSettings player;
+
+	#endregion // Player Data
 
 	// HACK
 	public Sprite [ ] icons;
+
+	#region Menu Override Functions
 
 	/// <summary>
 	/// Opens the team selection menu.
@@ -49,110 +52,105 @@ public class TeamSelectionMenu : Menu
 	{
 		// Open the menu
 		base.OpenMenu ( closeParent );
-		unitInfoPanel.SetActive ( true );
-		unitSelectionPanel.SetActive ( true );
+		selectPanel.SetActive ( true );
 		confirmPanel.SetActive ( false );
-		teamSelectionObjs.SetActive ( true );
-		foreach ( SpriteRenderer s in teamDisplaySprites )
-			if ( s != currentUnitSprite )
-				s.gameObject.SetActive ( false );
 
 		// Set the player
 		player = values [ 0 ] as PlayerSettings;
-		specialIndex = 0;
 
 		// Display team name
 		teamName.text = player.name;
-		teamName.color = Util.TeamColor ( player.teamColor );
+		teamName.color = Util.TeamColor ( player.TeamColor );
 
-		// Hide unit icons
-		for ( int i = 0; i < teamIcons.Length; i++ )
+		// Reset resource meter to only display on slot for the Leader unit
+		slotMeter.SetMeter ( 1 );
+
+		// Set the total number of heroes to be selected
+		heroTotal = MatchSettings.teamSize;
+
+		// Start hero selection from the beginning
+		heroIndex = 0;
+		disabledCardIndex = slotMeter.TotalSlots - heroTotal - 1;
+
+		// Display cards for the number of heroes to be selected
+		for ( int i = 0; i < cards.Length; i++ )
 		{
-			if ( i < player.specialIDs.Count )
-				teamIcons [ i ].color = new Color32 ( 255, 255, 255, 0 );
-			else
-				teamIcons [ i ].gameObject.SetActive ( false );
+			// Hide excess cards
+			cards [ i ].gameObject.SetActive ( i < heroTotal );
+
+			// Set displayed cards
+			if ( i < heroTotal )
+			{
+				// Set card color
+				cards [ i ].SetTeamColor ( Util.TeamColor ( player.TeamColor ) );
+
+				// Set cards to unselected
+				cards [ i ].DisplayCardWithoutHero ( );
+				if ( i == 0 )
+					cards [ i ].SetControls ( HeroCard.CardControls.RANDOM );
+				else
+					cards [ i ].SetControls ( HeroCard.CardControls.NONE );
+			}
 		}
 
-		// Set colors
-		selected.normalColor =        new Color32 ( 255, 210,  75, 255 );
-		selected.highlightedColor =   new Color32 ( 255, 210,  75, 255 );
-		selected.pressedColor =       new Color32 ( 255, 210,  75, 255 );
-		selected.disabledColor =      new Color32 (   0, 165, 255, 255 );
-		selected.colorMultiplier = 1;
-		unselected.normalColor =      new Color32 ( 255, 255, 200, 255 );
-		unselected.highlightedColor = new Color32 ( 255, 210,  75, 255 );
-		unselected.pressedColor =     new Color32 ( 255, 210,  75, 255 );
-		unselected.disabledColor =    new Color32 (   0, 165, 255, 255 );
-		unselected.colorMultiplier = 1;
-		inactive.normalColor =        new Color32 (   0,   0,   0,   0 );
-		inactive.highlightedColor =   new Color32 (   0,   0,   0,   0 );
-		inactive.pressedColor =       new Color32 (   0,   0,   0,   0 );
-		inactive.disabledColor =      new Color32 (   0,   0,   0,   0 );
-		inactive.colorMultiplier = 1;
+		// Set hero select buttons
+		for ( int i = 0; i < heroPortraits.Length; i++ )
+			heroPortraits [ i ].SetUnit ( i + 1, icons [ i ], Util.TeamColor ( player.TeamColor ) );
 
-		// Start unit selection from the beginning
-		randomButton.interactable = true;
-		unselectButton.interactable = false;
-		for ( int i = 0; i < unitButtons.Length; i++ )
-		{
-			if ( MatchSettings.heroSettings [ i ].selection )
-			{
-				unitButtons [ i ].interactable = true;
-				unitButtons [ i ].colors = unselected;
-			}
-			else
-			{
-				unitButtons [ i ].interactable = false;
-				unitButtons [ i ].colors = inactive;
-			}
-			RectTransform rect = unitButtons [ i ].transform as RectTransform;
-			rect.offsetMax = Vector2.zero;
-			rect.offsetMin = Vector2.zero;
-		}
-		SelectRandomUnit ( );
+		// Start by selecting a random hero
+		SelectRandomUnit ( false );
 
 		// Display prompt
-		setup.splash.Slide ( "<size=75%>" + player.name + "</size>\n<color=white>Team Selection", Util.TeamColor ( player.teamColor ), true );
+		setup.splash.Slide ( "<size=75%>" + player.name + "</size>\n<color=white>Team Selection", Util.TeamColor ( player.TeamColor ), true );
 	}
+
+	#endregion // Menu Override Functions
+
+	#region Public Functions
 
 	/// <summary>
 	/// Selects the unit for display and potential addition to the team.
 	/// </summary>
 	public void SelectUnit ( int index )
 	{
-		// Display the button as selected
-		for ( int i = 0; i < unitButtons.Length; i++ )
+		// Check if hero is enabled
+		if ( heroPortraits [ index ].IsEnabled )
 		{
-			if ( i == index )
+			// Check for previously selected buttons
+			if ( selectedPortrait != null && selectedPortrait != heroPortraits [ index ] )
 			{
-				unitButtons [ i ].colors = selected;
-				RectTransform rect = unitButtons [ i ].transform as RectTransform;
-				rect.offsetMax = new Vector2 ( 2.5f, 2.5f );
-				rect.offsetMin = new Vector2 ( -2.5f, -2.5f );
+				// Reset the button
+				selectedPortrait.SelectToggle ( false );
 			}
-			else
-			{
-				// Set button as unselected
-				if ( unitButtons [ i ].interactable )
-				{
-					unitButtons [ i ].colors = unselected;
-					RectTransform rect = unitButtons [ i ].transform as RectTransform;
-					rect.offsetMax = Vector2.zero;
-					rect.offsetMin = Vector2.zero;
-				}
-			}
+
+			// Store current hero ID
+			selectedHeroID = index + 1;
+
+			// Store selected button
+			selectedPortrait = heroPortraits [ index ];
+
+			// Display hero in card
+			cards [ heroIndex ].SetHero ( selectedHeroID, icons [ index ] );
+
+			// Update slot meter
+			slotMeter.PreviewSlots ( HeroInfo.GetHeroByID ( selectedHeroID ).Slots );
 		}
+	}
 
-		// Store special ID
-		selectedSpecialID = index + 1;
+	/// <summary>
+	/// Selects an active unit at random.
+	/// </summary>
+	public void SelectRandomUnit ( bool confirmSelection )
+	{
+		// Get random hero from the enabled buttons
+		UnitPortrait [ ] enabledPortraits = heroPortraits.Where ( x => x.IsEnabled ).ToArray ( );
+		UnitPortrait randomPortrait = enabledPortraits [ Random.Range ( 0, enabledPortraits.Length ) ];
 
-		// Display unit name
-		unitName.text = HeroInfo.GetHeroByID ( selectedSpecialID ).characterName;
-
-		// Display unit
-		currentUnitSprite.sprite = icons [ index ];
-		currentUnitSprite.color = Util.TeamColor ( player.teamColor );
+		// Select button
+		randomPortrait.MouseClick ( );
+		SelectUnit ( System.Array.IndexOf ( heroPortraits, randomPortrait ) );
+		if ( confirmSelection )
+			ConfirmUnit ( );
 	}
 
 	/// <summary>
@@ -160,77 +158,64 @@ public class TeamSelectionMenu : Menu
 	/// </summary>
 	public void ConfirmUnit ( )
 	{
-		// Add unit to the team
-		player.specialIDs [ specialIndex ] = selectedSpecialID;
+		// Add hero to the team
+		player.heroIDs.Add ( selectedHeroID );
 
-		// Disable button
+		// Update slot meter
+		slotMeter.SetMeter ( slotMeter.FilledSlots + slotMeter.PreviewedSlots );
+
+		// Increment hero index
+		heroIndex++;
+
+		// Check if hero stacking is enabled
 		if ( !MatchSettings.stacking )
-			unitButtons [ selectedSpecialID - 1 ].interactable = false;
-
-		// Display the added unit
-		teamIcons [ specialIndex ].sprite = icons [ selectedSpecialID - 1 ];
-		teamIcons [ specialIndex ].color = Util.TeamColor ( player.teamColor );
-
-		// Activate undo button
-		unselectButton.interactable = true;
-
-		// Increment index
-		specialIndex++;
-
-		// Check if team selection is complete
-		if ( specialIndex < player.specialIDs.Count )
 		{
-			// Continue team selection
-			SelectRandomUnit ( );
+			// Disable hero button
+			selectedPortrait.SelectToggle ( false );
+			selectedPortrait.EnableToggle ( false );
+			selectedPortrait = null;
 		}
-		else
+
+		// Check the hero takes up multiple slots
+		if ( HeroInfo.GetHeroByID ( selectedHeroID ).Slots > 1 )
 		{
-			// Display confirmation
-			unitInfoPanel.SetActive ( false );
-			unitSelectionPanel.SetActive ( false );
-			confirmPanel.SetActive ( true );
+			// Subtract the number of available slots
+			disabledCardIndex -= ( HeroInfo.GetHeroByID ( selectedHeroID ).Slots - 1 );
 
-			// Disable random team button
-			randomButton.interactable = false;
-
-			// Display team
-			for ( int i = 0; i < player.specialIDs.Count; i++ )
+			// Check if a hero slot was removed
+			if ( disabledCardIndex < 0 )
 			{
-				teamDisplaySprites [ i ].gameObject.SetActive ( true );
-				teamDisplaySprites [ i ].sprite = icons [ player.specialIDs [ i ] - 1 ];
-				teamDisplaySprites [ i ].color = Util.TeamColor ( player.teamColor );
+				// Disable the hero card to indicate the loss of a hero slot
+				cards [ heroTotal + disabledCardIndex ].DisableCard ( );
 			}
 		}
-	}
 
-	/// <summary>
-	/// Selects random units to fill out the rest of the team.
-	/// </summary>
-	public void RandomTeam ( )
-	{
-		// Check index
-		if ( specialIndex < player.specialIDs.Count )
+		// Update controls
+		if ( heroIndex - 2 >= 0 )
+			cards [ heroIndex - 2 ].SetControls ( HeroCard.CardControls.NONE );
+		if ( heroIndex < heroTotal && slotMeter.FilledSlots < slotMeter.TotalSlots )
+			cards [ heroIndex - 1 ].SetControls ( HeroCard.CardControls.UNDO );
+		else
+			cards [ heroIndex - 1 ].SetControls ( HeroCard.CardControls.NONE );
+		if ( heroIndex < heroTotal && slotMeter.FilledSlots < slotMeter.TotalSlots )
+			cards [ heroIndex ].SetControls ( HeroCard.CardControls.RANDOM );
+
+		// Check if hero selection is complete
+		if ( heroIndex < heroTotal && slotMeter.FilledSlots < slotMeter.TotalSlots )
 		{
-			// Store index
-			randomStartIndex = specialIndex;
+			// Disable heroes that won't fit within the team with the remaining resources
+			for ( int i = 0; i < heroPortraits.Length; i++ )
+				heroPortraits [ i ].EnableToggle ( heroPortraits [ i ].IsEnabled && slotMeter.FilledSlots + HeroInfo.list [ i ].Slots <= slotMeter.TotalSlots );
+
+			// Select next hero
+			SelectRandomUnit ( false );
 		}
 		else
 		{
-			// Unselect the randomly selected units
-			for ( int i = specialIndex; i > randomStartIndex; i-- )
-				UnselectUnit ( );
+			// Display confirmation panel
+			confirmPanel.SetActive ( true );
+			selectPanel.SetActive ( false );
 		}
-
-		// Randomly select the first unit
-		SelectRandomUnit ( );
-		ConfirmUnit ( );
-
-		// Randomly select any remaining units
-		while ( specialIndex < player.specialIDs.Count )
-			ConfirmUnit ( );
-
-		// Enable random team button for random reassignment
-		randomButton.interactable = true;
 	}
 
 	/// <summary>
@@ -238,38 +223,61 @@ public class TeamSelectionMenu : Menu
 	/// </summary>
 	public void UnselectUnit ( )
 	{
-		// Check if team is full
-		if ( specialIndex == player.specialIDs.Count )
+		// Check if confirmation is being cancelled
+		if ( heroIndex == heroTotal || slotMeter.FilledSlots == slotMeter.TotalSlots )
 		{
-			// Display selection controls
-			unitInfoPanel.SetActive ( true );
-			unitSelectionPanel.SetActive ( true );
-
-			// Hide confirmation controls
+			// Display selection panel
+			selectPanel.SetActive ( true );
 			confirmPanel.SetActive ( false );
-			foreach ( SpriteRenderer s in teamDisplaySprites )
-				if ( s != currentUnitSprite )
-					s.gameObject.SetActive ( false );
 		}
 
-		// Decrement index
-		specialIndex--;
+		// Decrement hero index
+		heroIndex--;
 
-		// Remove icon from team
-		teamIcons [ specialIndex ].color = new Color32 ( 255, 255, 255, 0 );
+		// Store selected hero
+		selectedHeroID = player.heroIDs [ heroIndex ];
 
-		// Enable button
-		unitButtons [ player.specialIDs [ specialIndex ] - 1 ].interactable = true;
+		// Remove hero from player list
+		player.heroIDs.Remove ( selectedHeroID );
 
-		// Set removed unit to be currently selected
-		SelectUnit ( player.specialIDs [ specialIndex ] - 1 );
+		// Remove last hero from slot meter
+		slotMeter.SetMeter ( slotMeter.FilledSlots - HeroInfo.GetHeroByID ( selectedHeroID ).Slots );
 
-		// Disable undo button if team is empty
-		if ( specialIndex == 0 )
-			unselectButton.interactable = false;
+		// Check if the hero takes up multiples slots
+		if ( HeroInfo.GetHeroByID ( selectedHeroID ).Slots > 1 )
+		{
+			// Add the number of available slots
+			disabledCardIndex += ( HeroInfo.GetHeroByID ( selectedHeroID ).Slots - 1 );
 
-		// Enable random team button
-		randomButton.interactable = true;
+			// Check if a hero slot was added
+			if ( disabledCardIndex <= 0 )
+			{
+				// Enable the hero card to indicate the addition of a hero slot
+				cards [ heroTotal + ( disabledCardIndex - ( HeroInfo.GetHeroByID ( selectedHeroID ).Slots - 1 ) ) ].DisplayCardWithoutHero ( );
+			}
+		}
+
+		// Update cards and controls
+		if ( heroIndex - 1 >= 0 )
+			cards [ heroIndex - 1 ].SetControls ( HeroCard.CardControls.UNDO );
+		cards [ heroIndex ].SetControls ( HeroCard.CardControls.RANDOM );
+		if ( heroIndex + 1 < heroTotal && slotMeter.FilledSlots + HeroInfo.GetHeroByID ( selectedHeroID ).Slots < slotMeter.TotalSlots )
+		{
+			cards [ heroIndex + 1 ].DisplayCardWithoutHero ( );
+			cards [ heroIndex + 1 ].SetControls ( HeroCard.CardControls.NONE );
+		}
+			
+
+		// Enable any hero buttons that were removed from the last hero's selection
+		for ( int i = 0; i < heroPortraits.Length; i++ )
+			heroPortraits [ i ].EnableToggle ( MatchSettings.heroSettings [ i ].selection && ( MatchSettings.stacking || !player.heroIDs.Contains ( HeroInfo.list [ i ].ID ) ) && slotMeter.FilledSlots + HeroInfo.list [ i ].Slots <= slotMeter.TotalSlots );
+
+		// Enable previous hero button
+		heroPortraits [ selectedHeroID - 1 ].EnableToggle ( true );
+
+		// Select previous hero
+		heroPortraits [ selectedHeroID - 1 ].MouseClick ( );
+		SelectUnit ( selectedHeroID - 1 );
 	}
 
 	/// <summary>
@@ -277,28 +285,9 @@ public class TeamSelectionMenu : Menu
 	/// </summary>
 	public void ConfirmTeam ( )
 	{
-		// Hide game objects
-		teamSelectionObjs.SetActive ( false );
-
 		// Open the team formation menu
 		teamFormation.OpenMenu ( true, player );
 	}
 
-	/// <summary>
-	/// Selects an active unit at random.
-	/// </summary>
-	private void SelectRandomUnit ( )
-	{
-		// Create list of available units
-		List<int> list = new List<int> ( );
-		for ( int i = 0; i < unitButtons.Length; i++ )
-			if ( unitButtons [ i ].interactable )
-				list.Add ( i );
-
-		// Select random index
-		int index = Random.Range ( 0, list.Count );
-
-		// Select unit
-		SelectUnit ( list [ index ] );
-	}
+	#endregion // Public Functions
 }

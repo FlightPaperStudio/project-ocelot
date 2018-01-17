@@ -4,9 +4,30 @@ using UnityEngine;
 
 public class Menu : MonoBehaviour 
 {
-	// Menu elements
-	public Menu parentMenu;
+	#region UI Elements
+
 	public GameObject menuContainer;
+
+	#endregion // UI Elements
+
+	#region Menu Data
+
+	public Menu parentMenu;
+	
+	/// <summary>
+	/// Tracks whether or not this menu is currently open.
+	/// </summary>
+	public bool IsOpen
+	{
+		get
+		{
+			return menuContainer.activeSelf;
+		}
+	}
+
+	#endregion // Menu Data
+
+	#region Public Functions
 
 	/// <summary>
 	/// Opens the menu.
@@ -20,9 +41,26 @@ public class Menu : MonoBehaviour
 	}
 
 	/// <summary>
+	/// Closes the menu.
+	/// Use this as a button even wrapper for going up a layer (e.g. from a sub menu to a parent menu).
+	/// Default parameters are passed.
+	/// </summary>
+	public void CloseMenu ( )
+	{
+		// Close the menu
+		CloseMenu ( true );
+	}
+
+	#endregion // Public Functions
+
+	#region Public Virtual Functions
+
+	/// <summary>
 	/// Opens the menu.
 	/// Use this for going down a layer (e.g. from a parent menu to a sub menu).
 	/// </summary>
+	/// <param name="closeParent"> Whether or not the parent menu should be closed upon this menu opening. </param>
+	/// <param name="values"> Any parameters needed as additional information when opening this menu. </param>
 	public virtual void OpenMenu ( bool closeParent = true, params object [ ] values )
 	{
 		// Close parent menu
@@ -35,19 +73,10 @@ public class Menu : MonoBehaviour
 
 	/// <summary>
 	/// Closes the menu.
-	/// Use this as a button even wrapper for going up a layer (e.g. from a sub menu to a parent menu).
-	/// Default parameters are passed.
-	/// </summary>
-	public void CloseMenu ( )
-	{
-		// Close the menu
-		CloseMenu ( true );
-	}
-
-	/// <summary>
-	/// Closes the menu.
 	/// Use this for going up a layer (e.g. from a sub menu to a parent menu).
 	/// </summary>
+	/// <param name="openParent"> Whether or not the parent menu should be opened upon this menu closing. </param>
+	/// <param name="values"> Any parameters needed as additional information when opening the parent menu. </param>
 	public virtual void CloseMenu ( bool openParent = true, params object [ ] values )
 	{
 		// Hide menu
@@ -57,4 +86,6 @@ public class Menu : MonoBehaviour
 		if ( parentMenu != null && openParent )
 			parentMenu.OpenMenu ( false, values );
 	}
+
+	#endregion // Public Virtual Functions
 }

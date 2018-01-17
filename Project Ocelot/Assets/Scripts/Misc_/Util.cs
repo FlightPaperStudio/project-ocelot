@@ -84,27 +84,27 @@ public class Util
 		switch ( direction )
 		{
 		// Above
-		case MoveData.MoveDirection.Above:
+		case MoveData.MoveDirection.ABOVE:
 			return new Vector3 (  0.0f,  1.5f, 0f );
 
 		// Right above
-		case MoveData.MoveDirection.RightAbove:
+		case MoveData.MoveDirection.RIGHT_ABOVE:
 			return new Vector3 (  1.3f,  0.75f, 0f );
 
 		// Right below
-		case MoveData.MoveDirection.RightBelow:
+		case MoveData.MoveDirection.RIGHT_BELOW:
 			return new Vector3 (  1.3f, -0.75f, 0f );
 
 		// Below
-		case MoveData.MoveDirection.Below:
+		case MoveData.MoveDirection.BELOW:
 			return new Vector3 (  0.0f, -1.5f, 0f );
 
 		// Left Below
-		case MoveData.MoveDirection.LeftBelow:
+		case MoveData.MoveDirection.LEFT_BELOW:
 			return new Vector3 ( -1.3f, -0.75f, 0f );
 
 		// Left above
-		case MoveData.MoveDirection.LeftAbove:
+		case MoveData.MoveDirection.LEFT_ABOVE:
 			return new Vector3 ( -1.3f,  0.75f, 0f );
 		}
 

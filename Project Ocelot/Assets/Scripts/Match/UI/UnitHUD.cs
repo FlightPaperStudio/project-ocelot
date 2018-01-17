@@ -8,11 +8,14 @@ public class UnitHUD : MonoBehaviour
 {
 	// UI elements
 	public GameObject container;
+	public Image portraitContainer;
 	public Image unitIcon;
-	public TextMeshProUGUI unitName;
+	public GameObject heroContainer;
+	public TextMeshProUGUI heroName;
 	public GameObject abilityContainer;
 	public AbilityHUD ability1;
 	public AbilityHUD ability2;
+	public GameObject pawnContainer;
 	public TextMeshProUGUI pawnName;
 	public RectTransform heightReference;
 	public GameObject [ ] statusPrompts;
@@ -35,6 +38,9 @@ public class UnitHUD : MonoBehaviour
 		// Display HUD
 		container.SetActive ( true );
 
+		// Display team color
+		portraitContainer.color = Util.TeamColor ( currentUnit.owner.team );
+
 		// Display unit icon
 		unitIcon.sprite = currentUnit.displaySprite;
 		unitIcon.color = Util.TeamColor ( currentUnit.owner.team );
@@ -48,34 +54,38 @@ public class UnitHUD : MonoBehaviour
 			// Store unit as a hero
 			HeroUnit h = currentUnit as HeroUnit;
 
-			// Display unit name
-			unitName.gameObject.SetActive ( true );
-			unitName.text = currentUnit.characterName;
+			// Display hero information
+			heroContainer.SetActive ( true );
+			pawnContainer.SetActive ( false );
+
+			// Display hero name
+			heroName.text = currentUnit.characterName;
 
 			// Display ability HUD
 			abilityContainer.SetActive ( true );
 			ability2.container.SetActive ( true );
-			pawnName.gameObject.SetActive ( false );
 
 			// Display ability 1
-			SetupAbility ( h.currentAbility1, h.info.ability1, ability1, h.abilitySprite1 );
+			SetupAbility ( h.CurrentAbility1, h.Info.Ability1, ability1, h.abilitySprite1 );
 
 			// Display ability 2
-			SetupAbility ( h.currentAbility2, h.info.ability2, ability2, h.abilitySprite2 );
+			SetupAbility ( h.CurrentAbility2, h.Info.Ability2, ability2, h.abilitySprite2 );
 		}
 		else if ( currentUnit is Leader )
 		{
 			// Store unit as a leader
 			Leader l = currentUnit as Leader;
 
-			// Display unit name
-			unitName.gameObject.SetActive ( true );
-			unitName.text = currentUnit.characterName;
+			// Display leader information
+			heroContainer.SetActive ( true );
+			pawnContainer.SetActive ( false );
+
+			// Display leader name
+			heroName.text = currentUnit.characterName;
 
 			// Display ability HUD
 			abilityContainer.SetActive ( true );
 			ability2.container.SetActive ( false );
-			pawnName.gameObject.SetActive ( false );
 
 			// Display ability icon
 			ability1.icon.sprite = l.abilitySprite;
@@ -88,13 +98,13 @@ public class UnitHUD : MonoBehaviour
 			// Store unit as a pawn
 			Pawn p = currentUnit as Pawn;
 
-			// Display unit name
-			pawnName.gameObject.SetActive ( true );
-			pawnName.text = p.characterName + "\n" + p.characterNickname;
-
-			// Hide ability HUD
-			unitName.gameObject.SetActive ( false );
+			// Display pawn information
+			pawnContainer.SetActive ( true );
+			heroContainer.SetActive ( false );
 			abilityContainer.SetActive ( false );
+
+			// Display unit name
+			pawnName.text = p.characterName + "\n" + p.characterNickname;
 		}
 	}
 
@@ -155,7 +165,7 @@ public class UnitHUD : MonoBehaviour
 			hud.cooldown.gameObject.SetActive ( false );
 
 			// Check ability type
-			if ( current.type == Ability.AbilityType.Command )
+			if ( current.type == Ability.AbilityType.COMMAND )
 			{
 				// Display command buttons
 				hud.useButton.gameObject.SetActive ( true );
@@ -181,16 +191,16 @@ public class UnitHUD : MonoBehaviour
 		HeroUnit h = currentUnit as HeroUnit;
 		Ability setting;
 		AbilityHUD hud;
-		if ( current == h.currentAbility1 )
+		if ( current == h.CurrentAbility1 )
 		{
 			// Store ability 1
-			setting = h.info.ability1;
+			setting = h.Info.Ability1;
 			hud = ability1;
 		}
 		else
 		{
 			// Store ability 2
-			setting = h.info.ability2;
+			setting = h.Info.Ability2;
 			hud = ability2;
 		}
 
@@ -207,7 +217,7 @@ public class UnitHUD : MonoBehaviour
 		switch ( current.type )
 		{
 		// Passive ability
-		case Ability.AbilityType.Passive:
+		case Ability.AbilityType.PASSIVE:
 
 			// Display passive ability
 			DisplayPassive ( current, setting, hud );
@@ -215,7 +225,7 @@ public class UnitHUD : MonoBehaviour
 			break;
 
 		// Special ability
-		case Ability.AbilityType.Special:
+		case Ability.AbilityType.SPECIAL:
 
 			// Display special ability
 			DisplaySpecial ( current, setting, hud );
@@ -223,7 +233,7 @@ public class UnitHUD : MonoBehaviour
 			break;
 
 		// Command ability
-		case Ability.AbilityType.Command:
+		case Ability.AbilityType.COMMAND:
 
 			// Display command ability
 			DisplayCommand ( current, setting, hud );
@@ -248,7 +258,7 @@ public class UnitHUD : MonoBehaviour
 		if ( current.duration > 0 )
 		{
 			// Check if the ability's duration is full
-			if ( current.duration == setting.duration && !current.active )
+			if ( current.duration == setting.Duration && !current.active )
 			{
 				// Display the ability normally
 				hud.activityDisplay.gameObject.SetActive ( false );
@@ -260,7 +270,7 @@ public class UnitHUD : MonoBehaviour
 				hud.activityDisplay.color = ACTIVE;
 
 				// Calculate percentage
-				hud.activityDisplay.rectTransform.offsetMax = CalculateCountSize ( (float)current.duration, (float)setting.duration, heightReference.sizeDelta.y );
+				hud.activityDisplay.rectTransform.offsetMax = CalculateCountSize ( (float)current.duration, (float)setting.Duration, heightReference.sizeDelta.y );
 			}
 		}
 		else
@@ -298,7 +308,7 @@ public class UnitHUD : MonoBehaviour
 			hud.activityDisplay.color = INACTIVE;
 
 			// Calculate percentage
-			hud.activityDisplay.rectTransform.offsetMax = CalculateCountSize ( (float)current.cooldown, (float)setting.cooldown, heightReference.sizeDelta.y );
+			hud.activityDisplay.rectTransform.offsetMax = CalculateCountSize ( (float)current.cooldown, (float)setting.Cooldown, heightReference.sizeDelta.y );
 
 			// Display cooldown
 			hud.cooldown.gameObject.SetActive ( true );
@@ -330,7 +340,7 @@ public class UnitHUD : MonoBehaviour
 			hud.activityDisplay.color = INACTIVE;
 
 			// Calculate percentage
-			hud.activityDisplay.rectTransform.offsetMax = CalculateCountSize ( (float)current.cooldown, (float)setting.cooldown, heightReference.sizeDelta.y );
+			hud.activityDisplay.rectTransform.offsetMax = CalculateCountSize ( (float)current.cooldown, (float)setting.Cooldown, heightReference.sizeDelta.y );
 
 			// Display cooldown
 			hud.cooldown.gameObject.SetActive ( true );
@@ -430,11 +440,11 @@ public class UnitHUD : MonoBehaviour
 			HeroUnit h = currentUnit as HeroUnit;
 
 			// Check if ability 1 is a command and disable the use button
-			if ( h.currentAbility1.type == Ability.AbilityType.Command )
+			if ( h.CurrentAbility1.type == Ability.AbilityType.COMMAND )
 				ability1.useButton.interactable = false;
 
 			// Check if ability 2 is a command and disable the use button
-			if ( h.currentAbility2.type == Ability.AbilityType.Command )
+			if ( h.CurrentAbility2.type == Ability.AbilityType.COMMAND )
 				ability2.useButton.interactable = false;
 		}
 	}

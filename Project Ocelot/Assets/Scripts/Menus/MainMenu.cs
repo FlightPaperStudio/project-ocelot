@@ -23,6 +23,10 @@ public class MainMenu : Menu
 
 		// Set delegate
 		popUpDelegate += QuitToDesktop;
+
+		// Name generator test
+		for ( int i = 0; i < 50; i++ )
+			Debug.Log ( "Name: " + NameGenerator.CreateName ( ) + "      Nickname: " + NameGenerator.CreateNickname ( ) );
 	}
 
 	/// <summary>
@@ -32,7 +36,7 @@ public class MainMenu : Menu
 	{
 		// Load special ability data
 		TextAsset heroes = Resources.Load ( "HeroList" ) as TextAsset;
-		HeroInfo.SetList (heroes.text );
+		HeroInfo.SetList ( heroes.text );
 
 		// Load name generator data
 		TextAsset generator = Resources.Load ( "NameGeneratorList" ) as TextAsset;

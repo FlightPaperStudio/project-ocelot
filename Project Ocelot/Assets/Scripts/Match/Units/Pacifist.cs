@@ -35,7 +35,7 @@ public class Pacifist : HeroUnit
 			moveList.Clear ( );
 
 		// Check status effects
-		if ( status.canMove )
+		if ( status.CanMove )
 		{
 			// Store which tiles are to be ignored
 			IntPair back = GetBackDirection ( owner.direction );
@@ -51,13 +51,13 @@ public class Pacifist : HeroUnit
 				if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
 				{
 					// Add as an available move
-					moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.Move, i ) );
+					moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
 				}
 				// Check if this unit can jump the neighboring tile
 				else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
 				{
 					// Add as an available jump
-					MoveData m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Jump, i );
+					MoveData m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.JUMP, i );
 					moveList.Add ( m );
 
 					// Find additional jumps
@@ -67,7 +67,7 @@ public class Pacifist : HeroUnit
 		}
 
 		// Get obstruction availability
-		currentAbility2.active = CommandAvailabilityCheck ( currentAbility2, prerequisite );
+		CurrentAbility2.active = CommandAvailabilityCheck ( CurrentAbility2, prerequisite );
 	}
 
 	/// <summary>
@@ -77,7 +77,7 @@ public class Pacifist : HeroUnit
 	public override bool UnitAttackCheck ( Unit attacker )
 	{
 		// Prevent any attacks with the Ghost ability
-		if ( currentAbility1.enabled )
+		if ( PassiveAvailabilityCheck ( CurrentAbility1, null ) )
 			return false;
 
 		// Return normal values if the Ghost ability is disabled
@@ -135,7 +135,7 @@ public class Pacifist : HeroUnit
 			GM.UI.timer.PauseTimer ( );
 
 		// Create Obstruction
-		currentObstruction = CreateTileOject ( obstructionPrefab, t, info.ability2.duration, ObstructionDurationComplete );
+		currentObstruction = CreateTileOject ( obstructionPrefab, t, Info.Ability2.Duration, ObstructionDurationComplete );
 
 		// Hide cancel button
 		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
@@ -149,7 +149,7 @@ public class Pacifist : HeroUnit
 			.OnComplete ( ( ) =>
 			{
 				// Start cooldown
-				StartCooldown ( currentAbility2, info.ability2 );
+				StartCooldown ( CurrentAbility2, Info.Ability2 );
 
 				// Pause turn timer
 				if ( MatchSettings.turnTimer )

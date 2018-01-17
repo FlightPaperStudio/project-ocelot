@@ -118,7 +118,7 @@ public class TurnTimer : MonoBehaviour
 			Unit unit = units [ unitIndex ];
 
 			// Create list of possible moves
-			List<MoveData> moves = unit.moveList.FindAll ( x => x.prerequisite == null );
+			List<MoveData> moves = unit.moveList.FindAll ( x => x.Prerequisite == null );
 
 			// Select a random move
 			int moveIndex = Random.Range ( 0, moves.Count );
@@ -128,7 +128,7 @@ public class TurnTimer : MonoBehaviour
 			GM.board.ResetTiles ( );
 
 			// Force a panic move and end the player's turn
-			StartCoroutine ( PanicMove ( unit, move.tile ) );
+			StartCoroutine ( PanicMove ( unit, move.Tile ) );
 		}
 		else
 		{

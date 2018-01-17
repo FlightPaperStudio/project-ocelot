@@ -35,17 +35,15 @@ public class GrimReaper : HeroUnit
 		base.Start ( );
 
 		// Set Life Drain
-		if ( currentAbility1.enabled )
+		if ( CurrentAbility1.enabled )
 		{
-			currentAbility1.duration = 0;
-			currentAbility1.active = true;
+			CurrentAbility1.duration = 0;
+			CurrentAbility1.active = true;
 		}
 
 		// Set Grim Reaper
-		if ( currentAbility2.enabled )
-			foreach ( Unit u in owner.units )
-				if ( u != this )
-					u.koDelegate += AddGrimReaperTile;
+		if ( CurrentAbility2.enabled )
+			owner.standardKOdelegate += AddGrimReaperTile;
 	}
 
 	/// <summary>
@@ -54,7 +52,8 @@ public class GrimReaper : HeroUnit
 	private void AddGrimReaperTile ( Unit u )
 	{
 		// Add tile
-		grimReaperTiles.Add ( u.currentTile );
+		if ( u.owner == owner )
+			grimReaperTiles.Add ( u.currentTile );
 	}
 
 	/// <summary>
@@ -66,7 +65,7 @@ public class GrimReaper : HeroUnit
 		base.FindMoves ( t, prerequisite, returnOnlyJumps );
 
 		// Get Grim Reaper moves
-		if ( SpecialAvailabilityCheck ( currentAbility2, prerequisite ) )
+		if ( SpecialAvailabilityCheck ( CurrentAbility2, prerequisite ) )
 			GetGrimReaper ( );
 	}
 
@@ -100,7 +99,7 @@ public class GrimReaper : HeroUnit
 			if ( OccupyTileCheck ( t, null ) )
 			{
 				// Create move
-				MoveData m = new MoveData ( t, null, MoveData.MoveType.Special, 0 );
+				MoveData m = new MoveData ( t, null, MoveData.MoveType.SPECIAL, 0 );
 
 				// Add as an available special move
 				moveList.Add ( m );
@@ -122,17 +121,17 @@ public class GrimReaper : HeroUnit
 			.OnComplete ( ( ) =>
 			{
 				// Move unit instantly
-				transform.position = data.tile.transform.position;
+				transform.position = data.Tile.transform.position;
 			} );
 		Tween t2 = barrier.DOFade ( 0, MOVE_ANIMATION_TIME );
 		Tween t3 = sprite.DOFade ( 1, MOVE_ANIMATION_TIME )
 			.OnComplete ( ( ) =>
 			{
 				// Start teleport cooldown
-				StartCooldown ( currentAbility2, info.ability2 );
+				StartCooldown ( CurrentAbility2, Info.Ability2 );
 
 				// Set unit and tile data
-				SetUnitToTile ( data.tile );
+				SetUnitToTile ( data.Tile );
 			} );
 		Tween t4 = barrier.DOFade ( LIFE_DRAIN_FADE, MOVE_ANIMATION_TIME );
 
@@ -154,7 +153,7 @@ public class GrimReaper : HeroUnit
 		base.AttackUnit ( data );
 
 		// Check for Life Drain
-		if ( currentAbility1.enabled )
+		if ( PassiveAvailabilityCheck ( CurrentAbility1, data ) )
 			ActivateLifeDrain ( );
 	}
 
@@ -173,17 +172,18 @@ public class GrimReaper : HeroUnit
 			.OnComplete ( ( ) =>
 			{
 				// Refresh abilities
-				currentAbility1.duration = info.ability1.duration;
-				if ( currentAbility2.enabled )
-						currentAbility2.cooldown = 0;
+				CurrentAbility1.duration = Info.Ability1.Duration;
+				if ( CurrentAbility2.enabled )
+						CurrentAbility2.cooldown = 0;
 
 				// Update HUD
-				GM.UI.unitHUD.DisplayAbility ( currentAbility1 );
-				if ( currentAbility2.enabled )
-					GM.UI.unitHUD.DisplayAbility ( currentAbility2 );
+				GM.UI.unitHUD.DisplayAbility ( CurrentAbility1 );
+				if ( CurrentAbility2.enabled )
+					GM.UI.unitHUD.DisplayAbility ( CurrentAbility2 );
 
 				// Apply status effect
-				status.AddStatusEffect ( abilitySprite1, LIFE_DRAIN_STATUS_PROMPT, this, currentAbility1.duration );
+				status.AddStatusEffect ( abilitySprite1, LIFE_DRAIN_STATUS_PROMPT, this, CurrentAbility1.duration );
+				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( instanceID, status );
 				GM.UI.unitHUD.UpdateStatusEffects ( );
 			} );
 
@@ -198,13 +198,14 @@ public class GrimReaper : HeroUnit
 	public override void GetAttacked ( bool usePostAnimationQueue = false )
 	{
 		// Check for barrier
-		if ( !usePostAnimationQueue && currentAbility1.enabled && currentAbility1.duration > 0 )
+		if ( !usePostAnimationQueue && CurrentAbility1.enabled && CurrentAbility1.duration > 0 )
 		{
 			// Remove barrier
 			DeactivateLifeDrain ( );
 
 			// Remove status effect
 			status.RemoveStatusEffect ( abilitySprite1, LIFE_DRAIN_STATUS_PROMPT, this );
+			GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( instanceID, status );
 		}
 		else
 		{
@@ -217,9 +218,9 @@ public class GrimReaper : HeroUnit
 				.OnStart ( ( ) =>
 				{
 					// Remove delegates
-					if ( currentAbility2.enabled )
+					if ( CurrentAbility2.enabled )
 						foreach ( Unit u in owner.units )
-							if ( u != this )
+							if ( u != null )
 								u.koDelegate -= AddGrimReaperTile;
 
 					// Hide barrier
@@ -227,17 +228,17 @@ public class GrimReaper : HeroUnit
 				} )
 				.OnComplete ( ( ) =>
 				{
-				// Display deactivation
-				GM.UI.GetPlayerHUD ( this ).DisplayDeactivation ( instanceID );
+					// Display deactivation
+					GM.UI.matchInfoMenu.GetPlayerHUD ( this ).DisplayKO ( instanceID );
 
-				// Remove unit from the team
-				owner.units.Remove ( this );
+					// Remove unit from the team
+					owner.units.Remove ( this );
 
-				// Remove unit reference from the tile
-				currentTile.currentUnit = null;
+					// Remove unit reference from the tile
+					currentTile.currentUnit = null;
 
-				// Delete the unit
-				Destroy ( this.gameObject );
+					// Delete the unit
+					Destroy ( this.gameObject );
 				} )
 				.Pause ( );
 			Tween t2 = sprite.DOFade ( 0, MOVE_ANIMATION_TIME )
@@ -270,7 +271,7 @@ public class GrimReaper : HeroUnit
 				barrier.gameObject.SetActive ( false );
 
 				// End ability duration
-				currentAbility1.duration = 0;
+				CurrentAbility1.duration = 0;
 			} );
 
 		// Add animation to queue
@@ -283,17 +284,17 @@ public class GrimReaper : HeroUnit
 	public override void Cooldown ( )
 	{
 		// Check for active ability type for ability 1
-		if ( currentAbility1.enabled )
+		if ( CurrentAbility1.enabled )
 		{
 			// Check if current duration is active
-			if ( currentAbility1.duration > 0 )
+			if ( CurrentAbility1.duration > 0 )
 			{
 				// Decrement duration
-				currentAbility1.duration--;
+				CurrentAbility1.duration--;
 
 				// Check if duration is complete
-				if ( currentAbility1.duration == 0 )
-					OnDurationComplete ( currentAbility1 );
+				if ( CurrentAbility1.duration == 0 )
+					OnDurationComplete ( CurrentAbility1 );
 			}
 		}
 

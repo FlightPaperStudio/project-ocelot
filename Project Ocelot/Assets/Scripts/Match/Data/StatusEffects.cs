@@ -4,39 +4,53 @@ using UnityEngine;
 
 public class StatusEffects
 {
+	#region Status Effect Data
+
 	// Status effect information
 	public enum StatusType
 	{
-		CanMove,
-		CanBeMoved,
-		CanUseAbility
+		CAN_MOVE,
+		CAN_BE_MOVED,
+		CAN_USE_ABILITY
 	}
 
-	// Determines if the unit can move
-	public bool canMove
+	/// <summary>
+	/// Determines if the unit is able to move.
+	/// </summary>
+	public bool CanMove
 	{
-		get;
-		private set;
+		get
+		{
+			return canMoveStack == 0;
+		}
 	}
 	private int canMoveStack = 0;
 
-	// Determines if the unit can be moved by abilities
-	public bool canBeMoved
+	/// <summary>
+	/// Determines if the unit is able to be moved by abilities.
+	/// </summary>
+	public bool CanBeMoved
 	{
-		get;
-		private set;
+		get
+		{
+			return canBeMovedStack == 0;
+		}
 	}
 	private int canBeMovedStack = 0;
 
-	// Determines if the unit can use abilities
-	public bool canUseAbility
+	/// <summary>
+	/// Determines if the unit is able to use abilities.
+	/// </summary>
+	public bool CanUseAbility
 	{
-		get;
-		private set;
+		get
+		{
+			return canUseAbilityStack == 0;
+		}
 	}
 	private int canUseAbilityStack = 0;
 
-	// All of the information to needed to add a new status effect to a unit.
+	// All of the information needed to add a new status effect to a unit.
 	public struct EffectInfo
 	{
 		public Sprite icon;
@@ -65,17 +79,26 @@ public class StatusEffects
 	}
 	public List<StatusEffect> effects = new List<StatusEffect> ( );
 
+	#endregion // Status Effect Data
+
+	#region Public Functions
+
 	public StatusEffects ( )
 	{
 		// Set default values
-		canMove = true;
-		canBeMoved = true;
-		canUseAbility = true;
+		canMoveStack = 0;
+		canBeMovedStack = 0;
+		canUseAbilityStack = 0;
 	}
 
 	/// <summary>
 	/// Adds a new status effect to the stack.
 	/// </summary>
+	/// <param name="_icon"> The icon representing the status effect. </param>
+	/// <param name="_text"> The text representing the status effect. </param>
+	/// <param name="_caster"> The unit applying the status effect to the affected unit. </param>
+	/// <param name="_duration"> The number of turns the status effect lasts. </param>
+	/// <param name="_effects"> Any standard effects applied by the status effect. </param>
 	public void AddStatusEffect ( Sprite _icon, string _text, Unit _caster, int _duration, params StatusType [ ] _effects )
 	{
 		// Create new status effect
@@ -98,46 +121,7 @@ public class StatusEffects
 			// Increment each effect
 			foreach ( StatusType type in statusEffect.effects )
 				IncrementEffect ( type );
-
-			// Update the current status
-			UpdateStatus ( );
 		}
-	}
-
-	/// <summary>
-	/// Increments the current stack of a particular status type.
-	/// </summary>
-	private void IncrementEffect ( StatusType _type )
-	{
-		// Check type and increment the corrisponding stack
-		switch ( _type )
-		{
-		case StatusType.CanMove:
-			canMoveStack++;
-			break;
-		case StatusType.CanBeMoved:
-			canBeMovedStack++;
-			break;
-		case StatusType.CanUseAbility:
-			canUseAbilityStack++;
-			break;
-		}
-	}
-
-	/// <summary>
-	/// Updates the current status by calculating the current stack of each status.
-	/// The default state of each status is true, which is when its current stack is empty at 0.
-	/// </summary>
-	private void UpdateStatus ( )
-	{
-		// Set Can Move status
-		canMove = canMoveStack == 0;
-
-		// Set Can Be Moved status
-		canBeMoved = canBeMovedStack == 0;
-
-		// Set Can Use Ability status
-		canUseAbility = canUseAbilityStack == 0;
 	}
 
 	/// <summary>
@@ -162,51 +146,16 @@ public class StatusEffects
 
 		// Remove any expired status effects
 		effects.RemoveAll ( match => match.duration == 0 );
-
-		// Update the current status
-		UpdateStatus ( );
-	}
-
-	/// <summary>
-	/// Decrements the current stack of a particular status type.
-	/// </summary>
-	private void DecrementEffect ( StatusType _type )
-	{
-		// Check type and decrement the corrisponding stack
-		switch ( _type )
-		{
-		case StatusType.CanMove:
-			canMoveStack = DecrementStack ( canMoveStack );
-			break;
-		case StatusType.CanBeMoved:
-			canBeMovedStack = DecrementStack ( canBeMovedStack );
-			break;
-		case StatusType.CanUseAbility:
-			canUseAbilityStack = DecrementStack ( canUseAbilityStack );
-			break;
-		}
-	}
-
-	/// <summary>
-	/// Decrements a stack and checks for negative overflow.
-	/// </summary>
-	private int DecrementStack ( int _stack )
-	{
-		// Decrement stack
-		_stack--;
-
-		// Check for negative overflow
-		if ( _stack < 0 )
-			_stack = 0;
-
-		// Return stack value
-		return _stack;
 	}
 
 	/// <summary>
 	/// Finds and removes an applied status effect.
 	/// Use this in case of interupts.
 	/// </summary>
+	/// <param name="_icon"> The icon representing the status effect. </param>
+	/// <param name="_text"> The text representing the status effect. </param>
+	/// <param name="_caster"> The unit that applied the status effect to the affect unit. </param>
+	/// <param name="_effects"> Any standard effects applied by the status effect. </param>
 	public void RemoveStatusEffect ( Sprite _icon, string _text, Unit _caster, params StatusType [ ] _effects )
 	{
 		// Find status effect
@@ -220,11 +169,74 @@ public class StatusEffects
 			foreach ( StatusType type in e.effects )
 				DecrementEffect ( type );
 
-			// Update the current status
-			UpdateStatus ( );
-
 			// Remove the status effect
 			effects.Remove ( e );
 		}
 	}
+
+	#endregion // Public Functions
+
+	#region Private Functions
+
+	/// <summary>
+	/// Increments the current stack of a particular status type.
+	/// </summary>
+	/// <param name="_type"> The status effect type being incremented. </param>
+	private void IncrementEffect ( StatusType _type )
+	{
+		// Check type and increment the corrisponding stack
+		switch ( _type )
+		{
+		case StatusType.CAN_MOVE:
+			canMoveStack++;
+			break;
+		case StatusType.CAN_BE_MOVED:
+			canBeMovedStack++;
+			break;
+		case StatusType.CAN_USE_ABILITY:
+			canUseAbilityStack++;
+			break;
+		}
+	}
+
+	/// <summary>
+	/// Decrements the current stack of a particular status type.
+	/// </summary>
+	/// <param name="_type"> The status effect type being decremented. </param>
+	private void DecrementEffect ( StatusType _type )
+	{
+		// Check type and decrement the corrisponding stack
+		switch ( _type )
+		{
+		case StatusType.CAN_MOVE:
+			canMoveStack = DecrementStack ( canMoveStack );
+			break;
+		case StatusType.CAN_BE_MOVED:
+			canBeMovedStack = DecrementStack ( canBeMovedStack );
+			break;
+		case StatusType.CAN_USE_ABILITY:
+			canUseAbilityStack = DecrementStack ( canUseAbilityStack );
+			break;
+		}
+	}
+
+	/// <summary>
+	/// Decrements a stack and checks for negative overflow.
+	/// </summary>
+	/// <param name="_stack"> The starting value of the stack. </param>
+	/// <returns> The decremented value of the stack. </returns>
+	private int DecrementStack ( int _stack )
+	{
+		// Decrement stack
+		_stack--;
+
+		// Check for negative overflow
+		if ( _stack < 0 )
+			_stack = 0;
+
+		// Return stack value
+		return _stack;
+	}
+
+	#endregion // Private Functions
 }

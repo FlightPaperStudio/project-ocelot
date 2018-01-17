@@ -76,6 +76,11 @@ public class MatchSettings
 	private static Dictionary<int, HeroSettings> dic = new Dictionary<int, HeroSettings> ( );
 	private static ReadOnlyDictionary<int, HeroSettings> readOnlyDic = new ReadOnlyDictionary<int, HeroSettings> ( dic );
 
+	public const int TEAM_SIZE = 6;
+	public const int NO_UNIT = -2;
+	public const int LEADER_UNIT = -1;
+	public const int PAWN_UNIT = 0;
+
 	/// <summary>
 	/// Sets the match settings.
 	/// </summary>
@@ -170,13 +175,11 @@ public class MatchSettings
 		// Set teams and formations to empty
 		foreach ( PlayerSettings p in playerSettings )
 		{
-			// Set specials to blank
-			p.specialIDs.Clear ( );
-			for ( int i = 0; i < teamSize; i++ )
-				p.specialIDs.Add ( 0 );
+			// Clear any previous heroes
+			p.heroIDs.Clear ( );
 
 			// Set formation to default
-			p.formation = new int [ 6 ] { -1, 0, 0, 0, 0, 0 };
+			p.formation = new int [ TEAM_SIZE ] { LEADER_UNIT, NO_UNIT, NO_UNIT, NO_UNIT, NO_UNIT, NO_UNIT };
 		}
 
 		// Check for match types with randomly assigned teams and formations
@@ -185,18 +188,28 @@ public class MatchSettings
 			// Store the information for randomly assigning specials
 			List<int> ids = new List<int> ( );
 			foreach ( Hero h in HeroInfo.list )
-				if ( dic [ h.id ].selection )
-					ids.Add ( h.id );
+				if ( dic [ h.ID ].selection )
+					ids.Add ( h.ID );
 
 			// Store the information for randomaly assigning starting positions
-			List<int> pos = new List<int> ( );
-			pos.Add ( 1 ); pos.Add ( 2 ); pos.Add ( 3 ); pos.Add ( 4 ); pos.Add ( 5 );
+			List<int> pos = new List<int>
+			{
+				1,
+				2,
+				3,
+				4,
+				5
+			};
 
 			// Randomly assign the same team selection and team formation to each team
+			int slots = 1;
 			for ( int i = 0; i < teamSize; i++ )
 			{
-				// Grab a random special
-				int s = ids [ Random.Range ( 0, ids.Count ) ];
+				// Grab a random hero
+				int h = ids [ Random.Range ( 0, ids.Count ) ];
+
+				// Occupy the hero's slots
+				slots += HeroInfo.GetHeroByID ( h ).Slots;
 
 				// Grab a random position
 				int f = pos [ Random.Range ( 0, pos.Count ) ];
@@ -205,15 +218,44 @@ public class MatchSettings
 				foreach ( PlayerSettings p in playerSettings )
 				{
 					// Assign the special
-					p.specialIDs [ i ] = s;
+					p.heroIDs.Add ( h );
 
 					// Assign the postion
-					p.formation [ f ] = s;
+					p.formation [ f ] = h;
 				}
 
-				// Remove the special from the list
+				// Remove the hero from the list
 				if ( !stacking )
-					ids.Remove ( s );
+					ids.Remove ( h );
+
+				// Remove any heroes that occupy more slots than the remaining number
+				List<int> overSlotLimit = new List<int> ( );
+				for ( int j = 0; j < ids.Count; j++ )
+					if ( slots + HeroInfo.GetHeroByID ( ids [ j ] ).Slots > TEAM_SIZE )
+						overSlotLimit.Add ( ids [ j ] );
+				for ( int j = 0; j < overSlotLimit.Count; j++ )
+					ids.Remove ( overSlotLimit [ j ] );
+
+				// Remove the postion from the list
+				pos.Remove ( f );
+
+				// Check for remaining slots
+				if ( slots == TEAM_SIZE )
+					break;
+			}
+
+			// Randomly assign pawns for the remaining slots
+			for ( int i = 0; i < TEAM_SIZE - slots; i++ )
+			{
+				// Grab a random position
+				int f = pos [ Random.Range ( 0, pos.Count ) ];
+
+				// Assign the special and position to each team
+				foreach ( PlayerSettings p in playerSettings )
+				{
+					// Assign the postion
+					p.formation [ f ] = PAWN_UNIT;
+				}
 
 				// Remove the postion from the list
 				pos.Remove ( f );
@@ -228,7 +270,7 @@ public class MatchSettings
 
 		for ( int i = 0; i < HeroInfo.list.Count; i++ )
 		{
-			HeroSettings h = new HeroSettings ( HeroInfo.list [ i ].id, true, true, (Ability.AbilityType)HeroInfo.list [ i ].ability1.type, HeroInfo.list [ i ].ability1.duration, HeroInfo.list [ i ].ability1.cooldown, true, (Ability.AbilityType)HeroInfo.list [ i ].ability2.type, HeroInfo.list [ i ].ability2.duration, HeroInfo.list [ i ].ability2.cooldown );
+			HeroSettings h = new HeroSettings ( HeroInfo.list [ i ].ID, true, true, (Ability.AbilityType)HeroInfo.list [ i ].Ability1.Type, HeroInfo.list [ i ].Ability1.Duration, HeroInfo.list [ i ].Ability1.Cooldown, true, (Ability.AbilityType)HeroInfo.list [ i ].Ability2.Type, HeroInfo.list [ i ].Ability2.Duration, HeroInfo.list [ i ].Ability2.Cooldown );
 			actualHeroSettings.Add ( h );
 			dic.Add ( heroSettings [ i ].id, heroSettings [ i ] );
 		}

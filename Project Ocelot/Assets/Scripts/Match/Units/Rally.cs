@@ -35,7 +35,7 @@ public class Rally : HeroUnit
 		base.FindMoves ( t, prerequisite, returnOnlyJumps );
 
 		// Get Backflip moves
-		if ( SpecialAvailabilityCheck ( currentAbility2, prerequisite ) )
+		if ( SpecialAvailabilityCheck ( CurrentAbility2, prerequisite ) )
 			GetBackflip ( t, prerequisite, returnOnlyJumps );
 	}
 
@@ -58,32 +58,6 @@ public class Rally : HeroUnit
 	}
 
 	/// <summary>
-	/// Determines if any of the prerequisite moves used abilities.
-	/// Returns true if an ability was used.
-	/// </summary>
-	private bool CheckPrequisiteType ( MoveData m )
-	{
-		// Check for prerequisite move
-		if ( m != null )
-		{
-			// Check if the type matches
-			if ( m.type == MoveData.MoveType.Special || m.type == MoveData.MoveType.SpecialAttack )
-			{
-				// Return that an ability has been used
-				return true;
-			}
-			else
-			{
-				// Check prerequisite move's type
-				return CheckPrequisiteType ( m.prerequisite );
-			}
-		}
-
-		// Return that no abilities were used in previous moves
-		return false;
-	}
-
-	/// <summary>
 	/// Marks every tile available to the Backflip ability.
 	/// </summary>
 	private void GetBackflip ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
@@ -102,7 +76,7 @@ public class Rally : HeroUnit
 			if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
 			{
 				// Add as an available move
-				moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.Special, i ) );
+				moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i ) );
 			}
 			// Check if this unit can jump the neighboring tile
 			else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
@@ -114,12 +88,12 @@ public class Rally : HeroUnit
 				if ( t.neighbors [ i ].currentUnit != null && t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
 				{
 					// Add as an available attack
-					m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.SpecialAttack, i, t.neighbors [ i ] );
+					m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL_ATTACK, i, t.neighbors [ i ] );
 				}
 				else
 				{
 					// Add as an available jump
-					m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.Special, i );
+					m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i );
 				}
 
 				// Add move to the move list
@@ -138,17 +112,17 @@ public class Rally : HeroUnit
 	protected override void UseSpecial ( MoveData data )
 	{
 		// Check for attack
-		if ( data.type == MoveData.MoveType.SpecialAttack )
+		if ( data.Type == MoveData.MoveType.SPECIAL_ATTACK )
 		{
 			// Create animation
-			Tween t = transform.DOMove ( data.tile.transform.position, MOVE_ANIMATION_TIME * 2 )
+			Tween t = transform.DOMove ( data.Tile.transform.position, MOVE_ANIMATION_TIME * 2 )
 				.OnComplete ( ( ) =>
 				{
 						// Start teleport cooldown
-						StartCooldown ( currentAbility2, info.ability2 );
+						StartCooldown ( CurrentAbility2, Info.Ability2 );
 
 						// Set unit and tile data
-						SetUnitToTile ( data.tile );
+						SetUnitToTile ( data.Tile );
 				} );
 
 			// Add animation to queue
@@ -160,17 +134,17 @@ public class Rally : HeroUnit
 		else
 		{
 			// Check for normal move
-			if ( data.prerequisite == null && currentTile.neighbors [ (int)data.direction ] == data.tile )
+			if ( data.Prerequisite == null && currentTile.neighbors [ (int)data.Direction ] == data.Tile )
 			{
 				// Create animation
-				Tween t = transform.DOMove ( data.tile.transform.position, MOVE_ANIMATION_TIME )
+				Tween t = transform.DOMove ( data.Tile.transform.position, MOVE_ANIMATION_TIME )
 					.OnComplete ( ( ) =>
 					{
 						// Start teleport cooldown
-						StartCooldown ( currentAbility2, info.ability2 );
+						StartCooldown ( CurrentAbility2, Info.Ability2 );
 
 						// Set unit and tile data
-						SetUnitToTile ( data.tile );
+						SetUnitToTile ( data.Tile );
 					} );
 
 				// Add animation to queue
@@ -179,31 +153,31 @@ public class Rally : HeroUnit
 			else
 			{
 				// Create animation
-				Tween t = transform.DOMove ( data.tile.transform.position, MOVE_ANIMATION_TIME * 2 )
+				Tween t = transform.DOMove ( data.Tile.transform.position, MOVE_ANIMATION_TIME * 2 )
 					.OnComplete ( ( ) =>
 					{
 						// Start teleport cooldown
-						StartCooldown ( currentAbility2, info.ability2 );
+						StartCooldown ( CurrentAbility2, Info.Ability2 );
 
 						// Set unit and tile data
-						SetUnitToTile ( data.tile );
+						SetUnitToTile ( data.Tile );
 					} );
 
 				// Add animation to queue
 				GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 
 				// Check for Rally
-				if ( currentAbility1.enabled && currentAbility1.duration > 0 )
+				if ( CurrentAbility1.enabled && CurrentAbility1.duration > 0 )
 				{
 					// Get unit
 					Unit u;
-					if ( data.prerequisite == null )
-						u = currentTile.neighbors [ (int)data.direction ].currentUnit;
+					if ( data.Prerequisite == null )
+						u = currentTile.neighbors [ (int)data.Direction ].currentUnit;
 					else
-						u = data.prerequisite.tile.neighbors [ (int)data.direction ].currentUnit;
+						u = data.Prerequisite.Tile.neighbors [ (int)data.Direction ].currentUnit;
 
 					// Check unit status
-					if ( u.status.canMove )
+					if ( u.status.CanMove )
 						ActivateRally ( u );
 				}
 			}
@@ -220,19 +194,41 @@ public class Rally : HeroUnit
 		base.Jump ( data );
 
 		// Check for Rally
-		if ( currentAbility1.enabled && currentAbility1.duration > 0 && data.type != MoveData.MoveType.Attack && data.type != MoveData.MoveType.SpecialAttack )
+		if ( PassiveAvailabilityCheck ( CurrentAbility1, data ) )
 		{
 			// Get unit
 			Unit u;
-			if ( data.prerequisite == null )
-				u = currentTile.neighbors [ (int)data.direction ].currentUnit;
+			if ( data.Prerequisite == null )
+				u = currentTile.neighbors [ (int)data.Direction ].currentUnit;
 			else
-				u = data.prerequisite.tile.neighbors [ (int)data.direction ].currentUnit;
+				u = data.Prerequisite.Tile.neighbors [ (int)data.Direction ].currentUnit;
 
 			// Check unit status
-			if ( u.status.canMove )
+			if ( u.status.CanMove )
 				ActivateRally ( u );
 		}
+	}
+
+	/// <summary>
+	/// Checks if the hero is capable of using a passive ability.
+	/// Returns true if the passive ability is available.
+	/// </summary>
+	protected override bool PassiveAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
+	{
+		// Check base conditions
+		if ( !base.PassiveAvailabilityCheck ( current, prerequisite ) )
+			return false;
+
+		// Check if duration has expired
+		if ( current.duration == 0 )
+			return false;
+
+		// Check for attack
+		if ( prerequisite.Type == MoveData.MoveType.ATTACK || prerequisite.Type == MoveData.MoveType.SPECIAL_ATTACK )
+			return false;
+
+		// Return that the ability is available
+		return true;
 	}
 
 	/// <summary>
@@ -247,7 +243,7 @@ public class Rally : HeroUnit
 			.OnComplete ( ( ) =>
 			{
 				// Decrease Rally duration
-				currentAbility1.duration--;
+				CurrentAbility1.duration--;
 
 				// Add unit to unit queue
 				GM.unitQueue.Add ( u );
@@ -256,7 +252,8 @@ public class Rally : HeroUnit
 				u.status.AddStatusEffect ( abilitySprite1, RALLY_STATUS_PROMPT, this, 1 );
 
 				// Update HUD
-				GM.UI.unitHUD.DisplayAbility ( currentAbility1 );
+				GM.UI.matchInfoMenu.GetPlayerHUD ( u ).UpdateStatusEffects ( u.instanceID, u.status );
+				GM.UI.unitHUD.DisplayAbility ( CurrentAbility1 );
 			} );
 
 		// Add animation to queue
@@ -269,10 +266,10 @@ public class Rally : HeroUnit
 	public override void Cooldown ( )
 	{
 		// Check for active ability type for ability 1
-		if ( currentAbility1.enabled )
+		if ( CurrentAbility1.enabled )
 		{
 			// Check if current duration is active
-			if ( currentAbility1.duration < info.ability1.duration )
+			if ( CurrentAbility1.duration < Info.Ability1.Duration )
 			{
 				// Check for regen
 				if ( rallyRegen > 0 )
@@ -284,7 +281,7 @@ public class Rally : HeroUnit
 					if ( rallyRegen == 0 )
 					{
 						// Increase duration
-						currentAbility1.duration++;
+						CurrentAbility1.duration++;
 
 						// Reset regen
 						rallyRegen = RALLY_REGEN_RATE;

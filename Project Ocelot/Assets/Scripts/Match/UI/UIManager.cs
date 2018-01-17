@@ -7,21 +7,29 @@ using DG.Tweening;
 
 public class UIManager : MonoBehaviour 
 {
-	// UI elements
+	#region UI Elements
+	
 	public GameObject midTurnControls;
 	public GameObject endOfMatchControls;
 	public GameObject conflictPrompt;
 	public GameObject skipControls;
 
-	// UI information
-	public PlayerHUD [ ] huds;
+	#endregion // UI Elements
+
+	#region UI Data
+
+	public MatchInfoMenu matchInfoMenu;
 	public UnitHUD unitHUD;
 	public TurnTimer timer;
 	public SplashPrompt splash;
 	public PopUpMenu popUp;
 	public LoadingScreen load;
 	public bool isPaused = false;
-	public Menu [ ] menus;
+	public Menu [ ] pauseMenus;
+
+	#endregion // UI Data
+
+	#region MonoBehaviour Functions
 
 	/// <summary>
 	/// Listens for the pause button being pressed.
@@ -29,15 +37,15 @@ public class UIManager : MonoBehaviour
 	private void Update ( )
 	{
 		// Check for the escape button being pressed
-		if ( Input.GetKeyDown ( KeyCode.Escape ) && !popUp.menuContainer.activeSelf )
+		if ( Input.GetKeyDown ( KeyCode.Escape ) && !popUp.IsOpen && !matchInfoMenu.IsOpen )
 		{
 			// Check if the game is paused
 			if ( isPaused )
 			{
 				// Find the current open menu and close it
-				foreach ( Menu m in menus )
+				foreach ( Menu m in pauseMenus )
 				{
-					if ( m.menuContainer.activeSelf )
+					if ( m.IsOpen )
 					{
 						// Check if the current menu is the base pause menu
 						if ( m is PauseMenu )
@@ -55,19 +63,32 @@ public class UIManager : MonoBehaviour
 				isPaused = true;
 
 				// Open the pause menu
-				menus [ 0 ].OpenMenu ( );
+				pauseMenus [ 0 ].OpenMenu ( );
 			}
 		}
+		// Check for the tab button being pressed
+		else if ( Input.GetKeyDown ( KeyCode.Tab ) && !isPaused && !popUp.IsOpen )
+		{
+			// Toggle open/close the match info menu
+			if ( matchInfoMenu.IsOpen )
+				matchInfoMenu.CloseMenu ( );
+			else
+				matchInfoMenu.OpenMenu ( );
+		}
 	}
+
+	#endregion // MonoBehaviour Functions
+
+	#region Public Functions
 
 	/// <summary>
 	/// Initializes the match UI.
 	/// </summary>
+	/// <param name="players"> A list of the players in the match. </param>
 	public void Initialize ( Player [ ] players )
 	{
 		// Set up player HUDs
-		for ( int i = 0; i < players.Length; i++ )
-			huds [ i ].Initialize ( players [ i ] );
+		matchInfoMenu.Initialize ( players );
 
 		// Hide unit HUD
 		unitHUD.HideHUD ( );
@@ -80,38 +101,10 @@ public class UIManager : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Gets the Player HUD for a particular player.
-	/// Returns null if a match is not found.
-	/// </summary>
-	public PlayerHUD GetPlayerHUD ( Player p )
-	{
-		// Return the matching HUD
-		foreach ( PlayerHUD h in huds )
-			if ( h.player == p )
-				return h;
-
-		// Return that the HUD was not found
-		return null;
-	}
-
-	/// <summary>
-	/// Gets the Player HUD for a particular unit.
-	/// Returns null if a match is not found.
-	/// </summary>
-	public PlayerHUD GetPlayerHUD ( Unit u )
-	{
-		// Return the matching HUD
-		foreach ( PlayerHUD h in huds )
-			if ( h.CheckForIcon ( u.instanceID ) )
-				return h;
-
-		// Return that the HUD was not found
-		return null;
-	}
-
-	/// <summary>
 	/// Toggles the mid-turn controls on and off.
 	/// </summary>
+	/// <param name="moveControls"> Whether or not the move controls should be displayed. </param>
+	/// <param name="skipUnitControls"> Whether or not the skip controls should be displayed. </param>
 	public void ToggleMidTurnControls ( bool moveControls, bool skipUnitControls )
 	{
 		// Toggle movement controls
@@ -124,22 +117,11 @@ public class UIManager : MonoBehaviour
 	/// <summary>
 	/// Prompts that a player has won the match.
 	/// </summary>
+	/// <param name="p"> The player that won the match. </param>
 	public void WinPrompt ( Player p )
 	{
 		// Play win animation
 		StartCoroutine ( WinCoroutine ( p ) );
-	}
-
-	/// <summary>
-	/// Prompts that a player has won the match.
-	/// </summary>
-	private IEnumerator WinCoroutine ( Player p )
-	{
-		// Wait for shake animation
-		yield return splash.Shake ( p.playerName + " Wins!", Util.TeamColor ( p.team ), false ).WaitForCompletion ( );
-
-		// Display end of match controls
-		endOfMatchControls.SetActive ( true );
 	}
 
 	/// <summary>
@@ -195,4 +177,23 @@ public class UIManager : MonoBehaviour
 		// Load main menu
 		load.LoadScene ( Scenes.Menus );
 	}
+
+	#endregion // Public Functions
+
+	#region Private Functions
+
+	/// <summary>
+	/// Prompts that a player has won the match.
+	/// </summary>
+	/// <param name="p"> The player that won the match. </param>
+	private IEnumerator WinCoroutine ( Player p )
+	{
+		// Wait for shake animation
+		yield return splash.Shake ( p.playerName + " Wins!", Util.TeamColor ( p.team ), false ).WaitForCompletion ( );
+
+		// Display end of match controls
+		endOfMatchControls.SetActive ( true );
+	}
+
+	#endregion // Private Functions
 }

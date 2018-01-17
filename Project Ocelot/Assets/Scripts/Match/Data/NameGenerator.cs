@@ -5,15 +5,20 @@ using UnityEngine;
 public class NameGenerator
 {
 	// Data structure for storing all of the name elements
-	private class Names
+	[System.Serializable]
+	private struct Names
 	{
-		public string [ ] firstNames;
-		public string [ ] nicknames;
-		public string [ ] lastNames;
+		public string [ ] FirstNames;
+		public string [ ] Nicknames;
+		public string [ ] LastNames;
+		public string [ ] Suffixes;
 	}
 
 	// A list of random name elements
 	private static Names names;
+
+	// The percentage chance of a suffix being added to a name
+	private const float SUFFIX_PERCENTAGE = 0.05f;
 
 	/// <summary>
 	/// Initializes the lists of first names, last names, and titles for the random name generator from a JSON file.
@@ -26,15 +31,28 @@ public class NameGenerator
 
 	/// <summary>
 	/// Creates a randomly generated name.
-	/// The name consists of a first name and a last name only (e.g. Ethan Caraway).
+	/// The name consists of a first name, a last name, and sometimes a suffix at a 5% chance (e.g. Ethan Caraway or Sam Ange III).
 	/// </summary>
 	public static string CreateName ( )
 	{
 		// Generate first name
-		string first = names.firstNames [ Random.Range ( 0, names.firstNames.Length ) ];
+		string first = names.FirstNames [ Random.Range ( 0, names.FirstNames.Length ) ];
 
 		// Generate last name
-		string last = names.lastNames [ Random.Range ( 0, names.lastNames.Length ) ];
+		string last = names.LastNames [ Random.Range ( 0, names.LastNames.Length ) ];
+
+		// Check for suffix
+		if ( Random.Range ( 0f, 1f ) <= SUFFIX_PERCENTAGE )
+		{
+			// Generate suffix
+			string suffix = names.Suffixes [ Random.Range ( 0, names.Suffixes.Length ) ];
+
+			// Check if suffix begins with a comma
+			if (suffix[0] == ',')
+				return first + " " + last + suffix; // Return full name with suffix separated by a comma
+			else
+				return first + " " + last + " " + suffix; // Return full name with suffix separated by a space
+		}
 
 		// Return full name
 		return first + " " + last;
@@ -48,9 +66,9 @@ public class NameGenerator
 	public static string CreateNickname ( )
 	{
 		// Generate nickname
-		string nick = names.nicknames [ Random.Range ( 0, names.nicknames.Length ) ];
+		string nickname = names.Nicknames [ Random.Range ( 0, names.Nicknames.Length ) ];
 
 		// Return formated nickname
-		return "\"" + nick + "\""; 
+		return "\"" + nickname + "\""; 
 	}
 }

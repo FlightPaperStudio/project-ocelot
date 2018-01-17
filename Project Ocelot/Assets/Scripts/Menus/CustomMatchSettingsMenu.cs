@@ -67,7 +67,7 @@ public class CustomMatchSettingsMenu : Menu
 		for ( int i = 0; i < HeroInfo.list.Count; i++ )
 		{
 			// Set hero setting
-			HeroSettings h = new HeroSettings ( HeroInfo.list [ i ].id, true, true, (Ability.AbilityType)HeroInfo.list [ i ].ability1.type, HeroInfo.list [ i ].ability1.duration, HeroInfo.list [ i ].ability1.cooldown, true, (Ability.AbilityType)HeroInfo.list [ i ].ability2.type, HeroInfo.list [ i ].ability2.duration, HeroInfo.list [ i ].ability2.cooldown );
+			HeroSettings h = new HeroSettings ( HeroInfo.list [ i ].ID, true, true, (Ability.AbilityType)HeroInfo.list [ i ].Ability1.Type, HeroInfo.list [ i ].Ability1.Duration, HeroInfo.list [ i ].Ability1.Cooldown, true, (Ability.AbilityType)HeroInfo.list [ i ].Ability2.Type, HeroInfo.list [ i ].Ability2.Duration, HeroInfo.list [ i ].Ability2.Cooldown );
 			heroValue.Add ( h );
 
 			// Set selection
@@ -521,6 +521,16 @@ public class CustomMatchSettingsMenu : Menu
 	{
 		// Set cooldown
 		SetCooldown ( heroValue [ 7 ].ability2, (int)value, cooldownSlider2 [ 7 ], cooldownDisplay2 [ 7 ] );
+	}
+
+	/// <summary>
+	/// Sets the current cooldown setting for Hero 7's Split Up ability.
+	/// Use this as a slider update event wrapper.
+	/// </summary>
+	public void SetSplitUpCooldown ( float value )
+	{
+		// Set cooldown
+		SetCooldown ( heroValue [ 8 ].ability2, (int)value, cooldownSlider2 [ 8 ], cooldownDisplay2 [ 8 ] );
 	}
 
 	/// <summary>

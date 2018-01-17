@@ -35,11 +35,11 @@ public class Teleport : HeroUnit
 		base.FindMoves ( t, prerequisite, returnOnlyJumps );
 
 		// Get Blink moves
-		if ( SpecialAvailabilityCheck ( currentAbility1, prerequisite ) )
+		if ( SpecialAvailabilityCheck ( CurrentAbility1, prerequisite ) )
 			GetBlink ( t, GetBackDirection ( owner.direction ), 2 );
 
 		// Get Translocator availability
-		currentAbility2.active = CommandAvailabilityCheck ( currentAbility2, prerequisite );
+		CurrentAbility2.active = CommandAvailabilityCheck ( CurrentAbility2, prerequisite );
 	}
 
 	/// <summary>
@@ -76,10 +76,10 @@ public class Teleport : HeroUnit
 			if ( t.neighbors [ i ] != null )
 			{
 				// Check if tile already has a move associated with it
-				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && !moveList.Exists ( match => match.tile == t.neighbors [ i ] && match.prerequisite == null ) )
+				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && !moveList.Exists ( match => match.Tile == t.neighbors [ i ] && match.Prerequisite == null ) )
 				{
 					// Add as an available special move
-					moveList.Add ( new MoveData ( t.neighbors [ i ], null, MoveData.MoveType.Special, i ) );
+					moveList.Add ( new MoveData ( t.neighbors [ i ], null, MoveData.MoveType.SPECIAL, i ) );
 				}
 
 				// Check if the maximum range for teleport has been reached
@@ -103,16 +103,16 @@ public class Teleport : HeroUnit
 			.OnComplete ( ( ) =>
 			{
 				// Move unit instantly
-				transform.position = data.tile.transform.position;
+				transform.position = data.Tile.transform.position;
 			} );
 		Tween t2 = sprite.DOFade ( 1, MOVE_ANIMATION_TIME )
 			.OnComplete ( ( ) =>
 			{
 				// Start teleport cooldown
-				StartCooldown ( currentAbility1, info.ability1 );
+				StartCooldown ( CurrentAbility1, Info.Ability1 );
 
 				// Set unit and tile data
-				SetUnitToTile ( data.tile );
+				SetUnitToTile ( data.Tile );
 			} );
 
 		// Add animations to queue
@@ -132,7 +132,7 @@ public class Teleport : HeroUnit
 		foreach ( Unit u in owner.units )
 		{
 			// Check status effects
-			if ( u != this && !( u is Leader ) && u.status.canBeMoved )
+			if ( u != this && !( u is Leader ) && u.status.CanBeMoved )
 				u.currentTile.SetTileState ( TileState.AvailableCommand );
 		}
 	}
@@ -227,7 +227,7 @@ public class Teleport : HeroUnit
 				unit2 = null;
 
 				// Start cooldown
-				StartCooldown ( currentAbility2, info.ability2 );
+				StartCooldown ( CurrentAbility2, Info.Ability2 );
 
 				// Pause turn timer
 				if ( MatchSettings.turnTimer )

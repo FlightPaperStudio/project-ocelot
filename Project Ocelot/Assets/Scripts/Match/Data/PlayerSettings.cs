@@ -6,32 +6,32 @@ public class PlayerSettings
 {
 	public string name;
 
-	public Player.TeamColor teamColor
+	public Player.TeamColor TeamColor
 	{
 		get;
 		private set;
 	}
 
-	public Player.Direction direction
+	public Player.Direction Direction
 	{
 		get;
 		private set;
 	}
 
-	public Player.PlayerControl control
+	public Player.PlayerControl Control
 	{
 		get;
 		private set;
 	}
 
-	public List<int> specialIDs = new List<int> ( );
+	public List<int> heroIDs = new List<int> ( );
 
 	public int [ ] formation;
 
 	public PlayerSettings ( Player.TeamColor _color, Player.Direction _direction, Player.PlayerControl _control )
 	{
-		teamColor = _color;
-		direction = _direction;
-		control = _control;
+		TeamColor = _color;
+		Direction = _direction;
+		Control = _control;
 	}
 }

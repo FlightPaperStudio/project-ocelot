@@ -2,171 +2,210 @@
 	"list":
 	[
 		{
-			"id": 1,
-			"characterName": "Hero 1",
-			"characterDescription": "Insert Hero 1 description here...",
-			"ability1":
+			"ID": 1,
+			"CharacterName": "Hero 1",
+			"CharacterDescription": "Insert Hero 1 description here...",
+			"Slots": 2,
+			"ClassType": 1,
+			"Ability1":
 			{
-				"name": "Armor",
-				"description": "Insert Armor description here...",
-				"type": 0,
-				"duration": 1,
-				"cooldown": 0
+				"Name": "Armor",
+				"Description": "Insert Armor description here...",
+				"Type": 0,
+				"Duration": 1,
+				"Cooldown": 0
 			},
-			"ability2":
+			"Ability2":
 			{
-				"name": "Self-Destruct/Recall",
-				"description": "Insert Self-Destruct/Recall description here...",
-				"type": 2,
-				"duration": 1,
-				"cooldown": 8
+				"Name": "Self-Destruct/Recall",
+				"Description": "Insert Self-Destruct/Recall description here...",
+				"Type": 2,
+				"Duration": 1,
+				"Cooldown": 8
 			}
 		},
 		{
-			"id": 2,
-			"characterName": "Hero 2",
-			"characterDescription": "Insert Hero 2 description here...",
-			"ability1":
+			"ID": 2,
+			"CharacterName": "Hero 2",
+			"CharacterDescription": "Insert Hero 2 description here...",
+			"Slots": 1,
+			"ClassType": 0,
+			"Ability1":
 			{
-				"name": "Catapult",
-				"description": "Insert Catapult description here...",
-				"type": 1,
-				"duration": 2,
-				"cooldown": 5
+				"Name": "Catapult",
+				"Description": "Insert Catapult description here...",
+				"Type": 1,
+				"Duration": 2,
+				"Cooldown": 5
 			},
-			"ability2":
+			"Ability2":
 			{
-				"name": "Grapple",
-				"description": "Insert Grapple description here...",
-				"type": 2,
-				"duration": 2,
-				"cooldown": 4
+				"Name": "Grapple",
+				"Description": "Insert Grapple description here...",
+				"Type": 2,
+				"Duration": 2,
+				"Cooldown": 4
 			}
 		},
 		{
-			"id": 3,
-			"characterName": "Hero 6",
-			"characterDescription": "Insert Hero 6 description here...",
-			"ability1":
+			"ID": 3,
+			"CharacterName": "Hero 6",
+			"CharacterDescription": "Insert Hero 6 description here...",
+			"Slots": 1,
+			"ClassType": 2,
+			"Ability1":
 			{
-				"name": "Ghost",
-				"description": "Insert Ghost description here...",
-				"type": 0,
-				"duration": 1,
-				"cooldown": 0
+				"Name": "Ghost",
+				"Description": "Insert Ghost description here...",
+				"Type": 0,
+				"Duration": 1,
+				"Cooldown": 0
 			},
-			"ability2":
+			"Ability2":
 			{
-				"name": "Obstruction",
-				"description": "Insert Obstruction description here...",
-				"type": 2,
-				"duration": 2,
-				"cooldown": 5
+				"Name": "Obstruction",
+				"Description": "Insert Obstruction description here...",
+				"Type": 2,
+				"Duration": 2,
+				"Cooldown": 5
 			}
 		},
 		{
-			"id": 4,
-			"characterName": "Hero 8",
-			"characterDescription": "Insert Hero 8 description here...",
-			"ability1":
+			"ID": 4,
+			"CharacterName": "Hero 8",
+			"CharacterDescription": "Insert Hero 8 description here...",
+			"Slots": 1,
+			"ClassType": 2,
+			"Ability1":
 			{
-				"name": "Blink",
-				"description": "Insert Blink description here...",
-				"type": 1,
-				"duration": 0,
-				"cooldown": 2
+				"Name": "Blink",
+				"Description": "Insert Blink description here...",
+				"Type": 1,
+				"Duration": 0,
+				"Cooldown": 2
 			},
-			"ability2":
+			"Ability2":
 			{
-				"name": "Translocator",
-				"description": "Insert Translocator description here...",
-				"type": 2,
-				"duration": 0,
-				"cooldown": 4
+				"Name": "Translocator",
+				"Description": "Insert Translocator description here...",
+				"Type": 2,
+				"Duration": 0,
+				"Cooldown": 4
 			}
 		},
 		{
-			"id": 5,
-			"characterName": "Hero 9",
-			"characterDescription": "Insert Hero 9 description here...",
-			"ability1":
+			"ID": 5,
+			"CharacterName": "Hero 9",
+			"CharacterDescription": "Insert Hero 9 description here...",
+			"Slots": 1,
+			"ClassType": 0,
+			"Ability1":
 			{
-				"name": "Run The Ropes",
-				"description": "Insert Run The Ropes description here...",
-				"type": 1,
-				"duration": 0,
-				"cooldown": 2
+				"Name": "Run The Ropes",
+				"Description": "Insert Run The Ropes description here...",
+				"Type": 1,
+				"Duration": 0,
+				"Cooldown": 2
 			},
-			"ability2":
+			"Ability2":
 			{
-				"name": "Taunt",
-				"description": "Insert Taunt description here...",
-				"type": 2,
-				"duration": 0,
-				"cooldown": 6
+				"Name": "Taunt",
+				"Description": "Insert Taunt description here...",
+				"Type": 2,
+				"Duration": 0,
+				"Cooldown": 6
 			}
 		},
 		{
-			"id": 6,
-			"characterName": "Hero 4",
-			"characterDescription": "Insert Hero 4 description here...",
-			"ability1":
+			"ID": 6,
+			"CharacterName": "Hero 4",
+			"CharacterDescription": "Insert Hero 4 description here...",
+			"Slots": 1,
+			"ClassType": 1,
+			"Ability1":
 			{
-				"name": "Life Drain",
-				"description": "Insert Life Drain description here...",
-				"type": 0,
-				"duration": 1,
-				"cooldown": 0
+				"Name": "Life Drain",
+				"Description": "Insert Life Drain description here...",
+				"Type": 0,
+				"Duration": 1,
+				"Cooldown": 0
 			},
-			"ability2":
+			"Ability2":
 			{
-				"name": "Grim Reaper",
-				"description": "Insert Grim Reaper description here...",
-				"type": 1,
-				"duration": 0,
-				"cooldown": 5
+				"Name": "Grim Reaper",
+				"Description": "Insert Grim Reaper description here...",
+				"Type": 1,
+				"Duration": 0,
+				"Cooldown": 5
 			}
 		},
 		{
-			"id": 7,
-			"characterName": "Hero 5",
-			"characterDescription": "Insert Hero 5 description here...",
-			"ability1":
+			"ID": 7,
+			"CharacterName": "Hero 5",
+			"CharacterDescription": "Insert Hero 5 description here...",
+			"Slots": 1,
+			"ClassType": 2,
+			"Ability1":
 			{
-				"name": "Rally",
-				"description": "Insert Rally description here...",
-				"type": 0,
-				"duration": 3,
-				"cooldown": 0
+				"Name": "Rally",
+				"Description": "Insert Rally description here...",
+				"Type": 0,
+				"Duration": 3,
+				"Cooldown": 0
 			},
-			"ability2":
+			"Ability2":
 			{
-				"name": "Backflip",
-				"description": "Insert Backflip description here...",
-				"type": 1,
-				"duration": 0,
-				"cooldown": 3
+				"Name": "Backflip",
+				"Description": "Insert Backflip description here...",
+				"Type": 1,
+				"Duration": 0,
+				"Cooldown": 3
 			}
 		},
 		{
-			"id": 8,
-			"characterName": "Hero 3",
-			"characterDescription": "Insert Hero 3 description here...",
-			"ability1":
+			"ID": 8,
+			"CharacterName": "Hero 3",
+			"CharacterDescription": "Insert Hero 3 description here...",
+			"Slots": 1,
+			"ClassType": 0,
+			"Ability1":
 			{
-				"name": "Mind Control",
-				"description": "Insert Mind Control description here...",
-				"type": 0,
-				"duration": 3,
-				"cooldown": 0
+				"Name": "Mind Control",
+				"Description": "Insert Mind Control description here...",
+				"Type": 0,
+				"Duration": 3,
+				"Cooldown": 0
 			},
-			"ability2":
+			"Ability2":
 			{
-				"name": "Clone Assist",
-				"description": "Insert Clone Assist description here...",
-				"type": 1,
-				"duration": 0,
-				"cooldown": 4
+				"Name": "Clone Assist",
+				"Description": "Insert Clone Assist description here...",
+				"Type": 1,
+				"Duration": 0,
+				"Cooldown": 4
+			}
+		},
+		{
+			"ID": 9,
+			"CharacterName": "Hero 7",
+			"CharacterDescription": "Insert Hero 7 description here...",
+			"Slots": 2,
+			"ClassType": 0,
+			"Ability1":
+			{
+				"Name": "Tag Team",
+				"Description": "Insert Tag Team description here...",
+				"Type": 0,
+				"Duration": 0,
+				"Cooldown": 0
+			},
+			"Ability2":
+			{
+				"Name": "Split Up/Group Up",
+				"Description": "Insert Split Up/Group Up description here...",
+				"Type": 2,
+				"Duration": 3,
+				"Cooldown": 5
 			}
 		}
 	]

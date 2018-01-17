@@ -46,7 +46,7 @@ public class Armor : HeroUnit
 		base.FindMoves ( t, prerequisite, returnOnlyJumps );
 
 		// Get Self-Destruct/Recall availability
-		currentAbility2.active = CommandAvailabilityCheck ( currentAbility2, prerequisite );
+		CurrentAbility2.active = CommandAvailabilityCheck ( CurrentAbility2, prerequisite );
 	}
 
 	/// <summary>
@@ -56,13 +56,13 @@ public class Armor : HeroUnit
 	public override void GetAttacked ( bool usePostAnimationQueue = false )
 	{
 		// Check armor duration
-		if ( currentAbility1.enabled && currentAbility1.duration > 0 && !usePostAnimationQueue )
+		if ( PassiveAvailabilityCheck ( CurrentAbility1, null ) && !usePostAnimationQueue )
 		{
 			// Decrement armor duration
-			currentAbility1.duration--;
+			CurrentAbility1.duration--;
 
 			// Check if Armor is destroyed
-			if ( currentAbility1.duration == 0 )
+			if ( CurrentAbility1.duration == 0 )
 			{
 				// Create animation
 				Tween t1 = mechAnimation.transform.DOScale ( new Vector3 ( 3.33f, 3.33f, 3.33f ), MOVE_ANIMATION_TIME )
@@ -77,7 +77,7 @@ public class Armor : HeroUnit
 					.OnComplete ( ( ) =>
 					{
 						// Update player HUD
-						GM.UI.GetPlayerHUD ( this ).UpdateIcon ( instanceID, displaySprite );
+						GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( instanceID, displaySprite );
 
 						// Hide animation sprite
 						mechAnimation.gameObject.SetActive ( false );
@@ -102,6 +102,24 @@ public class Armor : HeroUnit
 			// KO this unit
 			base.GetAttacked ( usePostAnimationQueue );
 		}
+	}
+
+	/// <summary>
+	/// Checks if the hero is capable of using a passive ability.
+	/// Returns true if the passive ability is available.
+	/// </summary>
+	protected override bool PassiveAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
+	{
+		// Check base conditions
+		if ( !base.PassiveAvailabilityCheck ( current, prerequisite ) )
+			return false;
+
+		// Check if duration has expired
+		if ( current.duration == 0 )
+			return false;
+
+		// Return that the ability is available
+		return true;
 	}
 
 	/// <summary>
@@ -196,10 +214,10 @@ public class Armor : HeroUnit
 		GM.board.ResetTiles ( );
 
 		// Check for Recall or Self-Destruct
-		if ( currentAbility1.duration == 0 )
+		if ( CurrentAbility1.duration == 0 )
 		{
 			// Create Recall
-			currentRecall = CreateTileOject ( recallPrefab, t, info.ability2.duration, RecallDurationComplete );
+			currentRecall = CreateTileOject ( recallPrefab, t, Info.Ability2.Duration, RecallDurationComplete );
 
 			// Set team color
 			Color32 c = Util.TeamColor ( owner.team );
@@ -218,10 +236,11 @@ public class Armor : HeroUnit
 					moveList.Clear ( );
 
 					// Start cooldown
-					StartCooldown ( currentAbility2, info.ability2 );
+					StartCooldown ( CurrentAbility2, Info.Ability2 );
 
 					// Apply status effect
-					status.AddStatusEffect ( withMechSprite, RECALL_STATUS_PROMPT, this, currentAbility2.duration, StatusEffects.StatusType.CanMove );
+					status.AddStatusEffect ( withMechSprite, RECALL_STATUS_PROMPT, this, CurrentAbility2.duration, StatusEffects.StatusType.CAN_MOVE );
+					GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( instanceID, status );
 
 					// Pause turn timer
 					if ( MatchSettings.turnTimer )
@@ -238,7 +257,7 @@ public class Armor : HeroUnit
 		else
 		{
 			// Create Self-Destruct
-			currentSelfDestruct = CreateTileOject ( selfDestructPrefab, t, info.ability2.duration, SelfDestructDurationComplete );
+			currentSelfDestruct = CreateTileOject ( selfDestructPrefab, t, Info.Ability2.Duration, SelfDestructDurationComplete );
 
 			// Set team color
 			currentSelfDestruct.sprite.color = Util.TeamColor ( owner.team );
@@ -323,14 +342,14 @@ public class Armor : HeroUnit
 
 		// Update player HUD
 		if ( !isFromAttack )
-			GM.UI.GetPlayerHUD ( this ).UpdateIcon ( instanceID, displaySprite );
+			GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( instanceID, displaySprite );
 
 		// Expire Armor's duration
 		if ( !isFromAttack )
-			currentAbility1.duration = 0;
+			CurrentAbility1.duration = 0;
 
 		// Set Recall cooldown
-		StartCooldown ( currentAbility2, info.ability2, !isFromAttack );
+		StartCooldown ( CurrentAbility2, Info.Ability2, !isFromAttack );
 	}
 
 	/// <summary>
@@ -341,10 +360,10 @@ public class Armor : HeroUnit
 		// Change sprite
 		displaySprite = withMechSprite;
 		sprite.sprite = displaySprite;
-		GM.UI.GetPlayerHUD ( this ).UpdateIcon ( instanceID, displaySprite );
+		GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( instanceID, displaySprite );
 
 		// Replenish Armor's duration
-		currentAbility1.duration = info.ability1.duration;
+		CurrentAbility1.duration = Info.Ability1.Duration;
 	}
 
 	/// <summary>
@@ -361,7 +380,8 @@ public class Armor : HeroUnit
 			EndRecall ( );
 
 			// Interupt status effect
-			status.RemoveStatusEffect ( withMechSprite, RECALL_STATUS_PROMPT, this, StatusEffects.StatusType.CanMove );
+			status.RemoveStatusEffect ( withMechSprite, RECALL_STATUS_PROMPT, this, StatusEffects.StatusType.CAN_MOVE );
+			GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( instanceID, status );
 		}
 	}
 
