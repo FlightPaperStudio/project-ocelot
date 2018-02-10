@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class Dropkick : HeroUnit
 {
@@ -20,7 +21,8 @@ public class Dropkick : HeroUnit
 
 	#region Ability Data
 
-	private int MIN_DIVE_RANGE = 2;
+	private Dictionary<Tile, int> dropkickTargetDirection = new Dictionary<Tile, int> ( );
+
 	private int MAX_DIVE_RANGE = 4;
 
 	#endregion // Ability Data
@@ -40,7 +42,7 @@ public class Dropkick : HeroUnit
 
 		// Get Divebomb moves
 		if ( SpecialAvailabilityCheck ( CurrentAbility1, prerequisite ) )
-			GetDivebomb ( );
+			GetDivebomb ( t, MAX_DIVE_RANGE );
 
 		// Get Dropkick availability
 		CurrentAbility2.active = CommandAvailabilityCheck ( CurrentAbility2, prerequisite );
@@ -84,7 +86,78 @@ public class Dropkick : HeroUnit
 	/// <returns> Whether or not the command ability can be used. </returns>
 	protected override bool CommandAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
 	{
-		return base.CommandAvailabilityCheck ( current, prerequisite );
+		// Check base conditions
+		if ( !base.CommandAvailabilityCheck ( current, prerequisite ) )
+			return false;
+
+		// Check if a target is available
+		if ( !DropkickCheck ( ) )
+			return false;
+
+		// Return that the ability is available
+		return true;
+	}
+
+	/// <summary>
+	/// Uses the unit's special ability.
+	/// Override this function to call specific special ability functions for a hero unit.
+	/// </summary>
+	/// <param name="data"> The move data required for this move. </param>
+	protected override void UseSpecial ( MoveData data )
+	{
+		
+	}
+
+	/// <summary>
+	/// Sets up the hero's command use.
+	/// </summary>
+	public override void StartCommand ( )
+	{
+		// Clear the board
+		base.StartCommand ( );
+
+		// Clear previous targets
+		dropkickTargetDirection.Clear ( );
+
+		// Get back direction
+		IntPair back = GetBackDirection ( owner.direction );
+
+		// Check each neighbor tile
+		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
+		{
+			// Check for back direction
+			if ( i == back.FirstInt || i == back.SecondInt )
+				continue;
+
+			// Check for target
+			if ( currentTile.neighbors [ i ] != null && currentTile.neighbors [ i ].currentUnit != null && currentTile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) && KnockbackTileCheck ( currentTile.neighbors [ i ], i, true ) )
+			{
+				// Mark target
+				currentTile.neighbors [ i ].SetTileState ( TileState.AvailableCommand );
+
+				// Store direction
+				dropkickTargetDirection.Add ( currentTile.neighbors [ i ], i );
+			}
+		}
+	}
+
+	/// <summary>
+	/// Selects the unit to dropkick.
+	/// </summary>
+	/// <param name="t"> The selected tile for the command. </param>
+	public override void SelectCommandTile ( Tile t )
+	{
+		// Pause turn timer
+		if ( MatchSettings.turnTimer )
+			GM.UI.timer.PauseTimer ( );
+
+		// Hide cancel button
+		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
+
+		// Clear board
+		GM.board.ResetTiles ( );
+
+
 	}
 
 	#endregion // HeroUnit Override Functions
@@ -110,6 +183,11 @@ public class Dropkick : HeroUnit
 		return false;
 	}
 
+	/// <summary>
+	/// Gets all tiles within range of the Divebomb ability.
+	/// </summary>
+	/// <param name="t"> The current tile who's neighbors are being checked. </param>
+	/// <param name="count"> The range of tiles left to check. </param>
 	private void GetDivebomb ( Tile t, int count )
 	{
 		// Check each neighbor tile
@@ -121,7 +199,15 @@ public class Dropkick : HeroUnit
 				// Check if the tile is available to move to
 				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && MinimumDiveDistance ( t.neighbors [ i ] ) )
 				{
+					// Add as an available special move
+					moveList.Add ( new MoveData ( t.neighbors [ i ], null, MoveData.MoveType.SPECIAL, i ) );	
+				}
 
+				// Check if the max range has been reached
+				if ( count > 0 )
+				{
+					// Continue search
+					GetDivebomb ( t.neighbors [ i ], count - 1 );
 				}
 			}
 		}
@@ -184,6 +270,31 @@ public class Dropkick : HeroUnit
 				return false;
 			}
 		}
+	}
+
+	/// <summary>
+	/// Checks if any targets are avialable for the Dropkick ability.
+	/// </summary>
+	/// <returns> Whether or not any targets are available. </returns>
+	private bool DropkickCheck ( )
+	{
+		// Store which tiles are to be ignored
+		IntPair back = GetBackDirection ( owner.direction );
+
+		// Check each neighboring tile
+		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
+		{
+			// Ignore tiles that would allow for backward movement
+			if ( i == back.FirstInt || i == back.SecondInt )
+				continue;
+
+			// Check for target
+			if ( currentTile.neighbors [ i ] != null && currentTile.neighbors [ i ].currentUnit != null && currentTile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) && KnockbackTileCheck ( currentTile.neighbors [ i ], i, true ) )
+				return true;
+		}
+
+		// Return that no targets were found
+		return false;
 	}
 
 	#endregion // Private Functions
