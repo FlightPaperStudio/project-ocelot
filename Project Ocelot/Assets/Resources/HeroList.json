@@ -207,6 +207,29 @@
 				"Duration": 3,
 				"Cooldown": 5
 			}
+		},
+		{
+			"ID": 10,
+			"CharacterName": "Hero 10",
+			"CharacterDescription": "Insert Hero 10 description here...",
+			"Slots": 1,
+			"ClassType": 1,
+			"Ability1":
+			{
+				"Name": "Divebomb",
+				"Description": "Insert Divebomb description here...",
+				"Type": 1,
+				"Duration": 0,
+				"Cooldown": 3
+			},
+			"Ability2":
+			{
+				"Name": "Dropkick",
+				"Description": "Insert Dropkick description here...",
+				"Type": 2,
+				"Duration": 0,
+				"Cooldown": 4
+			}
 		}
 	]
 }
