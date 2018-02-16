@@ -534,6 +534,26 @@ public class CustomMatchSettingsMenu : Menu
 	}
 
 	/// <summary>
+	/// Sets the current cooldown setting for Hero 10's Divebomb ability.
+	/// Use this as a slider update event wrapper.
+	/// </summary>
+	public void SetDivebombCooldown ( float value )
+	{
+		// Set cooldown
+		SetCooldown ( heroValue [ 9 ].ability1, (int)value, cooldownSlider1 [ 9 ], cooldownDisplay1 [ 9 ] );
+	}
+
+	/// <summary>
+	/// Sets the current cooldown setting for Hero 10's Dropkick ability.
+	/// Use this as a slider update event wrapper.
+	/// </summary>
+	public void SetDropkickCooldown ( float value )
+	{
+		// Set cooldown
+		SetCooldown ( heroValue [ 9 ].ability2, (int)value, cooldownSlider2 [ 9 ], cooldownDisplay2 [ 9 ] );
+	}
+
+	/// <summary>
 	/// Sets the current cooldown setting for a special ability.
 	/// Does not apply to the actual match setting until the match starts.
 	/// </summary>

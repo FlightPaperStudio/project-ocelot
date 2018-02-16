@@ -23,7 +23,10 @@ public class Dropkick : HeroUnit
 
 	private Dictionary<Tile, int> dropkickTargetDirection = new Dictionary<Tile, int> ( );
 
-	private int MAX_DIVE_RANGE = 4;
+	private const int MAX_DIVE_RANGE = 3;
+	private const float DIVE_ANIMATION_TIME = 1.0f;
+	private const float DIVE_ANIMATION_SCALE = 2.0f;
+	private const string DROPKICK_STATUS_PROMPT = "Dropkick";
 
 	#endregion // Ability Data
 
@@ -42,7 +45,7 @@ public class Dropkick : HeroUnit
 
 		// Get Divebomb moves
 		if ( SpecialAvailabilityCheck ( CurrentAbility1, prerequisite ) )
-			GetDivebomb ( t, MAX_DIVE_RANGE );
+			GetDivebomb ( t, MAX_DIVE_RANGE - 1 );
 
 		// Get Dropkick availability
 		CurrentAbility2.active = CommandAvailabilityCheck ( CurrentAbility2, prerequisite );
@@ -105,7 +108,36 @@ public class Dropkick : HeroUnit
 	/// <param name="data"> The move data required for this move. </param>
 	protected override void UseSpecial ( MoveData data )
 	{
-		
+		// Create animation for dive
+		Tween t1 = transform.DOMove ( data.Tile.transform.position, DIVE_ANIMATION_TIME )
+			.OnComplete ( ( ) =>
+			{
+				// Start teleport cooldown
+				StartCooldown ( CurrentAbility1, Info.Ability1 );
+
+				// Set unit and tile data
+				SetUnitToTile ( data.Tile );
+			} );
+		Tween t2 = transform.DOScale ( DIVE_ANIMATION_SCALE, DIVE_ANIMATION_TIME / 2 )
+			.SetLoops ( 2, LoopType.Yoyo );
+
+		// Add animations to queue
+		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+
+		int targetCount = 0;
+
+		// Get knockback targets
+		for ( int i = 0; i < data.Tile.neighbors.Length; i++ )
+		{
+			// Check for target
+			if ( data.Tile.neighbors [ i ] != null && data.Tile.neighbors [ i ].currentUnit != null && data.Tile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) && data.Tile.neighbors [ i ].currentUnit.status.CanBeMoved && KnockbackTileCheck ( data.Tile.neighbors [ i ].neighbors [ i ], i, false ) )
+			{
+				// Create animation for knockback
+				targetCount++;
+				DivebombKnockback ( data.Tile.neighbors [ i ].currentUnit, data.Tile.neighbors [ i ].neighbors [ i ], targetCount <= 1 );
+			}
+		}
 	}
 
 	/// <summary>
@@ -157,7 +189,36 @@ public class Dropkick : HeroUnit
 		// Clear board
 		GM.board.ResetTiles ( );
 
+		// Create animation
+		Sequence s = DOTween.Sequence ( );
 
+		// Animate dropkick
+		s.Append ( transform.DOMove ( currentTile.transform.position + ( ( t.transform.position - currentTile.transform.position ) * 0.5f ), MOVE_ANIMATION_TIME / 2 ) );
+		s.Append ( transform.DOMove ( currentTile.transform.position, MOVE_ANIMATION_TIME / 2 ) );
+
+		// Knockback targets
+		DropkickKnockback ( t, dropkickTargetDirection [ t ], s );
+
+		// End animation
+		s.OnComplete ( ( ) =>
+		{
+			// Start cooldown
+			StartCooldown ( CurrentAbility2, Info.Ability2 );
+
+			// Apply status effect
+			status.AddStatusEffect ( abilitySprite2, DROPKICK_STATUS_PROMPT, this, 1, StatusEffects.StatusType.CAN_MOVE );
+
+			// Pause turn timer
+			if ( MatchSettings.turnTimer )
+				GM.UI.timer.ResumeTimer ( );
+
+			// Get moves
+			GM.GetTeamMoves ( );
+
+			// Display team
+			GM.DisplayAvailableUnits ( );
+			GM.SelectUnit ( this );
+		} );
 	}
 
 	#endregion // HeroUnit Override Functions
@@ -197,7 +258,7 @@ public class Dropkick : HeroUnit
 			if ( t.neighbors [ i ] != null )
 			{
 				// Check if the tile is available to move to
-				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && MinimumDiveDistance ( t.neighbors [ i ] ) )
+				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && MinimumDiveDistance ( t.neighbors [ i ] ) && !moveList.Exists ( match => match.Tile == t.neighbors [ i ] && match.Type == MoveData.MoveType.SPECIAL ) )
 				{
 					// Add as an available special move
 					moveList.Add ( new MoveData ( t.neighbors [ i ], null, MoveData.MoveType.SPECIAL, i ) );	
@@ -258,6 +319,10 @@ public class Dropkick : HeroUnit
 		}
 		else
 		{
+			// Check if the unit can not be moved
+			if ( !t.currentUnit.status.CanBeMoved )
+				return false;
+
 			// Check if tiles should continue to be checked
 			if ( isRecursive )
 			{
@@ -270,6 +335,34 @@ public class Dropkick : HeroUnit
 				return false;
 			}
 		}
+	}
+
+	/// <summary>
+	/// Knocks a unit back from the Divebomb ability
+	/// </summary>
+	/// <param name="target"> The unit affected by the Divebomb ability. </param>
+	/// <param name="knockbackTile"> The tile the unit is being knocked back to. </param>
+	private void DivebombKnockback ( Unit target, Tile knockbackTile, bool isAppend )
+	{
+		// Create animation
+		Tween t = target.transform.DOMove ( knockbackTile.transform.position, MOVE_ANIMATION_TIME )
+			.OnStart ( ( ) =>
+			{
+				// Interupt target
+				target.InteruptUnit ( );
+			} )
+			.OnComplete ( ( ) =>
+			{
+				// Remove target from previous tile
+				target.currentTile.currentUnit = null;
+
+				// Set the target's new current tile
+				target.currentTile = knockbackTile;
+				knockbackTile.currentUnit = target;
+			} );
+
+		// Add animations to queue
+		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, isAppend ) );
 	}
 
 	/// <summary>
@@ -289,12 +382,46 @@ public class Dropkick : HeroUnit
 				continue;
 
 			// Check for target
-			if ( currentTile.neighbors [ i ] != null && currentTile.neighbors [ i ].currentUnit != null && currentTile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) && KnockbackTileCheck ( currentTile.neighbors [ i ], i, true ) )
+			if ( currentTile.neighbors [ i ] != null && currentTile.neighbors [ i ].currentUnit != null && currentTile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) && currentTile.neighbors [ i ].currentUnit.status.CanBeMoved && KnockbackTileCheck ( currentTile.neighbors [ i ].neighbors [ i ], i, true ) )
 				return true;
 		}
 
 		// Return that no targets were found
 		return false;
+	}
+
+	/// <summary>
+	/// Knocks back a target from the Dropkick ability.
+	/// </summary>
+	/// <param name="t"> The current tile of the target. </param>
+	/// <param name="direction"> The direction of the dropkick. </param>
+	/// <param name="s"> The animation sequence for the dropkick. </param>
+	private void DropkickKnockback ( Tile t, int direction, Sequence s )
+	{
+		// Check for additional targets
+		if ( t.neighbors [ direction ] != null && t.neighbors [ direction ].currentUnit != null )
+			DropkickKnockback ( t.neighbors [ direction ], direction, s );
+
+		// Store target
+		Unit target = t.currentUnit;
+
+		// Clear target's current tile
+		t.currentUnit = null;
+
+		// Interupt target
+		target.InteruptUnit ( );
+
+		// Move target
+		Tween animation = target.transform.DOMove ( t.neighbors [ direction ].transform.position, MOVE_ANIMATION_TIME )
+			.OnComplete ( ( ) =>
+			{
+				// Set target to tile
+				target.currentTile = t.neighbors [ direction ];
+				t.neighbors [ direction ].currentUnit = target;
+			} );
+
+		// Add animation
+		s.Join ( animation );
 	}
 
 	#endregion // Private Functions
