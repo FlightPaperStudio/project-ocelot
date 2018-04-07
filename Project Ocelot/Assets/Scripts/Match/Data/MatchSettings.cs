@@ -50,15 +50,29 @@ public class MatchSettings
 		private set;
 	}
 
+	public static Debate MatchDebate
+	{
+		get;
+		private set;
+	}
+
+	private static UnitDefaultData [ ] unitSettings;
+	private static Dictionary<int, UnitDefaultData> unitSettingsDictionary = new Dictionary<int, UnitDefaultData> ( );
+
+	public static UnitDefaultData GetUnitSetting ( int id )
+	{
+		return unitSettingsDictionary [ id ];
+	}
+
 	/// <summary>
 	/// This setting determines the starting information for each player in the match.
 	/// </summary>
-	private static List<PlayerSettings> actualPlayerSettings = new List<PlayerSettings> ( );
+	public static List<PlayerSettings> Players = new List<PlayerSettings> ( );
 	public static ReadOnlyCollection<PlayerSettings> playerSettings
 	{
 		get
 		{
-			return actualPlayerSettings.AsReadOnly ( );
+			return Players.AsReadOnly ( );
 		}
 	}
 
@@ -99,6 +113,8 @@ public class MatchSettings
 		// Set stacking
 		stacking = _stacking;
 
+		MatchDebate = DebateGenerator.GetRandomDebate ( type );
+
 		// Set hero settings
 		if ( _heroes != null )
 		{
@@ -116,7 +132,7 @@ public class MatchSettings
 		}
 
 		// Clear previous player settings
-		actualPlayerSettings.Clear ( );
+		Players.Clear ( );
 
 		// Check match type for adding players
 		switch ( type )
@@ -128,16 +144,16 @@ public class MatchSettings
 		case MatchType.CustomMirror:
 
 			// Initialize two players
-			PlayerSettings cp1 = new PlayerSettings ( Player.TeamColor.Blue,   Player.Direction.LeftToRight, Player.PlayerControl.LocalHuman );
-			PlayerSettings cp2 = new PlayerSettings ( Player.TeamColor.Orange, Player.Direction.RightToLeft, Player.PlayerControl.LocalHuman );
+			PlayerSettings cp1 = new PlayerSettings ( Player.TeamColor.BLUE,   Player.Direction.LEFT_TO_RIGHT, Player.PlayerControl.LOCAL_PLAYER );
+			PlayerSettings cp2 = new PlayerSettings ( Player.TeamColor.ORANGE, Player.Direction.RIGHT_TO_LEFT, Player.PlayerControl.LOCAL_PLAYER );
 
 			// Set player names
-			cp1.name = "Blue Team";
-			cp2.name = "Orange Team";
+			cp1.PlayerName = "Blue Team";
+			cp2.PlayerName = "Orange Team";
 
 			// Add players
-			actualPlayerSettings.Add ( cp1 );
-			actualPlayerSettings.Add ( cp2 );
+			Players.Add ( cp1 );
+			Players.Add ( cp2 );
 
 			break;
 
@@ -146,28 +162,28 @@ public class MatchSettings
 		case MatchType.CustomRumble:
 
 			// Initialize six players
-			PlayerSettings rp1 = new PlayerSettings ( Player.TeamColor.Blue,   Player.Direction.LeftToRight,          Player.PlayerControl.LocalHuman );
-			PlayerSettings rp2 = new PlayerSettings ( Player.TeamColor.Green,  Player.Direction.TopLeftToBottomRight, Player.PlayerControl.LocalHuman );
-			PlayerSettings rp3 = new PlayerSettings ( Player.TeamColor.Yellow, Player.Direction.TopRightToBottomLeft, Player.PlayerControl.LocalHuman );
-			PlayerSettings rp4 = new PlayerSettings ( Player.TeamColor.Orange, Player.Direction.RightToLeft,          Player.PlayerControl.LocalHuman );
-			PlayerSettings rp5 = new PlayerSettings ( Player.TeamColor.Pink,   Player.Direction.BottomRightToTopLeft, Player.PlayerControl.LocalHuman );
-			PlayerSettings rp6 = new PlayerSettings ( Player.TeamColor.Purple, Player.Direction.BottomLeftToTopRight, Player.PlayerControl.LocalHuman );
+			PlayerSettings rp1 = new PlayerSettings ( Player.TeamColor.BLUE,   Player.Direction.LEFT_TO_RIGHT,          Player.PlayerControl.LOCAL_PLAYER );
+			PlayerSettings rp2 = new PlayerSettings ( Player.TeamColor.GREEN,  Player.Direction.TOP_LEFT_TO_BOTTOM_RIGHT, Player.PlayerControl.LOCAL_PLAYER );
+			PlayerSettings rp3 = new PlayerSettings ( Player.TeamColor.YELLOW, Player.Direction.TOP_RIGHT_TO_BOTTOM_LEFT, Player.PlayerControl.LOCAL_PLAYER );
+			PlayerSettings rp4 = new PlayerSettings ( Player.TeamColor.ORANGE, Player.Direction.RIGHT_TO_LEFT,          Player.PlayerControl.LOCAL_PLAYER );
+			PlayerSettings rp5 = new PlayerSettings ( Player.TeamColor.PINK,   Player.Direction.BOTTOM_RIGHT_TO_TOP_LEFT, Player.PlayerControl.LOCAL_PLAYER );
+			PlayerSettings rp6 = new PlayerSettings ( Player.TeamColor.PURPLE, Player.Direction.BOTTOM_LEFT_TO_TOP_RIGHT, Player.PlayerControl.LOCAL_PLAYER );
 
 			// Set player names
-			rp1.name = "Blue Team";
-			rp2.name = "Green Team";
-			rp3.name = "Yellow Team";
-			rp4.name = "Orange Team";
-			rp5.name = "Pink Team";
-			rp6.name = "Purple Team";
+			rp1.PlayerName = "Blue Team";
+			rp2.PlayerName = "Green Team";
+			rp3.PlayerName = "Yellow Team";
+			rp4.PlayerName = "Orange Team";
+			rp5.PlayerName = "Pink Team";
+			rp6.PlayerName = "Purple Team";
 
 			// Add players
-			actualPlayerSettings.Add ( rp1 );
-			actualPlayerSettings.Add ( rp2 );
-			actualPlayerSettings.Add ( rp3 );
-			actualPlayerSettings.Add ( rp4 );
-			actualPlayerSettings.Add ( rp5 );
-			actualPlayerSettings.Add ( rp6 );
+			Players.Add ( rp1 );
+			Players.Add ( rp2 );
+			Players.Add ( rp3 );
+			Players.Add ( rp4 );
+			Players.Add ( rp5 );
+			Players.Add ( rp6 );
 
 			break;
 		}
@@ -179,7 +195,7 @@ public class MatchSettings
 			p.heroIDs.Clear ( );
 
 			// Set formation to default
-			p.formation = new int [ TEAM_SIZE ] { LEADER_UNIT, NO_UNIT, NO_UNIT, NO_UNIT, NO_UNIT, NO_UNIT };
+			p.Formation = new int [ TEAM_SIZE ] { LEADER_UNIT, NO_UNIT, NO_UNIT, NO_UNIT, NO_UNIT, NO_UNIT };
 		}
 
 		// Check for match types with randomly assigned teams and formations
@@ -221,7 +237,7 @@ public class MatchSettings
 					p.heroIDs.Add ( h );
 
 					// Assign the postion
-					p.formation [ f ] = h;
+					p.Formation [ f ] = h;
 				}
 
 				// Remove the hero from the list
@@ -254,7 +270,7 @@ public class MatchSettings
 				foreach ( PlayerSettings p in playerSettings )
 				{
 					// Assign the postion
-					p.formation [ f ] = PAWN_UNIT;
+					p.Formation [ f ] = PAWN_UNIT;
 				}
 
 				// Remove the postion from the list
@@ -286,9 +302,11 @@ public enum MatchType
 {
 	Classic,
 	Mirror,
+	Ladder,
 	Rumble,
 	CustomClassic,
 	CustomMirror,
+	CustomLadder,
 	CustomRumble
 }
 

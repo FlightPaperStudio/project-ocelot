@@ -7,16 +7,145 @@ using TMPro;
 
 public class TeamFormationMenu : Menu 
 {
+	#region Private Classes
+
+	[System.Serializable]
+	private class FormationCards
+	{
+		public UnitCard Card;
+		public Button UndoButton;
+
+		private bool isEnabled;
+		private bool isSelected;
+		private bool isLastSelected;
+
+		/// <summary>
+		/// Whether or not the cards are to be displayed for units.
+		/// </summary>
+		public bool IsEnabled
+		{
+			get
+			{
+				// Return value
+				return isEnabled;
+			}
+			set
+			{
+				// Store value
+				isEnabled = value;
+
+				// Display or hide card
+				Card.IsEnabled = isEnabled && isSelected;
+
+				// Display or hide button
+				UndoButton.gameObject.SetActive ( isEnabled ? isLastSelected : false );
+			}
+		}
+
+		/// <summary>
+		/// Whether or not the cards should be displayed for units already positioned.
+		/// </summary>
+		public bool IsSelected
+		{
+			get
+			{
+				// Return value
+				return isSelected;
+			}
+			set
+			{
+				// Store value
+				isSelected = value;
+
+				// Display or hide card
+				Card.IsEnabled = isSelected && isEnabled;
+
+				// Display or hide button
+				UndoButton.gameObject.SetActive ( isSelected ? isLastSelected : false );
+			}
+		}
+
+		/// <summary>
+		/// Whether or not the undo button should be displayed for the last unit positioned.
+		/// </summary>
+		public bool IsLastSelected
+		{
+			get
+			{
+				// Return value
+				return isLastSelected;
+			}
+			set
+			{
+				// Store value
+				isLastSelected = value;
+
+				// Display or hide button
+				UndoButton.gameObject.SetActive ( isLastSelected );
+			}
+		}
+	}
+
+	[System.Serializable]
+	private class FormationTiles
+	{
+		public SpriteRenderer Tile;
+		public SpriteRenderer Outline;
+		public SpriteRenderer Unit;
+
+		private bool hasUnit;
+
+		/// <summary>
+		/// Whether or not a unit has been positioned on this tile.
+		/// </summary>
+		public bool HasUnit
+		{
+			get
+			{
+				// Return value
+				return hasUnit;
+			}
+			set
+			{
+				// Store value
+				hasUnit = value;
+
+				// Display or hide unit
+				Unit.gameObject.SetActive ( hasUnit );
+			}
+		}
+	}
+
+	#endregion // Private Classes
+
 	#region UI Elements
 
-	public Button selectButton;
-	public GameObject unitInfoPanel;
-	public GameObject heroPortaitPanel;
-	public GameObject confirmPanel;
+	[SerializeField]
+	private GameObject cardsPanel;
+
+	[SerializeField]
+	private UnitCard _currentCard;
+
+	[SerializeField]
+	private FormationCards [ ] _previousCards;
+
+	[SerializeField]
+	private GameObject portaitsPanel;
+
+	[SerializeField]
+	private GameObject confirmPanel;
+
+	[SerializeField]
+	private UnitPortrait [ ] portraits;
+
+	[SerializeField]
+	private Button selectButton;
+
+	
 	public TeamSlotMeter slotMeter;
 	public HeroCard currentCard;
 	public HeroCard [ ] previousCards;
-	public UnitPortrait [ ] heroPortraits;
+	
 	public GameObject pawnCard;
 	public TextMeshProUGUI pawnCountText;
 	public GameObject pawnUndoButton;
@@ -25,16 +154,29 @@ public class TeamFormationMenu : Menu
 
 	#region Game Objects
 
-	public GameObject teamFormationObjs;
-	public SpriteRenderer [ ] tiles;
-	public SpriteRenderer [ ] tileOutlines;
-	public SpriteRenderer [ ] tileIcons;
+	[SerializeField]
+	private GameObject teamFormationObjs;
+
+	[SerializeField]
+	private FormationTiles [ ] _tiles;
+
+
+	[SerializeField]
+	private SpriteRenderer [ ] tiles;
+
+	[SerializeField]
+	private SpriteRenderer [ ] tileOutlines;
+
+	[SerializeField]
+	private SpriteRenderer [ ] tileIcons;
 
 	#endregion // Game Objects
 
 	#region Menu Data
 
-	public TeamSetup setup;
+	[SerializeField]
+	private TeamSetup setupManager;
+
 	private bool canSelect = true;
 	private int tileIndex = 0;
 	private readonly Color32 SELECTED_TILE = new Color32 ( 255, 210, 75, 255 );
@@ -43,6 +185,8 @@ public class TeamFormationMenu : Menu
 	#endregion // Menu Data
 
 	#region Player Data
+
+	private int unitIndex;
 
 	private PlayerSettings player;
 	private int heroIndex = 0;
@@ -66,10 +210,34 @@ public class TeamFormationMenu : Menu
 	{
 		// Open the menu
 		base.OpenMenu ( closeParent );
-		unitInfoPanel.SetActive ( true );
-		heroPortaitPanel.SetActive ( true );
+		cardsPanel.SetActive ( true );
+		portaitsPanel.SetActive ( true );
 		confirmPanel.SetActive ( false );
 		teamFormationObjs.SetActive ( true );
+
+		// Set unit portraits
+		for ( int i = 0; i < portraits.Length; i++ )
+		{
+			// Set whether or not the portrait has a unit to display
+			portraits [ i ].IsEnabled = i < setupManager.CurrentPlayer.Units.Count;
+
+			// Check for portrait
+			if ( portraits [ i ].IsEnabled )
+			{
+				// Display unit in portrait
+				portraits [ i ].SetPortrait ( setupManager.CurrentPlayer.Units [ i ], setupManager.CurrentPlayer.Team );
+			}
+		}
+
+		// Set tiles
+		for ( int i = 0; i < _tiles.Length; i++ )
+		{
+			// Set outline color
+			_tiles [ i ].Outline.color = Util.TeamColor ( setupManager.CurrentPlayer.Team );
+
+
+		}
+
 
 		// Set the player
 		player = values [ 0 ] as PlayerSettings;
@@ -100,10 +268,10 @@ public class TeamFormationMenu : Menu
 		for ( int i = 0; i < tiles.Length; i++ )
 		{
 			// Set outline color
-			tileOutlines [ i ].color = Util.TeamColor ( player.TeamColor );
+			tileOutlines [ i ].color = Util.TeamColor ( player.Team );
 
 			// Set icon color
-			tileIcons [ i ].color = Util.TeamColor ( player.TeamColor );
+			tileIcons [ i ].color = Util.TeamColor ( player.Team );
 
 			// Hide icon
 			if ( i != 0 )
@@ -111,14 +279,14 @@ public class TeamFormationMenu : Menu
 		}
 
 		// Set icons
-		for ( int i = 0; i < heroPortraits.Length; i++ )
+		for ( int i = 0; i < portraits.Length; i++ )
 		{
 			// Toggle portrait
-			heroPortraits [ i ].gameObject.SetActive ( i < player.heroIDs.Count );
+			portraits [ i ].gameObject.SetActive ( i < player.heroIDs.Count );
 
 			// Display hero
 			if ( i < player.heroIDs.Count )
-				heroPortraits [ i ].SetUnit ( player.heroIDs [ i ], icons [ player.heroIDs [ i ] ], Util.TeamColor ( player.TeamColor ) );
+				portraits [ i ].SetUnit ( player.heroIDs [ i ], icons [ player.heroIDs [ i ] ], Util.TeamColor ( player.Team ) );
 		}
 
 		// Set cards
@@ -128,7 +296,7 @@ public class TeamFormationMenu : Menu
 			if ( i < player.heroIDs.Count )
 			{
 				// Set card color
-				previousCards [ i ].SetTeamColor ( Util.TeamColor ( player.TeamColor ) );
+				previousCards [ i ].SetTeamColor ( Util.TeamColor ( player.Team ) );
 
 				// Display card
 				previousCards [ i ].DisplayCardWithoutHero ( );
@@ -142,7 +310,7 @@ public class TeamFormationMenu : Menu
 		}
 
 		// Set current card color
-		currentCard.SetTeamColor ( Util.TeamColor ( player.TeamColor ) );
+		currentCard.SetTeamColor ( Util.TeamColor ( player.Team ) );
 
 		// Reset slot meter
 		slotMeter.ResetMeter ( );
@@ -151,7 +319,7 @@ public class TeamFormationMenu : Menu
 		DisplayUnit ( false );
 
 		// Display prompt
-		setup.splash.Slide ( "<size=75%>" + player.name + "</size>\n<color=white>Team Formation", Util.TeamColor ( player.TeamColor ), true );
+		setupManager.splash.Slide ( "<size=75%>" + player.PlayerName + "</size>\n<color=white>Team Formation", Util.TeamColor ( player.Team ), true );
 	}
 
 	#endregion // Menu Functions
@@ -167,7 +335,7 @@ public class TeamFormationMenu : Menu
 	public void OnTileEnter ( int index )
 	{
 		// Check if the position is available
-		if ( canSelect && player.formation [ index ] == MatchSettings.NO_UNIT && index != tileIndex )
+		if ( canSelect && player.Formation [ index ] == MatchSettings.NO_UNIT && index != tileIndex )
 		{
 			// Display icon
 			tileIcons [ index ].gameObject.SetActive ( true );
@@ -187,7 +355,7 @@ public class TeamFormationMenu : Menu
 	public void OnTileExit ( int index )
 	{
 		// Check if the position is available
-		if ( canSelect && player.formation [ index ] == MatchSettings.NO_UNIT && index != tileIndex )
+		if ( canSelect && player.Formation [ index ] == MatchSettings.NO_UNIT && index != tileIndex )
 		{
 			// Hide icon
 			tileIcons [ index ].gameObject.SetActive ( false );
@@ -201,7 +369,7 @@ public class TeamFormationMenu : Menu
 	public void OnTileClick ( int index )
 	{
 		// Check if the position is available
-		if ( canSelect && player.formation [ index ] == MatchSettings.NO_UNIT && index != tileIndex )
+		if ( canSelect && player.Formation [ index ] == MatchSettings.NO_UNIT && index != tileIndex )
 		{
 			// Clear previous tile
 			if ( tileIndex != 0 )
@@ -240,12 +408,12 @@ public class TeamFormationMenu : Menu
 		// Store position
 		if ( !willAutoFillPawns && heroIndex == player.heroIDs.Count )
 		{
-			player.formation [ tileIndex ] = MatchSettings.PAWN_UNIT;
+			player.Formation [ tileIndex ] = MatchSettings.PAWN_UNIT;
 			pawnPositions [ pawnIndex ] = tileIndex;
 		}
 		else
 		{
-			player.formation [ tileIndex ] = player.heroIDs [ heroIndex ];
+			player.Formation [ tileIndex ] = player.heroIDs [ heroIndex ];
 		}
 
 		// Disable selection button
@@ -278,19 +446,19 @@ public class TeamFormationMenu : Menu
 			canSelect = false;
 
 			// Hide unit controls
-			unitInfoPanel.SetActive ( false );
-			heroPortaitPanel.SetActive ( false );
+			cardsPanel.SetActive ( false );
+			portaitsPanel.SetActive ( false );
 
 			// Check if pawns will be auto-filled
 			if ( willAutoFillPawns )
 			{
 				Sequence s = DOTween.Sequence ( );
-				for ( int i = 0; i < player.formation.Length; i++ )
+				for ( int i = 0; i < player.Formation.Length; i++ )
 				{
 					// Display pawns in the formation
-					if ( player.formation [ i ] == MatchSettings.NO_UNIT )
+					if ( player.Formation [ i ] == MatchSettings.NO_UNIT )
 					{
-						player.formation [ i ] = MatchSettings.PAWN_UNIT;
+						player.Formation [ i ] = MatchSettings.PAWN_UNIT;
 						tileIcons [ i ].gameObject.SetActive ( true );
 						tileIcons [ i ].sprite = icons [ MatchSettings.PAWN_UNIT ];
 						s.AppendInterval ( 0.1f );
@@ -322,8 +490,8 @@ public class TeamFormationMenu : Menu
 		int index;
 		do
 		{
-			index = Random.Range ( 1, player.formation.Length );
-		} while ( player.formation [ index ] != MatchSettings.NO_UNIT );
+			index = Random.Range ( 1, player.Formation.Length );
+		} while ( player.Formation [ index ] != MatchSettings.NO_UNIT );
 
 		// Select the position
 		OnTileClick ( index );
@@ -339,22 +507,22 @@ public class TeamFormationMenu : Menu
 		if ( ( willAutoFillPawns && heroIndex == player.heroIDs.Count ) || ( !willAutoFillPawns && pawnIndex == pawnTotal ) )
 		{
 			// Display controls
-			unitInfoPanel.SetActive ( true );
-			heroPortaitPanel.SetActive ( true );
+			cardsPanel.SetActive ( true );
+			portaitsPanel.SetActive ( true );
 			confirmPanel.SetActive ( false );
 
 			// Remove pawns if they were auto filled
 			if ( willAutoFillPawns )
 			{
 				// Check each position
-				for ( int i = 0; i < player.formation.Length; i++ )
+				for ( int i = 0; i < player.Formation.Length; i++ )
 				{
 					// Check for pawn
-					if ( player.formation [ i ] == MatchSettings.PAWN_UNIT )
+					if ( player.Formation [ i ] == MatchSettings.PAWN_UNIT )
 					{
 						// Remove pawn
 						tileIcons [ i ].gameObject.SetActive ( false );
-						player.formation [ i ] = MatchSettings.NO_UNIT;
+						player.Formation [ i ] = MatchSettings.NO_UNIT;
 					}
 				}
 					
@@ -392,9 +560,9 @@ public class TeamFormationMenu : Menu
 			heroIndex--;
 
 			// Get tile index
-			for ( int i = 0; i < player.formation.Length; i++ )
+			for ( int i = 0; i < player.Formation.Length; i++ )
 			{
-				if ( player.formation [ i ] == player.heroIDs [ heroIndex ] )
+				if ( player.Formation [ i ] == player.heroIDs [ heroIndex ] )
 				{
 					tempTileIndex = i;
 					break;
@@ -406,7 +574,7 @@ public class TeamFormationMenu : Menu
 		slotMeter.SetMeter ( slotMeter.FilledSlots - slotMeter.PreviewedSlots );
 
 		// Remove unit from formation
-		player.formation [ tempTileIndex ] = MatchSettings.NO_UNIT;
+		player.Formation [ tempTileIndex ] = MatchSettings.NO_UNIT;
 
 		// Display the unit as selected
 		OnTileClick ( tempTileIndex );
@@ -424,22 +592,74 @@ public class TeamFormationMenu : Menu
 	public void ConfirmFormation ( )
 	{
 		// Get next player
-		if ( setup.SetNextPlayer ( ) )
-		{
-			// Close menu and begin the next player's team selection
-			teamFormationObjs.SetActive ( false );
-			base.CloseMenu ( true, setup.currentPlayer );
-		}
-		else
-		{
-			// Load match
-			setup.BeginMatch ( );
-		}
+//		if ( setup.SetNextPlayer ( ) )
+//		{
+//			// Close menu and begin the next player's team selection
+//			teamFormationObjs.SetActive ( false );
+////			base.CloseMenu ( true, setup.currentPlayer );
+//		}
+//		else
+//		{
+//			// Load match
+//			setup.BeginMatch ( );
+//		}
 	}
 
 	#endregion // Public Functions
 
 	#region Private Functions
+
+	/// <summary>
+	/// Sets the size and color of each unit portrait for the current unit being positioned.
+	/// </summary>
+	/// <param name="index"> The index of the unit being positioned in the player settings unit list. </param>
+	private void SetPortraits ( int index )
+	{
+		// Set each portrait to the appropriate size and color
+		for ( int i = 0; i < setupManager.CurrentPlayer.Units.Count; i++ )
+		{
+			// Set size of the portrait to be larger if its the current unit
+			if ( i == index )
+				portraits [ i ].ChangeSize ( 5 );
+			else
+				portraits [ i ].ResetSize ( );
+
+			// Set the color of the border to be highlighted if its the current unit
+			portraits [ i ].IsBorderHighlighted = i == index;
+		}
+	}
+
+	/// <summary>
+	/// Displays or hides all cards in the menu for the current unit being positioned.
+	/// </summary>
+	/// <param name="index"> The index of the unit being positioned in the player settings unit list. </param>
+	private void SetCards ( int index )
+	{
+		// Display current unit in main card
+		_currentCard.SetCard ( setupManager.CurrentPlayer.Units [ index ], setupManager.CurrentPlayer.Team );
+
+		// Display each previous unit in the previous cards
+		for ( int i = 0; i < _previousCards.Length; i++ )
+		{
+			// Set whether or not the card will display a unit
+			_previousCards [ i ].IsEnabled = i < setupManager.CurrentPlayer.Units.Count - 2;
+
+			// Check for card
+			if ( _previousCards [ i ].IsEnabled )
+			{
+				// Set whether or not the unit has been positioned for this card
+				_previousCards [ i ].IsSelected = i <= index - 2;
+				_previousCards [ i ].IsLastSelected = i == index - 2;
+
+				// Check if the card is displayed
+				if ( _previousCards [ i ].IsSelected )
+				{
+					// Display unit
+					_previousCards [ i ].Card.SetCard ( setupManager.CurrentPlayer.Units [ i + 1 ], setupManager.CurrentPlayer.Team );
+				}
+			}
+		}
+	}
 
 	/// <summary>
 	/// Sets the cards and portraits to display the current unit.
@@ -511,15 +731,15 @@ public class TeamFormationMenu : Menu
 
 		// Set previous portrait size
 		if ( heroIndex - 1 >= 0 )
-			heroPortraits [ heroIndex - 1 ].SelectToggle ( false );
+			portraits [ heroIndex - 1 ].SelectToggle ( false );
 
 		// Set current portrait size
 		if ( heroIndex < player.heroIDs.Count )
-			heroPortraits [ heroIndex ].SelectToggle ( true );
+			portraits [ heroIndex ].SelectToggle ( true );
 
 		// Set next portrait size
 		if ( heroIndex + 1 < player.heroIDs.Count )
-			heroPortraits [ heroIndex + 1 ].SelectToggle ( false );
+			portraits [ heroIndex + 1 ].SelectToggle ( false );
 	}
 
 	#endregion // Private Functions

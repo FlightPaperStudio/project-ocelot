@@ -43,7 +43,7 @@ public class Catapult : HeroUnit
 		if ( status.CanMove )
 		{
 			// Store which tiles are to be ignored
-			IntPair back = GetBackDirection ( owner.direction );
+			IntPair back = GetBackDirection ( owner.TeamDirection );
 
 			// Check each neighboring tile
 			for ( int i = 0; i < t.neighbors.Length; i++ )
@@ -87,7 +87,7 @@ public class Catapult : HeroUnit
 
 		// Get Catapult moves
 		if ( SpecialAvailabilityCheck ( CurrentAbility1, prerequisite ) )
-			GetCatapult ( t, GetBackDirection ( owner.direction ) );
+			GetCatapult ( t, GetBackDirection ( owner.TeamDirection ) );
 
 		// Get Grapple availability
 		CurrentAbility2.active = CommandAvailabilityCheck ( CurrentAbility2, prerequisite );
@@ -239,7 +239,7 @@ public class Catapult : HeroUnit
 	private bool GrappleCheck ( )
 	{
 		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.direction );
+		IntPair back = GetBackDirection ( owner.TeamDirection );
 
 		// Check each neighboring tile
 		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
@@ -266,7 +266,7 @@ public class Catapult : HeroUnit
 		base.StartCommand ( );
 
 		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.direction );
+		IntPair back = GetBackDirection ( owner.TeamDirection );
 
 		// Get every Taunt target
 		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
@@ -311,9 +311,9 @@ public class Catapult : HeroUnit
 				// Display grapple
 				currentGrappleDisplay = Instantiate ( grappleDisplayPrefab, owner.transform );
 				currentGrappleDisplay.transform.position = Vector3.Lerp ( transform.position, grappleTarget.transform.position, 0.5f );
-				Color32 c = Util.TeamColor ( owner.team );
+				Color32 c = Util.TeamColor ( owner.Team );
 				currentGrappleDisplay.color = new Color32 ( c.r, c.g, c.b, 150 );
-				Util.OrientSpriteToDirection ( currentGrappleDisplay, owner.direction );
+				Util.OrientSpriteToDirection ( currentGrappleDisplay, owner.TeamDirection );
 
 				// Start cooldown
 				StartCooldown ( CurrentAbility2, Info.Ability2 );

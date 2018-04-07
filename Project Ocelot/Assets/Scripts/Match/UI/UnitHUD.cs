@@ -39,11 +39,11 @@ public class UnitHUD : MonoBehaviour
 		container.SetActive ( true );
 
 		// Display team color
-		portraitContainer.color = Util.TeamColor ( currentUnit.owner.team );
+		portraitContainer.color = Util.TeamColor ( currentUnit.owner.Team );
 
 		// Display unit icon
 		unitIcon.sprite = currentUnit.displaySprite;
-		unitIcon.color = Util.TeamColor ( currentUnit.owner.team );
+		unitIcon.color = Util.TeamColor ( currentUnit.owner.Team );
 
 		// Display status prompts
 		UpdateStatusEffects ( );

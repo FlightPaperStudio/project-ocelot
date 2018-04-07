@@ -89,25 +89,25 @@ public class GameManager : MonoBehaviour
 		for ( int i = 0; i < players.Length; i++ )
 		{
 			// Set team name
-			players [ i ].playerName = MatchSettings.playerSettings [ i ].name;
+			players [ i ].PlayerName = MatchSettings.playerSettings [ i ].PlayerName;
 
 			// Set team color
-			players [ i ].team = MatchSettings.playerSettings [ i ].TeamColor;
+			players [ i ].Team = MatchSettings.playerSettings [ i ].Team;
 
 			// Set goal area
-			players [ i ].startArea.SetColor ( players [ i ].team );
+			players [ i ].startArea.SetColor ( players [ i ].Team );
 
 			// Set special IDs
 			players [ i ].specialIDs = MatchSettings.playerSettings [ i ].heroIDs.ToArray ( );
 
 			// Spawn units
-			for ( int j = 0; j < MatchSettings.playerSettings [ i ].formation.Length; j++ )
+			for ( int j = 0; j < MatchSettings.playerSettings [ i ].Formation.Length; j++ )
 			{
 				// Check for unit
-				if ( MatchSettings.playerSettings [ i ].formation [ j ] > MatchSettings.NO_UNIT )
+				if ( MatchSettings.playerSettings [ i ].Formation [ j ] > MatchSettings.NO_UNIT )
 				{
 					// Create unit
-					Unit u = Instantiate ( unitPrefabs [ MatchSettings.playerSettings [ i ].formation [ j ] + 1 ], players [ i ].transform );
+					Unit u = Instantiate ( unitPrefabs [ MatchSettings.playerSettings [ i ].Formation [ j ] + 1 ], players [ i ].transform );
 
 					// Set unit info
 					u.GM = this;
@@ -115,10 +115,10 @@ public class GameManager : MonoBehaviour
 					u.owner = players [ i ];
 
 					// Set unit team color
-					u.SetTeamColor ( players [ i ].team );
+					u.SetTeamColor ( players [ i ].Team );
 
 					// Set unit direction
-					Util.OrientSpriteToDirection ( u.sprite, players [ i ].direction );
+					Util.OrientSpriteToDirection ( u.sprite, players [ i ].TeamDirection );
 
 					// Position unit to starting tile
 					u.transform.position = players [ i ].startArea.tiles [ j ].transform.position;
@@ -136,7 +136,7 @@ public class GameManager : MonoBehaviour
 					u.koDelegate += players [ i ].standardKOdelegate;
 
 			// Check for blue team
-			if ( players [ i ].team == Player.TeamColor.Blue )
+			if ( players [ i ].Team == Player.TeamColor.BLUE )
 			{
 				// Set the blue team as the starting player
 				currentPlayer = players [ i ];
@@ -177,7 +177,7 @@ public class GameManager : MonoBehaviour
 	private IEnumerator StartTurnCoroutine ( )
 	{
 		// Wait until animation is completed
-		yield return UI.splash.Slide ( currentPlayer.playerName + "'s Turn", Util.TeamColor ( currentPlayer.team ), true ).WaitForCompletion ( );
+		yield return UI.splash.Slide ( currentPlayer.PlayerName + "'s Turn", Util.TeamColor ( currentPlayer.Team ), true ).WaitForCompletion ( );
 
 		// Set cooldowns
 		UpdateUnitCountdowns ( );

@@ -53,12 +53,12 @@ public class TeamSlotMeter : MonoBehaviour
 	#region Public Functions
 
 	/// <summary>
-	/// Resets the slot meter to the start (1 by default for the Leader Unit).
+	/// Resets the slot meter to the start.
 	/// </summary>
 	public void ResetMeter ( )
 	{
-		// Set meter to 1
-		SetMeter ( 1 );
+		// Set meter to 0
+		SetMeter ( 0 );
 	}
 
 	/// <summary>

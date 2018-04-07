@@ -47,8 +47,8 @@ public class PlayerHUD : MonoBehaviour
 	public void Initialize ( Player p )
 	{
 		// Set team name
-		playerName.text = p.playerName;
-		playerName.color = Util.TeamColor ( p.team );
+		playerName.text = p.PlayerName;
+		playerName.color = Util.TeamColor ( p.Team );
 
 		// Set units
 		for ( int i = 0; i < instanceIDs.Length; i++ )
@@ -62,7 +62,7 @@ public class PlayerHUD : MonoBehaviour
 				unitIndexDic.Add ( p.units [ i ].instanceID, i );
 
 				// Set unit portrait
-				unitPortraits [ i ].SetUnit ( p.units [ i ].unitID, p.units [ i ].displaySprite, Util.TeamColor ( p.team ) );
+				unitPortraits [ i ].SetUnit ( p.units [ i ].unitID, p.units [ i ].displaySprite, Util.TeamColor ( p.Team ) );
 
 				// Clear status effects
 				ClearStatusEffects ( statusEffects [ i ] );
@@ -120,7 +120,7 @@ public class PlayerHUD : MonoBehaviour
 	public void UpdatePortrait ( int id, Color32 newColor )
 	{
 		// Change portrait color
-		unitPortraits [ unitIndexDic [ id ] ].SetUnit ( unitIDs [ unitIndexDic [ id ] ], unitPortraits [ unitIndexDic [ id ] ].icon.sprite, newColor );
+		//unitPortraits [ unitIndexDic [ id ] ].SetUnit ( unitIDs [ unitIndexDic [ id ] ], unitPortraits [ unitIndexDic [ id ] ].icon.sprite, newColor );
 	}
 
 	/// <summary>
@@ -157,7 +157,7 @@ public class PlayerHUD : MonoBehaviour
 
 			// Set portrait
 			unitPortraits [ i ].gameObject.SetActive ( true );
-			unitPortraits [ i ].SetUnit ( unitIDs [ i - 1 ], unitPortraits [ i - 1 ].icon.sprite, unitPortraits [ i - 1 ].teamColor );
+			//unitPortraits [ i ].SetUnit ( unitIDs [ i - 1 ], unitPortraits [ i - 1 ].icon.sprite, unitPortraits [ i - 1 ].teamColor );
 			unitPortraits [ i ].EnableToggle ( unitPortraits [ i - 1 ].IsEnabled );
 
 			// Set status effect icons
@@ -170,7 +170,7 @@ public class PlayerHUD : MonoBehaviour
 		unitIndexDic.Add ( newUnit.instanceID, endIndex );
 
 		// Display portrait of the new unit
-		unitPortraits [ endIndex ].SetUnit ( newUnit.unitID, newUnit.displaySprite, Util.TeamColor ( newUnit.owner.team ) );
+		unitPortraits [ endIndex ].SetUnit ( newUnit.unitID, newUnit.displaySprite, Util.TeamColor ( newUnit.owner.Team ) );
 
 		// Display status effects of the new unit
 		UpdateStatusEffects ( newUnit.instanceID, newUnit.status );
@@ -194,7 +194,7 @@ public class PlayerHUD : MonoBehaviour
 				unitIndexDic [ instanceIDs [ i + 1 ] ]--;
 
 				// Set portrait
-				unitPortraits [ i ].SetUnit ( unitIDs [ i + 1 ], unitPortraits [ i + 1 ].icon.sprite, unitPortraits [ i + 1 ].teamColor );
+				//unitPortraits [ i ].SetUnit ( unitIDs [ i + 1 ], unitPortraits [ i + 1 ].icon.sprite, unitPortraits [ i + 1 ].teamColor );
 				unitPortraits [ i ].EnableToggle ( unitPortraits [ i + 1 ].IsEnabled );
 
 				// Set status effect icons
@@ -237,7 +237,7 @@ public class PlayerHUD : MonoBehaviour
 				// Display status effect
 				statusEffects [ unitIndexDic [ id ] ].statusIcons [ i ].gameObject.SetActive ( true );
 				statusEffects [ unitIndexDic [ id ] ].statusIcons [ i ].sprite = status.effects [ i ].info.icon;
-				statusEffects [ unitIndexDic [ id ] ].statusIcons [ i ].color = Util.TeamColor ( status.effects [ i ].info.caster.owner.team );
+				statusEffects [ unitIndexDic [ id ] ].statusIcons [ i ].color = Util.TeamColor ( status.effects [ i ].info.caster.owner.Team );
 			}
 			else
 			{

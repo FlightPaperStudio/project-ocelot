@@ -4,34 +4,20 @@ using UnityEngine;
 
 public class PlayerSettings 
 {
-	public string name;
+	public string PlayerName;
+	public Player.TeamColor Team;
+	public Player.Direction TeamDirection;
+	public Player.PlayerControl Control;
+	public List<UnitDefaultData> Units = new List<UnitDefaultData> ( );
+	public int [ ] Formation;
 
-	public Player.TeamColor TeamColor
-	{
-		get;
-		private set;
-	}
-
-	public Player.Direction Direction
-	{
-		get;
-		private set;
-	}
-
-	public Player.PlayerControl Control
-	{
-		get;
-		private set;
-	}
 
 	public List<int> heroIDs = new List<int> ( );
 
-	public int [ ] formation;
-
 	public PlayerSettings ( Player.TeamColor _color, Player.Direction _direction, Player.PlayerControl _control )
 	{
-		TeamColor = _color;
-		Direction = _direction;
+		Team = _color;
+		TeamDirection = _direction;
 		Control = _control;
 	}
 }

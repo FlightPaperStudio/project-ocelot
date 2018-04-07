@@ -1,0 +1,565 @@
+{
+	"Debates":
+	[
+		{
+			"ID": 1,
+			"EventName": "Library of Smackdowns",
+			"DebateTopic": "Book Organization",
+			"Blue":
+			{
+				"Answer": "By title",
+				"Victory": ""
+			},
+			"Green":
+			{
+				"Answer": "By author",
+				"Victory": ""
+			},
+			"Yellow":
+			{
+				"Answer": "By release date",
+				"Victory": ""
+			},
+			"Orange":
+			{
+				"Answer": "By genre",
+				"Victory": ""
+			},
+			"Pink":
+			{
+				"Answer": "By color",
+				"Victory": ""
+			},
+			"Purple":
+			{
+				"Answer": "By the Dewey Decimal System",
+				"Victory": ""
+			}
+		},
+		{
+			"ID": 3,
+			"EventName": "Roommate Rumble I: The Betrayal",
+			"DebateTopic": "Toilet Paper Direction",
+			"Blue":
+			{
+				"Answer": "Over",
+				"Victory": ""
+			},
+			"Green":
+			{
+				"Answer": "Under",
+				"Victory": ""
+			},
+			"Yellow":
+			{
+				"Answer": "Sideways, placed on top",
+				"Victory": ""
+			},
+			"Orange":
+			{
+				"Answer": "",
+				"Victory": ""
+			},
+			"Pink":
+			{
+				"Answer": "",
+				"Victory": ""
+			},
+			"Purple":
+			{
+				"Answer": "",
+				"Victory": ""
+			}
+		},
+		{
+			"ID": 4,
+			"EventName": "Roommate Rumble II: The Disrespect",
+			"DebateTopic": "When to Shower",
+			"Blue":
+			{
+				"Answer": "In the morning",
+				"Victory": ""
+			},
+			"Green":
+			{
+				"Answer": "In the evening",
+				"Victory": ""
+			},
+			"Yellow":
+			{
+				"Answer": "In the middle of the day",
+				"Victory": ""
+			},
+			"Orange":
+			{
+				"Answer": "Never",
+				"Victory": ""
+			},
+			"Pink":
+			{
+				"Answer": "Once a month",
+				"Victory": ""
+			},
+			"Purple":
+			{
+				"Answer": "Just constantly - People are filthy",
+				"Victory": ""
+			}
+		},
+		{
+			"ID": 6,
+			"EventName": "Food Fight I: Peanut Butter",
+			"DebateTopic": "Peanut Butter",
+			"Blue":
+			{
+				"Answer": "",
+				"Victory": ""
+			},
+			"Green":
+			{
+				"Answer": "",
+				"Victory": ""
+			},
+			"Yellow":
+			{
+				"Answer": "",
+				"Victory": ""
+			},
+			"Orange":
+			{
+				"Answer": "Crunchy is excellent",
+				"Victory": ""
+			},
+			"Pink":
+			{
+				"Answer": "",
+				"Victory": ""
+			},
+			"Purple":
+			{
+				"Answer": "Creamy is superior",
+				"Victory": ""
+			}
+		},
+		{
+			"ID": 7,
+			"EventName": "Smack N Cheese: Ultimate Showdown",
+			"DebateTopic": "How to Eat Mac N Cheese",
+			"Blue":
+			{
+				"Answer": "With a fork",
+				"Victory": ""
+			},
+			"Green":
+			{
+				"Answer": "With a spoon",
+				"Victory": ""
+			},
+			"Yellow":
+			{
+				"Answer": "With a spork",
+				"Victory": ""
+			},
+			"Orange":
+			{
+				"Answer": "With your hands",
+				"Victory": ""
+			},
+			"Pink":
+			{
+				"Answer": "With a funnel",
+				"Victory": ""
+			},
+			"Purple":
+			{
+				"Answer": "With chop sticks",
+				"Victory": ""
+			}
+		},
+		{
+			"ID": 10,
+			"EventName": "Alternative Sports I: Reckoning",
+			"DebateTopic": "Best Team Sport (Aside From Wrestling)",
+			"Blue":
+			{
+				"Answer": "Baseball with grenades and laser swords",
+				"Victory": ""
+			},
+			"Green":
+			{
+				"Answer": "Basketball - Space Jam style",
+				"Victory": ""
+			},
+			"Yellow":
+			{
+				"Answer": "Football/Soccer",
+				"Victory": ""
+			},
+			"Orange":
+			{
+				"Answer": "Rugby",
+				"Victory": ""
+			},
+			"Pink":
+			{
+				"Answer": "Tennis",
+				"Victory": ""
+			},
+			"Purple":
+			{
+				"Answer": "Hockey",
+				"Victory": ""
+			}
+		},
+		{
+			"ID": 11,
+			"EventName": "Alternative Sports II: Electric Boogaloo",
+			"DebateTopic": "Best Individual Sport (Aside From Wrestling)",
+			"Blue":
+			{
+				"Answer": "Slap Fencing",
+				"Victory": ""
+			},
+			"Green":
+			{
+				"Answer": "Frisbee Golf",
+				"Victory": ""
+			},
+			"Yellow":
+			{
+				"Answer": "Pool noodle water skiing",
+				"Victory": ""
+			},
+			"Orange":
+			{
+				"Answer": "Cup stacking",
+				"Victory": ""
+			},
+			"Pink":
+			{
+				"Answer": "Tennis",
+				"Victory": ""
+			},
+			"Purple":
+			{
+				"Answer": "Swimming - AKA not drowning",
+				"Victory": ""
+			}
+		},
+		{
+			"ID": 12,
+			"EventName": "Cracking Eggs & Cracking Skulls",
+			"DebateTopic": "Eggs",
+			"Blue":
+			{
+				"Answer": "Boiled",
+				"Victory": ""
+			},
+			"Green":
+			{
+				"Answer": "Fried",
+				"Victory": ""
+			},
+			"Yellow":
+			{
+				"Answer": "Over easy",
+				"Victory": ""
+			},
+			"Orange":
+			{
+				"Answer": "Scrambled",
+				"Victory": ""
+			},
+			"Pink":
+			{
+				"Answer": "Raw",
+				"Victory": ""
+			},
+			"Purple":
+			{
+				"Answer": "Pickled",
+				"Victory": ""
+			}
+		},
+		{
+			"ID": 13,
+			"EventName": "Brewing Brutality",
+			"DebateTopic": "Coffee",
+			"Blue":
+			{
+				"Answer": "Black",
+				"Victory": ""
+			},
+			"Green":
+			{
+				"Answer": "With cream",
+				"Victory": ""
+			},
+			"Yellow":
+			{
+				"Answer": "With cream and sugar",
+				"Victory": ""
+			},
+			"Orange":
+			{
+				"Answer": "With steamed milk",
+				"Victory": ""
+			},
+			"Pink":
+			{
+				"Answer": "With artifical creamer",
+				"Victory": ""
+			},
+			"Purple":
+			{
+				"Answer": "I don't drink coffe as I am an Immortal Being with no need for such trivialities",
+				"Victory": ""
+			}
+		},
+		{
+			"ID": 14,
+			"EventName": "Revenge of the Nerds",
+			"DebateTopic": "Glasses",
+			"Blue":
+			{
+				"Answer": "They serve a purpose",
+				"Victory": ""
+			},
+			"Green":
+			{
+				"Answer": "They make you look smart",
+				"Victory": ""
+			},
+			"Yellow":
+			{
+				"Answer": "They make you look sexy",
+				"Victory": ""
+			},
+			"Orange":
+			{
+				"Answer": "They make you look like a nerd",
+				"Victory": ""
+			},
+			"Pink":
+			{
+				"Answer": "I prefer contacts",
+				"Victory": ""
+			},
+			"Purple":
+			{
+				"Answer": "",
+				"Victory": ""
+			}
+		},
+		{
+			"ID": 15,
+			"EventName": "Existential Extravaganza",
+			"DebateTopic": "The Meaning of Life",
+			"Blue":
+			{
+				"Answer": "Wrestling",
+				"Victory": ""
+			},
+			"Green":
+			{
+				"Answer": "Friendship",
+				"Victory": ""
+			},
+			"Yellow":
+			{
+				"Answer": "Queso",
+				"Victory": ""
+			},
+			"Orange":
+			{
+				"Answer": "Power",
+				"Victory": ""
+			},
+			"Pink":
+			{
+				"Answer": "42",
+				"Victory": ""
+			},
+			"Purple":
+			{
+				"Answer": "Crushing your enemies",
+				"Victory": ""
+			}
+		},
+		{
+			"ID": 18,
+			"EventName": "The Great GIF Debate",
+			"DebateTopic": "How to pronounce GIF",
+			"Blue":
+			{
+				"Answer": "It's pronounced gif!",
+				"Victory": ""
+			},
+			"Green":
+			{
+				"Answer": "It's pronounced gif!",
+				"Victory": ""
+			},
+			"Yellow":
+			{
+				"Answer": "It's pronounced gif!",
+				"Victory": ""
+			},
+			"Orange":
+			{
+				"Answer": "It's pronounced gif!",
+				"Victory": ""
+			},
+			"Pink":
+			{
+				"Answer": "It's pronounced gif!",
+				"Victory": ""
+			},
+			"Purple":
+			{
+				"Answer": "It's pronounced gif!",
+				"Victory": ""
+			}
+		},
+		{
+			"ID": 19,
+			"EventName": "Nacho Libre",
+			"DebateTopic": "Planets Made of Nachos",
+			"Blue":
+			{
+				"Answer": "I'm for it",
+				"Victory": ""
+			},
+			"Green":
+			{
+				"Answer": "That's ridiculous",
+				"Victory": ""
+			},
+			"Yellow":
+			{
+				"Answer": "Maybe just nacho mountains and queso rivers",
+				"Victory": ""
+			},
+			"Orange":
+			{
+				"Answer": "",
+				"Victory": ""
+			},
+			"Pink":
+			{
+				"Answer": "",
+				"Victory": ""
+			},
+			"Purple":
+			{
+				"Answer": "",
+				"Victory": ""
+			}
+		},
+		{
+			"ID": 20,
+			"EventName": "Food Fight II: Pineapple Pizza",
+			"DebateTopic": "Pineapple on Pizza",
+			"Blue":
+			{
+				"Answer": "It's delicious",
+				"Victory": ""
+			},
+			"Green":
+			{
+				"Answer": "It's a crime",
+				"Victory": ""
+			},
+			"Yellow":
+			{
+				"Answer": "It's acceptable but no preferable",
+				"Victory": ""
+			},
+			"Orange":
+			{
+				"Answer": "",
+				"Victory": ""
+			},
+			"Pink":
+			{
+				"Answer": "",
+				"Victory": ""
+			},
+			"Purple":
+			{
+				"Answer": "",
+				"Victory": ""
+			}
+		},
+		{
+			"ID": 21,
+			"EventName": "Meme Madness I: The Dress",
+			"DebateTopic": "The Color of #TheDress",
+			"Blue":
+			{
+				"Answer": "The dress was black and blue",
+				"Victory": ""
+			},
+			"Green":
+			{
+				"Answer": "",
+				"Victory": ""
+			},
+			"Yellow":
+			{
+				"Answer": "The dress was white and gold",
+				"Victory": ""
+			},
+			"Orange":
+			{
+				"Answer": "",
+				"Victory": ""
+			},
+			"Pink":
+			{
+				"Answer": "",
+				"Victory": ""
+			},
+			"Purple":
+			{
+				"Answer": "",
+				"Victory": ""
+			}
+		},
+		{
+			"ID": 23,
+			"EventName": "Food Fight III: Hotdogs",
+			"DebateTopic": "Is a hotdog a sandwich?",
+			"Blue":
+			{
+				"Answer": "",
+				"Victory": ""
+			},
+			"Green":
+			{
+				"Answer": "Yes, it's meat between bread, it's a sandwich",
+				"Victory": ""
+			},
+			"Yellow":
+			{
+				"Answer": "",
+				"Victory": ""
+			},
+			"Orange":
+			{
+				"Answer": "No, hotdogs are hotdogs, sandwiches are sandwiches",
+				"Victory": ""
+			},
+			"Pink":
+			{
+				"Answer": "",
+				"Victory": ""
+			},
+			"Purple":
+			{
+				"Answer": "",
+				"Victory": ""
+			}
+		}
+	]
+}

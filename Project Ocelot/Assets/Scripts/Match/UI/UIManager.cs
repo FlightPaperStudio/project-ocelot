@@ -189,7 +189,7 @@ public class UIManager : MonoBehaviour
 	private IEnumerator WinCoroutine ( Player p )
 	{
 		// Wait for shake animation
-		yield return splash.Shake ( p.playerName + " Wins!", Util.TeamColor ( p.team ), false ).WaitForCompletion ( );
+		yield return splash.Shake ( p.PlayerName + " Wins!", Util.TeamColor ( p.Team ), false ).WaitForCompletion ( );
 
 		// Display end of match controls
 		endOfMatchControls.SetActive ( true );

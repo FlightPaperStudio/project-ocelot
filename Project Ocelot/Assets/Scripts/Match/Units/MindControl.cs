@@ -77,7 +77,7 @@ public class MindControl : HeroUnit
 	private void GetCloneAssist ( Tile t, MoveData prerequisite )
 	{
 		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.direction );
+		IntPair back = GetBackDirection ( owner.TeamDirection );
 
 		// Check each neighboring tile
 		for ( int i = 0; i < t.neighbors.Length; i++ )
@@ -110,9 +110,9 @@ public class MindControl : HeroUnit
 		// Create clone
 		currentCloneDisplay = Instantiate ( cloneDisplayPrefab, owner.transform );
 		currentCloneDisplay.transform.position = data.Tile.neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].transform.position;
-		Color32 c = Util.TeamColor ( owner.team );
+		Color32 c = Util.TeamColor ( owner.Team );
 		currentCloneDisplay.color = new Color32 ( c.r, c.g, c.b, 150 );
-		Util.OrientSpriteToDirection ( currentCloneDisplay, owner.direction );
+		Util.OrientSpriteToDirection ( currentCloneDisplay, owner.TeamDirection );
 		currentCloneDisplay.gameObject.SetActive ( false );
 
 		// Create animations
@@ -229,7 +229,7 @@ public class MindControl : HeroUnit
 	private void ActivateMindControl ( Unit u )
 	{
 		// Create animation
-		Tween t = u.sprite.DOColor ( Util.TeamColor ( owner.team ), MIND_CONTROL_ANIMATION_TIME )
+		Tween t = u.sprite.DOColor ( Util.TeamColor ( owner.Team ), MIND_CONTROL_ANIMATION_TIME )
 			.OnStart ( ( ) =>
 			{
 				// Check for pre-existing Mind Control
@@ -271,11 +271,11 @@ public class MindControl : HeroUnit
 				//u.koDelegate += MindControlKO;
 
 				// Face unit in correct direction
-				Util.OrientSpriteToDirection ( u.sprite, u.owner.direction );
+				Util.OrientSpriteToDirection ( u.sprite, u.owner.TeamDirection );
 
 				// Update HUD
 				GM.UI.matchInfoMenu.GetPlayerHUD ( u ).UpdateStatusEffects ( u.instanceID, u.status );
-				GM.UI.matchInfoMenu.GetPlayerHUD ( u ).UpdatePortrait ( u.instanceID, Util.TeamColor ( owner.team ) );
+				GM.UI.matchInfoMenu.GetPlayerHUD ( u ).UpdatePortrait ( u.instanceID, Util.TeamColor ( owner.Team ) );
 			} );
 
 		// Add animation to queue

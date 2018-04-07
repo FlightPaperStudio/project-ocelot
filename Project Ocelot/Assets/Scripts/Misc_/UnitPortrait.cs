@@ -7,20 +7,98 @@ public class UnitPortrait : MonoBehaviour
 {
 	#region UI Elements
 
-	public RectTransform container;
-	public Image border;
-	public Image icon;
-	public Image [ ] slots;
+	[SerializeField]
+	private RectTransform container;
+
+	[SerializeField]
+	private Image border;
+
+	[SerializeField]
+	private Image unitPortrait;
 
 	#endregion // UI Elements
 
 	#region Portrait Data
 
+	private UnitData unitData;
+	private Player.TeamColor _teamColor;
+	private bool isEnabled;
+	private bool isAvailable;
+	private bool isBorderHighlighted;
+
+	private readonly Color32 UNAVAILABLE_COLOR = Color.grey;
+	private readonly Color32 HIGHLIGHT_COLOR = new Color32 ( 255, 210, 75, 255 );
+
+	/// <summary>
+	/// Whether or not the portrait is to be displayed.
+	/// </summary>
 	public bool IsEnabled
 	{
-		get;
-		private set;
+		get
+		{
+			// Return value
+			return isEnabled;
+		}
+		set
+		{
+			// Store value
+			isEnabled = value;
+
+			// Display or hide portrait
+			container.gameObject.SetActive ( isEnabled );
+		}
 	}
+
+	/// <summary>
+	/// Whether or not the portrait is selectable or interactable.
+	/// </summary>
+	public bool IsAvailable
+	{
+		get
+		{
+			// Return value
+			return isAvailable;
+		}
+		set
+		{
+			// Store value
+			isAvailable = value;
+
+			// Set portrait color
+			border.color = isAvailable ? Util.TeamColor ( _teamColor ) : UNAVAILABLE_COLOR;
+			unitPortrait.color = isAvailable ? Util.TeamColor ( _teamColor ) : UNAVAILABLE_COLOR;
+		}
+	}
+
+	/// <summary>
+	/// Whether or not the border of the portrait should be highlighted to indicate selection.
+	/// </summary>
+	public bool IsBorderHighlighted
+	{
+		get
+		{
+			// Return value
+			return isBorderHighlighted;
+		}
+		set
+		{
+			// Store value
+			isBorderHighlighted = value;
+
+			// Check value
+			if ( isBorderHighlighted )
+			{
+				// Set border color to highlighted
+				border.color = HIGHLIGHT_COLOR;
+			}
+			else
+			{
+				// Set border color to its normal color
+				border.color = isAvailable ? Util.TeamColor ( _teamColor ) : UNAVAILABLE_COLOR;
+			}
+		}
+	}
+
 	public bool IsSelected
 	{
 		get;
@@ -32,12 +110,78 @@ public class UnitPortrait : MonoBehaviour
 		get;
 		private set;
 	}
-	private readonly Color32 DISABLED_COLOR = Color.grey; //new Color32 ( 100, 100, 100, 255 );
-	private readonly Color32 SLOT_COLOR = new Color32 ( 255, 210, 75, 255 );
+
 
 	#endregion // Portrait Data
 
+	//#region Mouse Input Functions
+
+	///// <summary>
+	///// Enlarge the portrait upon hovering over an enabled and unselected unit.
+	///// </summary>
+	//public void MouseEnter ( )
+	//{
+	//	// Check state
+	//	if ( IsEnabled && !IsSelected )
+	//	{
+	//		// Set enlarged size
+	//		SetSize ( false );
+	//	}
+	//}
+
+	///// <summary>
+	///// Sets the portrait to its normal size upon the mouse no longer hover over an enable and unselected unit.
+	///// </summary>
+	//public void MouseExit ( )
+	//{
+	//	// Check state
+	//	if ( IsEnabled && !IsSelected )
+	//	{
+	//		// Set default size
+	//		SetSize ( true );
+	//	}
+	//}
+
+	///// <summary>
+	///// Selects the unit upon clicking the button.
+	///// </summary>
+	//public void MouseClick ( )
+	//{
+	//	// Check state
+	//	if ( IsEnabled && !IsSelected )
+	//	{
+	//		// Select the hero
+	//		SelectToggle ( true );
+	//	}
+	//}
+
+	//#endregion // Mouse Input Functions
+
 	#region Public Functions
+
+	public void SetPortrait ( UnitData unit, Player.TeamColor team )
+	{
+		// Check for leader unit
+		if ( unit.Type == UnitData.UnitType.LEADER )
+		{
+			// Store leader
+			unitData = UnitDataStorage.GetLeaderDefault ( team );
+		}
+		else
+		{
+			// Store unit
+			unitData = unit;
+		}
+
+		// Store team
+		_teamColor = team;
+
+		// Display portrait
+		IsEnabled = true;
+		IsAvailable = true;
+		IsBorderHighlighted = false;
+	}
+
 
 	/// <summary>
 	/// Displays a given unit in the portait.
@@ -51,29 +195,7 @@ public class UnitPortrait : MonoBehaviour
 		unitID = id;
 
 		// Display icon
-		icon.sprite = sprite;
-
-		// Set slots
-		if ( slots != null )
-		{
-			for ( int i = 0; i < slots.Length; i++ )
-			{
-				// Check for hero
-				if ( unitID != MatchSettings.LEADER_UNIT && unitID != MatchSettings.PAWN_UNIT )
-				{
-					// Display the slot marker
-					slots [ i ].gameObject.SetActive ( i < HeroInfo.GetHeroByID ( unitID ).Slots );
-
-					// Set slot color
-					slots [ i ].color = SLOT_COLOR;
-				}
-				else
-				{
-					// Hide slot markers
-					slots [ i ].gameObject.SetActive ( false );
-				}
-			}
-		}
+		unitPortrait.sprite = sprite;
 
 		// Store team color
 		teamColor = col;
@@ -86,6 +208,28 @@ public class UnitPortrait : MonoBehaviour
 	}
 
 	/// <summary>
+	/// Reset the portrait to its default size.
+	/// </summary>
+	public void ResetSize ( )
+	{
+		// Set default size
+		container.offsetMax = Vector2.zero;
+		container.offsetMin = Vector2.zero;
+	}
+
+	/// <summary>
+	/// Increases or decreases the size of the portrait from its default size.
+	/// </summary>
+	/// <param name="offset"> How much the portrait's size should uniformly change. Positive values make it bigger and negative values make it smaller. </param>
+	public void ChangeSize ( float offset )
+	{
+		// Set card size
+		container.offsetMax = new Vector2 ( offset, offset );
+		container.offsetMin = new Vector2 ( -1 * offset, -1 * offset );
+	}
+
+
+	/// <summary>
 	/// Sets whether or not the unit is enabled.
 	/// This sets the color of the portrait (either the team color or grey).
 	/// </summary>
@@ -95,33 +239,11 @@ public class UnitPortrait : MonoBehaviour
 		// Set enabled
 		IsEnabled = isEnable;
 
-		// Check which color the button should be set
-		if ( IsEnabled )
-		{
-			// Set border color
-			border.color = teamColor;
+		// Set border color
+		border.color = isEnable ? teamColor : UNAVAILABLE_COLOR;
 
-			// Set icon color
-			icon.color = teamColor;
-
-			// Set slot color
-			if ( slots != null && unitID != MatchSettings.LEADER_UNIT && unitID != MatchSettings.PAWN_UNIT )
-				for ( int i = 0; i < slots.Length; i++ )
-					slots [ i ].color = SLOT_COLOR;
-		}
-		else
-		{
-			// Set border color
-			border.color = DISABLED_COLOR;
-
-			// Set icon color
-			icon.color = DISABLED_COLOR;
-
-			// Set slot color
-			if ( slots != null )
-				for ( int i = 0; i < slots.Length; i++ )
-					slots [ i ].color = DISABLED_COLOR;
-		}
+		// Set icon color
+		unitPortrait.color = isEnable ? teamColor : UNAVAILABLE_COLOR;
 	}
 
 	/// <summary>
@@ -135,59 +257,16 @@ public class UnitPortrait : MonoBehaviour
 		IsSelected = isSelect;
 
 		// Set border color
-		if ( !IsEnabled )
-			border.color = DISABLED_COLOR;
-		else if ( isSelect )
-			border.color = SLOT_COLOR;
-		else
-			border.color = teamColor;
+		//if ( !IsEnabled )
+		//	border.color = UNAVAILABLE_COLOR;
+		//else if ( isSelect )
+		//	border.color = SLOT_COLOR;
+		//else
+		//	border.color = teamColor;
 
 		// Set size
 		SetSize ( !IsSelected );
 	}
-
-	#region Mouse Input Functions
-
-	/// <summary>
-	/// Enlarge the portrait upon hovering over an enabled and unselected unit.
-	/// </summary>
-	public void MouseEnter ( )
-	{
-		// Check state
-		if ( IsEnabled && !IsSelected )
-		{
-			// Set enlarged size
-			SetSize ( false );
-		}
-	}
-
-	/// <summary>
-	/// Sets the portrait to its normal size upon the mouse no longer hover over an enable and unselected unit.
-	/// </summary>
-	public void MouseExit ( )
-	{
-		// Check state
-		if ( IsEnabled && !IsSelected )
-		{
-			// Set default size
-			SetSize ( true );
-		}
-	}
-
-	/// <summary>
-	/// Selects the unit upon clicking the button.
-	/// </summary>
-	public void MouseClick ( )
-	{
-		// Check state
-		if ( IsEnabled && !IsSelected )
-		{
-			// Select the hero
-			SelectToggle ( true );
-		}
-	}
-
-	#endregion // Mouse Input Functions
 
 	#endregion // Public Funtions
 

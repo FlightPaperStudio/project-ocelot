@@ -1,0 +1,377 @@
+{
+	"LeaderData":
+	[
+		{
+			"UnitName": "Blue Leader",
+			"UnitDescription": "The leader of the Blue Team",
+			"FinishingMove": "",
+			"Portrait": "Rewards_Crown"
+		},
+		{
+			"UnitName": "Green Leader",
+			"UnitDescription": "The leader of the Green Team",
+			"FinishingMove": "",
+			"Portrait": "Rewards_Crown"
+		},
+		{
+			"UnitName": "Yellow Leader",
+			"UnitDescription": "The leader of the Yellow Team",
+			"FinishingMove": "",
+			"Portrait": "Rewards_Crown"
+		},
+		{
+			"UnitName": "Orange Leader",
+			"UnitDescription": "The leader of the Orange Team",
+			"FinishingMove": "",
+			"Portrait": "Rewards_Crown"
+		},
+		{
+			"UnitName": "Pink Leader",
+			"UnitDescription": "The leader of the Pink Team",
+			"FinishingMove": "",
+			"Portrait": "Rewards_Crown"
+		},
+		{
+			"UnitName": "Purple Leader",
+			"UnitDescription": "The leader of the Purple Team",
+			"FinishingMove": "",
+			"Portrait": "Rewards_Crown"
+		}
+	],
+	"ExtraUnitData":
+	[
+		{
+			"UnitName": "Hero 1.1",
+			"UnitDescription": "Hero 1 without their robotic minion",
+			"FinishingMove": "",
+			"Portrait": "World_Compass"
+		},
+		{
+			"UnitName": "Hero 7.1",
+			"UnitDescription": "One of the duo for Hero 7",
+			"FinishingMove": "",
+			"Portrait": "Inventory_Carrot"
+		},
+		{
+			"UnitName": "Hero 7.2",
+			"UnitDescription": "One of the duo for Hero 7",
+			"FinishingMove": "",
+			"Portrait": "Inventory_Carrot"
+		}
+	],
+	"UnitData":
+	[
+		{
+			"ID": 1,
+			"UnitName": "Pawn",
+			"UnitDescription": "Pawn Description",
+			"FinishingMove": "",
+			"Portrait": "Equipment_Boots",
+			"Type": 0,
+			"Slots": 1,
+			"Abilities":
+			{
+				"AbilityName": "",
+				"AbilityDescription": "",
+				"Icon": "",
+				"Type": 0,
+				"Cooldown": 0,
+				"Duration": 0,
+			}
+		},
+		{
+			"ID": 2,
+			"UnitName": "Leader",
+			"UnitDescription": "Leader Description",
+			"FinishingMove": "",
+			"Portrait": "Rewards_Crown",
+			"Type": 1,
+			"Slots": 1,
+			"Abilities":
+			{
+				"AbilityName": "Smite",
+				"AbilityDescription": "KO's all opponents upon achieving the objective",
+				"Icon": "Rewards_Cup",
+				"Type": 0,
+				"Cooldown": 0,
+				"Duration": 0,
+			}
+		},
+		{
+			"ID": 3,
+			"UnitName": "Hero 1",
+			"UnitDescription": "Hero 1 Description",
+			"FinishingMove": "",
+			"Portrait": "Equipment_Shield",
+			"Type": 3,
+			"Slots": 2,
+			"Abilities":
+			{
+				"AbilityName": "Bodyguard",
+				"AbilityDescription": "Robotic minion sacrifices itself to block a single attack",
+				"Icon": "Equipment_Vest",
+				"Type": 0,
+				"Cooldown": 0,
+				"Duration": 1,
+			},
+			{
+				"AbilityName": "Self-Destruct",
+				"AbilityDescription": "Detonate robotic minion after a brief period to KO any nearby opponents",
+				"Icon": "Weapons_Bomb",
+				"Type": 3,
+				"Cooldown": 3,
+				"Duration": 1,
+			},
+			{
+				"AbilityName": "Reconstruct",
+				"AbilityDescription": "Construct a new robotic minion after a brief period",
+				"Icon": "Tools_Wrench",
+				"Type": 3,
+				"Cooldown": 6,
+				"Duration": 1,
+			}
+		},
+		{
+			"ID": 4,
+			"UnitName": "Hero 2",
+			"UnitDescription": "Hero 2 Description",
+			"FinishingMove": "",
+			"Portrait": "Modifiers_BoostSpeed",
+			"Type": 2,
+			"Slots": 1,
+			"Abilities":
+			{
+				"AbilityName": "Catapult",
+				"AbilityDescription": "Charges forward to KO any opponent in their path, becoming exhausted for a short period",
+				"Icon": "Inventory_Arrow",
+				"Type": 1,
+				"Cooldown": 5,
+				"Duration": 2,
+			},
+			{
+				"AbilityName": "Grapple",
+				"AbilityDescription": "Grabs hold of a nearby opponent, leaving both immobilised for a short period",
+				"Icon": "Equipment_Gloves",
+				"Type": 2,
+				"Cooldown": 4,
+				"Duration": 2,
+			}
+		},
+		{
+			"ID": 5,
+			"UnitName": "Hero 3",
+			"UnitDescription": "Hero 3 Description",
+			"FinishingMove": "",
+			"Portrait": "Equipment_Helmet",
+			"Type": 2,
+			"Slots": 1,
+			"Abilities":
+			{
+				"AbilityName": "Mind Control",
+				"AbilityDescription": "Attacked opponents can be controlled for a short period before they are eventually KO'd",
+				"Icon": "Inventory_PotionSmall",
+				"Type": 0,
+				"Cooldown": 0,
+				"Duration": 3,
+			},
+			{
+				"AbilityName": "Clone",
+				"AbilityDescription": "Creates a temporary clone of itself for an assist",
+				"Icon": "Inventory_Steak",
+				"Type": 1,
+				"Cooldown": 4,
+				"Duration": 1,
+			}
+		},
+		{
+			"ID": 6,
+			"UnitName": "Hero 4",
+			"UnitDescription": "Hero 4 Description",
+			"FinishingMove": "",
+			"Portrait": "Elements_Death",
+			"Type": 3,
+			"Slots": 1,
+			"Abilities":
+			{
+				"AbilityName": "Life Drain",
+				"AbilityDescription": "Attacking an opponent provides renewed energy and additional protection for a brief period",
+				"Icon": "Elements_Fire",
+				"Type": 0,
+				"Cooldown": 0,
+				"Duration": 1,
+			},
+			{
+				"AbilityName": "Reaper",
+				"AbilityDescription": "Instantly appear at the location of any KO'd ally",
+				"Icon": "Inventory_Bone",
+				"Type": 1,
+				"Cooldown": 5,
+				"Duration": 0,
+			}
+		},
+		{
+			"ID": 7,
+			"UnitName": "Hero 5",
+			"UnitDescription": "Hero 5 Description",
+			"FinishingMove": "",
+			"Portrait": "Rewards_Star",
+			"Type": 4,
+			"Slots": 1,
+			"Abilities":
+			{
+				"AbilityName": "Rally",
+				"AbilityDescription": "Assisted allies are inspired to gain additional movement",
+				"Icon": "World_Flag",
+				"Type": 0,
+				"Cooldown": 0,
+				"Duration": 3,
+			},
+			{
+				"AbilityName": "Backflip",
+				"AbilityDescription": "Jumps backwards for increased mobility",
+				"Icon": "Equipment_Pants",
+				"Type": 1,
+				"Cooldown": 3,
+				"Duration": 0,
+			}
+		},
+		{
+			"ID": 8,
+			"UnitName": "Hero 6",
+			"UnitDescription": "Hero 6 Description",
+			"FinishingMove": "",
+			"Portrait": "Elements_Life",
+			"Type": 4,
+			"Slots": 1,
+			"Abilities":
+			{
+				"AbilityName": "Ghost",
+				"AbilityDescription": "Unable to attack or be attack by opponents",
+				"Icon": "Elements_Air",
+				"Type": 0,
+				"Cooldown": 0,
+				"Duration": 0,
+			},
+			{
+				"AbilityName": "Poltergeist",
+				"AbilityDescription": "Possesses an object to block an area for a short period",
+				"Icon": "World_Lock",
+				"Type": 2,
+				"Cooldown": 5,
+				"Duration": 2,
+			}
+		},
+		{
+			"ID": 9,
+			"UnitName": "Hero 7",
+			"UnitDescription": "Hero 7 Description",
+			"FinishingMove": "",
+			"Portrait": "Modifiers_Sleep",
+			"Type": 2,
+			"Slots": 2,
+			"Abilities":
+			{
+				"AbilityName": "Tag Team",
+				"AbilityDescription": "Can move twice in a single turn",
+				"Icon": "UI_Touch",
+				"Type": 0,
+				"Cooldown": 0,
+				"Duration": 0,
+			},
+			{
+				"AbilityName": "Split Up",
+				"AbilityDescription": "The duo goes their separate ways with extra mobility for a short period, losing Tag Team",
+				"Icon": "Rewards_MedalRibbon",
+				"Type": 3,
+				"Cooldown": 3,
+				"Duration": 3,
+			},
+			{
+				"AbilityName": "Regroup",
+				"AbilityDescription": "The duo gets back together, regaining Tag Team",
+				"Icon": "Rewards_Coins",
+				"Type": 3,
+				"Cooldown": 5,
+				"Duration": 0,
+			}
+		},
+		{
+			"ID": 10,
+			"UnitName": "Hero 8",
+			"UnitDescription": "Hero 8 Description",
+			"FinishingMove": "",
+			"Portrait": "Modifiers_LevelUp",
+			"Type": 4,
+			"Slots": 1,
+			"Abilities":
+			{
+				"AbilityName": "Blink",
+				"AbilityDescription": "Instantly teleports a short distance",
+				"Icon": "Elements_Energy",
+				"Type": 1,
+				"Cooldown": 2,
+				"Duration": 0,
+			},
+			{
+				"AbilityName": "Translocator",
+				"AbilityDescription": "Swaps the positions of two allies",
+				"Icon": "World_RoseOfWinds",
+				"Type": 2,
+				"Cooldown": 4,
+				"Duration": 0,
+			}
+		},
+		{
+			"ID": 11,
+			"UnitName": "Hero 9",
+			"UnitDescription": "Hero 9 Description",
+			"FinishingMove": "",
+			"Portrait": "Modifiers_Luck",
+			"Type": 2,
+			"Slots": 1,
+			"Abilities":
+			{
+				"AbilityName": "Run The Ropes",
+				"AbilityDescription": "Launches themself off the ropes to reach the other side of the arena",
+				"Icon": "World_Gate",
+				"Type": 1,
+				"Cooldown": 2,
+				"Duration": 0,
+			},
+			{
+				"AbilityName": "Taunt",
+				"AbilityDescription": "Insults an opponent, forcing the opponent out of position",
+				"Icon": "Modifiers_Silence",
+				"Type": 2,
+				"Cooldown": 6,
+				"Duration": 0,
+			}
+		},
+		{
+			"ID": 12,
+			"UnitName": "Hero 10",
+			"UnitDescription": "Hero 10 Description",
+			"FinishingMove": "",
+			"Portrait": "Elements_Ice",
+			"Type": 3,
+			"Slots": 1,
+			"Abilities":
+			{
+				"AbilityName": "Divebomb",
+				"AbilityDescription": "Jumps off the ropes, knocking back any nearby opponents upon landing",
+				"Icon": "Modifiers_Accuracy",
+				"Type": 1,
+				"Cooldown": 6,
+				"Duration": 0,
+			},
+			{
+				"AbilityName": "Dropkick",
+				"AbilityDescription": "Kicks a nearby opponent to knock back that opponent and anyone behind, leaves them immobilised for a brief period",
+				"Icon": "Tools_Shovel",
+				"Type": 2,
+				"Cooldown": 4,
+				"Duration": 1,
+			}
+		}
+	]
+}

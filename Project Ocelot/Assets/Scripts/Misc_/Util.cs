@@ -13,22 +13,22 @@ public class Util
 		Color32 col = Color.white;
 		switch ( team )
 		{
-		case Player.TeamColor.Blue:
+		case Player.TeamColor.BLUE:
 			col = new Color32 (   0,   0, 255, 255 );
 			break;
-		case Player.TeamColor.Green:
+		case Player.TeamColor.GREEN:
 			col = new Color32 (   0, 150,   0, 255 );
 			break;
-		case Player.TeamColor.Yellow:
+		case Player.TeamColor.YELLOW:
 			col = new Color32 ( 255, 255,   0, 255 );
 			break;
-		case Player.TeamColor.Orange:
+		case Player.TeamColor.ORANGE:
 			col = new Color32 ( 255, 125,   0, 255 );
 			break;
-		case Player.TeamColor.Pink:
+		case Player.TeamColor.PINK:
 			col = new Color32 ( 255, 100, 150, 255 );
 			break;
-		case Player.TeamColor.Purple:
+		case Player.TeamColor.PURPLE:
 			col = new Color32 ( 150,   0, 255, 255 );
 			break;
 		}
@@ -118,7 +118,7 @@ public class Util
 	public static void OrientSpriteToDirection ( SpriteRenderer sprite, Player.Direction direction )
 	{
 		// Check the direction
-		if ( direction == Player.Direction.RightToLeft || direction == Player.Direction.BottomRightToTopLeft || direction == Player.Direction.TopRightToBottomLeft )
+		if ( direction == Player.Direction.RIGHT_TO_LEFT || direction == Player.Direction.BOTTOM_RIGHT_TO_TOP_LEFT || direction == Player.Direction.TOP_RIGHT_TO_BOTTOM_LEFT )
 			sprite.flipX = true;
 		else
 			sprite.flipX = false;

@@ -72,7 +72,7 @@ public class Armor : HeroUnit
 						LoseMech ( true );
 						mechAnimation.gameObject.SetActive ( true );
 						mechAnimation.transform.localScale = Vector3.one;
-						mechAnimation.color = Util.TeamColor ( owner.team );
+						mechAnimation.color = Util.TeamColor ( owner.Team );
 					} )
 					.OnComplete ( ( ) =>
 					{
@@ -147,7 +147,7 @@ public class Armor : HeroUnit
 	private bool SelfDestructRecallCheck ( )
 	{
 		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.direction );
+		IntPair back = GetBackDirection ( owner.TeamDirection );
 
 		// Check each neighboring tile
 		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
@@ -183,7 +183,7 @@ public class Armor : HeroUnit
 	private void GetSelfDestructRecall ( )
 	{
 		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.direction );
+		IntPair back = GetBackDirection ( owner.TeamDirection );
 
 		// Check each neighboring tile
 		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
@@ -220,7 +220,7 @@ public class Armor : HeroUnit
 			currentRecall = CreateTileOject ( recallPrefab, t, Info.Ability2.Duration, RecallDurationComplete );
 
 			// Set team color
-			Color32 c = Util.TeamColor ( owner.team );
+			Color32 c = Util.TeamColor ( owner.Team );
 			currentRecall.sprite.color = new Color32 ( c.r, c.g, c.b, 150 );
 
 			// Set position
@@ -260,7 +260,7 @@ public class Armor : HeroUnit
 			currentSelfDestruct = CreateTileOject ( selfDestructPrefab, t, Info.Ability2.Duration, SelfDestructDurationComplete );
 
 			// Set team color
-			currentSelfDestruct.sprite.color = Util.TeamColor ( owner.team );
+			currentSelfDestruct.sprite.color = Util.TeamColor ( owner.Team );
 
 			// Remove Armor
 			LoseMech ( false );

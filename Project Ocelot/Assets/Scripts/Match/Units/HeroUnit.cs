@@ -378,7 +378,7 @@ public class HeroUnit : Unit
 		t.currentObject = obj;
 
 		// Set sprite direction
-		Util.OrientSpriteToDirection ( obj.sprite, owner.direction );
+		Util.OrientSpriteToDirection ( obj.sprite, owner.TeamDirection );
 
 		// Return the newly created tile object
 		return obj;

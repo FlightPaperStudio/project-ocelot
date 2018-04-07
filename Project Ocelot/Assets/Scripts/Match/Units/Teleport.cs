@@ -36,7 +36,7 @@ public class Teleport : HeroUnit
 
 		// Get Blink moves
 		if ( SpecialAvailabilityCheck ( CurrentAbility1, prerequisite ) )
-			GetBlink ( t, GetBackDirection ( owner.direction ), 2 );
+			GetBlink ( t, GetBackDirection ( owner.TeamDirection ), 2 );
 
 		// Get Translocator availability
 		CurrentAbility2.active = CommandAvailabilityCheck ( CurrentAbility2, prerequisite );

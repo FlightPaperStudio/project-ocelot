@@ -152,7 +152,7 @@ public class Dropkick : HeroUnit
 		dropkickTargetDirection.Clear ( );
 
 		// Get back direction
-		IntPair back = GetBackDirection ( owner.direction );
+		IntPair back = GetBackDirection ( owner.TeamDirection );
 
 		// Check each neighbor tile
 		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
@@ -372,7 +372,7 @@ public class Dropkick : HeroUnit
 	private bool DropkickCheck ( )
 	{
 		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.direction );
+		IntPair back = GetBackDirection ( owner.TeamDirection );
 
 		// Check each neighboring tile
 		for ( int i = 0; i < currentTile.neighbors.Length; i++ )

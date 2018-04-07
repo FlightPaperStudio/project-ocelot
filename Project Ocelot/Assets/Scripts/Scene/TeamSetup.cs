@@ -6,45 +6,70 @@ using TMPro;
 
 public class TeamSetup : MonoBehaviour 
 {
-	// UI elements
-	public TextMeshProUGUI matchInfo;
+	#region UI Elements
 
-	// Player settings
-	private int playerIndex = 0;
-	public PlayerSettings currentPlayer;
+	[SerializeField]
+	private TextMeshProUGUI matchPrompt;
 
-	// Menu information
-	public bool isPaused = false;
+	[SerializeField]
+	private TextMeshProUGUI playerName;
+
+	public TeamSlotMeter SlotMeter;
+
+	#endregion // UI Elements
+
+	#region Match Setup Data
+
+	[SerializeField]
+	private DebateMenu debateMenu;
+
 	public Menu teamSelection;
 	public SplashPrompt splash;
 	public PopUpMenu popUp;
 	public LoadingScreen load;
 	public Menu [ ] menus;
 
+	[HideInInspector]
+	public bool isPaused = false;
+	private int playerIndex = 0;
+
+	/// <summary>
+	/// The current player up for team selection.
+	/// </summary>
+	public PlayerSettings CurrentPlayer
+	{
+		get
+		{
+			return playerIndex < MatchSettings.Players.Count ? MatchSettings.Players [ playerIndex ] : null;
+		}
+	}
+
+	// Menu information
+	
+
+	#endregion // Match Setup Data
+
 	/// <summary>
 	/// Start the team setup menu.
 	/// </summary>
 	private void Start ( )
 	{
-		// Set player
-		currentPlayer = MatchSettings.playerSettings [ playerIndex ];
-
 		// Display match info
+		matchPrompt.text = MatchSettings.MatchDebate.EventName;
 		switch ( MatchSettings.type )
 		{
 		case MatchType.Classic:
 		case MatchType.CustomClassic:
-			matchInfo.text = "Classic Match";
+			matchPrompt.text += "\n<size=60%>Classic Match";
 			break;
 		case MatchType.Rumble:
 		case MatchType.CustomRumble:
-			matchInfo.text = "Rumble Match";
+			matchPrompt.text += "\n<size=60%>Rumble Match";
 			break;
 		}
-		matchInfo.text += "\n<size=60%>Location Name";
 
 		// Begin team selection
-		teamSelection.OpenMenu ( false, currentPlayer );
+		debateMenu.OpenMenu ( );
 	}
 
 	/// <summary>
@@ -88,7 +113,7 @@ public class TeamSetup : MonoBehaviour
 	/// Sets the next player for team selection.
 	/// Returns false if all players have selected their teams.
 	/// </summary>
-	public bool SetNextPlayer ( )
+	public void SetNextPlayer ( )
 	{
 		// Increment index
 		playerIndex++;
@@ -96,14 +121,19 @@ public class TeamSetup : MonoBehaviour
 		// Check if players remain
 		if ( playerIndex < MatchSettings.playerSettings.Count )
 		{
-			// Set next player
-			currentPlayer = MatchSettings.playerSettings [ playerIndex ];
-			return true;
+			// Display name of current player
+			playerName.text = CurrentPlayer.PlayerName;
+
+			// Reset slot meter
+			SlotMeter.ResetMeter ( );
+
+			// Begin the setup process for player
+			debateMenu.OpenMenu ( );
 		}
 		else
 		{
-			// Return that all players have selected their team
-			return false;
+			// Begin match
+			BeginMatch ( );
 		}
 	}
 
@@ -120,6 +150,8 @@ public class TeamSetup : MonoBehaviour
 		{
 		case MatchType.Classic:
 		case MatchType.CustomClassic:
+		case MatchType.Mirror:
+		case MatchType.CustomMirror:
 			scene = Scenes.Classic;
 			break;
 		case MatchType.Rumble:

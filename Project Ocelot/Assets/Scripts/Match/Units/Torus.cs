@@ -63,7 +63,7 @@ public class Torus : HeroUnit
 	private void GetRunTheRopes ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.direction );
+		IntPair back = GetBackDirection ( owner.TeamDirection );
 
 		// Check each neighboring tile
 		for ( int i = 0; i < t.neighbors.Length; i++ )

@@ -55,7 +55,7 @@ public class TagTeam : HeroUnit
 		if ( status.CanMove )
 		{
 			// Store which tiles are to be ignored
-			IntPair back = GetBackDirection ( owner.direction );
+			IntPair back = GetBackDirection ( owner.TeamDirection );
 
 			// Check each neighboring tile
 			for ( int i = 0; i < t.neighbors.Length; i++ )
@@ -212,7 +212,7 @@ public class TagTeam : HeroUnit
 		else
 		{
 			// Store which tiles are to be ignored
-			IntPair back = GetBackDirection ( owner.direction );
+			IntPair back = GetBackDirection ( owner.TeamDirection );
 
 			// Check each neighboring tile
 			for ( int i = 0; i < currentTile.neighbors.Length; i++ )
@@ -366,7 +366,7 @@ public class TagTeam : HeroUnit
 	private bool DivideAndConquerCheck ( )
 	{
 		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.direction );
+		IntPair back = GetBackDirection ( owner.TeamDirection );
 
 		// Check each neighboring tile
 		for ( int i = 0; i < currentTile.neighbors.Length; i++ )

@@ -57,7 +57,7 @@ public class Unit : MonoBehaviour
 		if ( status.CanMove )
 		{
 			// Store which tiles are to be ignored
-			IntPair back = GetBackDirection ( owner.direction );
+			IntPair back = GetBackDirection ( owner.TeamDirection );
 
 			// Check each neighboring tile
 			for ( int i = 0; i < t.neighbors.Length; i++ )
@@ -358,32 +358,32 @@ public class Unit : MonoBehaviour
 		switch ( direction )
 		{
 		// Left to right movement
-		case Player.Direction.LeftToRight:
+		case Player.Direction.LEFT_TO_RIGHT:
 			back = new IntPair ( (int)MoveData.MoveDirection.LEFT_BELOW, (int)MoveData.MoveDirection.LEFT_ABOVE );
 			break;
 
 		// Right to left movement
-		case Player.Direction.RightToLeft:
+		case Player.Direction.RIGHT_TO_LEFT:
 			back = new IntPair ( (int)MoveData.MoveDirection.RIGHT_ABOVE, (int)MoveData.MoveDirection.RIGHT_BELOW );
 			break;
 
 		// Top left to bottom right movement
-		case Player.Direction.TopLeftToBottomRight:
+		case Player.Direction.TOP_LEFT_TO_BOTTOM_RIGHT:
 			back = new IntPair ( (int)MoveData.MoveDirection.ABOVE, (int)MoveData.MoveDirection.LEFT_ABOVE );
 			break;
 
 		// Top right to bottom left movement
-		case Player.Direction.TopRightToBottomLeft:
+		case Player.Direction.TOP_RIGHT_TO_BOTTOM_LEFT:
 			back = new IntPair ( (int)MoveData.MoveDirection.ABOVE, (int)MoveData.MoveDirection.RIGHT_ABOVE );
 			break;
 
 		// Bottom left to top right movement
-		case Player.Direction.BottomLeftToTopRight:
+		case Player.Direction.BOTTOM_LEFT_TO_TOP_RIGHT:
 			back = new IntPair ( (int)MoveData.MoveDirection.BELOW, (int)MoveData.MoveDirection.LEFT_BELOW );
 			break;
 
 		// Bottom right to top left movement
-		case Player.Direction.BottomRightToTopLeft:
+		case Player.Direction.BOTTOM_RIGHT_TO_TOP_LEFT:
 			back = new IntPair ( (int)MoveData.MoveDirection.RIGHT_BELOW, (int)MoveData.MoveDirection.BELOW );
 			break;
 		}
