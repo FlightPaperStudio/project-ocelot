@@ -65,6 +65,30 @@ public class MatchSettings
 	}
 
 	/// <summary>
+	/// Gets a unit's data based on its ID as a new instance.
+	/// </summary>
+	/// <param name="id"> The ID of the unit. </param>
+	/// <returns> A new instance of the unit's data. </returns>
+	public static UnitDefaultData GetNewUnit ( int id )
+	{
+		// Create a new instance of the unit data based on its match settings
+		UnitDefaultData newUnit = new UnitDefaultData ( )
+		{
+			ID = unitSettingsDictionary [ id ].ID,
+			UnitName = unitSettingsDictionary [ id ].UnitName,
+			UnitDescription = unitSettingsDictionary [ id ].UnitDescription,
+			FinishingMove = unitSettingsDictionary [ id ].FinishingMove,
+			Portrait = unitSettingsDictionary [ id ].Portrait,
+			Type = unitSettingsDictionary [ id ].Type,
+			Slots = unitSettingsDictionary [ id ].Slots,
+			IsEnabled = unitSettingsDictionary [ id ].IsEnabled
+		};
+
+		// Return the new instance
+		return newUnit;
+	}
+
+	/// <summary>
 	/// This setting determines the starting information for each player in the match.
 	/// </summary>
 	public static List<PlayerSettings> Players = new List<PlayerSettings> ( );

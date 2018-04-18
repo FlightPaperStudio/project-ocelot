@@ -23,15 +23,35 @@ public class TeamSetup : MonoBehaviour
 	[SerializeField]
 	private DebateMenu debateMenu;
 
-	public Menu teamSelection;
-	public SplashPrompt splash;
-	public PopUpMenu popUp;
-	public LoadingScreen load;
-	public Menu [ ] menus;
+	[SerializeField]
+	private TeamFormationMenu formationMenu;
 
-	[HideInInspector]
-	public bool isPaused = false;
+	[SerializeField]
+	private Menu [ ] menus;
+
+	public SplashPrompt Splash;
+	public PopUpMenu PopUp;
+	public LoadingScreen Load;
+
+	private bool isPaused = false;
 	private int playerIndex = 0;
+
+	/// <summary>
+	/// Whether or not the game is currently paused.
+	/// </summary>
+	public bool IsPaused
+	{
+		get
+		{
+			// Return value
+			return isPaused;
+		}
+		set
+		{
+			// Store value
+			isPaused = value;
+		}
+	}
 
 	/// <summary>
 	/// The current player up for team selection.
@@ -44,10 +64,9 @@ public class TeamSetup : MonoBehaviour
 		}
 	}
 
-	// Menu information
-	
-
 	#endregion // Match Setup Data
+
+	#region MonoBehaviour Functions
 
 	/// <summary>
 	/// Start the team setup menu.
@@ -62,9 +81,17 @@ public class TeamSetup : MonoBehaviour
 		case MatchType.CustomClassic:
 			matchPrompt.text += "\n<size=60%>Classic Match";
 			break;
+		case MatchType.Mirror:
+		case MatchType.CustomMirror:
+			matchPrompt.text += "\n<size=60%>Mirror Match";
+			break;
 		case MatchType.Rumble:
 		case MatchType.CustomRumble:
 			matchPrompt.text += "\n<size=60%>Rumble Match";
+			break;
+		case MatchType.Ladder:
+		case MatchType.CustomLadder:
+			matchPrompt.text += "\n<size=60%>Ladder Match";
 			break;
 		}
 
@@ -78,10 +105,10 @@ public class TeamSetup : MonoBehaviour
 	private void Update ( )
 	{
 		// Check for the escape button being pressed
-		if ( Input.GetKeyDown ( KeyCode.Escape ) && !popUp.menuContainer.activeSelf )
+		if ( Input.GetKeyDown ( KeyCode.Escape ) && !PopUp.menuContainer.activeSelf )
 		{
 			// Check if the game is paused
-			if ( isPaused )
+			if ( IsPaused )
 			{
 				// Find the current open menu and close it
 				foreach ( Menu m in menus )
@@ -90,7 +117,7 @@ public class TeamSetup : MonoBehaviour
 					{
 						// Check if the current menu is the base pause menu
 						if ( m is PauseMenu )
-							isPaused = false;
+							IsPaused = false;
 
 						// Close the menu
 						m.CloseMenu ( );
@@ -101,13 +128,17 @@ public class TeamSetup : MonoBehaviour
 			else
 			{
 				// Mark that the game is paused
-				isPaused = true;
+				IsPaused = true;
 
 				// Open the pause menu
 				menus [ 0 ].OpenMenu ( );
 			}
 		}
 	}
+
+	#endregion // MonoBehaviour Functions
+
+	#region Public Functions
 
 	/// <summary>
 	/// Sets the next player for team selection.
@@ -128,6 +159,7 @@ public class TeamSetup : MonoBehaviour
 			SlotMeter.ResetMeter ( );
 
 			// Begin the setup process for player
+			formationMenu.CloseMenu ( false );
 			debateMenu.OpenMenu ( );
 		}
 		else
@@ -136,6 +168,10 @@ public class TeamSetup : MonoBehaviour
 			BeginMatch ( );
 		}
 	}
+
+	#endregion // Public Functions
+
+	#region Private Functions
 
 	/// <summary>
 	/// Begins the match.
@@ -161,6 +197,8 @@ public class TeamSetup : MonoBehaviour
 		}
 
 		// Load match
-		load.LoadScene ( scene );
+		Load.LoadScene ( scene );
 	}
+
+	#endregion // Private Functions
 }

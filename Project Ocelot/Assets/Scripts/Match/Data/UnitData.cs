@@ -19,7 +19,8 @@ public class UnitData
 		LEADER = 1,
 		OFFENSE = 2,
 		DEFENSE = 3,
-		SUPPORT = 4
+		SUPPORT = 4,
+		PARTIAL = 5
 	}
 }
 

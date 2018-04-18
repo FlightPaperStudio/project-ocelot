@@ -143,7 +143,7 @@ public class TeamSelectionMenu : Menu
 	/// Opens the team selection menu.
 	/// Use this for going down a layer (e.g. from a parent menu to a sub menu).
 	/// </summary>
-	public override void OpenMenu ( bool closeParent = true, params object [ ] values )
+	public override void OpenMenu ( bool closeParent = true )
 	{
 		// Open the menu
 		base.OpenMenu ( closeParent );
@@ -176,7 +176,7 @@ public class TeamSelectionMenu : Menu
 		SelectRandomUnit ( false );
 
 		// Display prompt
-		setupManager.splash.Slide ( "<size=75%>" + setupManager.CurrentPlayer.PlayerName + "</size>\n<color=white>Team Selection", Util.TeamColor ( setupManager.CurrentPlayer.Team ), true );
+		setupManager.Splash.Slide ( "<size=75%>" + setupManager.CurrentPlayer.PlayerName + "</size>\n<color=white>Team Selection", Util.TeamColor ( setupManager.CurrentPlayer.Team ), true );
 
 		//// Open the menu
 		//base.OpenMenu ( closeParent );
@@ -272,7 +272,7 @@ public class TeamSelectionMenu : Menu
 			portraits.First ( x => x.UnitID == selectedHero.ID ).Portrait.ResetSize ( );
 
 			// Store the currently selected hero
-			selectedHero = MatchSettings.GetUnitSetting ( portraits [ index ].UnitID );
+			selectedHero = MatchSettings.GetNewUnit ( portraits [ index ].UnitID );
 
 			// Enlarge the portrait to indicate that the hero is selected
 			portraits [ index ].Portrait.ChangeSize ( 5 );

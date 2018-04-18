@@ -9,6 +9,7 @@ public class PlayerSettings
 	public Player.Direction TeamDirection;
 	public Player.PlayerControl Control;
 	public List<UnitDefaultData> Units = new List<UnitDefaultData> ( );
+	public Dictionary<UnitDefaultData, int> UnitFormation = new Dictionary<UnitDefaultData, int> ( );
 	public int [ ] Formation;
 
 

@@ -81,7 +81,8 @@ public class MainMenu : Menu
 	public void ExitGame ( )
 	{
 		// Prompt user
-		popUp.OpenMenu ( false, false, "Are you sure?", popUpDelegate, null );
+		popUp.SetConfirmationPopUp ( "Are you sure?", popUpDelegate, null );
+		popUp.OpenMenu ( false );
 	}
 
 	/// <summary>

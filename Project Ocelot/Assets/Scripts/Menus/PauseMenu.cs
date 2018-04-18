@@ -23,8 +23,8 @@ public class PauseMenu : Menu
 		}
 		else if ( setup != null )
 		{
-			popUp = setup.popUp;
-			load = setup.load;
+			popUp = setup.PopUp;
+			load = setup.Load;
 		}
 	}
 
@@ -38,7 +38,7 @@ public class PauseMenu : Menu
 		if ( UI != null )
 			UI.isPaused = false;
 		else if ( setup != null )
-			setup.isPaused = false;
+			setup.IsPaused = false;
 
 		// Close the pause menu
 		base.CloseMenu ( );
@@ -54,7 +54,8 @@ public class PauseMenu : Menu
 		popUpDelegate += ReturnToMainMenu;
 
 		// Prompt user
-		popUp.OpenMenu ( false, false, "Are you sure you want to leave the match?\n<size=75%>(All progress in your current match will be lost!)", popUpDelegate, null );
+		popUp.SetConfirmationPopUp ( "Are you sure you want to leave the match?\n<size=75%>(All progress in your current match will be lost!)", popUpDelegate, null );
+		popUp.OpenMenu ( false );
 	}
 
 	/// <summary>
@@ -77,7 +78,8 @@ public class PauseMenu : Menu
 		popUpDelegate += QuitToDesktop;
 
 		// Prompt user
-		popUp.OpenMenu ( false, false, "Are you sure you want to exit to the desktop?\n<size=75%>(All progress in your current match will be lost!)", popUpDelegate, null );
+		popUp.SetConfirmationPopUp ( "Are you sure you want to exit to the desktop?\n<size=75%>(All progress in your current match will be lost!)", popUpDelegate, null );
+		popUp.OpenMenu ( false );
 	}
 
 	/// <summary>

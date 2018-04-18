@@ -21,10 +21,10 @@ public class AudioSettingsMenu : Menu
 	/// Opens the menu.
 	/// Use this for going down a layer (e.g. from a parent menu to a sub menu).
 	/// </summary>
-	public override void OpenMenu ( bool closeParent = true, params object [ ] values )
+	public override void OpenMenu ( bool closeParent = true )
 	{
 		// Open the menu
-		base.OpenMenu ( closeParent, values );
+		base.OpenMenu ( closeParent );
 
 		// Set master volume slider
 		SetMasterVolume ( Settings.MasterVolume );
@@ -43,10 +43,10 @@ public class AudioSettingsMenu : Menu
 	/// Closes the menu.
 	/// Use this for going up a layer (e.g. from a sub menu to a parent menu).
 	/// </summary>
-	public override void CloseMenu ( bool openParent = true, params object [ ] values )
+	public override void CloseMenu ( bool openParent = true )
 	{
 		// Close menu
-		base.CloseMenu (openParent, values);
+		base.CloseMenu (openParent);
 
 		// Save audio settings
 		if ( hasSettingsChanged )

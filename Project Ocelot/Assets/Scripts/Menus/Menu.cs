@@ -60,8 +60,7 @@ public class Menu : MonoBehaviour
 	/// Use this for going down a layer (e.g. from a parent menu to a sub menu).
 	/// </summary>
 	/// <param name="closeParent"> Whether or not the parent menu should be closed upon this menu opening. </param>
-	/// <param name="values"> Any parameters needed as additional information when opening this menu. </param>
-	public virtual void OpenMenu ( bool closeParent = true, params object [ ] values )
+	public virtual void OpenMenu ( bool closeParent = true )
 	{
 		// Close parent menu
 		if ( parentMenu != null && closeParent )
@@ -77,14 +76,14 @@ public class Menu : MonoBehaviour
 	/// </summary>
 	/// <param name="openParent"> Whether or not the parent menu should be opened upon this menu closing. </param>
 	/// <param name="values"> Any parameters needed as additional information when opening the parent menu. </param>
-	public virtual void CloseMenu ( bool openParent = true, params object [ ] values )
+	public virtual void CloseMenu ( bool openParent = true )
 	{
 		// Hide menu
 		menuContainer.SetActive ( false );
 
 		// Open parent menu
 		if ( parentMenu != null && openParent )
-			parentMenu.OpenMenu ( false, values );
+			parentMenu.OpenMenu ( false );
 	}
 
 	#endregion // Public Virtual Functions

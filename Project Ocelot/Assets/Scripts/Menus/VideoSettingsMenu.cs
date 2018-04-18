@@ -23,10 +23,10 @@ public class VideoSettingsMenu : Menu
 	/// Opens the menu.
 	/// Use this for going down a layer (e.g. from a parent menu to a sub menu).
 	/// </summary>
-	public override void OpenMenu ( bool closeParent = true, params object [ ] values )
+	public override void OpenMenu ( bool closeParent = true )
 	{
 		// Open the menu
-		base.OpenMenu ( closeParent, values );
+		base.OpenMenu ( closeParent );
 
 		// Set the current display setting
 		SetDisplay ( Settings.Display );

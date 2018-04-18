@@ -103,10 +103,10 @@ public class DebateMenu : Menu
 
 	#region Menu Override Functions
 
-	public override void OpenMenu ( bool closeParent = true, params object [ ] values )
+	public override void OpenMenu ( bool closeParent = true )
 	{
 		// Open the menu
-		base.OpenMenu ( closeParent, values );
+		base.OpenMenu ( closeParent );
 
 		// Display debate topic
 		debateText.text = "Match Debate\n<size=60%>" + MatchSettings.MatchDebate.DebateTopic;
