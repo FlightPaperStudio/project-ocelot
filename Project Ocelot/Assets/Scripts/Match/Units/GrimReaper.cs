@@ -136,10 +136,10 @@ public class GrimReaper : HeroUnit
 		Tween t4 = barrier.DOFade ( LIFE_DRAIN_FADE, MOVE_ANIMATION_TIME );
 
 		// Add animations to queue
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t3, true ) );
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t4, false ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t3, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t4, false ) );
 	}
 
 	/// <summary>
@@ -188,7 +188,7 @@ public class GrimReaper : HeroUnit
 			} );
 
 		// Add animation to queue
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 
 	/// <summary>
@@ -219,7 +219,7 @@ public class GrimReaper : HeroUnit
 				{
 					// Remove delegates
 					if ( CurrentAbility2.enabled )
-						foreach ( Unit u in owner.units )
+						foreach ( Unit u in owner.UnitInstances )
 							if ( u != null )
 								u.koDelegate -= AddGrimReaperTile;
 
@@ -232,7 +232,7 @@ public class GrimReaper : HeroUnit
 					GM.UI.matchInfoMenu.GetPlayerHUD ( this ).DisplayKO ( instanceID );
 
 					// Remove unit from the team
-					owner.units.Remove ( this );
+					owner.UnitInstances.Remove ( this );
 
 					// Remove unit reference from the tile
 					currentTile.currentUnit = null;
@@ -247,12 +247,12 @@ public class GrimReaper : HeroUnit
 			// Add animations to queue
 			if ( usePostAnimationQueue )
 			{
-				GM.postAnimationQueue.Add ( new GameManager.PostTurnAnimation ( this, owner, new GameManager.TurnAnimation ( t1, false ), new GameManager.TurnAnimation ( t2, false ) ) );
+				GM.PostAnimationQueue.Add ( new GameManager.PostTurnAnimation ( this, owner, new GameManager.TurnAnimation ( t1, false ), new GameManager.TurnAnimation ( t2, false ) ) );
 			}
 			else
 			{
-				GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-				GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+				GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+				GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
 			}
 		}
 	}
@@ -275,7 +275,7 @@ public class GrimReaper : HeroUnit
 			} );
 
 		// Add animation to queue
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 
 	/// <summary>

@@ -8,7 +8,8 @@ public class TeamSlotMeter : MonoBehaviour
 {
 	#region UI Elements
 
-	public Image [ ] slots;
+	[SerializeField]
+	private Image [ ] slots;
 
 	#endregion // UI Elements
 
@@ -71,8 +72,8 @@ public class TeamSlotMeter : MonoBehaviour
 		EndSlotPreview ( );
 
 		// Check that the slot index is within range
-		if ( fillSlots < 1 ) // The meter always has at least one slot filled for the Leader Unit
-			fillSlots = 1;
+		if ( fillSlots < 0 ) 
+			fillSlots = 0;
 		else if ( fillSlots > TotalSlots )
 			fillSlots = TotalSlots;
 

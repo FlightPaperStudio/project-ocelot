@@ -130,7 +130,7 @@ public class UIManager : MonoBehaviour
 	public void Rematch ( )
 	{
 		// Restart match
-		switch ( MatchSettings.type )
+		switch ( MatchSettings.Type )
 		{
 		case MatchType.Classic:
 		case MatchType.Mirror:
@@ -154,10 +154,10 @@ public class UIManager : MonoBehaviour
 		load.BeginLoad ( );
 
 		// Reset match settings
-		MatchSettings.SetMatchSettings ( MatchSettings.type );
+		MatchSettings.SetMatchSettings ( MatchSettings.Type );
 
 		// Check match type
-		if ( MatchSettings.type == MatchType.Mirror || MatchSettings.type == MatchType.CustomMirror )
+		if ( MatchSettings.Type == MatchType.Mirror || MatchSettings.Type == MatchType.CustomMirror )
 		{
 			// Load the match
 			load.LoadScene ( Scenes.Classic );

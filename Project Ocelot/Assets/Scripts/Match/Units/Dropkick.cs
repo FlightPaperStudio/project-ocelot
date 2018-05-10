@@ -122,8 +122,8 @@ public class Dropkick : HeroUnit
 			.SetLoops ( 2, LoopType.Yoyo );
 
 		// Add animations to queue
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
 
 		int targetCount = 0;
 
@@ -180,14 +180,14 @@ public class Dropkick : HeroUnit
 	public override void SelectCommandTile ( Tile t )
 	{
 		// Pause turn timer
-		if ( MatchSettings.turnTimer )
+		if ( MatchSettings.TurnTimer )
 			GM.UI.timer.PauseTimer ( );
 
 		// Hide cancel button
 		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
 
 		// Clear board
-		GM.board.ResetTiles ( );
+		GM.Board.ResetTiles ( );
 
 		// Create animation
 		Sequence s = DOTween.Sequence ( );
@@ -209,7 +209,7 @@ public class Dropkick : HeroUnit
 			status.AddStatusEffect ( abilitySprite2, DROPKICK_STATUS_PROMPT, this, 1, StatusEffects.StatusType.CAN_MOVE );
 
 			// Pause turn timer
-			if ( MatchSettings.turnTimer )
+			if ( MatchSettings.TurnTimer )
 				GM.UI.timer.ResumeTimer ( );
 
 			// Get moves
@@ -362,7 +362,7 @@ public class Dropkick : HeroUnit
 			} );
 
 		// Add animations to queue
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, isAppend ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, isAppend ) );
 	}
 
 	/// <summary>

@@ -2,18 +2,255 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitData
-{
-	public int ID;
-	public string UnitName;
-	public string UnitDescription;
-	public string FinishingMove;
-	public Sprite Portrait;
-	public UnitType Type;
-	public int Slots;
-	public bool IsEnabled;
+#region Public Interfaces
 
-	public enum UnitType
+public interface IReadOnlyUnitData
+{
+	/// <summary>
+	/// The ID of the unit.
+	/// </summary>
+	int ID
+	{
+		get;
+	}
+
+	/// <summary>
+	/// The name of the unit.
+	/// </summary>
+	string UnitName
+	{
+		get;
+	}
+
+	/// <summary>
+	/// The nickname of the unit.
+	/// </summary>
+	string UnitNickname
+	{
+		get;
+	}
+
+	/// <summary>
+	/// The bio description of the unit.
+	/// </summary>
+	string UnitBio
+	{
+		get;
+	}
+
+	/// <summary>
+	/// The name of the unit's primary attack.
+	/// </summary>
+	string FinishingMove
+	{
+		get;
+	}
+
+	/// <summary>
+	/// The role of the unit.
+	/// </summary>
+	UnitData.UnitRole Role
+	{
+		get;
+	}
+
+	/// <summary>
+	/// The amount of slots the unit occupies in a team.
+	/// </summary>
+	int Slots
+	{
+		get;
+	}
+
+	/// <summary>
+	/// The base sprite for displaying the unit's portrait.
+	/// </summary>
+	Sprite Portrait
+	{
+		get;
+	}
+
+	/// <summary>
+	/// Whether or not the unit is enabled to be used in the match.
+	/// </summary>
+	bool IsEnabled
+	{
+		get;
+	}
+}
+
+public interface IReadOnlyAbilityData
+{
+	/// <summary>
+	/// The ID of the ability.
+	/// </summary>
+	int ID
+	{
+		get;
+	}
+
+	/// <summary>
+	/// The name of the ability.
+	/// </summary>
+	string AbilityName
+	{
+		get;
+	}
+
+	/// <summary>
+	/// The description of the ability.
+	/// </summary>
+	string AbilityDescription
+	{
+		get;
+	}
+
+	/// <summary>
+	/// The sprite for the ability's display icon.
+	/// </summary>
+	Sprite Icon
+	{
+		get;
+	}
+
+	/// <summary>
+	/// The type of the ability.
+	/// </summary>
+	AbilityData.AbilityType Type
+	{
+		get;
+	}
+
+	/// <summary>
+	/// Whether or not the ability is enabled for the match.
+	/// </summary>
+	bool IsEnabled
+	{
+		get;
+	}
+
+	/// <summary>
+	/// The amount of turns before the ability can be used again.
+	/// </summary>
+	int Cooldown
+	{
+		get;
+	}
+
+	/// <summary>
+	/// The amount of turns or uses the ability lasts. 
+	/// </summary>
+	int Duration
+	{
+		get;
+	}
+
+	/// <summary>
+	/// The name of a setting that is unique to the ability.
+	/// </summary>
+	string CustomFeatureName
+	{
+		get;
+	}
+
+	/// <summary>
+	/// The value of a setting that is unique to the ability.
+	/// For toggle settings, 1 = true and 0 = false.
+	/// </summary>
+	int CustomFeatureValue
+	{
+		get;
+	}
+}
+
+#endregion // Public Interfaces
+
+#region Public Base Classes
+
+public class UnitData : IReadOnlyUnitData
+{
+	/// <summary>
+	/// The ID of the unit.
+	/// </summary>
+	public int ID
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// The name of the unit.
+	/// </summary>
+	public string UnitName
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// The nickname of the unit.
+	/// </summary>
+	public string UnitNickname
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// The bio description of the unit.
+	/// </summary>
+	public string UnitBio
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// The name of the unit's primary attack.
+	/// </summary>
+	public string FinishingMove
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// The role of the unit.
+	/// </summary>
+	public UnitRole Role
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// The amount of slots the unit occupies in a team.
+	/// </summary>
+	public int Slots
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// The base sprite for displaying the unit's portrait.
+	/// </summary>
+	public Sprite Portrait
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// Whether or not the unit is enabled to be used in the match.
+	/// </summary>
+	public bool IsEnabled
+	{
+		get;
+		set;
+	}
+
+	public enum UnitRole
 	{
 		PAWN = 0,
 		LEADER = 1,
@@ -24,7 +261,113 @@ public class UnitData
 	}
 }
 
-public class UnitDefaultData : UnitData
+public class AbilityData : IReadOnlyAbilityData
+{
+	/// <summary>
+	/// The ID of the ability.
+	/// </summary>
+	public int ID
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// The name of the ability.
+	/// </summary>
+	public string AbilityName
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// The description of the ability.
+	/// </summary>
+	public string AbilityDescription
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// The sprite for the ability's display icon.
+	/// </summary>
+	public Sprite Icon
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// The type of the ability.
+	/// </summary>
+	public AbilityType Type
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// Whether or not the ability is enabled for the match.
+	/// </summary>
+	public bool IsEnabled
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// The amount of turns before the ability can be used again.
+	/// </summary>
+	public int Cooldown
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// The amount of turns or uses the ability lasts. 
+	/// </summary>
+	public int Duration
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// The name of a setting that is unique to the ability.
+	/// </summary>
+	public string CustomFeatureName
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// The value of a setting that is unique to the ability.
+	/// For toggle settings, 1 = true and 0 = false.
+	/// </summary>
+	public int CustomFeatureValue
+	{
+		get;
+		set;
+	}
+
+	public enum AbilityType
+	{
+		PASSIVE = 0,
+		SPECIAL = 1,
+		COMMAND = 2,
+		TOGGLE_COMMAND = 3
+	}
+}
+
+#endregion // Public Base Classes
+
+#region Public Instance Classes
+
+public class UnitSettingData : UnitData
 {
 	private AbilityData [ ] abilities;
 
@@ -130,28 +473,11 @@ public class UnitInstanceData : UnitData
 	}
 }
 
-public class AbilityData
-{
-	public string AbilityName;
-	public string AbilityDescription;
-	public Sprite Icon;
-	public AbilityType Type;
-	public bool IsEnabled;
-	public int Cooldown;
-	public int Duration;
-
-	public enum AbilityType
-	{
-		PASSIVE = 0,
-		SPECIAL = 1,
-		COMMAND = 2,
-		TOGGLE_COMMAND = 3
-	}
-}
-
 public class AbilityInstanceData : AbilityData
 {
 	public bool IsAvailable;
 	public int CurrentCooldown;
 	public int CurrentDuration;
 }
+
+#endregion // Public Instance Classes

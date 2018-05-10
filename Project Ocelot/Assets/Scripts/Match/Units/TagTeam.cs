@@ -179,7 +179,7 @@ public class TagTeam : HeroUnit
 			tagTeamPartner.hasDivideAndConquerMove = true;
 
 			// Add tag team partner to unit queue
-			GM.unitQueue.Add ( tagTeamPartner );
+			GM.UnitQueue.Add ( tagTeamPartner );
 		}
 	}
 
@@ -317,7 +317,7 @@ public class TagTeam : HeroUnit
 				} );
 
 			// Add animation to queue
-			GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+			GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 
 			// Attack the unit
 			AttackUnit ( data );
@@ -336,7 +336,7 @@ public class TagTeam : HeroUnit
 					} );
 
 				// Add animation to queue
-				GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+				GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 			}
 			else
 			{
@@ -349,7 +349,7 @@ public class TagTeam : HeroUnit
 					} );
 
 				// Add animation to queue
-				GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+				GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 			}
 		}
 	}
@@ -441,14 +441,14 @@ public class TagTeam : HeroUnit
 	private void SplitTagTeam ( Tile tile )
 	{
 		// Pause turn timer
-		if ( MatchSettings.turnTimer )
+		if ( MatchSettings.TurnTimer )
 			GM.UI.timer.PauseTimer ( );
 
 		// Hide cancel button
 		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
 
 		// Clear board
-		GM.board.ResetTiles ( );
+		GM.Board.ResetTiles ( );
 
 		// Update hero as being split
 		displaySprite = splitDisplay;
@@ -464,7 +464,7 @@ public class TagTeam : HeroUnit
 		tagTeamPartner.originalPartner = this;
 		originalPartner = this;
 		tagTeamPartner.transform.position = transform.position;
-		owner.units.Add ( tagTeamPartner );
+		owner.UnitInstances.Add ( tagTeamPartner );
 
 		// Create animation
 		Tween t = tagTeamPartner.transform.DOMove ( tile.transform.position, MOVE_ANIMATION_TIME )
@@ -491,7 +491,7 @@ public class TagTeam : HeroUnit
 				GM.UI.matchInfoMenu.GetPlayerHUD ( tagTeamPartner ).UpdateStatusEffects ( tagTeamPartner.instanceID, tagTeamPartner.status );
 
 				// Pause turn timer
-				if ( MatchSettings.turnTimer )
+				if ( MatchSettings.TurnTimer )
 					GM.UI.timer.ResumeTimer ( );
 
 				// Get moves
@@ -510,14 +510,14 @@ public class TagTeam : HeroUnit
 	private void UniteTagTeam ( Tile tile )
 	{
 		// Pause turn timer
-		if ( MatchSettings.turnTimer )
+		if ( MatchSettings.TurnTimer )
 			GM.UI.timer.PauseTimer ( );
 
 		// Hide cancel button
 		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
 
 		// Clear board
-		GM.board.ResetTiles ( );
+		GM.Board.ResetTiles ( );
 
 		// Create animation
 		Tween t = transform.DOMove ( tile.transform.position, MOVE_ANIMATION_TIME )
@@ -533,7 +533,7 @@ public class TagTeam : HeroUnit
 					GM.UI.matchInfoMenu.GetPlayerHUD ( tagTeamPartner ).RemovePortrait ( tagTeamPartner.instanceID );
 
 					// Remove partner
-					owner.units.Remove ( tagTeamPartner );
+					owner.UnitInstances.Remove ( tagTeamPartner );
 					tile.currentUnit = null;
 					Destroy ( tagTeamPartner.gameObject );
 					tagTeamPartner = null;
@@ -548,7 +548,7 @@ public class TagTeam : HeroUnit
 						CurrentAbility1.active = true;
 
 					// Pause turn timer
-					if ( MatchSettings.turnTimer )
+					if ( MatchSettings.TurnTimer )
 						GM.UI.timer.ResumeTimer ( );
 
 					// Get moves
@@ -572,11 +572,11 @@ public class TagTeam : HeroUnit
 						tagTeamPartner.CurrentAbility1.active = true;
 
 					// Pause turn timer
-					if ( MatchSettings.turnTimer )
+					if ( MatchSettings.TurnTimer )
 						GM.UI.timer.ResumeTimer ( );
 
 					// Remove hero
-					owner.units.Remove ( this );
+					owner.UnitInstances.Remove ( this );
 					currentTile.currentUnit = null;
 					tagTeamPartner.tagTeamPartner = null;
 					tagTeamPartner.originalPartner = null;

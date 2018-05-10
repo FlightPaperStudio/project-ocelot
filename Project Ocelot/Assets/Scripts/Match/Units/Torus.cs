@@ -207,9 +207,9 @@ public class Torus : HeroUnit
 			} );
 
 		// Add animation to queue
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, true ) );
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t3, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t3, true ) );
 	}
 
 	/// <summary>
@@ -323,14 +323,14 @@ public class Torus : HeroUnit
 	public override void SelectCommandTile ( Tile t )
 	{
 		// Pause turn timer
-		if ( MatchSettings.turnTimer )
+		if ( MatchSettings.TurnTimer )
 			GM.UI.timer.PauseTimer ( );
 
 		// Hide cancel button
 		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
 
 		// Clear board
-		GM.board.ResetTiles ( );
+		GM.Board.ResetTiles ( );
 
 		// Store target and destination
 		Unit u = t.currentUnit;
@@ -355,7 +355,7 @@ public class Torus : HeroUnit
 				StartCooldown ( CurrentAbility2, Info.Ability2 );
 
 				// Pause turn timer
-				if ( MatchSettings.turnTimer )
+				if ( MatchSettings.TurnTimer )
 					GM.UI.timer.ResumeTimer ( );
 
 				// Get moves

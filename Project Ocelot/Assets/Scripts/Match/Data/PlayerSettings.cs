@@ -5,20 +5,11 @@ using UnityEngine;
 public class PlayerSettings 
 {
 	public string PlayerName;
+	public int TurnOrder;
 	public Player.TeamColor Team;
 	public Player.Direction TeamDirection;
 	public Player.PlayerControl Control;
-	public List<UnitDefaultData> Units = new List<UnitDefaultData> ( );
-	public Dictionary<UnitDefaultData, int> UnitFormation = new Dictionary<UnitDefaultData, int> ( );
+	public List<UnitSettingData> Units = new List<UnitSettingData> ( );
+	public Dictionary<UnitSettingData, int> UnitFormation = new Dictionary<UnitSettingData, int> ( );
 	public int [ ] Formation;
-
-
-	public List<int> heroIDs = new List<int> ( );
-
-	public PlayerSettings ( Player.TeamColor _color, Player.Direction _direction, Player.PlayerControl _control )
-	{
-		Team = _color;
-		TeamDirection = _direction;
-		Control = _control;
-	}
 }

@@ -141,10 +141,10 @@ public class MindControl : HeroUnit
 		Tween t4 = currentCloneDisplay.DOFade ( 0, MOVE_ANIMATION_TIME );
 
 		// Add animations to queue
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, true ) );
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t3, true ) );
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t4, false ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t3, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t4, false ) );
 	}
 
 	/// <summary>
@@ -254,12 +254,12 @@ public class MindControl : HeroUnit
 				//mindControlledUnits.Add ( new MindControlledUnit ( u, u.owner, currentAbility1.duration ) );
 
 				// Remove unit from unit's player's team
-				u.owner.units.Remove ( u );
+				u.owner.UnitInstances.Remove ( u );
 				if ( u.owner.standardKOdelegate != null )
 					u.koDelegate -= u.owner.standardKOdelegate;
 
 				// Add unit to player's team
-				owner.units.Add ( u );
+				owner.UnitInstances.Add ( u );
 				u.owner = owner;
 				if ( owner.standardKOdelegate != null )
 					u.koDelegate += owner.standardKOdelegate;
@@ -279,7 +279,7 @@ public class MindControl : HeroUnit
 			} );
 
 		// Add animation to queue
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 
 	/// <summary>

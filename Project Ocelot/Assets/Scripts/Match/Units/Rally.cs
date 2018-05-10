@@ -126,7 +126,7 @@ public class Rally : HeroUnit
 				} );
 
 			// Add animation to queue
-			GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+			GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 
 			// Attack the unit
 			AttackUnit ( data );
@@ -148,7 +148,7 @@ public class Rally : HeroUnit
 					} );
 
 				// Add animation to queue
-				GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+				GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 			}
 			else
 			{
@@ -164,7 +164,7 @@ public class Rally : HeroUnit
 					} );
 
 				// Add animation to queue
-				GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+				GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 
 				// Check for Rally
 				if ( CurrentAbility1.enabled && CurrentAbility1.duration > 0 )
@@ -246,7 +246,7 @@ public class Rally : HeroUnit
 				CurrentAbility1.duration--;
 
 				// Add unit to unit queue
-				GM.unitQueue.Add ( u );
+				GM.UnitQueue.Add ( u );
 
 				// Apply the unit's status effect
 				u.status.AddStatusEffect ( abilitySprite1, RALLY_STATUS_PROMPT, this, 1 );
@@ -257,7 +257,7 @@ public class Rally : HeroUnit
 			} );
 
 		// Add animation to queue
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 
 	/// <summary>

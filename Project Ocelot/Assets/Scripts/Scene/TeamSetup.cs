@@ -75,25 +75,28 @@ public class TeamSetup : MonoBehaviour
 	{
 		// Display match info
 		matchPrompt.text = MatchSettings.MatchDebate.EventName;
-		switch ( MatchSettings.type )
+		switch ( MatchSettings.Type )
 		{
 		case MatchType.Classic:
 		case MatchType.CustomClassic:
-			matchPrompt.text += "\n<size=60%>Classic Match";
+			matchPrompt.text += "\n<size=60%><color=#FFD24BFF>Classic Match";
 			break;
 		case MatchType.Mirror:
 		case MatchType.CustomMirror:
-			matchPrompt.text += "\n<size=60%>Mirror Match";
+			matchPrompt.text += "\n<size=60%><color=#FFD24BFF>Mirror Match";
 			break;
 		case MatchType.Rumble:
 		case MatchType.CustomRumble:
-			matchPrompt.text += "\n<size=60%>Rumble Match";
+			matchPrompt.text += "\n<size=60%><color=#FFD24BFF>Rumble Match";
 			break;
 		case MatchType.Ladder:
 		case MatchType.CustomLadder:
-			matchPrompt.text += "\n<size=60%>Ladder Match";
+			matchPrompt.text += "\n<size=60%><color=#FFD24BFF>Ladder Match";
 			break;
 		}
+
+		// Display player name
+		playerName.text = CurrentPlayer.PlayerName;
 
 		// Begin team selection
 		debateMenu.OpenMenu ( );
@@ -182,7 +185,7 @@ public class TeamSetup : MonoBehaviour
 		Scenes scene = Scenes.Classic;
 
 		// Check match type
-		switch ( MatchSettings.type )
+		switch ( MatchSettings.Type )
 		{
 		case MatchType.Classic:
 		case MatchType.CustomClassic:

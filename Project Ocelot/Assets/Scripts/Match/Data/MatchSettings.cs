@@ -3,12 +3,14 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MatchSettings 
+public static class MatchSettings 
 {
+	#region Settings Properties
+
 	/// <summary>
 	/// This setting determines the game mode for the match.
 	/// </summary>
-	public static MatchType type
+	public static MatchType Type
 	{
 		get;
 		private set;
@@ -17,7 +19,7 @@ public class MatchSettings
 	/// <summary>
 	/// This setting determines if the turn timer is active during the match.
 	/// </summary>
-	public static bool turnTimer
+	public static bool TurnTimer
 	{
 		get;
 		private set;
@@ -26,72 +28,549 @@ public class MatchSettings
 	/// <summary>
 	/// This setting determines how much time should be allotted per turn if the turn timer is active.
 	/// </summary>
-	public static float timerSetting
+	public static float TimePerTurn
 	{
 		get;
 		private set;
 	}
 
 	/// <summary>
-	/// This setting determines how many special abilities each team starts with.
+	/// This setting determines the number of heroes each team starts with.
 	/// </summary>
-	public static int teamSize
+	public static int HeroesPerTeam
 	{
 		get;
 		private set;
 	}
 
 	/// <summary>
-	/// This setting determines if special ability stacking is allowed.
+	/// This setting determines if dublicate heroes are allowed on the same team.
 	/// </summary>
-	public static bool stacking
+	public static bool HeroLimit
 	{
 		get;
 		private set;
 	}
 
+	/// <summary>
+	/// This setting is the current debate of the match.
+	/// </summary>
 	public static Debate MatchDebate
 	{
 		get;
 		private set;
 	}
 
-	private static UnitDefaultData [ ] unitSettings;
-	private static Dictionary<int, UnitDefaultData> unitSettingsDictionary = new Dictionary<int, UnitDefaultData> ( );
+	#endregion // Settings Properties
 
-	public static UnitDefaultData GetUnitSetting ( int id )
+	#region Settings Data
+
+	public static List<PlayerSettings> Players = new List<PlayerSettings> ( );
+
+	private static UnitSettingData [ ] unitSettings;
+	private static Dictionary<int, UnitSettingData> unitSettingsDictionary = new Dictionary<int, UnitSettingData> ( );
+
+	private const int PAWN_UNIT_ID = 1;
+
+	#endregion // Settings Data
+
+	#region Public Static Functions
+
+	/// <summary>
+	/// Sets the match settings.
+	/// </summary>
+	/// <param name="type"> The match type for the match. </param>
+	/// <param name="turnTimer"> Whether or not the turn timer is enabled for the match. </param>
+	/// <param name="timePerTurn"> The amount of time allotted per turn for the turn timer for the match. </param>
+	/// <param name="heroesPerTeam"> The amount of heroes allowed per team for the match. </param>
+	/// <param name="heroLimit"> Whether or not duplicate heroes are allowed per team for the match. </param>
+	/// <param name="heroes"> The custom hero settings for the match. </param>
+	public static void SetMatchSettings ( MatchType type, bool turnTimer = true, float timePerTurn = 90f, int heroesPerTeam = 3, bool heroLimit = true, List<UnitSettingData> heroes = null )
 	{
+		// Set the match type
+		Type = type;
+
+		// Set the turn timer
+		TurnTimer = turnTimer;
+		TimePerTurn = timePerTurn;
+
+		// Set the heroes per team
+		HeroesPerTeam = heroesPerTeam;
+
+		// Set the hero limit
+		HeroLimit = heroLimit;
+
+		// Set the match debate
+		MatchDebate = DebateGenerator.GetRandomDebate ( Type );
+
+		// Set the units
+		SetUnitSettings ( heroes );
+
+		// Set the players
+		SetPlayerSettings ( );
+
+		//// Set hero settings
+		//if ( _heroes != null )
+		//{
+		//	// Set custom special settings
+		//	actualHeroSettings.Clear ( );
+		//	actualHeroSettings = _heroes;
+		//	dic.Clear ( );
+		//	foreach ( HeroSettings h in heroSettings )
+		//		dic.Add ( h.id, h );
+		//}
+		//else
+		//{
+		//	// Set default hero settings
+		//	SetDefaultHeroSettings ( );
+		//}
+
+		//// Clear previous player settings
+		//Players.Clear ( );
+
+		//// Check match type for adding players
+		//switch ( Type )
+		//{
+		//// Two player game modes
+		//case MatchType.Classic:
+		//case MatchType.Mirror:
+		//case MatchType.CustomClassic:
+		//case MatchType.CustomMirror:
+
+		//	// Initialize two players
+		//	PlayerSettings cp1 = new PlayerSettings ( Player.TeamColor.BLUE, Player.Direction.LEFT_TO_RIGHT, Player.PlayerControl.LOCAL_PLAYER );
+		//	PlayerSettings cp2 = new PlayerSettings ( Player.TeamColor.ORANGE, Player.Direction.RIGHT_TO_LEFT, Player.PlayerControl.LOCAL_PLAYER );
+
+		//	// Set player names
+		//	cp1.PlayerName = "Blue Team";
+		//	cp2.PlayerName = "Orange Team";
+
+		//	// Add players
+		//	Players.Add ( cp1 );
+		//	Players.Add ( cp2 );
+
+		//	break;
+
+		//// Six player game modes
+		//case MatchType.Rumble:
+		//case MatchType.CustomRumble:
+
+		//	// Initialize six players
+		//	PlayerSettings rp1 = new PlayerSettings ( Player.TeamColor.BLUE, Player.Direction.LEFT_TO_RIGHT, Player.PlayerControl.LOCAL_PLAYER );
+		//	PlayerSettings rp2 = new PlayerSettings ( Player.TeamColor.GREEN, Player.Direction.TOP_LEFT_TO_BOTTOM_RIGHT, Player.PlayerControl.LOCAL_PLAYER );
+		//	PlayerSettings rp3 = new PlayerSettings ( Player.TeamColor.YELLOW, Player.Direction.TOP_RIGHT_TO_BOTTOM_LEFT, Player.PlayerControl.LOCAL_PLAYER );
+		//	PlayerSettings rp4 = new PlayerSettings ( Player.TeamColor.ORANGE, Player.Direction.RIGHT_TO_LEFT, Player.PlayerControl.LOCAL_PLAYER );
+		//	PlayerSettings rp5 = new PlayerSettings ( Player.TeamColor.PINK, Player.Direction.BOTTOM_RIGHT_TO_TOP_LEFT, Player.PlayerControl.LOCAL_PLAYER );
+		//	PlayerSettings rp6 = new PlayerSettings ( Player.TeamColor.PURPLE, Player.Direction.BOTTOM_LEFT_TO_TOP_RIGHT, Player.PlayerControl.LOCAL_PLAYER );
+
+		//	// Set player names
+		//	rp1.PlayerName = "Blue Team";
+		//	rp2.PlayerName = "Green Team";
+		//	rp3.PlayerName = "Yellow Team";
+		//	rp4.PlayerName = "Orange Team";
+		//	rp5.PlayerName = "Pink Team";
+		//	rp6.PlayerName = "Purple Team";
+
+		//	// Add players
+		//	Players.Add ( rp1 );
+		//	Players.Add ( rp2 );
+		//	Players.Add ( rp3 );
+		//	Players.Add ( rp4 );
+		//	Players.Add ( rp5 );
+		//	Players.Add ( rp6 );
+
+		//	break;
+		//}
+
+		//// Set teams and formations to empty
+		//foreach ( PlayerSettings p in playerSettings )
+		//{
+		//	// Clear any previous heroes
+		//	p.heroIDs.Clear ( );
+
+		//	// Set formation to default
+		//	p.Formation = new int [ TEAM_SIZE ] { LEADER_UNIT, NO_UNIT, NO_UNIT, NO_UNIT, NO_UNIT, NO_UNIT };
+		//}
+
+		//// Check for match types with randomly assigned teams and formations
+		//if ( Type == MatchType.Mirror || Type == MatchType.CustomMirror )
+		//{
+		//	// Store the information for randomly assigning specials
+		//	List<int> ids = new List<int> ( );
+		//	foreach ( Hero h in HeroInfo.list )
+		//		if ( dic [ h.ID ].selection )
+		//			ids.Add ( h.ID );
+
+		//	// Store the information for randomaly assigning starting positions
+		//	List<int> pos = new List<int>
+		//	{
+		//		1,
+		//		2,
+		//		3,
+		//		4,
+		//		5
+		//	};
+
+		//	// Randomly assign the same team selection and team formation to each team
+		//	int slots = 1;
+		//	for ( int i = 0; i < HeroesPerTeam; i++ )
+		//	{
+		//		// Grab a random hero
+		//		int h = ids [ Random.Range ( 0, ids.Count ) ];
+
+		//		// Occupy the hero's slots
+		//		slots += HeroInfo.GetHeroByID ( h ).Slots;
+
+		//		// Grab a random position
+		//		int f = pos [ Random.Range ( 0, pos.Count ) ];
+
+		//		// Assign the special and position to each team
+		//		foreach ( PlayerSettings p in playerSettings )
+		//		{
+		//			// Assign the special
+		//			p.heroIDs.Add ( h );
+
+		//			// Assign the postion
+		//			p.Formation [ f ] = h;
+		//		}
+
+		//		// Remove the hero from the list
+		//		if ( !HeroLimit )
+		//			ids.Remove ( h );
+
+		//		// Remove any heroes that occupy more slots than the remaining number
+		//		List<int> overSlotLimit = new List<int> ( );
+		//		for ( int j = 0; j < ids.Count; j++ )
+		//			if ( slots + HeroInfo.GetHeroByID ( ids [ j ] ).Slots > TEAM_SIZE )
+		//				overSlotLimit.Add ( ids [ j ] );
+		//		for ( int j = 0; j < overSlotLimit.Count; j++ )
+		//			ids.Remove ( overSlotLimit [ j ] );
+
+		//		// Remove the postion from the list
+		//		pos.Remove ( f );
+
+		//		// Check for remaining slots
+		//		if ( slots == TEAM_SIZE )
+		//			break;
+		//	}
+
+		//	// Randomly assign pawns for the remaining slots
+		//	for ( int i = 0; i < TEAM_SIZE - slots; i++ )
+		//	{
+		//		// Grab a random position
+		//		int f = pos [ Random.Range ( 0, pos.Count ) ];
+
+		//		// Assign the special and position to each team
+		//		foreach ( PlayerSettings p in playerSettings )
+		//		{
+		//			// Assign the postion
+		//			p.Formation [ f ] = PAWN_UNIT;
+		//		}
+
+		//		// Remove the postion from the list
+		//		pos.Remove ( f );
+		//	}
+		//}
+	}
+
+	/// <summary>
+	/// Gets the read only data for a unit.
+	/// </summary>
+	/// <param name="id"> The ID of the unit. </param>
+	/// <returns> The read only unit data. </returns>
+	public static IReadOnlyUnitData GetUnitData ( int id )
+	{
+		// Return the read only data
 		return unitSettingsDictionary [ id ];
 	}
 
 	/// <summary>
-	/// Gets a unit's data based on its ID as a new instance.
+	/// Gets the read only data for an ability.
 	/// </summary>
-	/// <param name="id"> The ID of the unit. </param>
-	/// <returns> A new instance of the unit's data. </returns>
-	public static UnitDefaultData GetNewUnit ( int id )
+	/// <param name="unitID"> The ID of the unit. </param>
+	/// <param name="abilityPosition"> The order position of the ability. </param>
+	/// <returns> The read only ability data. </returns>
+	public static IReadOnlyAbilityData GetAbilityData ( int unitID, int abilityPosition )
 	{
-		// Create a new instance of the unit data based on its match settings
-		UnitDefaultData newUnit = new UnitDefaultData ( )
+		// Check the ability position
+		switch ( abilityPosition )
+		{
+		default:
+		case 1:
+			// Return the read only data for ability 1
+			return unitSettingsDictionary [ unitID ].Ability1;
+		case 2:
+			// Return the read only data for ability 2
+			return unitSettingsDictionary [ unitID ].Ability2;
+		case 3:
+			// Return the read only data for ability 3
+			return unitSettingsDictionary [ unitID ].Ability3;
+		}
+	}
+
+	/// <summary>
+	/// Gets a new instance of leader data based on the unit settings for the match.
+	/// </summary>
+	/// <param name="team"> The team of the new leader. </param>
+	/// <returns> A new instance of leader data. </returns>
+	public static UnitSettingData GetLeader ( Player.TeamColor team )
+	{
+		// Create a new instance of a leader
+		UnitSettingData leader = new UnitSettingData
+		{
+			ID = unitSettingsDictionary [ (int)team + 2 ].ID,
+			UnitName = unitSettingsDictionary [ (int)team + 2 ].UnitName,
+			UnitNickname = unitSettingsDictionary [ (int)team + 2 ].UnitNickname,
+			UnitBio = unitSettingsDictionary [ (int)team + 2 ].UnitBio,
+			FinishingMove = unitSettingsDictionary [ (int)team + 2 ].FinishingMove,
+			Portrait = unitSettingsDictionary [ (int)team + 2 ].Portrait,
+			Role = unitSettingsDictionary [ (int)team + 2 ].Role,
+			Slots = unitSettingsDictionary [ (int)team + 2 ].Slots,
+			IsEnabled = unitSettingsDictionary [ (int)team + 2 ].IsEnabled
+		};
+
+		// Get leader ability data
+		leader.InitializeAbilities ( new AbilityData [ ] { unitSettingsDictionary [ (int)team + 2 ].Ability1, unitSettingsDictionary [ (int)team + 2 ].Ability2, unitSettingsDictionary [ (int)team + 2 ].Ability3 } );
+
+		// Return team leader
+		return leader;
+	}
+
+	/// <summary>
+	/// Gets a new instance of hero data based on the unit settings for the match.
+	/// </summary>
+	/// <param name="id"> The ID of the hero. </param>
+	/// <returns> A new instance of hero data. </returns>
+	public static UnitSettingData GetHero ( int id )
+	{
+		// Create a new instance of a leader
+		UnitSettingData hero = new UnitSettingData
 		{
 			ID = unitSettingsDictionary [ id ].ID,
 			UnitName = unitSettingsDictionary [ id ].UnitName,
-			UnitDescription = unitSettingsDictionary [ id ].UnitDescription,
+			UnitNickname = unitSettingsDictionary [ id ].UnitNickname,
+			UnitBio = unitSettingsDictionary [ id ].UnitBio,
 			FinishingMove = unitSettingsDictionary [ id ].FinishingMove,
 			Portrait = unitSettingsDictionary [ id ].Portrait,
-			Type = unitSettingsDictionary [ id ].Type,
+			Role = unitSettingsDictionary [ id ].Role,
 			Slots = unitSettingsDictionary [ id ].Slots,
 			IsEnabled = unitSettingsDictionary [ id ].IsEnabled
 		};
 
-		// Return the new instance
-		return newUnit;
+		// Get leader ability data
+		hero.InitializeAbilities ( new AbilityData [ ] { unitSettingsDictionary [ id ].Ability1, unitSettingsDictionary [ id ].Ability2, unitSettingsDictionary [ id ].Ability3 } );
+
+		// Return team leader
+		return hero;
 	}
 
 	/// <summary>
+	/// Gets a new instance of pawn data.
+	/// </summary>
+	/// <returns> A new instance of pawn data. </returns>
+	public static UnitSettingData GetPawn ( )
+	{
+		// Create a new instance of a leader
+		UnitSettingData pawn = new UnitSettingData
+		{
+			ID = unitSettingsDictionary [ PAWN_UNIT_ID ].ID,
+			UnitName = NameGenerator.CreateName ( ),
+			UnitNickname = NameGenerator.CreateNickname ( ),
+			UnitBio = unitSettingsDictionary [ PAWN_UNIT_ID ].UnitBio,
+			FinishingMove = unitSettingsDictionary [ PAWN_UNIT_ID ].FinishingMove,
+			Portrait = unitSettingsDictionary [ PAWN_UNIT_ID ].Portrait,
+			Role = unitSettingsDictionary [ PAWN_UNIT_ID ].Role,
+			Slots = unitSettingsDictionary [ PAWN_UNIT_ID ].Slots,
+			IsEnabled = unitSettingsDictionary [ PAWN_UNIT_ID ].IsEnabled
+		};
+
+		// Return team leader
+		return pawn;
+	}
+
+	#endregion // Public Static Functions
+
+	#region Private Static Functions
+
+	/// <summary>
+	/// Sets the unit settings for the match.
+	/// </summary>
+	/// <param name="heroes"> A list of any custom hero settings. </param>
+	private static void SetUnitSettings ( List<UnitSettingData> heroes )
+	{
+		// Get all default unit data
+		unitSettings = UnitDatabase.GetUnits ( );
+		//unitSettings = UnitDataStorage.GetUnits ( );
+		unitSettingsDictionary.Clear ( );
+
+		// Set the unit setting for each unit
+		for ( int unitIndex = 0, heroIndex = 0; unitIndex < unitSettings.Length; unitIndex++ )
+		{
+			// Check for custom hero settings
+			if ( heroes != null && ( unitSettings [ unitIndex ].Role == UnitData.UnitRole.OFFENSE || unitSettings [ unitIndex ].Role == UnitData.UnitRole.DEFENSE || unitSettings [ unitIndex ].Role == UnitData.UnitRole.SUPPORT ) )
+			{
+				// Update the unit setting with the custom match setting
+				unitSettings [ unitIndex ].IsEnabled = heroes [ heroIndex ].IsEnabled;
+
+				// Update the ability 1 setting with the custom match setting
+				if ( unitSettings [ unitIndex ].Ability1 != null )
+				{
+					unitSettings [ unitIndex ].Ability1.IsEnabled = heroes [ heroIndex ].Ability1.IsEnabled;
+					unitSettings [ unitIndex ].Ability1.Duration = heroes [ heroIndex ].Ability1.Duration;
+					unitSettings [ unitIndex ].Ability1.Cooldown = heroes [ heroIndex ].Ability1.Cooldown;
+				}
+
+				// Update the ability 2 setting with the custom match setting
+				if ( unitSettings [ unitIndex ].Ability2 != null )
+				{
+					unitSettings [ unitIndex ].Ability2.IsEnabled = heroes [ heroIndex ].Ability2.IsEnabled;
+					unitSettings [ unitIndex ].Ability2.Duration = heroes [ heroIndex ].Ability2.Duration;
+					unitSettings [ unitIndex ].Ability2.Cooldown = heroes [ heroIndex ].Ability2.Cooldown;
+				}
+
+				// Update the ability 3 setting with the custom match setting
+				if ( unitSettings [ unitIndex ].Ability3 != null )
+				{
+					unitSettings [ unitIndex ].Ability3.IsEnabled = heroes [ heroIndex ].Ability3.IsEnabled;
+					unitSettings [ unitIndex ].Ability3.Duration = heroes [ heroIndex ].Ability3.Duration;
+					unitSettings [ unitIndex ].Ability3.Cooldown = heroes [ heroIndex ].Ability3.Cooldown;
+				}
+
+				// Increment the hero index
+				heroIndex++;
+			}
+			// Check for partial heroes to apply the custom hero settings to 
+			else if ( heroes != null && unitSettings [ unitIndex ].Role == UnitData.UnitRole.PARTIAL )
+			{
+				// Update the unit setting with the custom match setting
+				unitSettings [ unitIndex ].IsEnabled = heroes [ heroIndex - 1 ].IsEnabled;
+
+				// Update the ability 1 setting with the custom match setting
+				if ( unitSettings [ unitIndex ].Ability1 != null )
+				{
+					unitSettings [ unitIndex ].Ability1.IsEnabled = heroes [ heroIndex - 1 ].Ability1.IsEnabled;
+					unitSettings [ unitIndex ].Ability1.Duration = heroes [ heroIndex - 1 ].Ability1.Duration;
+					unitSettings [ unitIndex ].Ability1.Cooldown = heroes [ heroIndex - 1 ].Ability1.Cooldown;
+				}
+
+				// Update the ability 2 setting with the custom match setting
+				if ( unitSettings [ unitIndex ].Ability2 != null )
+				{
+					unitSettings [ unitIndex ].Ability2.IsEnabled = heroes [ heroIndex - 1 ].Ability2.IsEnabled;
+					unitSettings [ unitIndex ].Ability2.Duration = heroes [ heroIndex - 1 ].Ability2.Duration;
+					unitSettings [ unitIndex ].Ability2.Cooldown = heroes [ heroIndex - 1].Ability2.Cooldown;
+				}
+
+				// Update the ability 3 setting with the custom match setting
+				if ( unitSettings [ unitIndex ].Ability3 != null )
+				{
+					unitSettings [ unitIndex ].Ability3.IsEnabled = heroes [ heroIndex - 1 ].Ability3.IsEnabled;
+					unitSettings [ unitIndex ].Ability3.Duration = heroes [ heroIndex - 1 ].Ability3.Duration;
+					unitSettings [ unitIndex ].Ability3.Cooldown = heroes [ heroIndex - 1 ].Ability3.Cooldown;
+				}
+			}
+
+			// Add unit to the dictionary
+			unitSettingsDictionary.Add ( unitSettings [ unitIndex ].ID, unitSettings [ unitIndex ] );
+		}
+	}
+
+	/// <summary>
+	/// Sets the players for the match.
+	/// </summary>
+	private static void SetPlayerSettings ( )
+	{
+		// Remove any previous players
+		Players.Clear ( );
+
+		// Determine the number of players
+		int playerTotal = 0;
+		switch ( Type )
+		{
+		case MatchType.Classic:
+		case MatchType.CustomClassic:
+		case MatchType.Mirror:
+		case MatchType.CustomMirror:
+			playerTotal = 2;
+			break;
+		case MatchType.Ladder:
+		case MatchType.CustomLadder:
+			playerTotal = 3;
+			break;
+		case MatchType.Rumble:
+		case MatchType.CustomRumble:
+			playerTotal = 6;
+			break;
+		}
+
+		// Add player settings
+		for ( int i = 0; i < playerTotal; i++ )
+			Players.Add ( new PlayerSettings
+			{
+				PlayerName = "Player " + ( i + 1 ).ToString ( ),
+				TurnOrder = i + 1,
+				Team = Player.TeamColor.NO_TEAM,
+				TeamDirection = GetPlayerDirection ( i + 1 ),
+				Control = Player.PlayerControl.LOCAL_PLAYER
+			} );
+	}
+
+	/// <summary>
+	/// Gets the direction the player will be going in the match.
+	/// </summary>
+	/// <param name="turnOrder"> The player's turn order. </param>
+	/// <returns> The direction of the player. </returns>
+	private static Player.Direction GetPlayerDirection ( int turnOrder )
+	{
+		// Check match type
+		switch ( Type )
+		{
+		case MatchType.Classic:
+		case MatchType.CustomClassic:
+		case MatchType.Mirror:
+		case MatchType.CustomMirror:
+			if ( turnOrder == 1 )
+				return Player.Direction.LEFT_TO_RIGHT;
+			else if ( turnOrder == 2 )
+				return Player.Direction.RIGHT_TO_LEFT;
+			break;
+		case MatchType.Ladder:
+		case MatchType.CustomLadder:
+			if ( turnOrder == 1 )
+				return Player.Direction.LEFT_TO_RIGHT;
+			else if ( turnOrder == 2 )
+				return Player.Direction.TOP_RIGHT_TO_BOTTOM_LEFT;
+			else if ( turnOrder == 3 )
+				return Player.Direction.BOTTOM_RIGHT_TO_TOP_LEFT;
+			break;
+		case MatchType.Rumble:
+		case MatchType.CustomRumble:
+			if ( turnOrder == 1 )
+				return Player.Direction.LEFT_TO_RIGHT;
+			else if ( turnOrder == 2 )
+				return Player.Direction.TOP_LEFT_TO_BOTTOM_RIGHT;
+			else if ( turnOrder == 3 )
+				return Player.Direction.TOP_RIGHT_TO_BOTTOM_LEFT;
+			else if ( turnOrder == 4 )
+				return Player.Direction.RIGHT_TO_LEFT;
+			else if ( turnOrder == 5 )
+				return Player.Direction.BOTTOM_RIGHT_TO_TOP_LEFT;
+			else if ( turnOrder == 6 )
+				return Player.Direction.BOTTOM_LEFT_TO_TOP_RIGHT;
+			break;
+		}
+
+		// Return player 1 by default
+		return Player.Direction.LEFT_TO_RIGHT;
+	}
+
+	#endregion // Private Static Functions
+
+	
+	/// <summary>
 	/// This setting determines the starting information for each player in the match.
 	/// </summary>
-	public static List<PlayerSettings> Players = new List<PlayerSettings> ( );
+	
 	public static ReadOnlyCollection<PlayerSettings> playerSettings
 	{
 		get
@@ -119,189 +598,7 @@ public class MatchSettings
 	public const int LEADER_UNIT = -1;
 	public const int PAWN_UNIT = 0;
 
-	/// <summary>
-	/// Sets the match settings.
-	/// </summary>
-	public static void SetMatchSettings ( MatchType _type, bool _turnTimer = true, float _timer = 90f, int _teamSize = 3, bool _stacking = false, List<HeroSettings> _heroes = null )
-	{
-		// Set the match type
-		type = _type;
-
-		// Set timer
-		turnTimer = _turnTimer;
-		timerSetting = _timer;
-
-		// Set the team size
-		teamSize = _teamSize;
-
-		// Set stacking
-		stacking = _stacking;
-
-		MatchDebate = DebateGenerator.GetRandomDebate ( type );
-
-		// Set hero settings
-		if ( _heroes != null )
-		{
-			// Set custom special settings
-			actualHeroSettings.Clear ( );
-			actualHeroSettings = _heroes;
-			dic.Clear ( );
-			foreach ( HeroSettings h in heroSettings )
-				dic.Add ( h.id, h );
-		}
-		else
-		{
-			// Set default hero settings
-			SetDefaultHeroSettings ( );
-		}
-
-		// Clear previous player settings
-		Players.Clear ( );
-
-		// Check match type for adding players
-		switch ( type )
-		{
-		// Two player game modes
-		case MatchType.Classic:
-		case MatchType.Mirror:
-		case MatchType.CustomClassic:
-		case MatchType.CustomMirror:
-
-			// Initialize two players
-			PlayerSettings cp1 = new PlayerSettings ( Player.TeamColor.BLUE,   Player.Direction.LEFT_TO_RIGHT, Player.PlayerControl.LOCAL_PLAYER );
-			PlayerSettings cp2 = new PlayerSettings ( Player.TeamColor.ORANGE, Player.Direction.RIGHT_TO_LEFT, Player.PlayerControl.LOCAL_PLAYER );
-
-			// Set player names
-			cp1.PlayerName = "Blue Team";
-			cp2.PlayerName = "Orange Team";
-
-			// Add players
-			Players.Add ( cp1 );
-			Players.Add ( cp2 );
-
-			break;
-
-		// Six player game modes
-		case MatchType.Rumble:
-		case MatchType.CustomRumble:
-
-			// Initialize six players
-			PlayerSettings rp1 = new PlayerSettings ( Player.TeamColor.BLUE,   Player.Direction.LEFT_TO_RIGHT,          Player.PlayerControl.LOCAL_PLAYER );
-			PlayerSettings rp2 = new PlayerSettings ( Player.TeamColor.GREEN,  Player.Direction.TOP_LEFT_TO_BOTTOM_RIGHT, Player.PlayerControl.LOCAL_PLAYER );
-			PlayerSettings rp3 = new PlayerSettings ( Player.TeamColor.YELLOW, Player.Direction.TOP_RIGHT_TO_BOTTOM_LEFT, Player.PlayerControl.LOCAL_PLAYER );
-			PlayerSettings rp4 = new PlayerSettings ( Player.TeamColor.ORANGE, Player.Direction.RIGHT_TO_LEFT,          Player.PlayerControl.LOCAL_PLAYER );
-			PlayerSettings rp5 = new PlayerSettings ( Player.TeamColor.PINK,   Player.Direction.BOTTOM_RIGHT_TO_TOP_LEFT, Player.PlayerControl.LOCAL_PLAYER );
-			PlayerSettings rp6 = new PlayerSettings ( Player.TeamColor.PURPLE, Player.Direction.BOTTOM_LEFT_TO_TOP_RIGHT, Player.PlayerControl.LOCAL_PLAYER );
-
-			// Set player names
-			rp1.PlayerName = "Blue Team";
-			rp2.PlayerName = "Green Team";
-			rp3.PlayerName = "Yellow Team";
-			rp4.PlayerName = "Orange Team";
-			rp5.PlayerName = "Pink Team";
-			rp6.PlayerName = "Purple Team";
-
-			// Add players
-			Players.Add ( rp1 );
-			Players.Add ( rp2 );
-			Players.Add ( rp3 );
-			Players.Add ( rp4 );
-			Players.Add ( rp5 );
-			Players.Add ( rp6 );
-
-			break;
-		}
-
-		// Set teams and formations to empty
-		foreach ( PlayerSettings p in playerSettings )
-		{
-			// Clear any previous heroes
-			p.heroIDs.Clear ( );
-
-			// Set formation to default
-			p.Formation = new int [ TEAM_SIZE ] { LEADER_UNIT, NO_UNIT, NO_UNIT, NO_UNIT, NO_UNIT, NO_UNIT };
-		}
-
-		// Check for match types with randomly assigned teams and formations
-		if ( type == MatchType.Mirror || type == MatchType.CustomMirror )
-		{
-			// Store the information for randomly assigning specials
-			List<int> ids = new List<int> ( );
-			foreach ( Hero h in HeroInfo.list )
-				if ( dic [ h.ID ].selection )
-					ids.Add ( h.ID );
-
-			// Store the information for randomaly assigning starting positions
-			List<int> pos = new List<int>
-			{
-				1,
-				2,
-				3,
-				4,
-				5
-			};
-
-			// Randomly assign the same team selection and team formation to each team
-			int slots = 1;
-			for ( int i = 0; i < teamSize; i++ )
-			{
-				// Grab a random hero
-				int h = ids [ Random.Range ( 0, ids.Count ) ];
-
-				// Occupy the hero's slots
-				slots += HeroInfo.GetHeroByID ( h ).Slots;
-
-				// Grab a random position
-				int f = pos [ Random.Range ( 0, pos.Count ) ];
-
-				// Assign the special and position to each team
-				foreach ( PlayerSettings p in playerSettings )
-				{
-					// Assign the special
-					p.heroIDs.Add ( h );
-
-					// Assign the postion
-					p.Formation [ f ] = h;
-				}
-
-				// Remove the hero from the list
-				if ( !stacking )
-					ids.Remove ( h );
-
-				// Remove any heroes that occupy more slots than the remaining number
-				List<int> overSlotLimit = new List<int> ( );
-				for ( int j = 0; j < ids.Count; j++ )
-					if ( slots + HeroInfo.GetHeroByID ( ids [ j ] ).Slots > TEAM_SIZE )
-						overSlotLimit.Add ( ids [ j ] );
-				for ( int j = 0; j < overSlotLimit.Count; j++ )
-					ids.Remove ( overSlotLimit [ j ] );
-
-				// Remove the postion from the list
-				pos.Remove ( f );
-
-				// Check for remaining slots
-				if ( slots == TEAM_SIZE )
-					break;
-			}
-
-			// Randomly assign pawns for the remaining slots
-			for ( int i = 0; i < TEAM_SIZE - slots; i++ )
-			{
-				// Grab a random position
-				int f = pos [ Random.Range ( 0, pos.Count ) ];
-
-				// Assign the special and position to each team
-				foreach ( PlayerSettings p in playerSettings )
-				{
-					// Assign the postion
-					p.Formation [ f ] = PAWN_UNIT;
-				}
-
-				// Remove the postion from the list
-				pos.Remove ( f );
-			}
-		}
-	}
+	
 
 	private static void SetDefaultHeroSettings ( )
 	{

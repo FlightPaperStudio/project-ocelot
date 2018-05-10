@@ -161,17 +161,8 @@ public class UnitPortrait : MonoBehaviour
 
 	public void SetPortrait ( UnitData unit, Player.TeamColor team )
 	{
-		// Check for leader unit
-		if ( unit.Type == UnitData.UnitType.LEADER )
-		{
-			// Store leader
-			unitData = UnitDataStorage.GetLeaderDefault ( team );
-		}
-		else
-		{
-			// Store unit
-			unitData = unit;
-		}
+		// Store unit
+		unitData = unit;
 
 		// Store team
 		_teamColor = team;
@@ -180,6 +171,7 @@ public class UnitPortrait : MonoBehaviour
 		IsEnabled = true;
 		IsAvailable = true;
 		IsBorderHighlighted = false;
+		unitPortrait.sprite = unitData.Portrait;
 	}
 
 

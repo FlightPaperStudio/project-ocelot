@@ -120,7 +120,7 @@ public class HeroUnit : Unit
 	public virtual void StartCommand ( )
 	{
 		// Clear the current board
-		GM.board.ResetTiles ( );
+		GM.Board.ResetTiles ( );
 
 		// Highlight current tile
 		currentTile.SetTileState ( TileState.SelectedUnit );
@@ -143,13 +143,13 @@ public class HeroUnit : Unit
 	public virtual void EndCommand ( )
 	{
 		// Clear the current board
-		GM.board.ResetTiles ( );
+		GM.Board.ResetTiles ( );
 
 		// Get available units
 		GM.DisplayAvailableUnits ( );
 
 		// Select current unit
-		GM.SelectUnit ( GM.selectedUnit );
+		GM.SelectUnit ( GM.SelectedUnit );
 	}
 
 	/// <summary>
@@ -273,7 +273,7 @@ public class HeroUnit : Unit
 	protected virtual bool CommandAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
 	{
 		// Check if its the beginning of a player's turn
-		if ( !GM.isStartOfTurn )
+		if ( !GM.IsStartOfTurn )
 			return false;
 
 		// Check if moves have been plotted

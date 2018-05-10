@@ -199,7 +199,7 @@ public class Catapult : HeroUnit
 			} );
 
 		// Add animation to queue
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 
 	/// <summary>
@@ -287,14 +287,14 @@ public class Catapult : HeroUnit
 	public override void SelectCommandTile ( Tile t )
 	{
 		// Pause turn timer
-		if ( MatchSettings.turnTimer )
+		if ( MatchSettings.TurnTimer )
 			GM.UI.timer.PauseTimer ( );
 
 		// Hide cancel button
 		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
 
 		// Clear board
-		GM.board.ResetTiles ( );
+		GM.Board.ResetTiles ( );
 
 		// Store target
 		grappleTarget = t.currentUnit;
@@ -330,7 +330,7 @@ public class Catapult : HeroUnit
 				grappleTarget.koDelegate += EndGrappleDelegate;
 
 				// Pause turn timer
-				if ( MatchSettings.turnTimer )
+				if ( MatchSettings.TurnTimer )
 					GM.UI.timer.ResumeTimer ( );
 
 				// Get moves
@@ -392,8 +392,8 @@ public class Catapult : HeroUnit
 			} );
 
 		// Add animations to queue
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
 	}
 
 	/// <summary>

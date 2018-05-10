@@ -131,7 +131,7 @@ public class Pacifist : HeroUnit
 		}
 
 		// Pause turn timer
-		if ( MatchSettings.turnTimer )
+		if ( MatchSettings.TurnTimer )
 			GM.UI.timer.PauseTimer ( );
 
 		// Create Obstruction
@@ -141,7 +141,7 @@ public class Pacifist : HeroUnit
 		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
 
 		// Clear board
-		GM.board.ResetTiles ( );
+		GM.Board.ResetTiles ( );
 
 		// Begin animation
 		Sequence s = DOTween.Sequence ( )
@@ -152,7 +152,7 @@ public class Pacifist : HeroUnit
 				StartCooldown ( CurrentAbility2, Info.Ability2 );
 
 				// Pause turn timer
-				if ( MatchSettings.turnTimer )
+				if ( MatchSettings.TurnTimer )
 					GM.UI.timer.ResumeTimer ( );
 
 				// Get moves
@@ -185,6 +185,6 @@ public class Pacifist : HeroUnit
 			} );
 
 		// Add animation to queue
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 }

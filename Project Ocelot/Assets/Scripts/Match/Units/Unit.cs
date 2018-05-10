@@ -158,7 +158,7 @@ public class Unit : MonoBehaviour
 				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).DisplayKO ( instanceID );
 
 				// Remove unit from the team
-				owner.units.Remove ( this );
+				owner.UnitInstances.Remove ( this );
 
 				// Remove unit reference from the tile
 				currentTile.currentUnit = null;
@@ -173,12 +173,12 @@ public class Unit : MonoBehaviour
 		// Add animations to queue
 		if ( usePostAnimationQueue )
 		{
-			GM.postAnimationQueue.Add ( new GameManager.PostTurnAnimation ( this, owner, new GameManager.TurnAnimation ( t1, false ), new GameManager.TurnAnimation ( t2, false ) ) );
+			GM.PostAnimationQueue.Add ( new GameManager.PostTurnAnimation ( this, owner, new GameManager.TurnAnimation ( t1, false ), new GameManager.TurnAnimation ( t2, false ) ) );
 		}
 		else
 		{
-			GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-			GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+			GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+			GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
 		}
 	}
 
@@ -299,7 +299,7 @@ public class Unit : MonoBehaviour
 			} );
 
 		// Add animation to queue
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 
 	/// <summary>
@@ -318,7 +318,7 @@ public class Unit : MonoBehaviour
 			} );
 
 		// Add animation to queue
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 
 	/// <summary>

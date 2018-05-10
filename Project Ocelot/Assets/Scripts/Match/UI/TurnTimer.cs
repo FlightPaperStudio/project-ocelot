@@ -27,7 +27,7 @@ public class TurnTimer : MonoBehaviour
 	private void Start ( )
 	{
 		// Hide/Display timer
-		container.SetActive ( MatchSettings.turnTimer );
+		container.SetActive ( MatchSettings.TurnTimer );
 
 		// Set starting values
 		isTimerActive = false;
@@ -41,7 +41,7 @@ public class TurnTimer : MonoBehaviour
 	private void Update ( ) 
 	{
 		// Check if the timer is active
-		if ( MatchSettings.turnTimer && isTimerActive )
+		if ( MatchSettings.TurnTimer && isTimerActive )
 		{
 			// Check time remaining
 			if ( currentTime > 0 )
@@ -70,7 +70,7 @@ public class TurnTimer : MonoBehaviour
 	public void StartTimer ( )
 	{
 		// Set timer
-		currentTime = MatchSettings.timerSetting;
+		currentTime = MatchSettings.TimePerTurn;
 
 		// Begin timer
 		isTimerActive = true;
@@ -108,10 +108,10 @@ public class TurnTimer : MonoBehaviour
 		isOutOfTime = true;
 
 		// Check for start of turn
-		if ( GM.isStartOfTurn )
+		if ( GM.IsStartOfTurn )
 		{
 			// Create list of possible units
-			List<Unit> units = GM.currentPlayer.units.FindAll ( x => x.moveList.Count > 0 );
+			List<Unit> units = GM.CurrentPlayer.UnitInstances.FindAll ( x => x.moveList.Count > 0 );
 
 			// Select a random unit
 			int unitIndex = Random.Range ( 0, units.Count );
@@ -125,7 +125,7 @@ public class TurnTimer : MonoBehaviour
 			MoveData move = unit.moveList [ moveIndex ];
 
 			// Clear board
-			GM.board.ResetTiles ( );
+			GM.Board.ResetTiles ( );
 
 			// Force a panic move and end the player's turn
 			StartCoroutine ( PanicMove ( unit, move.Tile ) );

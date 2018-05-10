@@ -151,7 +151,7 @@ public class Leader : Unit
 		base.Move ( data );
 
 		// Check if tile is a goal tile and if tile is the final destination
-		if ( owner.startArea.IsGoalTile ( data.Tile ) && data == GM.selectedMove )
+		if ( owner.startArea.IsGoalTile ( data.Tile ) && data == GM.SelectedMove )
 		{
 			// Have the player win the match
 			GM.WinMatch ( owner );
@@ -167,7 +167,7 @@ public class Leader : Unit
 		base.Jump ( data );
 
 		// Check if tile is a goal tile and if tile is the final destination
-		if ( owner.startArea.IsGoalTile ( data.Tile ) && data == GM.selectedMove )
+		if ( owner.startArea.IsGoalTile ( data.Tile ) && data == GM.SelectedMove )
 		{
 			// Have the player win the match
 			GM.WinMatch ( owner );

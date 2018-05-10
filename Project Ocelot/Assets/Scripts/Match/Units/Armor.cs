@@ -85,8 +85,8 @@ public class Armor : HeroUnit
 				Tween t2 = mechAnimation.DOFade ( 0, MOVE_ANIMATION_TIME );
 
 				// Add animations to queue
-				GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-				GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+				GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+				GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
 			}
 			else
 			{
@@ -94,7 +94,7 @@ public class Armor : HeroUnit
 				Tween t = transform.DOShakePosition ( ARMOR_ATTACK_ANIMATION_TIME, 0.5f );
 
 				// Add animation to queue
-				GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+				GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 			}
 		}
 		else
@@ -204,14 +204,14 @@ public class Armor : HeroUnit
 	public override void SelectCommandTile ( Tile t )
 	{
 		// Pause turn timer
-		if ( MatchSettings.turnTimer )
+		if ( MatchSettings.TurnTimer )
 			GM.UI.timer.PauseTimer ( );
 
 		// Hide cancel button
 		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
 
 		// Clear board
-		GM.board.ResetTiles ( );
+		GM.Board.ResetTiles ( );
 
 		// Check for Recall or Self-Destruct
 		if ( CurrentAbility1.duration == 0 )
@@ -243,7 +243,7 @@ public class Armor : HeroUnit
 					GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( instanceID, status );
 
 					// Pause turn timer
-					if ( MatchSettings.turnTimer )
+					if ( MatchSettings.TurnTimer )
 						GM.UI.timer.ResumeTimer ( );
 
 					// Get moves
@@ -271,7 +271,7 @@ public class Armor : HeroUnit
 				.OnComplete ( ( ) =>
 				{
 					// Pause turn timer
-					if ( MatchSettings.turnTimer )
+					if ( MatchSettings.TurnTimer )
 						GM.UI.timer.ResumeTimer ( );
 
 					// Get moves
@@ -299,8 +299,8 @@ public class Armor : HeroUnit
 		Tween t2 = currentSelfDestruct.sprite.DOFade ( 0, MOVE_ANIMATION_TIME );
 
 		// Add animations to queue
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
 
 		// Attack any adjacent enemy units
 		foreach ( Tile t in currentSelfDestruct.tile.neighbors )
@@ -328,7 +328,7 @@ public class Armor : HeroUnit
 			} );
 
 		// Add animation to queue
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 
 	/// <summary>

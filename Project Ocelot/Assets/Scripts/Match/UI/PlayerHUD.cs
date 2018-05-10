@@ -54,15 +54,15 @@ public class PlayerHUD : MonoBehaviour
 		for ( int i = 0; i < instanceIDs.Length; i++ )
 		{
 			// Check for unit
-			if ( i < p.units.Count )
+			if ( i < p.UnitInstances.Count )
 			{
 				// Store unit instance id
-				unitIDs [ i ] = p.units [ i ].unitID;
-				instanceIDs [ i ] = p.units [ i ].instanceID;
-				unitIndexDic.Add ( p.units [ i ].instanceID, i );
+				unitIDs [ i ] = p.UnitInstances [ i ].unitID;
+				instanceIDs [ i ] = p.UnitInstances [ i ].instanceID;
+				unitIndexDic.Add ( p.UnitInstances [ i ].instanceID, i );
 
 				// Set unit portrait
-				unitPortraits [ i ].SetUnit ( p.units [ i ].unitID, p.units [ i ].displaySprite, Util.TeamColor ( p.Team ) );
+				unitPortraits [ i ].SetUnit ( p.UnitInstances [ i ].unitID, p.UnitInstances [ i ].displaySprite, Util.TeamColor ( p.Team ) );
 
 				// Clear status effects
 				ClearStatusEffects ( statusEffects [ i ] );

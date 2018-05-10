@@ -116,8 +116,8 @@ public class Teleport : HeroUnit
 			} );
 
 		// Add animations to queue
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-		GM.animationQueue.Add ( new GameManager.TurnAnimation ( t2, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, true ) );
 	}
 
 	/// <summary>
@@ -129,7 +129,7 @@ public class Teleport : HeroUnit
 		base.StartCommand ( );
 
 		// Highlight team members
-		foreach ( Unit u in owner.units )
+		foreach ( Unit u in owner.UnitInstances )
 		{
 			// Check status effects
 			if ( u != this && !( u is Leader ) && u.status.CanBeMoved )
@@ -194,7 +194,7 @@ public class Teleport : HeroUnit
 		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
 
 		// Pause turn timer
-		if ( MatchSettings.turnTimer )
+		if ( MatchSettings.TurnTimer )
 			GM.UI.timer.PauseTimer ( );
 
 		// Set units to their new tiles
@@ -204,7 +204,7 @@ public class Teleport : HeroUnit
 		unit2.currentTile = tile1;
 
 		// Clear the board
-		GM.board.ResetTiles ( );
+		GM.Board.ResetTiles ( );
 
 		// Begin animation
 		Sequence s = DOTween.Sequence ( )
@@ -230,7 +230,7 @@ public class Teleport : HeroUnit
 				StartCooldown ( CurrentAbility2, Info.Ability2 );
 
 				// Pause turn timer
-				if ( MatchSettings.turnTimer )
+				if ( MatchSettings.TurnTimer )
 					GM.UI.timer.ResumeTimer ( );
 
 				// Get moves

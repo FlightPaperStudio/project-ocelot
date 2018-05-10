@@ -51,6 +51,9 @@ public class TeamSelectionMenu : Menu
 				// Store value
 				state = value;
 
+				// Display or hide card
+				Card.gameObject.SetActive ( state != CardState.DISABLED );
+
 				// Display or hide unit card
 				Card.IsEnabled = state == CardState.SELECTED || state == CardState.LAST_SELECTED || state == CardState.ON_DECK;
 
@@ -114,7 +117,7 @@ public class TeamSelectionMenu : Menu
 	[SerializeField]
 	private Menu teamFormationMenu;
 
-	private UnitDefaultData selectedHero;
+	private UnitSettingData selectedHero;
 	private int confirmedHeroesCounter;
 	private int slotDeficitCounter;
 
@@ -160,11 +163,11 @@ public class TeamSelectionMenu : Menu
 		for ( int i = 0; i < portraits.Length; i++ )
 		{
 			// Set unit to portrait
-			portraits [ i ].Portrait.SetPortrait ( MatchSettings.GetUnitSetting ( portraits [ i ].UnitID ), setupManager.CurrentPlayer.Team );
+			portraits [ i ].Portrait.SetPortrait ( MatchSettings.GetHero ( portraits [ i ].UnitID ), setupManager.CurrentPlayer.Team );
 
 			// Set whether or not the hero is available from the settings
 			portraits [ i ].Portrait.IsEnabled = true;
-			portraits [ i ].Portrait.IsAvailable = MatchSettings.GetUnitSetting ( portraits [ i ].UnitID ).IsEnabled;
+			portraits [ i ].Portrait.IsAvailable = MatchSettings.GetUnitData ( portraits [ i ].UnitID ).IsEnabled;
 		}
 
 		// Set cards for the first hero selection
@@ -269,10 +272,11 @@ public class TeamSelectionMenu : Menu
 		if ( portraits [ index ].Portrait.IsAvailable )
 		{
 			// Unselect the previously selected hero
-			portraits.First ( x => x.UnitID == selectedHero.ID ).Portrait.ResetSize ( );
+			if ( selectedHero != null )
+				portraits.First ( x => x.UnitID == selectedHero.ID ).Portrait.ResetSize ( );
 
 			// Store the currently selected hero
-			selectedHero = MatchSettings.GetNewUnit ( portraits [ index ].UnitID );
+			selectedHero = MatchSettings.GetHero ( portraits [ index ].UnitID );
 
 			// Enlarge the portrait to indicate that the hero is selected
 			portraits [ index ].Portrait.ChangeSize ( 5 );
@@ -358,13 +362,13 @@ public class TeamSelectionMenu : Menu
 			slotDeficitCounter += selectedHero.Slots - 1;
 
 		// Set whether or not the confirmed hero is still available for selection based on the match's stacking setting
-		portraits.First ( x => x.UnitID == selectedHero.ID ).Portrait.IsAvailable = MatchSettings.stacking;
+		portraits.First ( x => x.UnitID == selectedHero.ID ).Portrait.IsAvailable = !MatchSettings.HeroLimit;
 
 		// Set the cards for the next selection
 		SetCardState ( confirmedHeroesCounter );
 
 		// Check if more heroes can be selected
-		if ( confirmedHeroesCounter < MatchSettings.teamSize && confirmedHeroesCounter < cards.Length - slotDeficitCounter )
+		if ( confirmedHeroesCounter < MatchSettings.HeroesPerTeam && confirmedHeroesCounter < cards.Length - slotDeficitCounter )
 		{
 			// Select a hero at random to start the next selection
 			SelectRandomUnit ( false );
@@ -373,6 +377,11 @@ public class TeamSelectionMenu : Menu
 		{
 			// Hide unselect card from the last card
 			cards [ confirmedHeroesCounter - 1 ].UnselectButton.gameObject.SetActive ( false );
+
+			// Set the portraits of any heros over the limit as unavailable
+			for ( int i = 0; i < portraits.Length; i++ )
+				if ( MatchSettings.GetUnitData ( portraits [ i ].UnitID ).Slots + setupManager.SlotMeter.FilledSlots > setupManager.SlotMeter.TotalSlots - slotDeficitCounter )
+					portraits [ i ].Portrait.IsAvailable = false;
 
 			// Display confirmation button
 			selectPanel.SetActive ( false );
@@ -453,7 +462,7 @@ public class TeamSelectionMenu : Menu
 		confirmedHeroesCounter--;
 
 		// Get last confirmed hero
-		UnitDefaultData previousHero = setupManager.CurrentPlayer.Units [ confirmedHeroesCounter + 1 ];
+		UnitSettingData previousHero = setupManager.CurrentPlayer.Units [ confirmedHeroesCounter + 1 ];
 
 		// Remove hero from the player's roster
 		setupManager.CurrentPlayer.Units.Remove ( previousHero );
@@ -468,7 +477,13 @@ public class TeamSelectionMenu : Menu
 		// Set cards to previous selection
 		SetCardState ( confirmedHeroesCounter );
 
+		// Enable any portraits that were disabled for being over the limit from the previous hero
+		for ( int i = 0; i < portraits.Length; i++ )
+			if ( MatchSettings.GetUnitData ( portraits [ i ].UnitID ).Slots + setupManager.SlotMeter.FilledSlots <= setupManager.SlotMeter.TotalSlots - slotDeficitCounter && ( !MatchSettings.HeroLimit || ( MatchSettings.HeroLimit && !setupManager.CurrentPlayer.Units.Exists ( x => x.ID == portraits [ i ].UnitID ) ) ) )
+				portraits [ i ].Portrait.IsAvailable = true;
+
 		// Select previous hero
+		//portraits.First ( x => x.UnitID == previousHero.ID ).Portrait.IsAvailable = true;
 		SelectUnit ( System.Array.IndexOf ( portraits, portraits.First ( x => x.UnitID == previousHero.ID ) ) );
 		
 
@@ -538,7 +553,7 @@ public class TeamSelectionMenu : Menu
 		for ( int i = 0; i < setupManager.SlotMeter.TotalSlots - setupManager.SlotMeter.FilledSlots; i++ )
 		{
 			// Get new unit data
-			UnitDefaultData newPawn = UnitDataStorage.GetPawnDefault ( setupManager.CurrentPlayer.Team );
+			UnitSettingData newPawn = MatchSettings.GetPawn ( );
 
 			// Add unit to team
 			setupManager.CurrentPlayer.Units.Add ( newPawn );
@@ -562,7 +577,7 @@ public class TeamSelectionMenu : Menu
 		for ( int i = 0; i < cards.Length; i++ )
 		{
 			// Check if the card is for more than the number of heroes for the match 
-			if ( i >= MatchSettings.teamSize )
+			if ( i >= MatchSettings.HeroesPerTeam )
 			{
 				// Set the card to disabled
 				cards [ i ].State = SelectionCards.CardState.DISABLED;
@@ -580,7 +595,7 @@ public class TeamSelectionMenu : Menu
 				cards [ i ].State = SelectionCards.CardState.ON_DECK;
 			}
 			// Check if the card is for the hero that was last selected
-			else if ( i == index - 1 && index - 1 > 0 )
+			else if ( i == index - 1 && index - 1 >= 0 )
 			{
 				// Set the card to last selected
 				cards [ i ].State = SelectionCards.CardState.LAST_SELECTED;

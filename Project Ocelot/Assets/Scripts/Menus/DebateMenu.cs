@@ -12,13 +12,13 @@ public class DebateMenu : Menu
 	private class DebateCards
 	{
 		[HideInInspector]
-		public UnitDefaultData Unit;
+		public UnitSettingData Unit;
 
 		[HideInInspector]
 		public Player.TeamColor Team;
 
+		public GameObject Container;
 		public UnitCard Card;
-		public GameObject StanceContainer;
 		public Image StanceBorder;
 		public TextMeshProUGUI StanceText;
 		public Button SelectButton;
@@ -42,8 +42,8 @@ public class DebateMenu : Menu
 				isEnabled = value;
 
 				// Display or hide elements
+				Container.SetActive ( isEnabled );
 				Card.IsEnabled = isEnabled;
-				StanceContainer.SetActive ( isEnabled );
 				SelectButton.gameObject.SetActive ( isEnabled && isAvailable );
 			}
 		}
@@ -66,6 +66,7 @@ public class DebateMenu : Menu
 				// Set color and selectability
 				Card.IsAvailable = isAvailable;
 				StanceBorder.color = isAvailable ? Util.TeamColor ( Team ) : (Color32)Color.grey;
+				StanceText.color = isAvailable ? Color.white : Color.grey;
 				SelectButton.gameObject.SetActive ( isEnabled && isAvailable );
 			}
 		}
@@ -109,9 +110,10 @@ public class DebateMenu : Menu
 		base.OpenMenu ( closeParent );
 
 		// Display debate topic
-		debateText.text = "Match Debate\n<size=60%>" + MatchSettings.MatchDebate.DebateTopic;
+		debateText.text = "<size=80%><color=#FFFFD2FF>Match Debate</color></size><i>\n" + MatchSettings.MatchDebate.DebateTopic;
 
 		// Set slot meter to preview leader unit
+		setupManager.SlotMeter.ResetMeter ( );
 		setupManager.SlotMeter.PreviewSlots ( 1 );
 
 		// Display participants
@@ -146,10 +148,10 @@ public class DebateMenu : Menu
 	{
 		// Set leader for player
 		setupManager.CurrentPlayer.Team = selectedTeam;
-		setupManager.CurrentPlayer.Units.Add ( UnitDataStorage.GetLeaderDefault ( selectedTeam ) );
+		setupManager.CurrentPlayer.Units.Add ( MatchSettings.GetLeader ( selectedTeam ) );
 
 		// Check for mirror match
-		if ( MatchSettings.type == MatchType.Mirror || MatchSettings.type == MatchType.CustomMirror )
+		if ( MatchSettings.Type == MatchType.Mirror || MatchSettings.Type == MatchType.CustomMirror )
 		{
 			// Move on to the next player
 			setupManager.SetNextPlayer ( );
@@ -193,9 +195,9 @@ public class DebateMenu : Menu
 			if ( MatchSettings.MatchDebate.GetLeaderResponse ( (Player.TeamColor)i ).HasStance )
 			{
 				// Set leader unit and team color
-				cards [ i ].Unit = UnitDataStorage.GetLeaderDefault ( (Player.TeamColor)i );
+				cards [ i ].Unit = MatchSettings.GetLeader ( (Player.TeamColor)i );
 				cards [ i ].Team = (Player.TeamColor)i;
-				cards [ i ].Card.SetCard ( UnitDataStorage.GetLeaderDefault ( (Player.TeamColor)i ), (Player.TeamColor)i );
+				cards [ i ].Card.SetCard ( cards [ i ].Unit, (Player.TeamColor)i );
 
 				// Display participant info
 				cards [ i ].IsEnabled = true;

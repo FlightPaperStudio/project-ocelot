@@ -24,7 +24,8 @@ public class Player : MonoBehaviour
 		YELLOW = 2,
 		ORANGE = 3,
 		PINK = 4,
-		PURPLE = 5
+		PURPLE = 5,
+		NO_TEAM = 6
 	}
 
 	public enum PlayerControl
@@ -41,7 +42,7 @@ public class Player : MonoBehaviour
 
 	public string PlayerName;
 	public PlayerControl Control;
-	public int PlayerOrder;
+	public int TurnOrder;
 
 	#endregion // Player Data
 
@@ -51,9 +52,22 @@ public class Player : MonoBehaviour
 	public Direction TeamDirection;
 	public int [ ] specialIDs;
 	public StartArea startArea;
-	public List<Unit> units = new List<Unit> ( );
+	public List<UnitSettingData> Units = new List<UnitSettingData> ( );
+	public List<Unit> UnitInstances = new List<Unit> ( );
 	public Unit.KOdelegate standardKOdelegate;
 	public List<TileObject> tileObjects = new List<TileObject> ( );
+
+	/// <summary>
+	/// Whether or not the player is eliminated from the match.
+	/// </summary>
+	public bool IsEliminated
+	{
+		get
+		{
+			// Check for any remaining units
+			return UnitInstances.Count == 0;
+		}
+	}
 
 	#endregion // Team Data
 }

@@ -38,10 +38,6 @@ public class MainMenu : Menu
 		TextAsset heroes = Resources.Load ( "HeroList" ) as TextAsset;
 		HeroInfo.SetList ( heroes.text );
 
-		// Load unit data
-		TextAsset unitDataJSON = Resources.Load ( "UnitData" ) as TextAsset;
-		UnitDataStorage.InitializeJSONData ( unitDataJSON.text );
-
 		// Load debate data
 		TextAsset debateDataJSON = Resources.Load ( "DebateGeneratorList" ) as TextAsset;
 		DebateGenerator.InitializeJSONData ( debateDataJSON.text );

@@ -21,7 +21,7 @@ public class MatchInfoMenu : Menu
 	public void Initialize ( Player [ ] players )
 	{
 		// Display match type
-		switch ( MatchSettings.type )
+		switch ( MatchSettings.Type )
 		{
 		case MatchType.Classic:
 		case MatchType.CustomClassic:

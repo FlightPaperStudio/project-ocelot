@@ -27,7 +27,7 @@ public class UnitCard : MonoBehaviour
 
 	#region Card Data
 
-	private UnitDefaultData unitData;
+	private UnitSettingData unitData;
 	private Player.TeamColor teamColor;
 	private bool isEnabled;
 	private bool isAvailable;
@@ -72,6 +72,7 @@ public class UnitCard : MonoBehaviour
 
 			// Set card color
 			border.color = isAvailable ? Util.TeamColor ( teamColor ) : UNAVAILABLE_COLOR;
+			unitName.color = isAvailable ? (Color32)Color.white : UNAVAILABLE_COLOR;
 			unitPortrait.color = isAvailable ? Util.TeamColor ( teamColor ) : UNAVAILABLE_COLOR;
 			for ( int i = 0; i < unitSlots.Length; i++ )
 				unitSlots [ i ].color = isAvailable ? SLOT_COLOR : UNAVAILABLE_COLOR;
@@ -87,7 +88,7 @@ public class UnitCard : MonoBehaviour
 	/// </summary>
 	/// <param name="unit"> The unit to be displayed in the card. </param>
 	/// <param name="team"> The unit's team. </param>
-	public void SetCard ( UnitDefaultData unit, Player.TeamColor team )
+	public void SetCard ( UnitSettingData unit, Player.TeamColor team )
 	{
 		// Store unit and team
 		unitData = unit;
