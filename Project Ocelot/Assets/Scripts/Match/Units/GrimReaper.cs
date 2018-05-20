@@ -7,15 +7,31 @@ public class GrimReaper : HeroUnit
 {
 	/// <summary>
 	///
-	/// Hero Ability Information
+	/// Hero 4 Unit Data
 	/// 
-	/// Ability 1: Life Drain
-	/// Type: Passive Ability
-	/// Default Duration: 1 Turn
+	/// ID: 12
+	/// Name: Hero 4
+	/// Nickname: Grim
+	/// Bio: ???
+	/// Finishing Move: ???
+	/// Role: Defense
+	/// Slots: 1
 	/// 
-	/// Ability 2: Grim Reaper
-	/// Type: Special Ability
-	/// Default Cooldown: 5 Turns
+	/// Ability 1
+	/// ID: 17
+	/// Name: Life Drain
+	/// Description: Attacking an opponent provides renewed energy and additional protection for a brief period
+	/// Type: Passive
+	/// Duration: 1 Turn
+	/// Refresh Cooldowns: Active
+	/// 
+	/// Ability 2
+	/// ID: 18
+	/// Name: Reaper
+	/// Description: Instantly appear at the location of any KO'd ally
+	/// Type: Special
+	/// Cooldown: 5 Turns
+	/// Continue Movement: Active
 	/// 
 	/// </summary>
 
@@ -26,35 +42,21 @@ public class GrimReaper : HeroUnit
 	private const float LIFE_DRAIN_ANIMATION_TIME = 0.75f;
 	private const string LIFE_DRAIN_STATUS_PROMPT = "Life Drain";
 
+	#region MonoBehaviour Functions
+
 	/// <summary>
 	/// Sets up both abilities at the start of a match.
 	/// </summary>
-	protected override void Start ( )
+	private void Start ( )
 	{
-		// Set up hero
-		base.Start ( );
-
-		// Set Life Drain
-		if ( CurrentAbility1.enabled )
-		{
-			CurrentAbility1.duration = 0;
-			CurrentAbility1.active = true;
-		}
-
 		// Set Grim Reaper
-		if ( CurrentAbility2.enabled )
+		if ( InstanceData.Ability2.IsEnabled )
 			owner.standardKOdelegate += AddGrimReaperTile;
 	}
 
-	/// <summary>
-	/// Adds the location of a unit to the list of Grim Reaper tiles when the unit gets KO'd.
-	/// </summary>
-	private void AddGrimReaperTile ( Unit u )
-	{
-		// Add tile
-		if ( u.owner == owner )
-			grimReaperTiles.Add ( u.currentTile );
-	}
+	#endregion // MonoBehaviour Functions
+
+	#region Public Unit Override Functions
 
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves available.
@@ -65,130 +67,8 @@ public class GrimReaper : HeroUnit
 		base.FindMoves ( t, prerequisite, returnOnlyJumps );
 
 		// Get Grim Reaper moves
-		if ( SpecialAvailabilityCheck ( CurrentAbility2, prerequisite ) )
+		if ( SpecialAvailabilityCheck ( InstanceData.Ability2, prerequisite ) )
 			GetGrimReaper ( );
-	}
-
-	/// <summary>
-	/// Checks if the hero is capable of using a special ability.
-	/// Returns true if the special ability is available.
-	/// </summary>
-	protected override bool SpecialAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
-	{
-		// Check base conditions
-		if ( !base.SpecialAvailabilityCheck ( current, prerequisite ) )
-			return false;
-
-		// Check if any moves have been made
-		if ( prerequisite != null )
-			return false;
-
-		// Return that the ability is available
-		return true;
-	}
-
-	/// <summary>
-	/// Marks every tile where an ally unit was KO for the Grim Reaper ability.
-	/// </summary>
-	private void GetGrimReaper ( )
-	{
-		// Check each KO location
-		foreach ( Tile t in grimReaperTiles )
-		{
-			// Check if tile is unoccupied
-			if ( OccupyTileCheck ( t, null ) )
-			{
-				// Create move
-				MoveData m = new MoveData ( t, null, MoveData.MoveType.SPECIAL, 0 );
-
-				// Add as an available special move
-				moveList.Add ( m );
-
-				// Continue movement
-				FindMoves ( t, m, false );
-			}
-		}
-	}
-
-	/// <summary>
-	/// Uses the unit's special ability.
-	/// Override this function to call specific special ability functions for a hero unit.
-	/// </summary>
-	protected override void UseSpecial ( MoveData data )
-	{
-		// Create animation
-		Tween t1 = sprite.DOFade ( 0, MOVE_ANIMATION_TIME )
-			.OnComplete ( ( ) =>
-			{
-				// Move unit instantly
-				transform.position = data.Tile.transform.position;
-			} );
-		Tween t2 = barrier.DOFade ( 0, MOVE_ANIMATION_TIME );
-		Tween t3 = sprite.DOFade ( 1, MOVE_ANIMATION_TIME )
-			.OnComplete ( ( ) =>
-			{
-				// Start teleport cooldown
-				StartCooldown ( CurrentAbility2, Info.Ability2 );
-
-				// Set unit and tile data
-				SetUnitToTile ( data.Tile );
-			} );
-		Tween t4 = barrier.DOFade ( LIFE_DRAIN_FADE, MOVE_ANIMATION_TIME );
-
-		// Add animations to queue
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t3, true ) );
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t4, false ) );
-	}
-
-	/// <summary>
-	/// Attacks the adjacent unit.
-	/// Call this function on the attacking unit.
-	/// This function builds the animation queue from the move data.
-	/// </summary>
-	protected override void AttackUnit ( MoveData data )
-	{
-		// Attack the unit
-		base.AttackUnit ( data );
-
-		// Check for Life Drain
-		if ( PassiveAvailabilityCheck ( CurrentAbility1, data ) )
-			ActivateLifeDrain ( );
-	}
-
-	/// <summary>
-	/// Activates the Life Drain ability. This refreshes all abilities and adds a protective barrier.
-	/// This function builds the animation queue.
-	/// </summary>
-	private void ActivateLifeDrain ( )
-	{
-		// Display barrier
-		barrier.gameObject.SetActive ( true );
-		barrier.color = new Color32 ( 255, 255, 255, 0 );
-
-		// Create animation
-		Tween t = barrier.DOFade ( LIFE_DRAIN_FADE, LIFE_DRAIN_ANIMATION_TIME )
-			.OnComplete ( ( ) =>
-			{
-				// Refresh abilities
-				CurrentAbility1.duration = Info.Ability1.Duration;
-				if ( CurrentAbility2.enabled )
-						CurrentAbility2.cooldown = 0;
-
-				// Update HUD
-				GM.UI.unitHUD.DisplayAbility ( CurrentAbility1 );
-				if ( CurrentAbility2.enabled )
-					GM.UI.unitHUD.DisplayAbility ( CurrentAbility2 );
-
-				// Apply status effect
-				status.AddStatusEffect ( abilitySprite1, LIFE_DRAIN_STATUS_PROMPT, this, CurrentAbility1.duration );
-				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( instanceID, status );
-				GM.UI.unitHUD.UpdateStatusEffects ( );
-			} );
-
-		// Add animation to queue
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 
 	/// <summary>
@@ -198,14 +78,14 @@ public class GrimReaper : HeroUnit
 	public override void GetAttacked ( bool usePostAnimationQueue = false )
 	{
 		// Check for barrier
-		if ( !usePostAnimationQueue && CurrentAbility1.enabled && CurrentAbility1.duration > 0 )
+		if ( !usePostAnimationQueue && InstanceData.Ability1.IsEnabled && InstanceData.Ability1.CurrentDuration > 0 )
 		{
 			// Remove barrier
 			DeactivateLifeDrain ( );
 
 			// Remove status effect
-			status.RemoveStatusEffect ( abilitySprite1, LIFE_DRAIN_STATUS_PROMPT, this );
-			GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( instanceID, status );
+			Status.RemoveStatusEffect ( InstanceData.Ability1.Icon, LIFE_DRAIN_STATUS_PROMPT, this );
+			GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
 		}
 		else
 		{
@@ -218,7 +98,7 @@ public class GrimReaper : HeroUnit
 				.OnStart ( ( ) =>
 				{
 					// Remove delegates
-					if ( CurrentAbility2.enabled )
+					if ( InstanceData.Ability2.IsEnabled )
 						foreach ( Unit u in owner.UnitInstances )
 							if ( u != null )
 								u.koDelegate -= AddGrimReaperTile;
@@ -229,7 +109,7 @@ public class GrimReaper : HeroUnit
 				.OnComplete ( ( ) =>
 				{
 					// Display deactivation
-					GM.UI.matchInfoMenu.GetPlayerHUD ( this ).DisplayKO ( instanceID );
+					GM.UI.matchInfoMenu.GetPlayerHUD ( this ).DisplayKO ( InstanceID );
 
 					// Remove unit from the team
 					owner.UnitInstances.Remove ( this );
@@ -257,6 +137,187 @@ public class GrimReaper : HeroUnit
 		}
 	}
 
+	#endregion // Public Unit Override Functions
+
+	#region Protected Unit Override Functions
+
+	/// <summary>
+	/// Attacks the adjacent unit.
+	/// Call this function on the attacking unit.
+	/// This function builds the animation queue from the move data.
+	/// </summary>
+	protected override void AttackUnit ( MoveData data )
+	{
+		// Attack the unit
+		base.AttackUnit ( data );
+
+		// Check for Life Drain
+		if ( PassiveAvailabilityCheck ( InstanceData.Ability1, data ) )
+			ActivateLifeDrain ( );
+	}
+
+	#endregion // Protected Unit Override Functions
+
+	#region Public HeroUnit Override Functions
+
+	/// <summary>
+	/// Decrements the cooldown for the unit's special ability.
+	/// </summary>
+	public override void Cooldown ( )
+	{
+		// Check for active ability type for ability 1
+		if ( InstanceData.Ability1.IsEnabled )
+		{
+			// Check if current duration is active
+			if ( InstanceData.Ability1.CurrentDuration > 0 )
+			{
+				// Decrement duration
+				InstanceData.Ability1.CurrentDuration--;
+
+				// Check if duration is complete
+				if ( InstanceData.Ability1.CurrentDuration == 0 )
+					OnDurationComplete ( InstanceData.Ability1 );
+			}
+		}
+
+		// Set cooldown for ability 2
+		base.Cooldown ( );
+	}
+
+	#endregion // Public HeroUnit Override Functions
+
+	#region Protected HeroUnit Override Functions
+
+	/// <summary>
+	/// Checks if the hero is capable of using a special ability.
+	/// Returns true if the special ability is available.
+	/// </summary>
+	protected override bool SpecialAvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
+	{
+		// Check base conditions
+		if ( !base.SpecialAvailabilityCheck ( ability, prerequisite ) )
+			return false;
+
+		// Check if any moves have been made
+		if ( prerequisite != null )
+			return false;
+
+		// Return that the ability is available
+		return true;
+	}
+
+	/// <summary>
+	/// Uses the unit's special ability.
+	/// Override this function to call specific special ability functions for a hero unit.
+	/// </summary>
+	protected override void UseSpecial ( MoveData data )
+	{
+		// Create animation
+		Tween t1 = sprite.DOFade ( 0, MOVE_ANIMATION_TIME )
+			.OnComplete ( ( ) =>
+			{
+				// Move unit instantly
+				transform.position = data.Tile.transform.position;
+			} );
+		Tween t2 = barrier.DOFade ( 0, MOVE_ANIMATION_TIME );
+		Tween t3 = sprite.DOFade ( 1, MOVE_ANIMATION_TIME )
+			.OnComplete ( ( ) =>
+			{
+				// Start teleport cooldown
+				StartCooldown ( InstanceData.Ability2 );
+
+				// Set unit and tile data
+				SetUnitToTile ( data.Tile );
+			} );
+		Tween t4 = barrier.DOFade ( LIFE_DRAIN_FADE, MOVE_ANIMATION_TIME );
+
+		// Add animations to queue
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t3, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t4, false ) );
+	}
+
+	/// <summary>
+	/// Callback for when the duration of an ability has expired.
+	/// </summary>
+	protected override void OnDurationComplete ( AbilityInstanceData ability )
+	{
+		// Deactivate Life Drain
+		DeactivateLifeDrain ( );
+	}
+
+	#endregion // Protected HeroUnit Override Functions
+
+	#region Private Functions
+
+	/// <summary>
+	/// Adds the location of a unit to the list of Grim Reaper tiles when the unit gets KO'd.
+	/// </summary>
+	private void AddGrimReaperTile ( Unit u )
+	{
+		// Add tile
+		if ( u.owner == owner )
+			grimReaperTiles.Add ( u.currentTile );
+	}
+
+	/// <summary>
+	/// Marks every tile where an ally unit was KO for the Grim Reaper ability.
+	/// </summary>
+	private void GetGrimReaper ( )
+	{
+		// Check each KO location
+		foreach ( Tile t in grimReaperTiles )
+		{
+			// Check if tile is unoccupied
+			if ( OccupyTileCheck ( t, null ) )
+			{
+				// Create move
+				MoveData m = new MoveData ( t, null, MoveData.MoveType.SPECIAL, 0 );
+
+				// Add as an available special move
+				MoveList.Add ( m );
+
+				// Continue movement
+				FindMoves ( t, m, false );
+			}
+		}
+	}
+
+	/// <summary>
+	/// Activates the Life Drain ability. This refreshes all abilities and adds a protective barrier.
+	/// This function builds the animation queue.
+	/// </summary>
+	private void ActivateLifeDrain ( )
+	{
+		// Display barrier
+		barrier.gameObject.SetActive ( true );
+		barrier.color = new Color32 ( 255, 255, 255, 0 );
+
+		// Create animation
+		Tween t = barrier.DOFade ( LIFE_DRAIN_FADE, LIFE_DRAIN_ANIMATION_TIME )
+			.OnComplete ( ( ) =>
+			{
+				// Refresh abilities
+				InstanceData.Ability1.CurrentDuration = InstanceData.Ability1.Duration;
+				if ( InstanceData.Ability2.IsEnabled )
+					InstanceData.Ability2.CurrentCooldown = 0;
+
+				// Update HUD
+				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+				if ( InstanceData.Ability2.IsEnabled )
+					GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability2 );
+
+				// Apply status effect
+				Status.AddStatusEffect ( InstanceData.Ability1.Icon, LIFE_DRAIN_STATUS_PROMPT, this, InstanceData.Ability1.Duration );
+				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
+				GM.UI.unitHUD.UpdateStatusEffects ( );
+			} );
+
+		// Add animation to queue
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+	}
+
 	/// <summary>
 	/// Deactivates the Life Drain ability. This removes the protective barrier.
 	/// This function builds the animation queue.
@@ -271,43 +332,12 @@ public class GrimReaper : HeroUnit
 				barrier.gameObject.SetActive ( false );
 
 				// End ability duration
-				CurrentAbility1.duration = 0;
+				InstanceData.Ability1.CurrentDuration = 0;
 			} );
 
 		// Add animation to queue
 		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 
-	/// <summary>
-	/// Decrements the cooldown for the unit's special ability.
-	/// </summary>
-	public override void Cooldown ( )
-	{
-		// Check for active ability type for ability 1
-		if ( CurrentAbility1.enabled )
-		{
-			// Check if current duration is active
-			if ( CurrentAbility1.duration > 0 )
-			{
-				// Decrement duration
-				CurrentAbility1.duration--;
-
-				// Check if duration is complete
-				if ( CurrentAbility1.duration == 0 )
-					OnDurationComplete ( CurrentAbility1 );
-			}
-		}
-
-		// Set cooldown for ability 2
-		base.Cooldown ( );
-	}
-
-	/// <summary>
-	/// Callback for when the duration of an ability has expired.
-	/// </summary>
-	protected override void OnDurationComplete ( AbilitySettings current )
-	{
-		// Deactivate Life Drain
-		DeactivateLifeDrain ( );
-	}
+	#endregion // Private Functions
 }

@@ -7,6 +7,17 @@ using DG.Tweening;
 
 public class GameManager : MonoBehaviour 
 {
+	#region Private Classes
+
+	[System.Serializable]
+	private class UnitPrefab
+	{
+		public int ID;
+		public Unit Unit;
+	}
+
+	#endregion // Private Classes
+
 	#region UI Elements
 
 	public UIManager UI;
@@ -25,7 +36,7 @@ public class GameManager : MonoBehaviour
 	private Player [ ] players;
 
 	[SerializeField]
-	private Unit [ ] unitPrefabs;
+	private UnitPrefab [ ] prefabs;
 
 	private int playerIndex = 0;
 	private Dictionary<int, Unit> unitPrefabDictionary = new Dictionary<int, Unit> ( );
@@ -124,8 +135,8 @@ public class GameManager : MonoBehaviour
 	private void Start ( )
 	{
 		// Set prefab dictionary
-		for ( int i = 0; i < unitPrefabs.Length; i++ )
-			unitPrefabDictionary.Add ( unitPrefabs [ i ].unitID, unitPrefabs [ i ] );
+		for ( int i = 0; i < prefabs.Length; i++ )
+			unitPrefabDictionary.Add ( prefabs [ i ].ID, prefabs [ i ].Unit );
 
 		// Start the match
 		StartMatch ( );
@@ -149,6 +160,9 @@ public class GameManager : MonoBehaviour
 			// Set team color
 			players [ i ].Team = MatchSettings.Players [ i ].Team;
 
+			// Set direction
+			players [ i ].TeamDirection = MatchSettings.Players [ i ].TeamDirection;
+
 			// Set goal area
 			players [ i ].startArea.SetColor ( players [ i ].Team );
 
@@ -164,9 +178,10 @@ public class GameManager : MonoBehaviour
 				// Create unit instance
 				Unit u = Instantiate ( unitPrefabDictionary [ players [ i ].Units [ j ].ID ], players [ i ].transform );
 
-				// Set unit info
-				u.GM = this;
-				u.instanceID = ( i * 10 ) + j; // Create a unique instance ID for this unit
+				// Set the instance data
+				u.InitializeInstance ( this, ( i * 10 ) + j, players [ i ].Units [ j ] );
+
+				// Set unit's owner
 				u.owner = players [ i ];
 
 				// Set unit team color
@@ -242,7 +257,7 @@ public class GameManager : MonoBehaviour
 		// Clear previous animation queues
 		AnimationQueue.Clear ( );
 		PostAnimationQueue.Clear ( );
-
+		
 		// Begin turn
 		IsStartOfTurn = true;
 
@@ -304,7 +319,7 @@ public class GameManager : MonoBehaviour
 		foreach ( Unit u in CurrentPlayer.UnitInstances )
 		{
 			// Set status effects
-			u.status.UpdateDurations ( );
+			u.Status.UpdateDurations ( );
 
 			// Set cooldowns
 			if ( u is HeroUnit )
@@ -314,7 +329,7 @@ public class GameManager : MonoBehaviour
 			}
 
 			// Update HUD
-			UI.matchInfoMenu.GetPlayerHUD ( u ).UpdateStatusEffects ( u.instanceID, u.status );
+			UI.matchInfoMenu.GetPlayerHUD ( u ).UpdateStatusEffects ( u.InstanceID, u.Status );
 		}
 	}
 
@@ -462,13 +477,13 @@ public class GameManager : MonoBehaviour
 		if ( isConflict )
 		{
 			if ( isLeftClick )
-				data = SelectedUnit.moveList.Find ( x => x.Tile == t && x.Prerequisite == SelectedMove && ( x.Type != MoveData.MoveType.SPECIAL && x.Type != MoveData.MoveType.SPECIAL_ATTACK ) );
+				data = SelectedUnit.MoveList.Find ( x => x.Tile == t && x.Prerequisite == SelectedMove && ( x.Type != MoveData.MoveType.SPECIAL && x.Type != MoveData.MoveType.SPECIAL_ATTACK ) );
 			else
-				data = SelectedUnit.moveList.Find ( x => x.Tile == t && x.Prerequisite == SelectedMove && ( x.Type == MoveData.MoveType.SPECIAL || x.Type == MoveData.MoveType.SPECIAL_ATTACK ) );
+				data = SelectedUnit.MoveList.Find ( x => x.Tile == t && x.Prerequisite == SelectedMove && ( x.Type == MoveData.MoveType.SPECIAL || x.Type == MoveData.MoveType.SPECIAL_ATTACK ) );
 		}
 		else
 		{
-			data = SelectedUnit.moveList.Find ( x => x.Tile == t && x.Prerequisite == SelectedMove );
+			data = SelectedUnit.MoveList.Find ( x => x.Tile == t && x.Prerequisite == SelectedMove );
 		}
 
 		// Store selected move
@@ -588,7 +603,7 @@ public class GameManager : MonoBehaviour
 	private void DisplayAvailableMoves ( MoveData prerequisite )
 	{
 		// Get only the moves for the prerequisite
-		foreach ( MoveData m in SelectedUnit.moveList.FindAll ( x => x.Prerequisite == prerequisite ) )
+		foreach ( MoveData m in SelectedUnit.MoveList.FindAll ( x => x.Prerequisite == prerequisite ) )
 		{
 			// Check if conflicted
 			if ( m.isConflicted )
@@ -814,7 +829,7 @@ public class GameManager : MonoBehaviour
 	{
 		// Check each unit's move list until at least one move is found
 		foreach ( Unit u in CurrentPlayer.UnitInstances )
-			if ( u.moveList.Count > 0 )
+			if ( u.MoveList.Count > 0 )
 				return false;
 
 		// Return that no moves were found

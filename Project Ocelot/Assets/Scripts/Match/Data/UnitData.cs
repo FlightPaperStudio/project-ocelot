@@ -369,7 +369,7 @@ public class AbilityData : IReadOnlyAbilityData
 
 public class UnitSettingData : UnitData
 {
-	private AbilityData [ ] abilities;
+	private AbilityData [ ] abilities = null;
 
 	/// <summary>
 	/// The default settings for this unit's first ability.
@@ -380,7 +380,7 @@ public class UnitSettingData : UnitData
 		get
 		{
 			// Check for first ability and return it
-			return abilities.Length < 1 || abilities [ 0 ] == null ? null : abilities [ 0 ];
+			return abilities == null || abilities.Length < 1 || abilities [ 0 ] == null ? null : abilities [ 0 ];
 		}
 	}
 
@@ -393,7 +393,7 @@ public class UnitSettingData : UnitData
 		get
 		{
 			// Check for second ability and return it
-			return abilities.Length < 2 || abilities [ 1 ] == null ? null : abilities [ 1 ];
+			return abilities == null || abilities.Length < 2 || abilities [ 1 ] == null ? null : abilities [ 1 ];
 		}
 	}
 
@@ -406,7 +406,7 @@ public class UnitSettingData : UnitData
 		get
 		{
 			// Check for third ability and return it
-			return abilities.Length < 3 || abilities [ 2 ] == null ? null : abilities [ 2 ];
+			return abilities == null || abilities.Length < 3 || abilities [ 2 ] == null ? null : abilities [ 2 ];
 		}
 	}
 
@@ -476,6 +476,7 @@ public class UnitInstanceData : UnitData
 public class AbilityInstanceData : AbilityData
 {
 	public bool IsAvailable;
+	public bool IsActive;
 	public int CurrentCooldown;
 	public int CurrentDuration;
 }

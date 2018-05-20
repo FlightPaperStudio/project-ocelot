@@ -93,7 +93,7 @@ public class MatchTypeMenu : Menu
 		MatchSettings.SetMatchSettings ( MatchType.Mirror );
 
 		// Load classic match
-		load.LoadScene ( Scenes.Classic );
+		load.LoadScene ( Scenes.MatchSetup );
 	}
 
 	/// <summary>

@@ -6,77 +6,9 @@ public class HeroUnit : Unit
 {
 	#region Hero Data
 
-	/// <summary>
-	/// This hero's base information data.
-	/// </summary>
-	public Hero Info
-	{
-		get;
-		private set;
-	}
-
-	public Sprite abilitySprite1;
-	public Sprite abilitySprite2;
+	protected AbilityInstanceData activeAbility;
 
 	#endregion // Hero Data
-
-	#region Ability Data
-
-	/// <summary>
-	/// This hero's current ability data for the first ability.
-	/// </summary>
-	public AbilitySettings CurrentAbility1
-	{
-		get;
-		protected set;
-	}
-
-	/// <summary>
-	/// This hero's current ability data for the second ability.
-	/// </summary>
-	public AbilitySettings CurrentAbility2
-	{
-		get;
-		protected set;
-	}
-
-	#endregion // Ability Data
-
-	#region MonoBehaviour Functions
-
-	/// <summary>
-	/// Initializes this hero unit instance.
-	/// </summary>
-	protected virtual void Start ( )
-	{
-		// Hero information
-		Info = HeroInfo.GetHeroByID ( unitID );
-		characterName = Info.CharacterName;
-
-		// Set ability settings
-		Info.Ability1.Duration = MatchSettings.GetHeroSettingsByID ( unitID ).ability1.duration;
-		Info.Ability1.Cooldown = MatchSettings.GetHeroSettingsByID ( unitID ).ability1.cooldown;
-		Info.Ability2.Duration = MatchSettings.GetHeroSettingsByID ( unitID ).ability2.duration;
-		Info.Ability2.Cooldown = MatchSettings.GetHeroSettingsByID ( unitID ).ability2.cooldown;
-
-		// Set current abilities
-		CurrentAbility1 = new AbilitySettings ( MatchSettings.GetHeroSettingsByID ( unitID ).ability1.enabled, MatchSettings.GetHeroSettingsByID ( unitID ).ability1.type, MatchSettings.GetHeroSettingsByID ( unitID ).ability1.duration, MatchSettings.GetHeroSettingsByID ( unitID ).ability1.cooldown );
-		CurrentAbility2 = new AbilitySettings ( MatchSettings.GetHeroSettingsByID ( unitID ).ability2.enabled, MatchSettings.GetHeroSettingsByID ( unitID ).ability2.type, MatchSettings.GetHeroSettingsByID ( unitID ).ability2.duration, MatchSettings.GetHeroSettingsByID ( unitID ).ability2.cooldown );
-
-		// Set that the ability cooldown is not active at the start
-		if ( CurrentAbility1.type == Ability.AbilityType.SPECIAL || CurrentAbility1.type == Ability.AbilityType.COMMAND )
-		{
-			CurrentAbility1.duration = 0;
-			CurrentAbility1.cooldown = 0;
-		}
-		if ( CurrentAbility2.type == Ability.AbilityType.SPECIAL || CurrentAbility2.type == Ability.AbilityType.COMMAND )
-		{
-			CurrentAbility2.duration = 0;
-			CurrentAbility2.cooldown = 0;
-		}
-	}
-
-	#endregion // MonoBehaviour Functions
 
 	#region Unit Override Functions
 
@@ -117,10 +49,14 @@ public class HeroUnit : Unit
 	/// Sets up the hero's command use.
 	/// Base function clears the board for its command state.
 	/// </summary>
-	public virtual void StartCommand ( )
+	public virtual void StartCommand ( AbilityInstanceData ability )
 	{
 		// Clear the current board
 		GM.Board.ResetTiles ( );
+
+		// Set the active ability
+		ability.IsActive = true;
+		activeAbility = ability;
 
 		// Highlight current tile
 		currentTile.SetTileState ( TileState.SelectedUnit );
@@ -142,6 +78,8 @@ public class HeroUnit : Unit
 	/// </summary>
 	public virtual void EndCommand ( )
 	{
+		activeAbility.IsActive = false;
+
 		// Clear the current board
 		GM.Board.ResetTiles ( );
 
@@ -157,49 +95,61 @@ public class HeroUnit : Unit
 	/// </summary>
 	public virtual void Cooldown ( )
 	{
-		// Check for active ability type for ability 1
-		if ( CurrentAbility1.enabled && CurrentAbility1.type != Ability.AbilityType.PASSIVE )
-		{
-			// Check if current duration is active
-			if ( CurrentAbility1.duration > 0 )
-			{
-				// Decrement duration
-				CurrentAbility1.duration--;
+		// Set the cooldown for ability 1
+		if ( InstanceData.Ability1 != null )
+			Cooldown ( InstanceData.Ability1 );
 
-				// Check if duration is complete
-				if ( CurrentAbility1.duration == 0 )
-					OnDurationComplete ( CurrentAbility1 );
-			}
+		// Set the cooldown for ability 2
+		if ( InstanceData.Ability2 != null )
+			Cooldown ( InstanceData.Ability2 );
 
-			// Check if current cooldown is active
-			if ( CurrentAbility1.cooldown > 0 )
-			{
-				// Decrement cooldown
-				CurrentAbility1.cooldown--;
-			}
-		}
+		// Set the cooldown for ability 3
+		if ( InstanceData.Ability3 != null )
+			Cooldown ( InstanceData.Ability3 );
 
-		// Check for active ability type for ability 2
-		if ( CurrentAbility2.enabled && CurrentAbility2.type != Ability.AbilityType.PASSIVE )
-		{
-			// Check if current duration is active
-			if ( CurrentAbility2.duration > 0 )
-			{
-				// Decrement duration
-				CurrentAbility2.duration--;
+		//// Check for active ability type for ability 1
+		//if ( CurrentAbility1.enabled && CurrentAbility1.type != Ability.AbilityType.PASSIVE )
+		//{
+		//	// Check if current duration is active
+		//	if ( CurrentAbility1.duration > 0 )
+		//	{
+		//		// Decrement duration
+		//		CurrentAbility1.duration--;
 
-				// Check if duration is complete
-				if ( CurrentAbility2.duration == 0 )
-					OnDurationComplete ( CurrentAbility2 );
-			}
+		//		// Check if duration is complete
+		//		if ( CurrentAbility1.duration == 0 )
+		//			OnDurationComplete ( CurrentAbility1 );
+		//	}
 
-			// Check if current cooldown is active
-			if ( CurrentAbility2.cooldown > 0 )
-			{
-				// Decrement cooldown
-				CurrentAbility2.cooldown--;
-			}
-		}
+		//	// Check if current cooldown is active
+		//	if ( CurrentAbility1.cooldown > 0 )
+		//	{
+		//		// Decrement cooldown
+		//		CurrentAbility1.cooldown--;
+		//	}
+		//}
+
+		//// Check for active ability type for ability 2
+		//if ( CurrentAbility2.enabled && CurrentAbility2.type != Ability.AbilityType.PASSIVE )
+		//{
+		//	// Check if current duration is active
+		//	if ( CurrentAbility2.duration > 0 )
+		//	{
+		//		// Decrement duration
+		//		CurrentAbility2.duration--;
+
+		//		// Check if duration is complete
+		//		if ( CurrentAbility2.duration == 0 )
+		//			OnDurationComplete ( CurrentAbility2 );
+		//	}
+
+		//	// Check if current cooldown is active
+		//	if ( CurrentAbility2.cooldown > 0 )
+		//	{
+		//		// Decrement cooldown
+		//		CurrentAbility2.cooldown--;
+		//	}
+		//}
 	}
 
 	#endregion // Public Virtual Functions
@@ -218,16 +168,45 @@ public class HeroUnit : Unit
 	}
 
 	/// <summary>
+	/// Decrements the duration and cooldown for an ability.
+	/// </summary>
+	/// <param name="ability"> The instance data for the ability. </param>
+	protected virtual void Cooldown ( AbilityInstanceData ability )
+	{
+		// Check for an active ability
+		if ( ability.IsEnabled && ability.Type != AbilityData.AbilityType.PASSIVE )
+		{
+			// Check for active duration
+			if ( ability.CurrentDuration > 0 )
+			{
+				// Decrement duration
+				ability.CurrentDuration--;
+
+				// Check if duration is complete
+				if ( ability.CurrentDuration == 0 )
+					OnDurationComplete ( ability );
+			}
+
+			// Check for active cooldown
+			if ( ability.CurrentCooldown > 0 )
+			{
+				// Decrement cooldown
+				ability.CurrentCooldown--;
+			}
+		}
+	}
+
+	/// <summary>
 	/// Checks if this hero is capable of using a passive ability.
 	/// Returns true if the passive ability is available.
 	/// </summary>
-	/// <param name="current"> The current ability data for the passive ability being checked. </param>
+	/// <param name="ability"> The ability data for the passive ability being checked. </param>
 	/// <param name="prerequisite"> The Move Data for any moves required for this hero unit to use the given passive ability. </param>
 	/// <returns> Whether or not the passive ability can be used. </returns>
-	protected virtual bool PassiveAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
+	protected virtual bool PassiveAvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
 	{
 		// Check if the ability is enabled
-		if ( !current.enabled )
+		if ( !ability.IsEnabled )
 			return false;
 
 		// Return that the ability is available
@@ -238,25 +217,25 @@ public class HeroUnit : Unit
 	/// Checks if this hero is capable of using a special ability.
 	/// Returns true if the special ability is available.
 	/// </summary>
-	/// <param name="current"> The current ability data for the special ability being checked. </param>
+	/// <param name="ability"> The ability data for the special ability being checked. </param>
 	/// <param name="prerequisite"> The Move Data for any moves required for this hero unit to use the given special ability. </param>
 	/// <returns> Whether or not the special ability can be used. </returns>
-	protected virtual bool SpecialAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
+	protected virtual bool SpecialAvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
 	{
 		// Check movement status effect
-		if ( !status.CanMove )
+		if ( !Status.CanMove )
 			return false;
 
 		// Check ability status effect
-		if ( !status.CanUseAbility )
+		if ( !Status.CanUseAbility )
 			return false;
 
 		// Check if the ability is enabled
-		if ( !current.enabled )
+		if ( !ability.IsEnabled )
 			return false;
 
 		// Check if the ability is on cooldown
-		if ( current.cooldown > 0 )
+		if ( ability.CurrentCooldown > 0 )
 			return false;
 
 		// Return that the ability is available
@@ -267,10 +246,10 @@ public class HeroUnit : Unit
 	/// Checks if this hero is capable of using a command ability.
 	/// Returns true if the command ability is available.
 	/// </summary>
-	/// <param name="current"> The current ability data for the command ability being checked. </param>
+	/// <param name="ability"> The ability data for the command ability being checked. </param>
 	/// <param name="prerequisite"> The Move Data for any moves required for this hero unit to use the given command ability. </param>
 	/// <returns> Whether or not the command ability can be used. </returns>
-	protected virtual bool CommandAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
+	protected virtual bool CommandAvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
 	{
 		// Check if its the beginning of a player's turn
 		if ( !GM.IsStartOfTurn )
@@ -281,15 +260,81 @@ public class HeroUnit : Unit
 			return false;
 
 		// Check status effects
-		if ( !status.CanUseAbility )
+		if ( !Status.CanUseAbility )
 			return false;
 
 		// Check if the ability is enabled
-		if ( !current.enabled )
+		if ( !ability.IsEnabled )
 			return false;
 
 		// Check if the ability is on cooldown
-		if ( current.cooldown > 0 )
+		if ( ability.CurrentCooldown > 0 )
+			return false;
+
+		// Return that the ability is available
+		return true;
+	}
+
+	/// <summary>
+	/// Checks if this hero is capable of using the first toggle command ability.
+	/// Returns true if the toggle command ability is available.
+	/// </summary>
+	/// <param name="ability"> The ability data for the first toggle command ability. </param>
+	/// <param name="prerequisite"> The Move Data for any moves required for this hero unit to use the given command ability. </param>
+	/// <returns> Whether or not the command ability can be used. </returns>
+	protected virtual bool ToggleCommand1AvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
+	{
+		// Check if its the beginning of a player's turn
+		if ( !GM.IsStartOfTurn )
+			return false;
+
+		// Check if moves have been plotted
+		if ( prerequisite != null )
+			return false;
+
+		// Check status effects
+		if ( !Status.CanUseAbility )
+			return false;
+
+		// Check if the ability is enabled
+		if ( !ability.IsEnabled )
+			return false;
+
+		// Check if the ability is on cooldown
+		if ( ability.CurrentCooldown > 0 )
+			return false;
+
+		// Return that the ability is available
+		return true;
+	}
+
+	/// <summary>
+	/// Checks if this hero is capable of using the second toggle command ability.
+	/// Returns true if the toggle command ability is available.
+	/// </summary>
+	/// <param name="ability"> The ability data for the second toggle command ability. </param>
+	/// <param name="prerequisite"> The Move Data for any moves required for this hero unit to use the given command ability. </param>
+	/// <returns> Whether or not the command ability can be used. </returns>
+	protected virtual bool ToggleCommand2AvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
+	{
+		// Check if its the beginning of a player's turn
+		if ( !GM.IsStartOfTurn )
+			return false;
+
+		// Check if moves have been plotted
+		if ( prerequisite != null )
+			return false;
+
+		// Check status effects
+		if ( !Status.CanUseAbility )
+			return false;
+
+		// Check if the ability is enabled
+		if ( !ability.IsEnabled )
+			return false;
+
+		// Check if the ability is on cooldown
+		if ( ability.CurrentCooldown > 0 )
 			return false;
 
 		// Return that the ability is available
@@ -299,10 +344,10 @@ public class HeroUnit : Unit
 	/// <summary>
 	/// Callback for when the duration of an ability has expired.
 	/// </summary>
-	/// <param name="current"> The current ability data for the ability whose duration has expired. </param>
-	protected virtual void OnDurationComplete ( AbilitySettings current )
+	/// <param name="ability"> The current ability data for the ability whose duration has expired. </param>
+	protected virtual void OnDurationComplete ( AbilityInstanceData ability )
 	{
-
+		ability.IsActive = false;
 	}
 
 	#endregion // Protected Virtual Functions
@@ -340,20 +385,19 @@ public class HeroUnit : Unit
 	/// <summary>
 	/// Starts the cooldown and duration for this unit's special ability or command ability.
 	/// </summary>
-	/// <param name="current"> The current ability data for the ability being used. </param>
-	/// <param name="setting"> The match settings ability data for the ability being used to set the cooldown and duration to. </param>
+	/// <param name="ability"> The instance data for the ability being used. </param>
 	/// <param name="updateHUD"> Whether or not the Unit HUD should be updated for this unit. </param>
-	protected void StartCooldown ( AbilitySettings current, Ability setting, bool updateHUD = true )
+	protected void StartCooldown ( AbilityInstanceData ability, bool updateHUD = true )
 	{
 		// Set duration
-		current.duration = setting.Duration;
+		ability.CurrentDuration = ability.Duration;
 
 		// Set cooldown
-		current.cooldown = setting.Cooldown;
+		ability.CurrentCooldown = ability.Cooldown;
 
 		// Display cooldown
 		if ( updateHUD )
-			GM.UI.unitHUD.DisplayAbility ( current );
+			GM.UI.unitHUD.UpdateAbilityHUD ( ability );
 	}
 
 	/// <summary>

@@ -7,16 +7,30 @@ public class Pacifist : HeroUnit
 {
 	/// <summary>
 	///
-	/// Hero Ability Information
+	/// Hero 6 Unit Data
 	/// 
-	/// Ability 1: Ghost
-	/// Type: Passive Ability
-	/// Default Duration: Permanent
+	/// ID: 14
+	/// Name: Hero 6
+	/// Nickname: Ghost
+	/// Bio: ???
+	/// Finishing Move: ???
+	/// Role: Support
+	/// Slots: 1
 	/// 
-	/// Ability 2: Obstruction
+	/// Ability 1
+	/// ID: 21
+	/// Name: Ghost
+	/// Description: Unable to attack or be attacked by opponents
+	/// Type: Passive
+	/// 
+	/// Ability 2
+	/// ID: 22
+	/// Name: Poltergeist
+	/// Description: Possesses an objectto block an area for a short period
 	/// Type: Command
-	/// Default Duration: 2 Turns
-	/// Default Cooldown: 5 Turns
+	/// Duration: 2 Turns
+	/// Cooldown: 5 Turns
+	/// Area: 2 Tiles
 	/// 
 	/// </summary>
 
@@ -25,6 +39,8 @@ public class Pacifist : HeroUnit
 	public TileObject currentObstruction;
 	private const float OBSTRUCTION_ANIMATION_TIME = 0.75f;
 
+	#region Public Unit Override Functions
+
 	/// <summary>
 	/// Calculates all base moves available to a unit without marking any potential captures.
 	/// </summary>
@@ -32,10 +48,10 @@ public class Pacifist : HeroUnit
 	{
 		// Cleare previous move list
 		if ( prerequisite == null )
-			moveList.Clear ( );
+			MoveList.Clear ( );
 
 		// Check status effects
-		if ( status.CanMove )
+		if ( Status.CanMove )
 		{
 			// Store which tiles are to be ignored
 			IntPair back = GetBackDirection ( owner.TeamDirection );
@@ -51,14 +67,14 @@ public class Pacifist : HeroUnit
 				if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
 				{
 					// Add as an available move
-					moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
+					MoveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
 				}
 				// Check if this unit can jump the neighboring tile
 				else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
 				{
 					// Add as an available jump
 					MoveData m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.JUMP, i );
-					moveList.Add ( m );
+					MoveList.Add ( m );
 
 					// Find additional jumps
 					FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
@@ -67,7 +83,7 @@ public class Pacifist : HeroUnit
 		}
 
 		// Get obstruction availability
-		CurrentAbility2.active = CommandAvailabilityCheck ( CurrentAbility2, prerequisite );
+		InstanceData.Ability2.IsAvailable = CommandAvailabilityCheck ( InstanceData.Ability2, prerequisite );
 	}
 
 	/// <summary>
@@ -77,24 +93,78 @@ public class Pacifist : HeroUnit
 	public override bool UnitAttackCheck ( Unit attacker )
 	{
 		// Prevent any attacks with the Ghost ability
-		if ( PassiveAvailabilityCheck ( CurrentAbility1, null ) )
+		if ( PassiveAvailabilityCheck ( InstanceData.Ability1, null ) )
 			return false;
 
 		// Return normal values if the Ghost ability is disabled
 		return base.UnitAttackCheck ( attacker );
 	}
 
+	#endregion // Public Unit Override Functions
+
+	#region Public HeroUnit Override Functions
+
 	/// <summary>
 	/// Sets up the hero's command use.
 	/// </summary>
-	public override void StartCommand ( )
+	public override void StartCommand ( AbilityInstanceData ability )
 	{
 		// Clear the board
-		base.StartCommand ( );
+		base.StartCommand ( ability );
 
 		// Highlight empty tiles within a 3 tile radius of the hero
 		GetObstruction ( currentTile, 2 );
 	}
+
+	/// <summary>
+	/// Selects the tile to place an obstruction.
+	/// </summary>
+	public override void SelectCommandTile ( Tile t )
+	{
+		// Check for previous obstruction
+		if ( currentObstruction != null )
+		{
+			// Remove previous Obstruction
+			DestroyTileObject ( currentObstruction );
+		}
+
+		// Pause turn timer
+		if ( MatchSettings.TurnTimer )
+			GM.UI.timer.PauseTimer ( );
+
+		// Create Obstruction
+		currentObstruction = CreateTileOject ( obstructionPrefab, t, InstanceData.Ability2.Duration, ObstructionDurationComplete );
+
+		// Hide cancel button
+		GM.UI.unitHUD.HideCancelButton ( InstanceData.Ability2 );
+
+		// Clear board
+		GM.Board.ResetTiles ( );
+
+		// Begin animation
+		Sequence s = DOTween.Sequence ( )
+			.Append ( currentObstruction.sprite.DOFade ( 0f, OBSTRUCTION_ANIMATION_TIME ).From ( ) )
+			.OnComplete ( ( ) =>
+			{
+				// Start cooldown
+				StartCooldown ( InstanceData.Ability2 );
+
+				// Pause turn timer
+				if ( MatchSettings.TurnTimer )
+					GM.UI.timer.ResumeTimer ( );
+
+				// Get moves
+				GM.GetTeamMoves ( );
+
+				// Display team
+				GM.DisplayAvailableUnits ( );
+				GM.SelectUnit ( this );
+			} );
+	}
+
+	#endregion // Public HeroUnit Override Functions
+
+	#region Private Functions
 
 	/// <summary>
 	/// Marks every unoccupied tile in a 3 tile radius as available for selection for Obstruction.
@@ -116,52 +186,6 @@ public class Pacifist : HeroUnit
 					GetObstruction ( t.neighbors [ i ], count - 1 );
 			}
 		}
-	}
-
-	/// <summary>
-	/// Selects the tile to place an obstruction.
-	/// </summary>
-	public override void SelectCommandTile ( Tile t )
-	{
-		// Check for previous obstruction
-		if ( currentObstruction != null )
-		{
-			// Remove previous Obstruction
-			DestroyTileObject ( currentObstruction );
-		}
-
-		// Pause turn timer
-		if ( MatchSettings.TurnTimer )
-			GM.UI.timer.PauseTimer ( );
-
-		// Create Obstruction
-		currentObstruction = CreateTileOject ( obstructionPrefab, t, Info.Ability2.Duration, ObstructionDurationComplete );
-
-		// Hide cancel button
-		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
-
-		// Clear board
-		GM.Board.ResetTiles ( );
-
-		// Begin animation
-		Sequence s = DOTween.Sequence ( )
-			.Append ( currentObstruction.sprite.DOFade ( 0f, OBSTRUCTION_ANIMATION_TIME ).From ( ) )
-			.OnComplete ( ( ) =>
-			{
-				// Start cooldown
-				StartCooldown ( CurrentAbility2, Info.Ability2 );
-
-				// Pause turn timer
-				if ( MatchSettings.TurnTimer )
-					GM.UI.timer.ResumeTimer ( );
-
-				// Get moves
-				GM.GetTeamMoves ( );
-
-				// Display team
-				GM.DisplayAvailableUnits ( );
-				GM.SelectUnit ( this );
-			} );
 	}
 
 	/// <summary>
@@ -187,4 +211,6 @@ public class Pacifist : HeroUnit
 		// Add animation to queue
 		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
+
+	#endregion // Private Functions
 }

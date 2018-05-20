@@ -23,7 +23,7 @@ public class Leader : Unit
 	private void Start ( )
 	{
 		// Set name
-		characterName = NameGenerator.CreateName ( );
+		//characterName = NameGenerator.CreateName ( );
 
 		// Set ability information
 		ability.Name = "Smite";
@@ -41,10 +41,10 @@ public class Leader : Unit
 	{
 		// Cleare previous move list
 		if ( prerequisite == null )
-			moveList.Clear ( );
+			MoveList.Clear ( );
 
 		// Check status effects
-		if ( status.CanMove )
+		if ( Status.CanMove )
 		{
 			// Store which tiles are to be ignored
 			IntPair back = GetBackDirection ( owner.TeamDirection );
@@ -63,12 +63,12 @@ public class Leader : Unit
 					if ( owner.startArea.IsGoalTile ( t.neighbors [ i ] ) )
 					{
 						// Add as an available move to win
-						moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE_TO_WIN, i ) );
+						MoveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE_TO_WIN, i ) );
 					}
 					else
 					{
 						// Add as an available move
-						moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
+						MoveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
 					}
 				}
 				// Check if this unit can jump the neighboring tile
@@ -108,7 +108,7 @@ public class Leader : Unit
 					}
 
 					// Add move to the move list
-					moveList.Add ( m );
+					MoveList.Add ( m );
 
 					// Find additional jumps
 					FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );

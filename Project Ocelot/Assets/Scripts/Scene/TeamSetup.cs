@@ -167,6 +167,10 @@ public class TeamSetup : MonoBehaviour
 		}
 		else
 		{
+			// Set the units and formation for a mirror match
+			if ( MatchSettings.Type == MatchType.Mirror || MatchSettings.Type == MatchType.CustomMirror )
+				MatchSettings.SetMirrorUnits ( );
+
 			// Begin match
 			BeginMatch ( );
 		}

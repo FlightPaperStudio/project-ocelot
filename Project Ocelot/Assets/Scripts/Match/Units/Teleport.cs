@@ -7,15 +7,31 @@ public class Teleport : HeroUnit
 {
 	/// <summary>
 	///
-	/// Hero Ability Information
+	/// Hero 8 Unit Data
 	/// 
-	/// Ability 1: Blink
-	/// Type: Special Ability
-	/// Default Cooldown: 2 Turns
+	/// ID: 18
+	/// Name: Hero 8
+	/// Nickname: Teleport
+	/// Bio: ???
+	/// Finishing Move: ???
+	/// Role: Support
+	/// Slots: 1
 	/// 
-	/// Ability 2: Translocator
-	/// Type: Command Ability
-	/// Default Cooldown: 4 Turns
+	/// Ability 1
+	/// ID: 32
+	/// Name: Blink
+	/// Description: Instantly teleports a short distance
+	/// Type: Special
+	/// Cooldown: 2 Turns
+	/// Range: 3 Tiles
+	/// 
+	/// Ability 2
+	/// ID: 33
+	/// Name: Translocator
+	/// Description: Swaps the position of two allies
+	/// Type: Command
+	/// Cooldown: 4 Turns
+	/// Affect Leader: Active
 	/// 
 	/// </summary>
 
@@ -26,6 +42,8 @@ public class Teleport : HeroUnit
 	private Unit unit2 = null;
 	private const float BLINK_ANIMATION_TIME = 0.75f;
 
+	#region Public Unit Override Functions
+
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves.
 	/// </summary>
@@ -35,104 +53,30 @@ public class Teleport : HeroUnit
 		base.FindMoves ( t, prerequisite, returnOnlyJumps );
 
 		// Get Blink moves
-		if ( SpecialAvailabilityCheck ( CurrentAbility1, prerequisite ) )
+		if ( SpecialAvailabilityCheck ( InstanceData.Ability1, prerequisite ) )
 			GetBlink ( t, GetBackDirection ( owner.TeamDirection ), 2 );
 
 		// Get Translocator availability
-		CurrentAbility2.active = CommandAvailabilityCheck ( CurrentAbility2, prerequisite );
+		InstanceData.Ability2.IsAvailable = CommandAvailabilityCheck ( InstanceData.Ability2, prerequisite );
 	}
 
-	/// <summary>
-	/// Checks if the hero is capable of using a special ability.
-	/// Returns true if the special ability is available.
-	/// </summary>
-	protected override bool SpecialAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
-	{
-		// Check base conditions
-		if ( !base.SpecialAvailabilityCheck ( current, prerequisite ) )
-			return false;
+	#endregion // Public Unit Override Functions
 
-		// Check if any moves have been made
-		if ( prerequisite != null )
-			return false;
-
-		// Return that the ability is available
-		return true;
-	}
-
-	/// <summary>
-	/// Marks every tile within range of the Blink ability.
-	/// </summary>
-	private void GetBlink ( Tile t, IntPair back, int count )
-	{
-		// Check each neighbor tile
-		for ( int i = 0; i < t.neighbors.Length; i++ )
-		{
-			// Ignore tiles that would allow for backward movement
-			if ( i == back.FirstInt || i == back.SecondInt )
-				continue;
-
-			// Check if tile is available
-			if ( t.neighbors [ i ] != null )
-			{
-				// Check if tile already has a move associated with it
-				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && !moveList.Exists ( match => match.Tile == t.neighbors [ i ] && match.Prerequisite == null ) )
-				{
-					// Add as an available special move
-					moveList.Add ( new MoveData ( t.neighbors [ i ], null, MoveData.MoveType.SPECIAL, i ) );
-				}
-
-				// Check if the maximum range for teleport has been reached
-				if ( count > 0 )
-				{
-					// Continue search
-					GetBlink ( t.neighbors [ i ], back, count - 1 );
-				}
-			}
-		}
-	}
-
-	/// <summary>
-	/// Uses the unit's special ability.
-	/// Override this function to call specific special ability functions for a hero unit.
-	/// </summary>
-	protected override void UseSpecial ( MoveData data )
-	{
-		// Create animation
-		Tween t1 = sprite.DOFade ( 0, MOVE_ANIMATION_TIME )
-			.OnComplete ( ( ) =>
-			{
-				// Move unit instantly
-				transform.position = data.Tile.transform.position;
-			} );
-		Tween t2 = sprite.DOFade ( 1, MOVE_ANIMATION_TIME )
-			.OnComplete ( ( ) =>
-			{
-				// Start teleport cooldown
-				StartCooldown ( CurrentAbility1, Info.Ability1 );
-
-				// Set unit and tile data
-				SetUnitToTile ( data.Tile );
-			} );
-
-		// Add animations to queue
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, true ) );
-	}
+	#region Public HeroUnit Override Functions
 
 	/// <summary>
 	/// Sets up the hero's command use.
 	/// </summary>
-	public override void StartCommand ( )
+	public override void StartCommand ( AbilityInstanceData ability )
 	{
 		// Clear board
-		base.StartCommand ( );
+		base.StartCommand ( ability );
 
 		// Highlight team members
 		foreach ( Unit u in owner.UnitInstances )
 		{
 			// Check status effects
-			if ( u != this && !( u is Leader ) && u.status.CanBeMoved )
+			if ( u != this && !( u is Leader ) && u.Status.CanBeMoved )
 				u.currentTile.SetTileState ( TileState.AvailableCommand );
 		}
 	}
@@ -181,6 +125,92 @@ public class Teleport : HeroUnit
 		base.EndCommand ( );
 	}
 
+	#endregion // Public HeroUnit Override Functions
+
+	#region Protected HeroUnit Override Functions
+
+	/// <summary>
+	/// Checks if the hero is capable of using a special ability.
+	/// Returns true if the special ability is available.
+	/// </summary>
+	protected override bool SpecialAvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
+	{
+		// Check base conditions
+		if ( !base.SpecialAvailabilityCheck ( ability, prerequisite ) )
+			return false;
+
+		// Check if any moves have been made
+		if ( prerequisite != null )
+			return false;
+
+		// Return that the ability is available
+		return true;
+	}
+
+	/// <summary>
+	/// Uses the unit's special ability.
+	/// Override this function to call specific special ability functions for a hero unit.
+	/// </summary>
+	protected override void UseSpecial ( MoveData data )
+	{
+		// Create animation
+		Tween t1 = sprite.DOFade ( 0, MOVE_ANIMATION_TIME )
+			.OnComplete ( ( ) =>
+			{
+				// Move unit instantly
+				transform.position = data.Tile.transform.position;
+			} );
+		Tween t2 = sprite.DOFade ( 1, MOVE_ANIMATION_TIME )
+			.OnComplete ( ( ) =>
+			{
+				// Start teleport cooldown
+				StartCooldown ( InstanceData.Ability1 );
+
+				// Set unit and tile data
+				SetUnitToTile ( data.Tile );
+			} );
+
+		// Add animations to queue
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, true ) );
+	}
+
+	#endregion // Protected HeroUnit Override Functions
+
+	#region Private Functions
+
+	/// <summary>
+	/// Marks every tile within range of the Blink ability.
+	/// </summary>
+	private void GetBlink ( Tile t, IntPair back, int count )
+	{
+		// Check each neighbor tile
+		for ( int i = 0; i < t.neighbors.Length; i++ )
+		{
+			// Ignore tiles that would allow for backward movement
+			if ( i == back.FirstInt || i == back.SecondInt )
+				continue;
+
+			// Check if tile is available
+			if ( t.neighbors [ i ] != null )
+			{
+				// Check if tile already has a move associated with it
+				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && !MoveList.Exists ( match => match.Tile == t.neighbors [ i ] && match.Prerequisite == null ) )
+				{
+					// Add as an available special move
+					MoveList.Add ( new MoveData ( t.neighbors [ i ], null, MoveData.MoveType.SPECIAL, i ) );
+				}
+
+				// Check if the maximum range for teleport has been reached
+				if ( count > 0 )
+				{
+					// Continue search
+					GetBlink ( t.neighbors [ i ], back, count - 1 );
+				}
+			}
+		}
+	}
+
 	/// <summary>
 	/// Swaps the positions of two teammates.
 	/// </summary>
@@ -191,7 +221,7 @@ public class Teleport : HeroUnit
 		unit2.InteruptUnit ( );
 
 		// Hide cancel button
-		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
+		GM.UI.unitHUD.HideCancelButton ( InstanceData.Ability2 );
 
 		// Pause turn timer
 		if ( MatchSettings.TurnTimer )
@@ -227,7 +257,7 @@ public class Teleport : HeroUnit
 				unit2 = null;
 
 				// Start cooldown
-				StartCooldown ( CurrentAbility2, Info.Ability2 );
+				StartCooldown ( InstanceData.Ability2 );
 
 				// Pause turn timer
 				if ( MatchSettings.TurnTimer )
@@ -241,4 +271,6 @@ public class Teleport : HeroUnit
 				GM.SelectUnit ( this );
 			} );
 	}
+
+	#endregion // Private Functions
 }

@@ -7,15 +7,31 @@ public class MindControl : HeroUnit
 {
 	/// <summary>
 	///
-	/// Hero Ability Information
+	/// Hero 3 Unit Data
 	/// 
-	/// Ability 1: Mind Control
-	/// Type: Passive Ability
-	/// Default Duration: 3 Turns
+	/// ID: 11
+	/// Name: Hero 3
+	/// Nickname: Mind Control
+	/// Bio: ???
+	/// Finishing Move: ???
+	/// Role: Offense
+	/// Slots: 1
 	/// 
-	/// Ability 2: Clone Assist
-	/// Type: Special Ability
-	/// Default Cooldown: 4 Turns
+	/// Ability 1
+	/// ID: 15
+	/// Name: Mind Control
+	/// Description: Attacked opponents can be controlled for a short period before they are eventually KO'd
+	/// Type: Passive
+	/// Duration: 3 Turns
+	/// 
+	/// Ability 2
+	/// ID: 16
+	/// Name: Clone
+	/// Description: Creates a temporary clone of itself for an assist
+	/// Type: Special
+	/// Duration: 1 Turn
+	/// Cooldown: 4 Turns
+	/// Continue Movement: Active
 	/// 
 	/// </summary>
 
@@ -40,6 +56,8 @@ public class MindControl : HeroUnit
 	private const float MIND_CONTROL_ANIMATION_TIME = 0.75f;
 	private const string MIND_CONTROL_STATUS_PROMPT = "Mind Control";
 
+	#region Public Unit Override Functions
+
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves available.
 	/// </summary>
@@ -49,18 +67,101 @@ public class MindControl : HeroUnit
 		base.FindMoves ( t, prerequisite, returnOnlyJumps );
 
 		// Get Clone Assist moves
-		if ( SpecialAvailabilityCheck ( CurrentAbility2, prerequisite ) )
+		if ( SpecialAvailabilityCheck ( InstanceData.Ability2, prerequisite ) )
 			GetCloneAssist ( t, prerequisite );
+	}
+
+	/// <summary>
+	/// Attack and KO this unit.
+	/// Call this function on the unit being attacked.
+	/// This function builds the animation queue from the move data.
+	/// </summary>
+	public override void GetAttacked ( bool usePostAnimationQueue = false )
+	{
+		// Check if post-animation queue is being used to prevent animation queue sync issues and check if the Mind Control ability is active
+		if ( !usePostAnimationQueue && InstanceData.Ability1.IsEnabled )
+		{
+			// Remove all Mind Controlled units
+			DeactivateMindControl ( );
+		}
+
+		// Get KO'd
+		base.GetAttacked ( usePostAnimationQueue );
+	}
+
+	#endregion // Public Unit Override Functions
+
+	#region Protected Unit Override Functions
+
+	/// <summary>
+	/// Attacks the adjacent unit.
+	/// Call this function on the attacking unit.
+	/// This function builds the animation queue from the move data.
+	/// </summary>
+	protected override void AttackUnit ( MoveData data )
+	{
+		// Check Mind Control conditions
+		if ( PassiveAvailabilityCheck ( InstanceData.Ability1, data ) )
+		{
+			// Mind Control the opponent
+			foreach ( Tile t in data.Attacks )
+			{
+				// Interupt unit
+				t.currentUnit.InteruptUnit ( );
+
+				// Activate Mind Control
+				ActivateMindControl ( t.currentUnit );
+			}
+		}
+		else
+		{
+			// Attack the unit as normal
+			base.AttackUnit ( data );
+		}
+	}
+
+	#endregion // Protected Unit Override Functions
+
+	#region Protected HeroUnit Override Functions
+
+	/// <summary>
+	/// Checks if the hero is capable of using a passive ability.
+	/// Returns true if the passive ability is available.
+	/// </summary>
+	protected override bool PassiveAvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
+	{
+		// Check base conditions
+		if ( !base.PassiveAvailabilityCheck ( ability, prerequisite ) )
+			return false;
+
+		// Check the opponent
+		foreach ( Tile t in prerequisite.Attacks )
+		{
+			// Check for Leader
+			if ( t.currentUnit is Leader )
+				return false;
+
+			// Check for Hero 6's Ghost ability
+			if ( t.currentUnit is Pacifist )
+			{
+				HeroUnit h = t.currentUnit as HeroUnit;
+				if ( h.InstanceData.Ability1.IsEnabled )
+					return false;
+			}
+		}
+
+		// Return that the ability is available
+		return true;
 	}
 
 	/// <summary>
 	/// Checks if the hero is capable of using a special ability.
 	/// Returns true if the special ability is available.
 	/// </summary>
-	protected override bool SpecialAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
+	protected override bool SpecialAvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
 	{
 		// Check base conditions
-		if ( !base.SpecialAvailabilityCheck ( current, prerequisite ) )
+		if ( !base.SpecialAvailabilityCheck ( ability, prerequisite ) )
 			return false;
 
 		// Check previous moves
@@ -69,36 +170,6 @@ public class MindControl : HeroUnit
 
 		// Return that the ability is available
 		return true;
-	}
-
-	/// <summary>
-	/// Marks every tile available to the Clone Assist ability.
-	/// </summary>
-	private void GetCloneAssist ( Tile t, MoveData prerequisite )
-	{
-		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.TeamDirection );
-
-		// Check each neighboring tile
-		for ( int i = 0; i < t.neighbors.Length; i++ )
-		{
-			// Ignore tiles that would allow for backward movement
-			if ( i == back.FirstInt || i == back.SecondInt )
-				continue;
-
-			// Check if this unit can jump the unoccupied neighboring tile
-			if ( OccupyTileCheck ( t.neighbors [ i ], prerequisite ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
-			{
-				// Add as an available jump
-				MoveData m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i );
-
-				// Add move to the move list
-				moveList.Add ( m );
-
-				// Find additional jumps
-				FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
-			}
-		}
 	}
 
 	/// <summary>
@@ -126,7 +197,7 @@ public class MindControl : HeroUnit
 			.OnComplete ( ( ) =>
 			{
 				// Start teleport cooldown
-				StartCooldown ( CurrentAbility2, Info.Ability2 );
+				StartCooldown ( InstanceData.Ability2 );
 
 				// Set unit and tile data
 				SetUnitToTile ( data.Tile );
@@ -147,79 +218,38 @@ public class MindControl : HeroUnit
 		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t4, false ) );
 	}
 
-	/// <summary>
-	/// Attacks the adjacent unit.
-	/// Call this function on the attacking unit.
-	/// This function builds the animation queue from the move data.
-	/// </summary>
-	protected override void AttackUnit ( MoveData data )
-	{
-		// Check Mind Control conditions
-		if ( PassiveAvailabilityCheck ( CurrentAbility1, data ) )
-		{
-			// Mind Control the opponent
-			foreach ( Tile t in data.Attacks )
-			{
-				// Interupt unit
-				t.currentUnit.InteruptUnit ( );
+	#endregion // Protected HeroUnit Override Functions
 
-				// Activate Mind Control
-				ActivateMindControl ( t.currentUnit );
+	#region Private Functions
+
+	/// <summary>
+	/// Marks every tile available to the Clone Assist ability.
+	/// </summary>
+	private void GetCloneAssist ( Tile t, MoveData prerequisite )
+	{
+		// Store which tiles are to be ignored
+		IntPair back = GetBackDirection ( owner.TeamDirection );
+
+		// Check each neighboring tile
+		for ( int i = 0; i < t.neighbors.Length; i++ )
+		{
+			// Ignore tiles that would allow for backward movement
+			if ( i == back.FirstInt || i == back.SecondInt )
+				continue;
+
+			// Check if this unit can jump the unoccupied neighboring tile
+			if ( OccupyTileCheck ( t.neighbors [ i ], prerequisite ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
+			{
+				// Add as an available jump
+				MoveData m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i );
+
+				// Add move to the move list
+				MoveList.Add ( m );
+
+				// Find additional jumps
+				FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
 			}
 		}
-		else
-		{
-			// Attack the unit as normal
-			base.AttackUnit ( data );
-		}
-	}
-
-	/// <summary>
-	/// Attack and KO this unit.
-	/// Call this function on the unit being attacked.
-	/// This function builds the animation queue from the move data.
-	/// </summary>
-	public override void GetAttacked ( bool usePostAnimationQueue = false )
-	{
-		// Check if post-animation queue is being used to prevent animation queue sync issues and check if the Mind Control ability is active
-		if ( !usePostAnimationQueue && CurrentAbility1.enabled )
-		{
-			// Remove all Mind Controlled units
-			DeactivateMindControl ( );
-		}
-
-		// Get KO'd
-		base.GetAttacked ( usePostAnimationQueue );
-	}
-
-	/// <summary>
-	/// Checks if the hero is capable of using a passive ability.
-	/// Returns true if the passive ability is available.
-	/// </summary>
-	protected override bool PassiveAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
-	{
-		// Check base conditions
-		if ( !base.PassiveAvailabilityCheck ( current, prerequisite ) )
-			return false;
-
-		// Check the opponent
-		foreach ( Tile t in prerequisite.Attacks )
-		{
-			// Check for Leader
-			if ( t.currentUnit is Leader )
-				return false;
-
-			// Check for Hero 6's Ghost ability
-			if ( t.currentUnit is Pacifist )
-			{
-				HeroUnit h = t.currentUnit as HeroUnit;
-				if ( h.CurrentAbility1.enabled )
-					return false;
-			}
-		}
-
-		// Return that the ability is available
-		return true;
 	}
 
 	/// <summary>
@@ -233,10 +263,10 @@ public class MindControl : HeroUnit
 			.OnStart ( ( ) =>
 			{
 				// Check for pre-existing Mind Control
-				if ( u.status.effects.Exists ( match => match.info.icon == abilitySprite1 && match.info.text == MIND_CONTROL_STATUS_PROMPT ) )
+				if ( u.Status.effects.Exists ( match => match.info.icon == InstanceData.Ability1.Icon && match.info.text == MIND_CONTROL_STATUS_PROMPT ) )
 				{
 					// Remove pre-existing Mind Control
-					MindControl original = u.status.effects.Find ( match => match.info.icon == abilitySprite1 && match.info.text == MIND_CONTROL_STATUS_PROMPT ).info.caster as MindControl;
+					MindControl original = u.Status.effects.Find ( match => match.info.icon == InstanceData.Ability1.Icon && match.info.text == MIND_CONTROL_STATUS_PROMPT ).info.caster as MindControl;
 					original.RemoveMindControlledUnit ( u );
 				}
 
@@ -265,7 +295,7 @@ public class MindControl : HeroUnit
 					u.koDelegate += owner.standardKOdelegate;
 
 				// Apply status effect
-				u.status.AddStatusEffect ( abilitySprite1, MIND_CONTROL_STATUS_PROMPT, this, CurrentAbility1.duration );
+				u.Status.AddStatusEffect ( InstanceData.Ability1.Icon, MIND_CONTROL_STATUS_PROMPT, this, InstanceData.Ability1.Duration );
 
 				// Add KO delegate
 				//u.koDelegate += MindControlKO;
@@ -274,8 +304,8 @@ public class MindControl : HeroUnit
 				Util.OrientSpriteToDirection ( u.sprite, u.owner.TeamDirection );
 
 				// Update HUD
-				GM.UI.matchInfoMenu.GetPlayerHUD ( u ).UpdateStatusEffects ( u.instanceID, u.status );
-				GM.UI.matchInfoMenu.GetPlayerHUD ( u ).UpdatePortrait ( u.instanceID, Util.TeamColor ( owner.Team ) );
+				GM.UI.matchInfoMenu.GetPlayerHUD ( u ).UpdateStatusEffects ( u.InstanceID, u.Status );
+				GM.UI.matchInfoMenu.GetPlayerHUD ( u ).UpdatePortrait ( u.InstanceID, Util.TeamColor ( owner.Team ) );
 			} );
 
 		// Add animation to queue
@@ -322,45 +352,5 @@ public class MindControl : HeroUnit
 		mindControlledUnits.Clear ( );
 	}
 
-	/// <summary>
-	/// Decrements the cooldown for the unit's special ability.
-	/// </summary>
-	//public override void Cooldown ( )
-	//{
-	//	// Check for active ability type for ability 1
-	//	if ( currentAbility1.enabled )
-	//	{
-	//		// Check each unit currently Mind Controlled
-	//		foreach ( MindControlledUnit u in mindControlledUnits )
-	//		{
-	//			// Check if the unit is still on the team
-	//			if ( owner.units.Contains ( u.unit ) )
-	//			{
-	//				// Decrement duration
-	//				u.duration--;
-
-	//				// Check if the unit has expired
-	//				if ( u.duration == 0 )
-	//				{
-	//					// Remove KO delegate
-	//					u.unit.koDelegate -= MindControlKO;
-
-	//					// KO unit
-	//					u.unit.GetAttacked ( true );
-	//				}					
-	//			}
-	//			else
-	//			{
-	//				// Expire the unit
-	//				u.duration = 0;
-	//			}
-	//		}
-
-	//		// Remove any expired units
-	//		mindControlledUnits.RemoveAll ( match => match.duration == 0 );
-	//	}
-
-	//	// Set cooldown for ability 2
-	//	base.Cooldown ( );
-	//}
+	#endregion // Private Functions
 }

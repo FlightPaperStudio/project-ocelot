@@ -7,15 +7,31 @@ public class Dropkick : HeroUnit
 {
 	/// <summary>
 	///
-	/// Hero Ability Information
+	/// Hero 10 Unit Data
 	/// 
-	/// Ability 1: Divebomb
-	/// Type: Special Ability
-	/// Default Cooldown: 3 Turns
+	/// ID: 20
+	/// Name: Hero 10
+	/// Nickname: Divebomb
+	/// Bio: ???
+	/// Finishing Move: ???
+	/// Role: Defense
+	/// Slots: 1
 	/// 
-	/// Ability 2: Dropkick
-	/// Type: Command Ability
-	/// Default Cooldown: 4 Turns
+	/// Ability 1
+	/// ID: 36
+	/// Name: Divebomb
+	/// Description: Jumps off the ropes, knocking back any nearby opponents upon landing
+	/// Type: Special
+	/// Cooldown: 3 Turns
+	/// Range: 4 Tiles
+	/// 
+	/// Ability 2
+	/// ID: 37
+	/// Name: Dropkick
+	/// Description: Kicks a nearby opponent to knock back the opponent and anyone behind
+	/// Type: Command
+	/// Cooldown: 4 Turns
+	/// Chain Knock Back: Active
 	/// 
 	/// </summary>
 
@@ -30,7 +46,7 @@ public class Dropkick : HeroUnit
 
 	#endregion // Ability Data
 
-	#region Unit Override Functions
+	#region Public Unit Override Functions
 
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves.
@@ -44,109 +60,24 @@ public class Dropkick : HeroUnit
 		base.FindMoves ( t, prerequisite, returnOnlyJumps );
 
 		// Get Divebomb moves
-		if ( SpecialAvailabilityCheck ( CurrentAbility1, prerequisite ) )
+		if ( SpecialAvailabilityCheck ( InstanceData.Ability1, prerequisite ) )
 			GetDivebomb ( t, MAX_DIVE_RANGE - 1 );
 
 		// Get Dropkick availability
-		CurrentAbility2.active = CommandAvailabilityCheck ( CurrentAbility2, prerequisite );
+		InstanceData.Ability2.IsAvailable = CommandAvailabilityCheck ( InstanceData.Ability2, prerequisite );
 	}
 
 	#endregion // Unit Override Functions
 
-	#region HeroUnit Override Functions
-
-	/// <summary>
-	/// Checks if the hero is capable of using a special ability.
-	/// Returns true if the special ability is available.
-	/// </summary>
-	/// /// <param name="current"> The current ability data for the special ability being checked. </param>
-	/// <param name="prerequisite"> The Move Data for any moves required for this hero unit to use the given special ability. </param>
-	/// <returns> Whether or not the special ability can be used. </returns>
-	protected override bool SpecialAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
-	{
-		// Check base conditions
-		if ( !base.SpecialAvailabilityCheck ( current, prerequisite ) )
-			return false;
-
-		// Check if any move has been made
-		if ( prerequisite != null )
-			return false;
-
-		// Check for edge
-		if ( !EdgeTileCheck ( currentTile ) )
-			return false;
-
-		// Return that the ability is available
-		return true;
-	}
-
-	/// <summary>
-	/// Checks if this hero is capable of using a command ability.
-	/// Returns true if the command ability is available.
-	/// </summary>
-	/// <param name="current"> The current ability data for the command ability being checked. </param>
-	/// <param name="prerequisite"> The Move Data for any moves required for this hero unit to use the given command ability. </param>
-	/// <returns> Whether or not the command ability can be used. </returns>
-	protected override bool CommandAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
-	{
-		// Check base conditions
-		if ( !base.CommandAvailabilityCheck ( current, prerequisite ) )
-			return false;
-
-		// Check if a target is available
-		if ( !DropkickCheck ( ) )
-			return false;
-
-		// Return that the ability is available
-		return true;
-	}
-
-	/// <summary>
-	/// Uses the unit's special ability.
-	/// Override this function to call specific special ability functions for a hero unit.
-	/// </summary>
-	/// <param name="data"> The move data required for this move. </param>
-	protected override void UseSpecial ( MoveData data )
-	{
-		// Create animation for dive
-		Tween t1 = transform.DOMove ( data.Tile.transform.position, DIVE_ANIMATION_TIME )
-			.OnComplete ( ( ) =>
-			{
-				// Start teleport cooldown
-				StartCooldown ( CurrentAbility1, Info.Ability1 );
-
-				// Set unit and tile data
-				SetUnitToTile ( data.Tile );
-			} );
-		Tween t2 = transform.DOScale ( DIVE_ANIMATION_SCALE, DIVE_ANIMATION_TIME / 2 )
-			.SetLoops ( 2, LoopType.Yoyo );
-
-		// Add animations to queue
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
-
-		int targetCount = 0;
-
-		// Get knockback targets
-		for ( int i = 0; i < data.Tile.neighbors.Length; i++ )
-		{
-			// Check for target
-			if ( data.Tile.neighbors [ i ] != null && data.Tile.neighbors [ i ].currentUnit != null && data.Tile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) && data.Tile.neighbors [ i ].currentUnit.status.CanBeMoved && KnockbackTileCheck ( data.Tile.neighbors [ i ].neighbors [ i ], i, false ) )
-			{
-				// Create animation for knockback
-				targetCount++;
-				DivebombKnockback ( data.Tile.neighbors [ i ].currentUnit, data.Tile.neighbors [ i ].neighbors [ i ], targetCount <= 1 );
-			}
-		}
-	}
+	#region Public HeroUnit Override Functions
 
 	/// <summary>
 	/// Sets up the hero's command use.
 	/// </summary>
-	public override void StartCommand ( )
+	public override void StartCommand ( AbilityInstanceData ability )
 	{
 		// Clear the board
-		base.StartCommand ( );
+		base.StartCommand ( ability );
 
 		// Clear previous targets
 		dropkickTargetDirection.Clear ( );
@@ -184,7 +115,7 @@ public class Dropkick : HeroUnit
 			GM.UI.timer.PauseTimer ( );
 
 		// Hide cancel button
-		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
+		GM.UI.unitHUD.HideCancelButton ( InstanceData.Ability2 );
 
 		// Clear board
 		GM.Board.ResetTiles ( );
@@ -203,10 +134,10 @@ public class Dropkick : HeroUnit
 		s.OnComplete ( ( ) =>
 		{
 			// Start cooldown
-			StartCooldown ( CurrentAbility2, Info.Ability2 );
+			StartCooldown ( InstanceData.Ability2 );
 
 			// Apply status effect
-			status.AddStatusEffect ( abilitySprite2, DROPKICK_STATUS_PROMPT, this, 1, StatusEffects.StatusType.CAN_MOVE );
+			Status.AddStatusEffect ( InstanceData.Ability2.Icon, DROPKICK_STATUS_PROMPT, this, 1, StatusEffects.StatusType.CAN_MOVE );
 
 			// Pause turn timer
 			if ( MatchSettings.TurnTimer )
@@ -219,6 +150,95 @@ public class Dropkick : HeroUnit
 			GM.DisplayAvailableUnits ( );
 			GM.SelectUnit ( this );
 		} );
+	}
+
+	#endregion // Public HeroUnit Override Functions
+
+	#region Protected HeroUnit Override Functions
+
+	/// <summary>
+	/// Checks if the hero is capable of using a special ability.
+	/// Returns true if the special ability is available.
+	/// </summary>
+	/// /// <param name="ability"> The current ability data for the special ability being checked. </param>
+	/// <param name="prerequisite"> The Move Data for any moves required for this hero unit to use the given special ability. </param>
+	/// <returns> Whether or not the special ability can be used. </returns>
+	protected override bool SpecialAvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
+	{
+		// Check base conditions
+		if ( !base.SpecialAvailabilityCheck ( ability, prerequisite ) )
+			return false;
+
+		// Check if any move has been made
+		if ( prerequisite != null )
+			return false;
+
+		// Check for edge
+		if ( !EdgeTileCheck ( currentTile ) )
+			return false;
+
+		// Return that the ability is available
+		return true;
+	}
+
+	/// <summary>
+	/// Checks if this hero is capable of using a command ability.
+	/// Returns true if the command ability is available.
+	/// </summary>
+	/// <param name="ability"> The current ability data for the command ability being checked. </param>
+	/// <param name="prerequisite"> The Move Data for any moves required for this hero unit to use the given command ability. </param>
+	/// <returns> Whether or not the command ability can be used. </returns>
+	protected override bool CommandAvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
+	{
+		// Check base conditions
+		if ( !base.CommandAvailabilityCheck ( ability, prerequisite ) )
+			return false;
+
+		// Check if a target is available
+		if ( !DropkickCheck ( ) )
+			return false;
+
+		// Return that the ability is available
+		return true;
+	}
+
+	/// <summary>
+	/// Uses the unit's special ability.
+	/// Override this function to call specific special ability functions for a hero unit.
+	/// </summary>
+	/// <param name="data"> The move data required for this move. </param>
+	protected override void UseSpecial ( MoveData data )
+	{
+		// Create animation for dive
+		Tween t1 = transform.DOMove ( data.Tile.transform.position, DIVE_ANIMATION_TIME )
+			.OnComplete ( ( ) =>
+			{
+				// Start teleport cooldown
+				StartCooldown ( InstanceData.Ability1 );
+
+				// Set unit and tile data
+				SetUnitToTile ( data.Tile );
+			} );
+		Tween t2 = transform.DOScale ( DIVE_ANIMATION_SCALE, DIVE_ANIMATION_TIME / 2 )
+			.SetLoops ( 2, LoopType.Yoyo );
+
+		// Add animations to queue
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+
+		int targetCount = 0;
+
+		// Get knockback targets
+		for ( int i = 0; i < data.Tile.neighbors.Length; i++ )
+		{
+			// Check for target
+			if ( data.Tile.neighbors [ i ] != null && data.Tile.neighbors [ i ].currentUnit != null && data.Tile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) && data.Tile.neighbors [ i ].currentUnit.Status.CanBeMoved && KnockbackTileCheck ( data.Tile.neighbors [ i ].neighbors [ i ], i, false ) )
+			{
+				// Create animation for knockback
+				targetCount++;
+				DivebombKnockback ( data.Tile.neighbors [ i ].currentUnit, data.Tile.neighbors [ i ].neighbors [ i ], targetCount <= 1 );
+			}
+		}
 	}
 
 	#endregion // HeroUnit Override Functions
@@ -258,10 +278,10 @@ public class Dropkick : HeroUnit
 			if ( t.neighbors [ i ] != null )
 			{
 				// Check if the tile is available to move to
-				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && MinimumDiveDistance ( t.neighbors [ i ] ) && !moveList.Exists ( match => match.Tile == t.neighbors [ i ] && match.Type == MoveData.MoveType.SPECIAL ) )
+				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && MinimumDiveDistance ( t.neighbors [ i ] ) && !MoveList.Exists ( match => match.Tile == t.neighbors [ i ] && match.Type == MoveData.MoveType.SPECIAL ) )
 				{
 					// Add as an available special move
-					moveList.Add ( new MoveData ( t.neighbors [ i ], null, MoveData.MoveType.SPECIAL, i ) );	
+					MoveList.Add ( new MoveData ( t.neighbors [ i ], null, MoveData.MoveType.SPECIAL, i ) );	
 				}
 
 				// Check if the max range has been reached
@@ -320,7 +340,7 @@ public class Dropkick : HeroUnit
 		else
 		{
 			// Check if the unit can not be moved
-			if ( !t.currentUnit.status.CanBeMoved )
+			if ( !t.currentUnit.Status.CanBeMoved )
 				return false;
 
 			// Check if tiles should continue to be checked
@@ -382,7 +402,7 @@ public class Dropkick : HeroUnit
 				continue;
 
 			// Check for target
-			if ( currentTile.neighbors [ i ] != null && currentTile.neighbors [ i ].currentUnit != null && currentTile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) && currentTile.neighbors [ i ].currentUnit.status.CanBeMoved && KnockbackTileCheck ( currentTile.neighbors [ i ].neighbors [ i ], i, true ) )
+			if ( currentTile.neighbors [ i ] != null && currentTile.neighbors [ i ].currentUnit != null && currentTile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) && currentTile.neighbors [ i ].currentUnit.Status.CanBeMoved && KnockbackTileCheck ( currentTile.neighbors [ i ].neighbors [ i ], i, true ) )
 				return true;
 		}
 

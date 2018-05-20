@@ -116,8 +116,15 @@ public class DebateMenu : Menu
 		setupManager.SlotMeter.ResetMeter ( );
 		setupManager.SlotMeter.PreviewSlots ( 1 );
 
+		// Display prompt
+		instructionPrompt.SetActive ( true );
+		confirmControls.SetActive ( false );
+
 		// Display participants
 		DisplayParticipants ( );
+
+		// Display prompt
+		setupManager.Splash.Slide ( "<size=75%>" + setupManager.CurrentPlayer.PlayerName + "</size>\n<color=white>Debate Stance", Color.white, true );
 	}
 
 	#endregion // Menu Override Functions
@@ -149,6 +156,7 @@ public class DebateMenu : Menu
 		// Set leader for player
 		setupManager.CurrentPlayer.Team = selectedTeam;
 		setupManager.CurrentPlayer.Units.Add ( MatchSettings.GetLeader ( selectedTeam ) );
+		setupManager.CurrentPlayer.UnitFormation.Add ( setupManager.CurrentPlayer.Units [ 0 ], 0 );
 
 		// Check for mirror match
 		if ( MatchSettings.Type == MatchType.Mirror || MatchSettings.Type == MatchType.CustomMirror )

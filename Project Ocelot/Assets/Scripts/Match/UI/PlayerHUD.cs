@@ -6,17 +6,25 @@ using UnityEngine.UI;
 
 public class PlayerHUD : MonoBehaviour 
 {
-	#region UI Elements
+	#region Private Classes
 
 	[System.Serializable]
-	public struct StatusEffectsBar
+	private class PlayerUnitHUD
 	{
-		public Image [ ] statusIcons;
+		public GameObject Container;
+		public UnitPortrait Portrait;
+		public Image [ ] StatusIcons;
 	}
 
-	public TextMeshProUGUI playerName;
-	public UnitPortrait [ ] unitPortraits;
-	public StatusEffectsBar [ ] statusEffects;
+	#endregion // Private Classes
+
+	#region UI Elements
+
+	[SerializeField]
+	private TextMeshProUGUI playerName;
+
+	[SerializeField]
+	private PlayerUnitHUD [ ] units;
 
 	#endregion // UI Elements
 
@@ -31,9 +39,8 @@ public class PlayerHUD : MonoBehaviour
 		private set;
 	}
 
-	private int [ ] unitIDs = { MatchSettings.NO_UNIT, MatchSettings.NO_UNIT, MatchSettings.NO_UNIT, MatchSettings.NO_UNIT, MatchSettings.NO_UNIT, MatchSettings.NO_UNIT };
-	private int [ ] instanceIDs = { MatchSettings.NO_UNIT, MatchSettings.NO_UNIT, MatchSettings.NO_UNIT, MatchSettings.NO_UNIT, MatchSettings.NO_UNIT, MatchSettings.NO_UNIT };
-	private Dictionary<int, int> unitIndexDic = new Dictionary<int, int> ( );
+	private Dictionary<int, PlayerUnitHUD> instanceHUDs = new Dictionary<int, PlayerUnitHUD> ( );
+
 	private readonly Color32 ELIMINATION = Color.grey; //new Color32 ( 100, 100, 100, 255 );
 
 	#endregion // HUD Data
@@ -46,31 +53,32 @@ public class PlayerHUD : MonoBehaviour
 	/// <param name="p"> The player that this HUD will represent. </param>
 	public void Initialize ( Player p )
 	{
+		// Store player
+		Player = p;
+		
 		// Set team name
-		playerName.text = p.PlayerName;
-		playerName.color = Util.TeamColor ( p.Team );
+		playerName.text = Player.PlayerName;
+		playerName.color = Util.TeamColor ( Player.Team );
 
 		// Set units
-		for ( int i = 0; i < instanceIDs.Length; i++ )
+		for ( int i = 0; i < units.Length; i++ )
 		{
 			// Check for unit
-			if ( i < p.UnitInstances.Count )
+			if ( i < Player.Units.Count )
 			{
-				// Store unit instance id
-				unitIDs [ i ] = p.UnitInstances [ i ].unitID;
-				instanceIDs [ i ] = p.UnitInstances [ i ].instanceID;
-				unitIndexDic.Add ( p.UnitInstances [ i ].instanceID, i );
+				// Add unit to dictionary
+				instanceHUDs.Add ( Player.UnitInstances [ i ].InstanceID, units [ i ] );
 
 				// Set unit portrait
-				unitPortraits [ i ].SetUnit ( p.UnitInstances [ i ].unitID, p.UnitInstances [ i ].displaySprite, Util.TeamColor ( p.Team ) );
+				units [ i ].Portrait.SetPortrait ( Player.Units [ i ], Player.Team );
 
 				// Clear status effects
-				ClearStatusEffects ( statusEffects [ i ] );
+				ClearStatusEffects ( units [ i ] );
 			}
 			else
 			{
 				// Hide unit portrait
-				unitPortraits [ i ].gameObject.SetActive ( false );
+				units [ i ].Container.SetActive ( false );
 			}
 		}
 	}
@@ -82,10 +90,10 @@ public class PlayerHUD : MonoBehaviour
 	public void DisplayKO ( int id )
 	{
 		// Disable portrait
-		unitPortraits [ unitIndexDic [ id ] ].EnableToggle ( false );
+		instanceHUDs [ id ].Portrait.EnableToggle ( false );
 
 		// Hide status effects
-		ClearStatusEffects ( statusEffects [ unitIndexDic [ id ] ] );
+		ClearStatusEffects ( instanceHUDs [ id ] );
 	}
 
 	/// <summary>
@@ -109,7 +117,7 @@ public class PlayerHUD : MonoBehaviour
 	public void UpdatePortrait ( int id, Sprite newSprite )
 	{
 		// Change portrait icon
-		unitPortraits [ unitIndexDic [ id ] ].SetUnit ( unitIDs [ unitIndexDic [ id ] ], newSprite, unitPortraits [ unitIndexDic [ id ] ].teamColor );
+		//instanceHUDs [ id ].Portrait.SetPortrait ( unitIDs [ unitIndexDic [ id ] ], newSprite, unitPortraits [ unitIndexDic [ id ] ].teamColor );
 	}
 
 	/// <summary>
@@ -131,7 +139,7 @@ public class PlayerHUD : MonoBehaviour
 	public bool CheckForUnit ( int id )
 	{
 		// Check if the instance ID for a unit is included in this HUD
-		return unitIndexDic.ContainsKey ( id );
+		return instanceHUDs.ContainsKey ( id );
 	}
 
 	/// <summary>
@@ -141,39 +149,39 @@ public class PlayerHUD : MonoBehaviour
 	/// <param name="adjacentID"> The instance ID the new portrait should appear next to. </param>
 	public void AddPortrait ( Unit newUnit, int adjacentID )
 	{
-		// Get the first empty slot as the start index
-		int startIndex = System.Array.IndexOf ( instanceIDs, MatchSettings.NO_UNIT );
+		//// Get the first empty slot as the start index
+		//int startIndex = System.Array.IndexOf ( instanceIDs, MatchSettings.NO_UNIT );
 
-		// Get the index of the adjacent unit as the end index
-		int endIndex = unitIndexDic [ adjacentID ] + 1;
+		//// Get the index of the adjacent unit as the end index
+		//int endIndex = unitIndexDic [ adjacentID ] + 1;
 
-		// Shift each portrait and unit back one space to make room for the new portrait
-		for ( int i = startIndex; i > endIndex; i-- )
-		{
-			// Update the stored id
-			unitIDs [ i ] = unitIDs [ i - 1 ];
-			instanceIDs [ i ] = instanceIDs [ i - 1 ];
-			unitIndexDic [ instanceIDs [ i - 1 ] ]++;
+		//// Shift each portrait and unit back one space to make room for the new portrait
+		//for ( int i = startIndex; i > endIndex; i-- )
+		//{
+		//	// Update the stored id
+		//	unitIDs [ i ] = unitIDs [ i - 1 ];
+		//	instanceIDs [ i ] = instanceIDs [ i - 1 ];
+		//	unitIndexDic [ instanceIDs [ i - 1 ] ]++;
 
-			// Set portrait
-			unitPortraits [ i ].gameObject.SetActive ( true );
-			//unitPortraits [ i ].SetUnit ( unitIDs [ i - 1 ], unitPortraits [ i - 1 ].icon.sprite, unitPortraits [ i - 1 ].teamColor );
-			unitPortraits [ i ].EnableToggle ( unitPortraits [ i - 1 ].IsEnabled );
+		//	// Set portrait
+		//	unitPortraits [ i ].gameObject.SetActive ( true );
+		//	//unitPortraits [ i ].SetUnit ( unitIDs [ i - 1 ], unitPortraits [ i - 1 ].icon.sprite, unitPortraits [ i - 1 ].teamColor );
+		//	unitPortraits [ i ].EnableToggle ( unitPortraits [ i - 1 ].IsEnabled );
 
-			// Set status effect icons
-			CopyStatusEffects ( statusEffects [ i - 1 ], statusEffects [ i ] );
-		}
+		//	// Set status effect icons
+		//	CopyStatusEffects ( statusEffects [ i - 1 ], statusEffects [ i ] );
+		//}
 
-		// Store the ids of the new unit
-		unitIDs [ endIndex ] = newUnit.unitID;
-		instanceIDs [ endIndex ] = newUnit.instanceID;
-		unitIndexDic.Add ( newUnit.instanceID, endIndex );
+		//// Store the ids of the new unit
+		//unitIDs [ endIndex ] = newUnit.InstanceData.ID;
+		//instanceIDs [ endIndex ] = newUnit.InstanceID;
+		//unitIndexDic.Add ( newUnit.InstanceID, endIndex );
 
-		// Display portrait of the new unit
-		unitPortraits [ endIndex ].SetUnit ( newUnit.unitID, newUnit.displaySprite, Util.TeamColor ( newUnit.owner.Team ) );
+		//// Display portrait of the new unit
+		//unitPortraits [ endIndex ].SetUnit ( newUnit.InstanceData.ID, newUnit.displaySprite, Util.TeamColor ( newUnit.owner.Team ) );
 
-		// Display status effects of the new unit
-		UpdateStatusEffects ( newUnit.instanceID, newUnit.status );
+		//// Display status effects of the new unit
+		//UpdateStatusEffects ( newUnit.InstanceID, newUnit.Status );
 	}
 
 	/// <summary>
@@ -182,43 +190,43 @@ public class PlayerHUD : MonoBehaviour
 	/// <param name="id"> The instance ID of the unit whose portrait is being removed. </param>
 	public void RemovePortrait ( int id )
 	{
-		// Shift each portrait and unit forward one space to adjust for the removed portrait
-		for ( int i = unitIndexDic [ id ]; i < unitPortraits.Length; i++ )
-		{
-			// Check for an exist unit
-			if ( i + 1 < unitPortraits.Length && unitIDs [ i + 1 ] != MatchSettings.NO_UNIT )
-			{
-				// Update the stored id
-				unitIDs [ i ] = unitIDs [ i + 1 ];
-				instanceIDs [ i ] = instanceIDs [ i + 1 ];
-				unitIndexDic [ instanceIDs [ i + 1 ] ]--;
+		//// Shift each portrait and unit forward one space to adjust for the removed portrait
+		//for ( int i = unitIndexDic [ id ]; i < unitPortraits.Length; i++ )
+		//{
+		//	// Check for an exist unit
+		//	if ( i + 1 < unitPortraits.Length && unitIDs [ i + 1 ] != MatchSettings.NO_UNIT )
+		//	{
+		//		// Update the stored id
+		//		unitIDs [ i ] = unitIDs [ i + 1 ];
+		//		instanceIDs [ i ] = instanceIDs [ i + 1 ];
+		//		unitIndexDic [ instanceIDs [ i + 1 ] ]--;
 
-				// Set portrait
-				//unitPortraits [ i ].SetUnit ( unitIDs [ i + 1 ], unitPortraits [ i + 1 ].icon.sprite, unitPortraits [ i + 1 ].teamColor );
-				unitPortraits [ i ].EnableToggle ( unitPortraits [ i + 1 ].IsEnabled );
+		//		// Set portrait
+		//		//unitPortraits [ i ].SetUnit ( unitIDs [ i + 1 ], unitPortraits [ i + 1 ].icon.sprite, unitPortraits [ i + 1 ].teamColor );
+		//		unitPortraits [ i ].EnableToggle ( unitPortraits [ i + 1 ].IsEnabled );
 
-				// Set status effect icons
-				CopyStatusEffects ( statusEffects [ i + 1 ], statusEffects [ i ] );
-			}
-			else
-			{
-				// Update the stored id to be nothing
-				unitIDs [ i ] = MatchSettings.NO_UNIT;
-				instanceIDs [ i ] = MatchSettings.NO_UNIT;
+		//		// Set status effect icons
+		//		CopyStatusEffects ( statusEffects [ i + 1 ], statusEffects [ i ] );
+		//	}
+		//	else
+		//	{
+		//		// Update the stored id to be nothing
+		//		unitIDs [ i ] = MatchSettings.NO_UNIT;
+		//		instanceIDs [ i ] = MatchSettings.NO_UNIT;
 
-				// Hide the empty portrait
-				unitPortraits [ i ].gameObject.SetActive ( false );
+		//		// Hide the empty portrait
+		//		unitPortraits [ i ].gameObject.SetActive ( false );
 
-				// Hide the status effects
-				ClearStatusEffects ( statusEffects [ i ] );
+		//		// Hide the status effects
+		//		ClearStatusEffects ( statusEffects [ i ] );
 
-				// The portrait removal is now complete
-				break;
-			}
-		}
+		//		// The portrait removal is now complete
+		//		break;
+		//	}
+		//}
 
-		// Remove the instance id from the dictionary
-		unitIndexDic.Remove ( id );
+		//// Remove the instance id from the dictionary
+		//unitIndexDic.Remove ( id );
 	}
 
 	/// <summary>
@@ -229,20 +237,20 @@ public class PlayerHUD : MonoBehaviour
 	public void UpdateStatusEffects ( int id, StatusEffects status )
 	{
 		// Update each status effect icon
-		for ( int i = 0; i < statusEffects [ unitIndexDic [ id ] ].statusIcons.Length; i++ )
+		for ( int i = 0; i < instanceHUDs [ id ].StatusIcons.Length; i++ )
 		{
 			// Check for status effect
 			if ( i < status.effects.Count )
 			{
 				// Display status effect
-				statusEffects [ unitIndexDic [ id ] ].statusIcons [ i ].gameObject.SetActive ( true );
-				statusEffects [ unitIndexDic [ id ] ].statusIcons [ i ].sprite = status.effects [ i ].info.icon;
-				statusEffects [ unitIndexDic [ id ] ].statusIcons [ i ].color = Util.TeamColor ( status.effects [ i ].info.caster.owner.Team );
+				instanceHUDs [ id ].StatusIcons [ i ].gameObject.SetActive ( true );
+				instanceHUDs [ id ].StatusIcons [ i ].sprite = status.effects [ i ].info.icon;
+				instanceHUDs [ id ].StatusIcons [ i ].color = Util.TeamColor ( status.effects [ i ].info.caster.owner.Team );
 			}
 			else
 			{
 				// Hide icon
-				statusEffects [ unitIndexDic [ id ] ].statusIcons [ i ].gameObject.SetActive ( false );
+				instanceHUDs [ id ].StatusIcons [ i ].gameObject.SetActive ( false );
 			}
 		}
 	}
@@ -254,12 +262,12 @@ public class PlayerHUD : MonoBehaviour
 	/// <summary>
 	/// Hides all status effect icons.
 	/// </summary>
-	/// <param name="bar"> The status effects bar being cleared of icons. </param>
-	private void ClearStatusEffects ( StatusEffectsBar bar )
+	/// <param name="hud"> The status effects bar being cleared of icons. </param>
+	private void ClearStatusEffects ( PlayerUnitHUD hud )
 	{
 		// Hide each status effect icon
-		for ( int i = 0; i < bar.statusIcons.Length; i++ )
-			bar.statusIcons [ i ].gameObject.SetActive ( false );
+		for ( int i = 0; i < hud.StatusIcons.Length; i++ )
+			hud.StatusIcons [ i ].gameObject.SetActive ( false );
 	}
 
 	/// <summary>
@@ -267,15 +275,15 @@ public class PlayerHUD : MonoBehaviour
 	/// </summary>
 	/// <param name="from"> The status effect icons being copied from. </param>
 	/// <param name="to"> The status effect icons being copied to. </param>
-	private void CopyStatusEffects ( StatusEffectsBar from, StatusEffectsBar to )
+	private void CopyStatusEffects ( PlayerUnitHUD from, PlayerUnitHUD to )
 	{
 		// Copy each status effect
-		for ( int i = 0; i < to.statusIcons.Length; i++ )
+		for ( int i = 0; i < to.StatusIcons.Length; i++ )
 		{
 			// Copy status effect icon
-			to.statusIcons [ i ].gameObject.SetActive ( from.statusIcons [ i ].gameObject.activeSelf );
-			to.statusIcons [ i ].sprite = from.statusIcons [ i ].sprite;
-			to.statusIcons [ i ].color = from.statusIcons [ i ].color;
+			to.StatusIcons [ i ].gameObject.SetActive ( from.StatusIcons [ i ].gameObject.activeSelf );
+			to.StatusIcons [ i ].sprite = from.StatusIcons [ i ].sprite;
+			to.StatusIcons [ i ].color = from.StatusIcons [ i ].color;
 		}
 	}
 

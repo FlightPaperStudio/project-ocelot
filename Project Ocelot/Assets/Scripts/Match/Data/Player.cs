@@ -50,7 +50,7 @@ public class Player : MonoBehaviour
 
 	public TeamColor Team;
 	public Direction TeamDirection;
-	public int [ ] specialIDs;
+	//public int [ ] specialIDs;
 	public StartArea startArea;
 	public List<UnitSettingData> Units = new List<UnitSettingData> ( );
 	public List<Unit> UnitInstances = new List<Unit> ( );

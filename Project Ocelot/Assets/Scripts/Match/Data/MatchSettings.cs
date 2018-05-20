@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public static class MatchSettings 
@@ -388,6 +389,74 @@ public static class MatchSettings
 		return pawn;
 	}
 
+	/// <summary>
+	/// Assigns each player the exact same units and formation for a Mirror Match.
+	/// </summary>
+	public static void SetMirrorUnits ( )
+	{
+		// Get a list of available heroes and formations
+		List<UnitSettingData> availableHeroes = unitSettings.Where ( x => x.IsEnabled && ( x.Role == UnitData.UnitRole.OFFENSE || x.Role == UnitData.UnitRole.DEFENSE || x.Role == UnitData.UnitRole.SUPPORT ) ).ToList ( );
+		List<int> availableFormations = new List<int> { 1, 2, 3, 4, 5 };
+
+		// Store the units and formations
+		List<int> unitIDs = new List<int> ( );
+		List<int> formation = new List<int> ( );
+
+		// Set the number of slots
+		int slotCounter = 5;
+
+		// Get the number of heroes per team
+		for ( int i = 0; i < HeroesPerTeam; i++ )
+		{
+			// Get the index of a random hero
+			int heroIndex = Random.Range ( 0, availableHeroes.Count );
+
+			// Get the index of a random formation
+			int formationIndex = Random.Range ( 0, availableFormations.Count );
+			Debug.Log ( "Hero: " + availableHeroes [ heroIndex ].UnitName + " Formation: " + availableFormations [ formationIndex ] );
+			// Add unit and formation
+			unitIDs.Add ( availableHeroes [ heroIndex ].ID );
+			formation.Add ( availableFormations [ formationIndex ] );
+
+			// Decrement slots
+			slotCounter -= availableHeroes [ heroIndex ].Slots;
+
+			// Remove unit and formation from availability
+			if ( HeroLimit )
+				availableHeroes.RemoveAt ( heroIndex );
+			availableFormations.RemoveAt ( formationIndex );
+
+			// Remove any heroes who are over the slot limit
+			availableHeroes = availableHeroes.Where ( x => x.Slots <= slotCounter ).ToList ( );
+		}
+
+		// Get formations for the remaining pawns
+		for ( int i = 0; i < slotCounter; i++ )
+		{
+			// Get the index of a random formation
+			int formationIndex = Random.Range ( 0, availableFormations.Count );
+			Debug.Log ( "Pawn Formation: " + availableFormations [ formationIndex ] );
+			// Add formation
+			formation.Add ( availableFormations [ formationIndex ] );
+
+			// Remove formation from availability
+			availableFormations.RemoveAt ( formationIndex );
+		}
+
+		// Set units to teams
+		for ( int i = 0; i < Players.Count; i++ )
+		{
+			// Add units
+			for ( int j = 0; j < formation.Count; j++ )
+			{
+				UnitSettingData unit = j < unitIDs.Count ? GetHero ( unitIDs [ j ] ) : GetPawn ( );
+				Players [ i ].Units.Add ( unit );
+				Players [ i ].UnitFormation.Add ( unit, formation [ j ] );
+				Debug.Log ( "Adding " + unit.UnitName + " at postion " + formation [ j ] );
+			}
+		}
+	}
+
 	#endregion // Public Static Functions
 
 	#region Private Static Functions
@@ -505,6 +574,7 @@ public static class MatchSettings
 
 		// Add player settings
 		for ( int i = 0; i < playerTotal; i++ )
+		{
 			Players.Add ( new PlayerSettings
 			{
 				PlayerName = "Player " + ( i + 1 ).ToString ( ),
@@ -513,6 +583,7 @@ public static class MatchSettings
 				TeamDirection = GetPlayerDirection ( i + 1 ),
 				Control = Player.PlayerControl.LOCAL_PLAYER
 			} );
+		}
 	}
 
 	/// <summary>
@@ -523,28 +594,24 @@ public static class MatchSettings
 	private static Player.Direction GetPlayerDirection ( int turnOrder )
 	{
 		// Check match type
-		switch ( Type )
+		if ( Type == MatchType.Classic || Type == MatchType.CustomClassic || Type == MatchType.Mirror || Type == MatchType.CustomMirror )
 		{
-		case MatchType.Classic:
-		case MatchType.CustomClassic:
-		case MatchType.Mirror:
-		case MatchType.CustomMirror:
 			if ( turnOrder == 1 )
 				return Player.Direction.LEFT_TO_RIGHT;
 			else if ( turnOrder == 2 )
 				return Player.Direction.RIGHT_TO_LEFT;
-			break;
-		case MatchType.Ladder:
-		case MatchType.CustomLadder:
+		}
+		else if ( Type == MatchType.Ladder || Type == MatchType.CustomLadder )
+		{
 			if ( turnOrder == 1 )
 				return Player.Direction.LEFT_TO_RIGHT;
 			else if ( turnOrder == 2 )
 				return Player.Direction.TOP_RIGHT_TO_BOTTOM_LEFT;
 			else if ( turnOrder == 3 )
 				return Player.Direction.BOTTOM_RIGHT_TO_TOP_LEFT;
-			break;
-		case MatchType.Rumble:
-		case MatchType.CustomRumble:
+		}
+		else if ( Type == MatchType.Rumble || Type == MatchType.CustomRumble )
+		{
 			if ( turnOrder == 1 )
 				return Player.Direction.LEFT_TO_RIGHT;
 			else if ( turnOrder == 2 )
@@ -557,7 +624,6 @@ public static class MatchSettings
 				return Player.Direction.BOTTOM_RIGHT_TO_TOP_LEFT;
 			else if ( turnOrder == 6 )
 				return Player.Direction.BOTTOM_LEFT_TO_TOP_RIGHT;
-			break;
 		}
 
 		// Return player 1 by default

@@ -111,18 +111,18 @@ public class TurnTimer : MonoBehaviour
 		if ( GM.IsStartOfTurn )
 		{
 			// Create list of possible units
-			List<Unit> units = GM.CurrentPlayer.UnitInstances.FindAll ( x => x.moveList.Count > 0 );
+			List<Unit> units = GM.CurrentPlayer.UnitInstances.FindAll ( x => x.MoveList.Count > 0 );
 
 			// Select a random unit
 			int unitIndex = Random.Range ( 0, units.Count );
 			Unit unit = units [ unitIndex ];
 
 			// Create list of possible moves
-			List<MoveData> moves = unit.moveList.FindAll ( x => x.Prerequisite == null );
+			List<MoveData> moves = unit.MoveList.FindAll ( x => x.Prerequisite == null );
 
 			// Select a random move
 			int moveIndex = Random.Range ( 0, moves.Count );
-			MoveData move = unit.moveList [ moveIndex ];
+			MoveData move = unit.MoveList [ moveIndex ];
 
 			// Clear board
 			GM.Board.ResetTiles ( );

@@ -101,12 +101,6 @@ public class TeamSelectionMenu : Menu
 	[SerializeField]
 	private GameObject confirmPanel;
 
-	//public TextMeshProUGUI teamName;
-	//public TeamSlotMeter slotMeter;
-	//public HeroCard [ ] cards;
-	
-	//public UnitPortrait [ ] heroPortraits;
-
 	#endregion // UI Elements
 
 	#region Menu Data
@@ -121,24 +115,7 @@ public class TeamSelectionMenu : Menu
 	private int confirmedHeroesCounter;
 	private int slotDeficitCounter;
 
-	//private int selectedHeroID;
-	//private UnitPortrait selectedPortrait;
-	
-	//private int heroTotal;
-	//private int disabledCardIndex;
-	//private List<Tween> slotAnimations = new List<Tween> ( );
-	//private Color32 slotColor = new Color32 ( 255, 210, 75, 255 );
-
 	#endregion // Menu Data
-
-	#region Player Data
-
-	//private PlayerSettings player;
-
-	#endregion // Player Data
-
-	// HACK
-	//public Sprite [ ] icons;
 
 	#region Menu Override Functions
 
@@ -180,59 +157,6 @@ public class TeamSelectionMenu : Menu
 
 		// Display prompt
 		setupManager.Splash.Slide ( "<size=75%>" + setupManager.CurrentPlayer.PlayerName + "</size>\n<color=white>Team Selection", Util.TeamColor ( setupManager.CurrentPlayer.Team ), true );
-
-		//// Open the menu
-		//base.OpenMenu ( closeParent );
-		//selectPanel.SetActive ( true );
-		//confirmPanel.SetActive ( false );
-
-		//// Set the player
-		//player = values [ 0 ] as PlayerSettings;
-
-		//// Display team name
-		//teamName.text = player.PlayerName;
-		//teamName.color = Util.TeamColor ( player.Team );
-
-		//// Reset resource meter to only display on slot for the Leader unit
-		//slotMeter.SetMeter ( 1 );
-
-		//// Set the total number of heroes to be selected
-		//heroTotal = MatchSettings.teamSize;
-
-		//// Start hero selection from the beginning
-		//heroIndex = 0;
-		//disabledCardIndex = slotMeter.TotalSlots - heroTotal - 1;
-
-		//// Display cards for the number of heroes to be selected
-		//for ( int i = 0; i < cards.Length; i++ )
-		//{
-		//	// Hide excess cards
-		//	cards [ i ].gameObject.SetActive ( i < heroTotal );
-
-		//	// Set displayed cards
-		//	if ( i < heroTotal )
-		//	{
-		//		// Set card color
-		//		cards [ i ].SetTeamColor ( Util.TeamColor ( player.Team ) );
-
-		//		// Set cards to unselected
-		//		cards [ i ].DisplayCardWithoutHero ( );
-		//		if ( i == 0 )
-		//			cards [ i ].SetControls ( HeroCard.CardControls.RANDOM );
-		//		else
-		//			cards [ i ].SetControls ( HeroCard.CardControls.NONE );
-		//	}
-		//}
-
-		//// Set hero select buttons
-		//for ( int i = 0; i < heroPortraits.Length; i++ )
-		//	heroPortraits [ i ].SetUnit ( i + 1, icons [ i ], Util.TeamColor ( player.Team ) );
-
-		//// Start by selecting a random hero
-		//SelectRandomUnit ( false );
-
-		//// Display prompt
-		//setupManager.splash.Slide ( "<size=75%>" + player.PlayerName + "</size>\n<color=white>Team Selection", Util.TeamColor ( player.Team ), true );
 	}
 
 	#endregion // Menu Override Functions
@@ -287,29 +211,6 @@ public class TeamSelectionMenu : Menu
 			// Preview the amount of slots the unit would add
 			setupManager.SlotMeter.PreviewSlots ( selectedHero.Slots );
 		}
-
-		//// Check if hero is enabled
-		//if ( heroPortraits [ index ].IsEnabled )
-		//{
-		//	// Check for previously selected buttons
-		//	if ( selectedPortrait != null && selectedPortrait != heroPortraits [ index ] )
-		//	{
-		//		// Reset the button
-		//		selectedPortrait.SelectToggle ( false );
-		//	}
-
-		//	// Store current hero ID
-		//	selectedHeroID = index + 1;
-
-		//	// Store selected button
-		//	selectedPortrait = heroPortraits [ index ];
-
-		//	// Display hero in card
-		//	cards [ heroIndex ].SetHero ( selectedHeroID, icons [ index ] );
-
-		//	// Update slot meter
-		//	slotMeter.PreviewSlots ( HeroInfo.GetHeroByID ( selectedHeroID ).Slots );
-		//}
 	}
 
 	/// <summary>
@@ -330,17 +231,6 @@ public class TeamSelectionMenu : Menu
 		// Check if the random hero should be confirmed as well
 		if ( confirmSelection )
 			ConfirmUnit ( );
-
-
-		//// Get random hero from the enabled buttons
-		//UnitPortrait [ ] enabledPortraits = heroPortraits.Where ( x => x.IsEnabled ).ToArray ( );
-		//UnitPortrait randomPortrait = enabledPortraits [ Random.Range ( 0, enabledPortraits.Length ) ];
-
-		//// Select button
-		//randomPortrait.MouseClick ( );
-		//SelectUnit ( System.Array.IndexOf ( heroPortraits, randomPortrait ) );
-		//if ( confirmSelection )
-		//	ConfirmUnit ( );
 	}
 
 	/// <summary>
@@ -367,6 +257,11 @@ public class TeamSelectionMenu : Menu
 		// Set the cards for the next selection
 		SetCardState ( confirmedHeroesCounter );
 
+		// Set the portraits of any heros over the limit as unavailable
+		for ( int i = 0; i < portraits.Length; i++ )
+			if ( MatchSettings.GetUnitData ( portraits [ i ].UnitID ).Slots + setupManager.SlotMeter.FilledSlots > setupManager.SlotMeter.TotalSlots )
+				portraits [ i ].Portrait.IsAvailable = false;
+
 		// Check if more heroes can be selected
 		if ( confirmedHeroesCounter < MatchSettings.HeroesPerTeam && confirmedHeroesCounter < cards.Length - slotDeficitCounter )
 		{
@@ -376,77 +271,15 @@ public class TeamSelectionMenu : Menu
 		else
 		{
 			// Hide unselect card from the last card
-			cards [ confirmedHeroesCounter - 1 ].UnselectButton.gameObject.SetActive ( false );
-
-			// Set the portraits of any heros over the limit as unavailable
-			for ( int i = 0; i < portraits.Length; i++ )
-				if ( MatchSettings.GetUnitData ( portraits [ i ].UnitID ).Slots + setupManager.SlotMeter.FilledSlots > setupManager.SlotMeter.TotalSlots - slotDeficitCounter )
-					portraits [ i ].Portrait.IsAvailable = false;
+			SetCardState ( confirmedHeroesCounter - 1 );
+			cards [ confirmedHeroesCounter - 1 ].State = SelectionCards.CardState.SELECTED;
+			cards [ confirmedHeroesCounter - 2 ].State = SelectionCards.CardState.SELECTED;
 
 			// Display confirmation button
 			selectPanel.SetActive ( false );
 			confirmPanel.SetActive ( true );
 
 		}
-
-		//// Add hero to the team
-		//player.heroIDs.Add ( selectedHeroID );
-
-		//// Update slot meter
-		//slotMeter.SetMeter ( slotMeter.FilledSlots + slotMeter.PreviewedSlots );
-
-		//// Increment hero index
-		//confirmedHeroesCounter++;
-
-		//// Check if hero stacking is enabled
-		//if ( !MatchSettings.stacking )
-		//{
-		//	// Disable hero button
-		//	selectedPortrait.SelectToggle ( false );
-		//	selectedPortrait.EnableToggle ( false );
-		//	selectedPortrait = null;
-		//}
-
-		//// Check the hero takes up multiple slots
-		//if ( HeroInfo.GetHeroByID ( selectedHeroID ).Slots > 1 )
-		//{
-		//	// Subtract the number of available slots
-		//	disabledCardIndex -= ( HeroInfo.GetHeroByID ( selectedHeroID ).Slots - 1 );
-
-		//	// Check if a hero slot was removed
-		//	if ( disabledCardIndex < 0 )
-		//	{
-		//		// Disable the hero card to indicate the loss of a hero slot
-		//		cards [ heroTotal + disabledCardIndex ].DisableCard ( );
-		//	}
-		//}
-
-		//// Update controls
-		//if ( confirmedHeroesCounter - 2 >= 0 )
-		//	cards [ confirmedHeroesCounter - 2 ].SetControls ( HeroCard.CardControls.NONE );
-		//if ( confirmedHeroesCounter < heroTotal && slotMeter.FilledSlots < slotMeter.TotalSlots )
-		//	cards [ confirmedHeroesCounter - 1 ].SetControls ( HeroCard.CardControls.UNDO );
-		//else
-		//	cards [ confirmedHeroesCounter - 1 ].SetControls ( HeroCard.CardControls.NONE );
-		//if ( confirmedHeroesCounter < heroTotal && slotMeter.FilledSlots < slotMeter.TotalSlots )
-		//	cards [ confirmedHeroesCounter ].SetControls ( HeroCard.CardControls.RANDOM );
-
-		//// Check if hero selection is complete
-		//if ( confirmedHeroesCounter < heroTotal && slotMeter.FilledSlots < slotMeter.TotalSlots )
-		//{
-		//	// Disable heroes that won't fit within the team with the remaining resources
-		//	for ( int i = 0; i < heroPortraits.Length; i++ )
-		//		heroPortraits [ i ].EnableToggle ( heroPortraits [ i ].IsEnabled && slotMeter.FilledSlots + HeroInfo.list [ i ].Slots <= slotMeter.TotalSlots );
-
-		//	// Select next hero
-		//	SelectRandomUnit ( false );
-		//}
-		//else
-		//{
-		//	// Display confirmation panel
-		//	confirmPanel.SetActive ( true );
-		//	selectPanel.SetActive ( false );
-		//}
 	}
 
 	/// <summary>
@@ -479,69 +312,11 @@ public class TeamSelectionMenu : Menu
 
 		// Enable any portraits that were disabled for being over the limit from the previous hero
 		for ( int i = 0; i < portraits.Length; i++ )
-			if ( MatchSettings.GetUnitData ( portraits [ i ].UnitID ).Slots + setupManager.SlotMeter.FilledSlots <= setupManager.SlotMeter.TotalSlots - slotDeficitCounter && ( !MatchSettings.HeroLimit || ( MatchSettings.HeroLimit && !setupManager.CurrentPlayer.Units.Exists ( x => x.ID == portraits [ i ].UnitID ) ) ) )
+			if ( MatchSettings.GetUnitData ( portraits [ i ].UnitID ).Slots + setupManager.SlotMeter.FilledSlots <= setupManager.SlotMeter.TotalSlots && ( !MatchSettings.HeroLimit || ( MatchSettings.HeroLimit && !setupManager.CurrentPlayer.Units.Exists ( x => x.ID == portraits [ i ].UnitID ) ) ) )
 				portraits [ i ].Portrait.IsAvailable = true;
 
 		// Select previous hero
-		//portraits.First ( x => x.UnitID == previousHero.ID ).Portrait.IsAvailable = true;
 		SelectUnit ( System.Array.IndexOf ( portraits, portraits.First ( x => x.UnitID == previousHero.ID ) ) );
-		
-
-		//// Check if confirmation is being cancelled
-		//if ( confirmedHeroesCounter == heroTotal || slotMeter.FilledSlots == slotMeter.TotalSlots )
-		//{
-		//	// Display selection panel
-		//	selectPanel.SetActive ( true );
-		//	confirmPanel.SetActive ( false );
-		//}
-
-		//// Decrement hero index
-		//confirmedHeroesCounter--;
-
-		//// Store selected hero
-		//selectedHeroID = player.heroIDs [ confirmedHeroesCounter ];
-
-		//// Remove hero from player list
-		//player.heroIDs.Remove ( selectedHeroID );
-
-		//// Remove last hero from slot meter
-		//slotMeter.SetMeter ( slotMeter.FilledSlots - HeroInfo.GetHeroByID ( selectedHeroID ).Slots );
-
-		//// Check if the hero takes up multiples slots
-		//if ( HeroInfo.GetHeroByID ( selectedHeroID ).Slots > 1 )
-		//{
-		//	// Add the number of available slots
-		//	disabledCardIndex += ( HeroInfo.GetHeroByID ( selectedHeroID ).Slots - 1 );
-
-		//	// Check if a hero slot was added
-		//	if ( disabledCardIndex <= 0 )
-		//	{
-		//		// Enable the hero card to indicate the addition of a hero slot
-		//		cards [ heroTotal + ( disabledCardIndex - ( HeroInfo.GetHeroByID ( selectedHeroID ).Slots - 1 ) ) ].DisplayCardWithoutHero ( );
-		//	}
-		//}
-
-		//// Update cards and controls
-		//if ( confirmedHeroesCounter - 1 >= 0 )
-		//	cards [ confirmedHeroesCounter - 1 ].SetControls ( HeroCard.CardControls.UNDO );
-		//cards [ confirmedHeroesCounter ].SetControls ( HeroCard.CardControls.RANDOM );
-		//if ( confirmedHeroesCounter + 1 < heroTotal && slotMeter.FilledSlots + HeroInfo.GetHeroByID ( selectedHeroID ).Slots < slotMeter.TotalSlots )
-		//{
-		//	cards [ confirmedHeroesCounter + 1 ].DisplayCardWithoutHero ( );
-		//	cards [ confirmedHeroesCounter + 1 ].SetControls ( HeroCard.CardControls.NONE );
-		//}
-			
-
-		//// Enable any hero buttons that were removed from the last hero's selection
-		//for ( int i = 0; i < heroPortraits.Length; i++ )
-		//	heroPortraits [ i ].EnableToggle ( MatchSettings.heroSettings [ i ].selection && ( MatchSettings.stacking || !player.heroIDs.Contains ( HeroInfo.list [ i ].ID ) ) && slotMeter.FilledSlots + HeroInfo.list [ i ].Slots <= slotMeter.TotalSlots );
-
-		//// Enable previous hero button
-		//heroPortraits [ selectedHeroID - 1 ].EnableToggle ( true );
-
-		//// Select previous hero
-		//heroPortraits [ selectedHeroID - 1 ].MouseClick ( );
-		//SelectUnit ( selectedHeroID - 1 );
 	}
 
 	/// <summary>

@@ -76,7 +76,7 @@ public class HeroSettingSlideMenu : SlideMenu
 	{
 		// Set the enable ability setting
 		if ( customSettingsManager.HeroSettings [ heroIndex ].Ability1 != null )
-			customSettingsManager.HeroSettings [ heroIndex ].Ability1.IsEnabled = abilityControls [ 0 ].EnableAbilityCarousel.OptionIndex == 1;
+			customSettingsManager.HeroSettings [ heroIndex ].Ability1.IsEnabled = abilityControls [ 0 ].EnableAbilityCarousel.IsOptionTrue;
 	}
 
 	/// <summary>
@@ -133,7 +133,7 @@ public class HeroSettingSlideMenu : SlideMenu
 	{
 		// Set the enable ability setting
 		if ( customSettingsManager.HeroSettings [ heroIndex ].Ability2 != null )
-			customSettingsManager.HeroSettings [ heroIndex ].Ability2.IsEnabled = abilityControls [ 1 ].EnableAbilityCarousel.OptionIndex == 1;
+			customSettingsManager.HeroSettings [ heroIndex ].Ability2.IsEnabled = abilityControls [ 1 ].EnableAbilityCarousel.IsOptionTrue;
 	}
 
 	/// <summary>

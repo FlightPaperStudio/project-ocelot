@@ -7,17 +7,31 @@ public class Catapult : HeroUnit
 {
 	/// <summary>
 	///
-	/// Hero Ability Information
+	/// Hero 2 Unit Data
 	/// 
-	/// Ability 1: Catapult
-	/// Type: Special Ability
-	/// Default Duration: 2 Turns
-	/// Default Cooldown: 5 Turns
+	/// ID: 10
+	/// Name: Hero 2
+	/// Nickname: Catapult
+	/// Bio: ???
+	/// Finishing Move: ???
+	/// Role: Offense
+	/// Slots: 1
 	/// 
-	/// Ability 2: Grapple
-	/// Type: Command Ability
-	/// Default Duration: 2 Turns
-	/// Default Cooldown: 4 Turns
+	/// Ability 1
+	/// ID: 13
+	/// Name: Catapult
+	/// Description: Charges forward to KO any opponent in their path, becoming exhausted for a short period
+	/// Type: Special
+	/// Duration: 2 Turns
+	/// Cooldown: 5 Turns
+	/// 
+	/// Ability 2
+	/// ID: 14
+	/// Name: Grapple
+	/// Description: Grabs hold of a nearby opponent, leaving both immobilised for a short period
+	/// Type: Command
+	/// Duration: 2 Turns
+	/// Cooldown: 4 Turns
 	/// 
 	/// </summary>
 
@@ -30,6 +44,8 @@ public class Catapult : HeroUnit
 	private const string GRAPPLE_STATUS_PROMPT = "Grapple";
 	private const string GRAPPLE_TARGET_STATUS_PROMPT = "Restrained";
 
+	#region Public Unit Override Functions
+
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves available.
 	/// </summary>
@@ -37,10 +53,10 @@ public class Catapult : HeroUnit
 	{
 		// Clear previous move list
 		if ( prerequisite == null )
-			moveList.Clear ( );
+			MoveList.Clear ( );
 
 		// Check status effects
-		if ( status.CanMove )
+		if ( Status.CanMove )
 		{
 			// Store which tiles are to be ignored
 			IntPair back = GetBackDirection ( owner.TeamDirection );
@@ -56,7 +72,7 @@ public class Catapult : HeroUnit
 				if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
 				{
 					// Add as an available move
-					moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
+					MoveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
 				}
 				// Check if this unit can jump the neighboring tile
 				else if ( base.JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
@@ -77,7 +93,7 @@ public class Catapult : HeroUnit
 					}
 
 					// Add move to the move list
-					moveList.Add ( m );
+					MoveList.Add ( m );
 
 					// Find additional jumps
 					FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
@@ -86,76 +102,16 @@ public class Catapult : HeroUnit
 		}
 
 		// Get Catapult moves
-		if ( SpecialAvailabilityCheck ( CurrentAbility1, prerequisite ) )
+		if ( SpecialAvailabilityCheck ( InstanceData.Ability1, prerequisite ) )
 			GetCatapult ( t, GetBackDirection ( owner.TeamDirection ) );
 
 		// Get Grapple availability
-		CurrentAbility2.active = CommandAvailabilityCheck ( CurrentAbility2, prerequisite );
+		InstanceData.Ability2.IsAvailable = CommandAvailabilityCheck ( InstanceData.Ability2, prerequisite );
 	}
 
-	/// <summary>
-	/// Checks if the hero is capable of using a special ability.
-	/// Returns true if the special ability is available.
-	/// </summary>
-	protected override bool SpecialAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
-	{
-		// Check base conditions
-		if ( !base.SpecialAvailabilityCheck ( current, prerequisite ) )
-			return false;
+	#endregion // Public Unit Override Functions
 
-		// Check if any moves have been made
-		if ( prerequisite != null )
-			return false;
-
-		// Return that the ability is available
-		return true;
-	}
-
-	/// <summary>
-	/// Marks all tiles that this unit could charge to.
-	/// </summary>
-	private void GetCatapult ( Tile t, IntPair back )
-	{
-		// Check each neighboring tile
-		for ( int i = 0; i < t.neighbors.Length; i++ )
-		{
-			// Ignore tiles that would allow for backward movement
-			if ( i == back.FirstInt || i == back.SecondInt )
-				continue;
-
-			// Check if tile is available
-			if ( JumpTileCheck ( t.neighbors [ i ] ) && JumpTileCheck ( t.neighbors [ i ].neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ].neighbors [ i ], null ) )
-			{
-				// Check for available attacks
-				if ( ( t.neighbors [ i ].currentUnit != null && t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) ) || ( t.neighbors [ i ].neighbors [ i ].currentUnit != null && t.neighbors [ i ].neighbors [ i ].currentUnit.UnitAttackCheck ( this ) ) )
-				{
-					// Check if the first neighbor unit can be attacked but the second neighbor unit cannot
-					if ( ( t.neighbors [ i ].currentUnit != null && t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) ) && ( t.neighbors [ i ].neighbors [ i ].currentUnit == null || !t.neighbors [ i ].neighbors [ i ].currentUnit.UnitAttackCheck ( this ) ) )
-					{
-						// Add as an available special attack move
-						moveList.Add ( new MoveData ( t.neighbors [ i ].neighbors [ i ].neighbors [ i ], null, MoveData.MoveType.SPECIAL_ATTACK, i, t.neighbors [ i ] ) );
-					}
-					// Check if the second neighbor unit can be attacked but the first neighbor unit cannot
-					else if ( ( t.neighbors [ i ].currentUnit == null || !t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) ) && ( t.neighbors [ i ].neighbors [ i ].currentUnit != null && t.neighbors [ i ].neighbors [ i ].currentUnit.UnitAttackCheck ( this ) ) )
-					{
-						// Add as an available special attack move
-						moveList.Add ( new MoveData ( t.neighbors [ i ].neighbors [ i ].neighbors [ i ], null, MoveData.MoveType.SPECIAL_ATTACK, i, t.neighbors [ i ].neighbors [ i ] ) );
-					}
-					// Check if both neighbor units can be attacked
-					else if ( ( t.neighbors [ i ].currentUnit != null && t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) ) && ( t.neighbors [ i ].neighbors [ i ].currentUnit != null && t.neighbors [ i ].neighbors [ i ].currentUnit.UnitAttackCheck ( this ) ) )
-					{
-						// Add as an available special attack move
-						moveList.Add ( new MoveData ( t.neighbors [ i ].neighbors [ i ].neighbors [ i ], null, MoveData.MoveType.SPECIAL_ATTACK, i, t.neighbors [ i ], t.neighbors [ i ].neighbors [ i ] ) );
-					}
-				}
-				else
-				{
-					// Add as an available special move
-					moveList.Add ( new MoveData ( t.neighbors [ i ].neighbors [ i ].neighbors [ i ], null, MoveData.MoveType.SPECIAL, i ) );
-				}
-			}
-		}
-	}
+	#region Protected Unit Override Functions
 
 	/// <summary>
 	/// Determines if a tile can be jumped by this unit using the Catapult ability.
@@ -167,7 +123,7 @@ public class Catapult : HeroUnit
 		if ( t == null )
 			return false;
 
-		// Check fi the tile has a tile object blocking it
+		// Check if the tile has a tile object blocking it
 		if ( t.currentObject != null && !t.currentObject.canBeJumped )
 			return false;
 
@@ -175,95 +131,17 @@ public class Catapult : HeroUnit
 		return true;
 	}
 
-	/// <summary>
-	/// Uses the unit's special ability.
-	/// Override this function to call specific special ability functions for a hero unit.
-	/// </summary>
-	protected override void UseSpecial ( MoveData data )
-	{
-		// Create animation
-		Tween t = transform.DOMove ( data.Tile.transform.position, MOVE_ANIMATION_TIME * 3 )
-			.SetRecyclable ( )
-			.OnComplete ( () =>
-			{
-				// Start special ability cooldown
-				StartCooldown ( CurrentAbility1, Info.Ability1 );
+	#endregion // Protected Unit Override Functions
 
-				// Add status effect
-				status.AddStatusEffect ( abilitySprite1, CATAPULT_STATUS_PROMPT, this, CurrentAbility1.duration, StatusEffects.StatusType.CAN_MOVE );
-				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( instanceID, status );
-				GM.UI.unitHUD.UpdateStatusEffects ( );
-
-				// Set unit and tile data
-				SetUnitToTile ( data.Tile );
-			} );
-
-		// Add animation to queue
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
-	}
-
-	/// <summary>
-	/// Callback for when the duration of an ability has expired.
-	/// </summary>
-	protected override void OnDurationComplete ( AbilitySettings current )
-	{
-		// Check ability
-		if ( current == CurrentAbility2 && grappleTarget != null )
-		{
-			// End the grapple
-			EndGrapple ( );
-		}
-	}
-
-	/// <summary>
-	/// Checks if there adjacent unoccupied tiles available for the Self-Destruct/Recall Ability.
-	/// Returns true if at least one adjacent tile is unoccupied.
-	/// </summary>
-	protected override bool CommandAvailabilityCheck ( AbilitySettings current, MoveData prerequisite )
-	{
-		// Check base conditions
-		if ( !base.CommandAvailabilityCheck ( current, prerequisite ) )
-			return false;
-
-		// Check if target is available
-		if ( !GrappleCheck ( ) )
-			return false;
-
-		// Return that the ability is available
-		return true;
-	}
-
-	/// <summary>
-	/// Checks to see if an enemy unit is within range of and available to be targeted by the Grapple ability.
-	/// </summary>
-	private bool GrappleCheck ( )
-	{
-		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.TeamDirection );
-
-		// Check each neighboring tile
-		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
-		{
-			// Ignore tiles that would allow for backward movement
-			if ( i == back.FirstInt || i == back.SecondInt )
-				continue;
-
-			// Check for target
-			if ( currentTile.neighbors [ i ] != null && currentTile.neighbors [ i ].currentUnit != null && currentTile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
-				return true;
-		}
-
-		// Return that no targets were found
-		return false;
-	}
+	#region Public HeroUnit Override Functions
 
 	/// <summary>
 	/// Sets up the hero's command use.
 	/// </summary>
-	public override void StartCommand ( )
+	public override void StartCommand ( AbilityInstanceData ability )
 	{
 		// Clear the board
-		base.StartCommand ( );
+		base.StartCommand ( ability );
 
 		// Store which tiles are to be ignored
 		IntPair back = GetBackDirection ( owner.TeamDirection );
@@ -291,7 +169,7 @@ public class Catapult : HeroUnit
 			GM.UI.timer.PauseTimer ( );
 
 		// Hide cancel button
-		GM.UI.unitHUD.ability2.cancelButton.SetActive ( false );
+		GM.UI.unitHUD.HideCancelButton ( InstanceData.Ability2 );
 
 		// Clear board
 		GM.Board.ResetTiles ( );
@@ -316,15 +194,15 @@ public class Catapult : HeroUnit
 				Util.OrientSpriteToDirection ( currentGrappleDisplay, owner.TeamDirection );
 
 				// Start cooldown
-				StartCooldown ( CurrentAbility2, Info.Ability2 );
+				StartCooldown ( InstanceData.Ability2 );
 
 				// Apply hero's status effect
-				status.AddStatusEffect ( abilitySprite2, GRAPPLE_STATUS_PROMPT, this, CurrentAbility2.duration, StatusEffects.StatusType.CAN_MOVE, StatusEffects.StatusType.CAN_USE_ABILITY );
-				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( instanceID, status );
+				Status.AddStatusEffect ( InstanceData.Ability2.Icon, GRAPPLE_STATUS_PROMPT, this, InstanceData.Ability2.Duration, StatusEffects.StatusType.CAN_MOVE, StatusEffects.StatusType.CAN_USE_ABILITY );
+				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
 
 				// Apply target's status effect
-				grappleTarget.status.AddStatusEffect ( abilitySprite2, GRAPPLE_TARGET_STATUS_PROMPT, this, CurrentAbility2.duration, StatusEffects.StatusType.CAN_MOVE, StatusEffects.StatusType.CAN_BE_MOVED, StatusEffects.StatusType.CAN_USE_ABILITY );
-				GM.UI.matchInfoMenu.GetPlayerHUD ( grappleTarget ).UpdateStatusEffects ( grappleTarget.instanceID, grappleTarget.status );
+				grappleTarget.Status.AddStatusEffect ( InstanceData.Ability2.Icon, GRAPPLE_TARGET_STATUS_PROMPT, this, InstanceData.Ability2.Duration, StatusEffects.StatusType.CAN_MOVE, StatusEffects.StatusType.CAN_BE_MOVED, StatusEffects.StatusType.CAN_USE_ABILITY );
+				GM.UI.matchInfoMenu.GetPlayerHUD ( grappleTarget ).UpdateStatusEffects ( grappleTarget.InstanceID, grappleTarget.Status );
 
 				// Set target's KO delegate for interupts
 				grappleTarget.koDelegate += EndGrappleDelegate;
@@ -356,9 +234,163 @@ public class Catapult : HeroUnit
 			EndGrapple ( );
 
 			// Remove the hero's status effect
-			status.RemoveStatusEffect ( abilitySprite2, GRAPPLE_STATUS_PROMPT, this, StatusEffects.StatusType.CAN_MOVE );
-			GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( instanceID, status );
+			Status.RemoveStatusEffect ( InstanceData.Ability2.Icon, GRAPPLE_STATUS_PROMPT, this, StatusEffects.StatusType.CAN_MOVE );
+			GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
 		}
+	}
+
+	#endregion // Public HeroUnit Override Functions
+
+	#region Protected HeroUnit Override Functions
+
+	/// <summary>
+	/// Checks if the hero is capable of using a special ability.
+	/// Returns true if the special ability is available.
+	/// </summary>
+	protected override bool SpecialAvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
+	{
+		// Check base conditions
+		if ( !base.SpecialAvailabilityCheck ( ability, prerequisite ) )
+			return false;
+
+		// Check if any moves have been made
+		if ( prerequisite != null )
+			return false;
+
+		// Return that the ability is available
+		return true;
+	}
+
+	/// <summary>
+	/// Checks if there adjacent unoccupied tiles available for the Grapple Ability.
+	/// Returns true if at least one enemy occupies an adjacent tile.
+	/// </summary>
+	protected override bool CommandAvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
+	{
+		// Check base conditions
+		if ( !base.CommandAvailabilityCheck ( ability, prerequisite ) )
+			return false;
+
+		// Check if target is available
+		if ( !GrappleCheck ( ) )
+			return false;
+
+		// Return that the ability is available
+		return true;
+	}
+
+	/// <summary>
+	/// Uses the unit's special ability.
+	/// Override this function to call specific special ability functions for a hero unit.
+	/// </summary>
+	protected override void UseSpecial ( MoveData data )
+	{
+		// Create animation
+		Tween t = transform.DOMove ( data.Tile.transform.position, MOVE_ANIMATION_TIME * 3 )
+			.SetRecyclable ( )
+			.OnComplete ( ( ) =>
+			{
+				// Start special ability cooldown
+				StartCooldown ( InstanceData.Ability1 );
+
+				// Add status effect
+				Status.AddStatusEffect ( InstanceData.Ability1.Icon, CATAPULT_STATUS_PROMPT, this, InstanceData.Ability1.Duration, StatusEffects.StatusType.CAN_MOVE );
+				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
+				GM.UI.unitHUD.UpdateStatusEffects ( );
+
+				// Set unit and tile data
+				SetUnitToTile ( data.Tile );
+			} );
+
+		// Add animation to queue
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+	}
+
+	/// <summary>
+	/// Callback for when the duration of an ability has expired.
+	/// </summary>
+	protected override void OnDurationComplete ( AbilityInstanceData ability )
+	{
+		// Check ability
+		if ( ability == InstanceData.Ability2 && grappleTarget != null )
+		{
+			// End the grapple
+			EndGrapple ( );
+		}
+	}
+
+	#endregion // Protected HeroUnit Override Functions
+
+	#region Private Functions
+
+	/// <summary>
+	/// Marks all tiles that this unit could charge to.
+	/// </summary>
+	private void GetCatapult ( Tile t, IntPair back )
+	{
+		// Check each neighboring tile
+		for ( int i = 0; i < t.neighbors.Length; i++ )
+		{
+			// Ignore tiles that would allow for backward movement
+			if ( i == back.FirstInt || i == back.SecondInt )
+				continue;
+
+			// Check if tile is available
+			if ( JumpTileCheck ( t.neighbors [ i ] ) && JumpTileCheck ( t.neighbors [ i ].neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ].neighbors [ i ], null ) )
+			{
+				// Check for available attacks
+				if ( ( t.neighbors [ i ].currentUnit != null && t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) ) || ( t.neighbors [ i ].neighbors [ i ].currentUnit != null && t.neighbors [ i ].neighbors [ i ].currentUnit.UnitAttackCheck ( this ) ) )
+				{
+					// Check if the first neighbor unit can be attacked but the second neighbor unit cannot
+					if ( ( t.neighbors [ i ].currentUnit != null && t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) ) && ( t.neighbors [ i ].neighbors [ i ].currentUnit == null || !t.neighbors [ i ].neighbors [ i ].currentUnit.UnitAttackCheck ( this ) ) )
+					{
+						// Add as an available special attack move
+						MoveList.Add ( new MoveData ( t.neighbors [ i ].neighbors [ i ].neighbors [ i ], null, MoveData.MoveType.SPECIAL_ATTACK, i, t.neighbors [ i ] ) );
+					}
+					// Check if the second neighbor unit can be attacked but the first neighbor unit cannot
+					else if ( ( t.neighbors [ i ].currentUnit == null || !t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) ) && ( t.neighbors [ i ].neighbors [ i ].currentUnit != null && t.neighbors [ i ].neighbors [ i ].currentUnit.UnitAttackCheck ( this ) ) )
+					{
+						// Add as an available special attack move
+						MoveList.Add ( new MoveData ( t.neighbors [ i ].neighbors [ i ].neighbors [ i ], null, MoveData.MoveType.SPECIAL_ATTACK, i, t.neighbors [ i ].neighbors [ i ] ) );
+					}
+					// Check if both neighbor units can be attacked
+					else if ( ( t.neighbors [ i ].currentUnit != null && t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) ) && ( t.neighbors [ i ].neighbors [ i ].currentUnit != null && t.neighbors [ i ].neighbors [ i ].currentUnit.UnitAttackCheck ( this ) ) )
+					{
+						// Add as an available special attack move
+						MoveList.Add ( new MoveData ( t.neighbors [ i ].neighbors [ i ].neighbors [ i ], null, MoveData.MoveType.SPECIAL_ATTACK, i, t.neighbors [ i ], t.neighbors [ i ].neighbors [ i ] ) );
+					}
+				}
+				else
+				{
+					// Add as an available special move
+					MoveList.Add ( new MoveData ( t.neighbors [ i ].neighbors [ i ].neighbors [ i ], null, MoveData.MoveType.SPECIAL, i ) );
+				}
+			}
+		}
+	}
+
+	/// <summary>
+	/// Checks to see if an enemy unit is within range of and available to be targeted by the Grapple ability.
+	/// </summary>
+	private bool GrappleCheck ( )
+	{
+		// Store which tiles are to be ignored
+		IntPair back = GetBackDirection ( owner.TeamDirection );
+
+		// Check each neighboring tile
+		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
+		{
+			// Ignore tiles that would allow for backward movement
+			if ( i == back.FirstInt || i == back.SecondInt )
+				continue;
+
+			// Check for target
+			if ( currentTile.neighbors [ i ] != null && currentTile.neighbors [ i ].currentUnit != null && currentTile.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
+				return true;
+		}
+
+		// Return that no targets were found
+		return false;
 	}
 
 	/// <summary>
@@ -381,8 +413,8 @@ public class Catapult : HeroUnit
 			.OnComplete ( ( ) =>
 			{
 				// Remove the target's status effect
-				grappleTarget.status.RemoveStatusEffect ( abilitySprite2, GRAPPLE_TARGET_STATUS_PROMPT, this, StatusEffects.StatusType.CAN_MOVE, StatusEffects.StatusType.CAN_BE_MOVED, StatusEffects.StatusType.CAN_USE_ABILITY );
-				GM.UI.matchInfoMenu.GetPlayerHUD ( grappleTarget ).UpdateStatusEffects ( grappleTarget.instanceID, grappleTarget.status );
+				grappleTarget.Status.RemoveStatusEffect ( InstanceData.Ability2.Icon, GRAPPLE_TARGET_STATUS_PROMPT, this, StatusEffects.StatusType.CAN_MOVE, StatusEffects.StatusType.CAN_BE_MOVED, StatusEffects.StatusType.CAN_USE_ABILITY );
+				GM.UI.matchInfoMenu.GetPlayerHUD ( grappleTarget ).UpdateStatusEffects ( grappleTarget.InstanceID, grappleTarget.Status );
 
 				// Remove target's KO delegate
 				grappleTarget.koDelegate -= EndGrappleDelegate;
@@ -407,7 +439,9 @@ public class Catapult : HeroUnit
 		EndGrapple ( );
 
 		// Remove the hero's status effect
-		status.RemoveStatusEffect ( abilitySprite2, GRAPPLE_STATUS_PROMPT, this, StatusEffects.StatusType.CAN_MOVE );
-		GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( instanceID, status );
+		Status.RemoveStatusEffect ( InstanceData.Ability2.Icon, GRAPPLE_STATUS_PROMPT, this, StatusEffects.StatusType.CAN_MOVE );
+		GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
 	}
+
+	#endregion // Private Functions
 }

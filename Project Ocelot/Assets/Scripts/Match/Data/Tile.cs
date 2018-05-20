@@ -72,7 +72,7 @@ public class Tile : MonoBehaviour
 	private void HighlightAttacks ( Tile t, TileState state, bool setTile = false )
 	{
 		// Get a list of moves for this tile
-		List<MoveData> moves = GM.SelectedUnit.moveList.FindAll ( x => x.Tile == t && x.Prerequisite == GM.SelectedMove );
+		List<MoveData> moves = GM.SelectedUnit.MoveList.FindAll ( x => x.Tile == t && x.Prerequisite == GM.SelectedMove );
 
 		// Highlight each attack tile
 		foreach ( MoveData m in moves )
@@ -207,7 +207,7 @@ public class Tile : MonoBehaviour
 			PointerEventData pointerEventData = data as PointerEventData;
 			if ( pointerEventData.button == PointerEventData.InputButton.Left )
 			{
-				MoveData md = GM.SelectedUnit.moveList.Find ( x => x.Tile == this && x.Prerequisite == GM.SelectedMove && ( x.Type != MoveData.MoveType.SPECIAL && x.Type != MoveData.MoveType.SPECIAL_ATTACK ) );
+				MoveData md = GM.SelectedUnit.MoveList.Find ( x => x.Tile == this && x.Prerequisite == GM.SelectedMove && ( x.Type != MoveData.MoveType.SPECIAL && x.Type != MoveData.MoveType.SPECIAL_ATTACK ) );
 				switch ( md.Type )
 				{
 				case MoveData.MoveType.MOVE:
@@ -226,7 +226,7 @@ public class Tile : MonoBehaviour
 			}
 			else if ( pointerEventData.button == PointerEventData.InputButton.Right )
 			{
-				MoveData md = GM.SelectedUnit.moveList.Find ( x => x.Tile == this && x.Prerequisite == GM.SelectedMove && ( x.Type == MoveData.MoveType.SPECIAL || x.Type == MoveData.MoveType.SPECIAL_ATTACK ) );
+				MoveData md = GM.SelectedUnit.MoveList.Find ( x => x.Tile == this && x.Prerequisite == GM.SelectedMove && ( x.Type == MoveData.MoveType.SPECIAL || x.Type == MoveData.MoveType.SPECIAL_ATTACK ) );
 				if ( md.Type == MoveData.MoveType.SPECIAL )
 				{
 					SetTileState ( TileState.SelectedSpecial );

@@ -7,11 +7,34 @@ public class Unit : MonoBehaviour
 {
 	#region Unit Data
 
-	public GameManager GM;
-	public int unitID; // The ID of the unit type (i.e. Leader, Pawn, etc.)
-	public int instanceID; // Every unit in a match has a unique instance ID 
-	public string characterName;
 	public Sprite displaySprite;
+
+	/// <summary>
+	/// The game manager for the match.
+	/// </summary>
+	protected GameManager GM
+	{
+		get;
+		private set;
+	}
+
+	/// <summary>
+	/// The unique ID for this particular unit instance in a match.
+	/// </summary>
+	public int InstanceID
+	{
+		get;
+		private set;
+	}
+
+	/// <summary>
+	/// The unit's instance data.
+	/// </summary>
+	public UnitInstanceData InstanceData
+	{
+		get;
+		protected set;
+	}
 
 	#endregion // Unit Data
 
@@ -27,7 +50,8 @@ public class Unit : MonoBehaviour
 
 	#region Turn Data
 
-	public List<MoveData> moveList = new List<MoveData> ( );
+	public List<MoveData> MoveList = new List<MoveData> ( );
+
 	protected const float MOVE_ANIMATION_TIME = 0.5f;
 	protected const float KO_ANIMATION_TIME = 0.5f;
 
@@ -35,11 +59,104 @@ public class Unit : MonoBehaviour
 
 	#region Status Data
 
-	public StatusEffects status = new StatusEffects ( );
+	public StatusEffects Status = new StatusEffects ( );
 
 	#endregion // Status Data
 
 	#region Public Virtual Functions
+
+	/// <summary>
+	/// Sets the unit's instance data from the player's unit setting data.
+	/// </summary>
+	/// <param name="settingData"> The unit's setting data. </param>
+	public virtual void InitializeInstance ( GameManager gm, int instanceID, UnitSettingData settingData )
+	{
+		// Set manager
+		GM = gm;
+
+		// Set instance's ID
+		InstanceID = instanceID;
+
+		// Set instance data from setting data
+		InstanceData = new UnitInstanceData
+		{
+			ID            = settingData.ID,
+			UnitName      = settingData.UnitName,
+			UnitNickname  = settingData.UnitNickname,
+			UnitBio       = settingData.UnitBio,
+			FinishingMove = settingData.FinishingMove,
+			Role          = settingData.Role,
+			Slots         = settingData.Slots,
+			Portrait      = settingData.Portrait,
+			IsEnabled     = settingData.IsEnabled
+		};
+
+		// Set ability instance data from setting data
+		List<AbilityInstanceData> abilities = new List<AbilityInstanceData> ( );
+
+		// Set instance data for ability 1
+		if ( settingData.Ability1 != null )
+			abilities.Add ( new AbilityInstanceData
+			{
+				ID                 = settingData.Ability1.ID,
+				AbilityName        = settingData.Ability1.AbilityName,
+				AbilityDescription = settingData.Ability1.AbilityDescription,
+				Icon               = settingData.Ability1.Icon,
+				Type               = settingData.Ability1.Type,
+				IsEnabled          = settingData.Ability1.IsEnabled,
+				Duration           = settingData.Ability1.Duration,
+				Cooldown           = settingData.Ability1.Cooldown,
+				CustomFeatureName  = settingData.Ability1.CustomFeatureName,
+				CustomFeatureValue = settingData.Ability1.CustomFeatureValue,
+
+				IsAvailable     = true,
+				CurrentDuration = 0,
+				CurrentCooldown = 0
+			} );
+
+		// Set instance data for ability 2
+		if ( settingData.Ability2 != null )
+			abilities.Add ( new AbilityInstanceData
+			{
+				ID                 = settingData.Ability2.ID,
+				AbilityName        = settingData.Ability2.AbilityName,
+				AbilityDescription = settingData.Ability2.AbilityDescription,
+				Icon               = settingData.Ability2.Icon,
+				Type               = settingData.Ability2.Type,
+				IsEnabled          = settingData.Ability2.IsEnabled,
+				Duration           = settingData.Ability2.Duration,
+				Cooldown           = settingData.Ability2.Cooldown,
+				CustomFeatureName  = settingData.Ability2.CustomFeatureName,
+				CustomFeatureValue = settingData.Ability2.CustomFeatureValue,
+
+				IsAvailable     = true,
+				CurrentDuration = 0,
+				CurrentCooldown = 0
+			} );
+
+		// Set instance data for ability 3
+		if ( settingData.Ability3 != null )
+			abilities.Add ( new AbilityInstanceData
+			{
+				ID                 = settingData.Ability3.ID,
+				AbilityName        = settingData.Ability3.AbilityName,
+				AbilityDescription = settingData.Ability3.AbilityDescription,
+				Icon               = settingData.Ability3.Icon,
+				Type               = settingData.Ability3.Type,
+				IsEnabled          = settingData.Ability3.IsEnabled,
+				Duration           = settingData.Ability3.Duration,
+				Cooldown           = settingData.Ability3.Cooldown,
+				CustomFeatureName  = settingData.Ability3.CustomFeatureName,
+				CustomFeatureValue = settingData.Ability3.CustomFeatureValue,
+
+				IsAvailable     = true,
+				CurrentDuration = 0,
+				CurrentCooldown = 0
+			} );
+
+		// Set ability instances
+		InstanceData.InitializeAbilities ( abilities.ToArray ( ) );
+	}
 
 	/// <summary>
 	/// Calculates all base moves available to a unit.
@@ -51,10 +168,10 @@ public class Unit : MonoBehaviour
 	{
 		// Clear previous move list
 		if ( prerequisite == null )
-			moveList.Clear ( );
+			MoveList.Clear ( );
 
 		// Check status effects
-		if ( status.CanMove )
+		if ( Status.CanMove )
 		{
 			// Store which tiles are to be ignored
 			IntPair back = GetBackDirection ( owner.TeamDirection );
@@ -70,7 +187,7 @@ public class Unit : MonoBehaviour
 				if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
 				{
 					// Add as an available move
-					moveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
+					MoveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
 				}
 				// Check if this unit can jump the neighboring tile
 				else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
@@ -91,7 +208,7 @@ public class Unit : MonoBehaviour
 					}
 
 					// Add move to the move list
-					moveList.Add ( m );
+					MoveList.Add ( m );
 
 					// Find additional jumps
 					FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
@@ -155,7 +272,7 @@ public class Unit : MonoBehaviour
 			.OnComplete ( ( ) =>
 			{
 				// Display KO in HUD
-				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).DisplayKO ( instanceID );
+				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).DisplayKO ( InstanceID );
 
 				// Remove unit from the team
 				owner.UnitInstances.Remove ( this );
@@ -202,13 +319,13 @@ public class Unit : MonoBehaviour
 	public void MoveConflictCheck ( )
 	{
 		// Set the list to be accessible by the tile of each potential move
-		foreach ( MoveData move in moveList )
+		foreach ( MoveData move in MoveList )
 		{
 			// Check for conflicted tiles
-			if ( moveList.Exists ( x => x.Tile == move.Tile && x.Prerequisite == move.Prerequisite && !x.isConflicted && x != move ) )
+			if ( MoveList.Exists ( x => x.Tile == move.Tile && x.Prerequisite == move.Prerequisite && !x.isConflicted && x != move ) )
 			{
 				// Create list of conflicted moves 
-				List<MoveData> conflicts = moveList.FindAll ( x => x.Tile == move.Tile && x.Prerequisite == move.Prerequisite && !x.isConflicted );
+				List<MoveData> conflicts = MoveList.FindAll ( x => x.Tile == move.Tile && x.Prerequisite == move.Prerequisite && !x.isConflicted );
 
 				// Mark moves as conflicted
 				foreach ( MoveData m in conflicts )

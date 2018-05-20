@@ -7,8 +7,11 @@ public class MatchInfoMenu : Menu
 {
 	#region UI Elements
 
-	public TextMeshProUGUI matchTypeText;
-	public PlayerHUD [ ] playerHUDs;
+	[SerializeField]
+	private TextMeshProUGUI matchPrompt;
+
+	[SerializeField]
+	private PlayerHUD [ ] playerHUDs;
 
 	#endregion // UI Elements
 
@@ -20,20 +23,25 @@ public class MatchInfoMenu : Menu
 	/// <param name="players"> The list of players in the match. </param>
 	public void Initialize ( Player [ ] players )
 	{
-		// Display match type
+		// Display match info
+		matchPrompt.text = MatchSettings.MatchDebate.EventName;
 		switch ( MatchSettings.Type )
 		{
 		case MatchType.Classic:
 		case MatchType.CustomClassic:
-			matchTypeText.text = "Classic Match";
+			matchPrompt.text += "\n<size=60%><color=#FFD24BFF>Classic Match";
 			break;
 		case MatchType.Mirror:
 		case MatchType.CustomMirror:
-			matchTypeText.text = "Mirror Match";
+			matchPrompt.text += "\n<size=60%><color=#FFD24BFF>Mirror Match";
 			break;
 		case MatchType.Rumble:
 		case MatchType.CustomRumble:
-			matchTypeText.text = "Rumble Match";
+			matchPrompt.text += "\n<size=60%><color=#FFD24BFF>Rumble Match";
+			break;
+		case MatchType.Ladder:
+		case MatchType.CustomLadder:
+			matchPrompt.text += "\n<size=60%><color=#FFD24BFF>Ladder Match";
 			break;
 		}
 
@@ -69,7 +77,7 @@ public class MatchInfoMenu : Menu
 	{
 		// Return the matching HUD
 		for ( int i = 0; i < playerHUDs.Length; i++ )
-			if ( playerHUDs [ i ].CheckForUnit ( u.instanceID ) )
+			if ( playerHUDs [ i ].CheckForUnit ( u.InstanceID ) )
 				return playerHUDs [ i ];
 
 		// Return that the HUD was not found
