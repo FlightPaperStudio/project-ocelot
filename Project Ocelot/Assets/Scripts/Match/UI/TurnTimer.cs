@@ -7,23 +7,46 @@ using DG.Tweening;
 
 public class TurnTimer : MonoBehaviour 
 {
-	// UI elements
-	public GameObject container;
-	public TextMeshProUGUI display;
+	#region UI Elements
 
-	// Timer information
-	public GameManager GM;
-	private bool isTimerActive = false;
+	[SerializeField]
+	private GameObject container;
+
+	[SerializeField]
+	private TextMeshProUGUI display;
+
+	#endregion // UI Elements
+
+	#region Timer Data
+
+	[SerializeField]
+	private GameManager GM;
+
+	[SerializeField]
+	private AudioSource audio;
+
+	[SerializeField]
+	private AudioClip outOfTimeSFX;
+
 	private float currentTime = 0f;
-	public bool isOutOfTime
+	private bool isTimerActive = false;
+	private bool isTimerWarning = false;
+
+	private const float TIMER_WARNING = 15f;
+
+	/// <summary>
+	/// Whether or not the turn timer has run out of time.
+	/// </summary>
+	public bool IsOutOfTime
 	{
 		get;
 		private set;
 	}
 
-	/// <summary>
-	/// Initializes the turn timer.
-	/// </summary>
+	#endregion // Timer Data
+
+	#region MonoBehaviour Functions
+
 	private void Start ( )
 	{
 		// Hide/Display timer
@@ -32,13 +55,13 @@ public class TurnTimer : MonoBehaviour
 		// Set starting values
 		isTimerActive = false;
 		currentTime = 0f;
-		isOutOfTime = false;
+		IsOutOfTime = false;
+
+		// Add sfx player to sfx manager
+		SFXManager.Instance.AddScenePlayer ( audio );
 	}
 
-	/// <summary>
-	/// Updates the timer.
-	/// </summary>
-	private void Update ( ) 
+	private void Update ( )
 	{
 		// Check if the timer is active
 		if ( MatchSettings.TurnTimer && isTimerActive )
@@ -46,6 +69,9 @@ public class TurnTimer : MonoBehaviour
 			// Check time remaining
 			if ( currentTime > 0 )
 			{
+				// Change color of the timer
+				display.color = isTimerWarning ? new Color32 ( 200, 50, 50, 255 ) : (Color32)Color.white;
+
 				// Decrease time
 				currentTime -= Time.deltaTime;
 
@@ -54,6 +80,16 @@ public class TurnTimer : MonoBehaviour
 				int min = roundedTime / 60;
 				int sec = roundedTime % 60;
 				display.text = string.Format ( "{0:0}:{1:00}", min, sec );
+
+				// Check for warning
+				if ( !isTimerWarning && currentTime <= TIMER_WARNING )
+				{
+					// Mark that the timer is now on warning
+					isTimerWarning = true;
+
+					// Play sfx
+					audio.Play ( );
+				}
 			}
 			else
 			{
@@ -62,6 +98,10 @@ public class TurnTimer : MonoBehaviour
 			}
 		}
 	}
+
+	#endregion // MonoBehaviour Functions
+
+	#region Public Functions
 
 	/// <summary>
 	/// Starts the timer.
@@ -74,7 +114,8 @@ public class TurnTimer : MonoBehaviour
 
 		// Begin timer
 		isTimerActive = true;
-		isOutOfTime = false;
+		isTimerWarning = false;
+		IsOutOfTime = false;
 	}
 
 	/// <summary>
@@ -85,6 +126,10 @@ public class TurnTimer : MonoBehaviour
 	{
 		// Pause the timer
 		isTimerActive = false;
+
+		// Pause the timer warning
+		if ( isTimerWarning )
+			audio.Pause ( );
 	}
 
 	/// <summary>
@@ -95,6 +140,10 @@ public class TurnTimer : MonoBehaviour
 	{
 		// Unpause the timer
 		isTimerActive = true;
+
+		// Resume the timer warning if it was paused
+		if ( isTimerWarning )
+			audio.UnPause ( );
 	}
 
 	/// <summary>
@@ -105,7 +154,12 @@ public class TurnTimer : MonoBehaviour
 	{
 		// Pause the timer
 		isTimerActive = false;
-		isOutOfTime = true;
+		isTimerWarning = false;
+		IsOutOfTime = true;
+
+		// Play sfx
+		audio.Stop ( );
+		audio.PlayOneShot ( outOfTimeSFX );
 
 		// Check for start of turn
 		if ( GM.IsStartOfTurn )
@@ -137,9 +191,15 @@ public class TurnTimer : MonoBehaviour
 		}
 	}
 
+	#endregion // Public Functions
+
+	#region Private Functions
+
 	/// <summary>
 	/// Ends the current player's turn early by forcing a random unit to make a random move.
 	/// </summary>
+	/// <param name="u"> The random unit selected for a panic move. </param>
+	/// <param name="t"> The tile the unit will move to. </param>
 	private IEnumerator PanicMove ( Unit u, Tile t )
 	{
 		// Wait for slide animation
@@ -154,4 +214,6 @@ public class TurnTimer : MonoBehaviour
 		// Execute move
 		GM.ExecuteMove ( true );
 	}
+
+	#endregion // Private Functions
 }

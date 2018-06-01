@@ -168,7 +168,7 @@ public class CustomMatchSettingsMenu : Menu
 			MatchSettings.SetMatchSettings ( MatchTypeSetting, EnableTurnTimerSetting, TimePerTurnSetting, HeroesPerTeamSetting, HeroLimitSetting, HeroSettings );
 
 			// Begin the match
-			load.LoadScene ( Scenes.MatchSetup );
+			load.LoadScene ( Scenes.MATCH_SETUP );
 		}
 		else
 		{

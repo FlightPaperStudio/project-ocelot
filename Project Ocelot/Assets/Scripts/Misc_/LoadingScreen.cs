@@ -5,11 +5,20 @@ using UnityEngine.SceneManagement;
 
 public class LoadingScreen : MonoBehaviour 
 {
-	// UI elements
-	public GameObject screen;
+	#region UI Elements
 
-	// Loading information
+	[SerializeField]
+	private GameObject screen;
+
+	#endregion // UI Elements
+
+	#region Loading Data
+	
 	private bool isLoading = false;
+
+	#endregion // Loading Data
+
+	#region Public Functions
 
 	/// <summary>
 	/// Begin loading a new scene by showing the loading screen.
@@ -27,29 +36,34 @@ public class LoadingScreen : MonoBehaviour
 	/// <summary>
 	/// Loads the next scene.
 	/// </summary>
+	/// <param name="scene"> The scene being loaded. </param>
 	public void LoadScene ( Scenes scene )
 	{
 		// Display loading screen if it has already
 		if ( !isLoading )
 			BeginLoad ( );
 
+		// Play the music for the scene
+		if ( SceneManager.GetActiveScene ( ).name != "Splash Screen" )
+			MusicManager.Instance.Play ( scene );
+
 		// Get scene
 		string s = "";
 		switch ( scene )
 		{
-		case Scenes.Menus:
+		case Scenes.MENUS:
 			s = "Menus";
 			break;
-		case Scenes.MatchSetup:
+		case Scenes.MATCH_SETUP:
 			s = "Match Setup";
 			break;
-		case Scenes.Classic:
+		case Scenes.CLASSIC:
 			s = "Classic";
 			break;
-		case Scenes.Rumble:
+		case Scenes.RUMBLE:
 			s = "Rumble";
 			break;
-		case Scenes.Credits:
+		case Scenes.CREDITS:
 			s = "Credits";
 			break;
 		}
@@ -58,9 +72,15 @@ public class LoadingScreen : MonoBehaviour
 		StartCoroutine ( LoadingScene ( s ) );
 	}
 
+	#endregion // Public Functions
+
+	#region Private Functions
+
 	/// <summary>
 	/// Wait at the loading screen until the scene has loaded.
 	/// </summary>
+	/// <param name="scene"> The name of the scene being loaded. </param>
+	/// <returns> When the scene is completed loading. </returns>
 	private IEnumerator LoadingScene ( string scene )
 	{
 		// Begin loading scene
@@ -70,13 +90,16 @@ public class LoadingScreen : MonoBehaviour
 		while ( !async.isDone )
 			yield return null;
 	}
+
+	#endregion // Private Functions
 }
 
 public enum Scenes
 {
-	Menus,
-	MatchSetup,
-	Classic,
-	Rumble,
-	Credits
+	SPLASH_SCREEN,
+	MENUS,
+	MATCH_SETUP,
+	CLASSIC,
+	RUMBLE,
+	CREDITS
 }

@@ -14,22 +14,22 @@ public class Util
 		switch ( team )
 		{
 		case Player.TeamColor.BLUE:
-			col = new Color32 (   0,   0, 255, 255 );
+			col = new Color32 (   0, 174, 239, 255 ); // Old color - 0, 0, 255
 			break;
 		case Player.TeamColor.GREEN:
-			col = new Color32 (   0, 150,   0, 255 );
+			col = new Color32 (  78, 219,  49, 255 ); // Old color - 0, 150, 0
 			break;
 		case Player.TeamColor.YELLOW:
-			col = new Color32 ( 255, 255,   0, 255 );
+			col = new Color32 ( 255, 222,  23, 255 ); // Old color - 255, 255, 0
 			break;
 		case Player.TeamColor.ORANGE:
-			col = new Color32 ( 255, 125,   0, 255 );
+			col = new Color32 ( 247, 148,  29, 255 ); // Old color - 255, 125, 0
 			break;
 		case Player.TeamColor.PINK:
-			col = new Color32 ( 255, 100, 150, 255 );
+			col = new Color32 ( 239,  58, 144, 255 ); // Old color - 255, 100, 150
 			break;
 		case Player.TeamColor.PURPLE:
-			col = new Color32 ( 150,   0, 255, 255 );
+			col = new Color32 ( 182,  53, 196, 255 ); // Old color - 150, 0, 255
 			break;
 		}
 

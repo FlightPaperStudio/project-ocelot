@@ -157,22 +157,5 @@ public class UnitPortrait : MonoBehaviour
 		container.offsetMin = new Vector2 ( -1 * offset, -1 * offset );
 	}
 
-	/// <summary>
-	/// Sets whether or not the unit is enabled.
-	/// This sets the color of the portrait (either the team color or grey).
-	/// </summary>
-	/// <param name="isEnable"> Whether or not the portrait is enabled. </param>
-	public void EnableToggle ( bool isEnable )
-	{
-		// Set enabled
-		IsEnabled = isEnable;
-
-		// Set border color
-		border.color = isEnable ? teamColor : UNAVAILABLE_COLOR;
-
-		// Set icon color
-		unitPortrait.color = isEnable ? teamColor : UNAVAILABLE_COLOR;
-	}
-
 	#endregion // Public Funtions
 }

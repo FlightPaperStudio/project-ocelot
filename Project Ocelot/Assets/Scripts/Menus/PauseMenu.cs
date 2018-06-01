@@ -65,7 +65,7 @@ public class PauseMenu : Menu
 	private void ReturnToMainMenu ( )
 	{
 		// Load the main menu
-		load.LoadScene ( Scenes.Menus );
+		load.LoadScene ( Scenes.MENUS );
 	}
 
 	/// <summary>

@@ -90,7 +90,7 @@ public class PlayerHUD : MonoBehaviour
 	public void DisplayKO ( int id )
 	{
 		// Disable portrait
-		instanceHUDs [ id ].Portrait.EnableToggle ( false );
+		instanceHUDs [ id ].Portrait.IsAvailable = false;
 
 		// Hide status effects
 		ClearStatusEffects ( instanceHUDs [ id ] );

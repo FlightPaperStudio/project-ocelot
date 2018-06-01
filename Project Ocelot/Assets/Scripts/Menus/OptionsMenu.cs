@@ -58,6 +58,6 @@ public class OptionsMenu : Menu
 	public void OpenCredits ( )
 	{
 		// Load the credits
-		load.LoadScene ( Scenes.Credits );
+		load.LoadScene ( Scenes.CREDITS );
 	}
 }

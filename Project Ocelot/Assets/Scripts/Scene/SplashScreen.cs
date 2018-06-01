@@ -6,12 +6,18 @@ using DG.Tweening;
 
 public class SplashScreen : MonoBehaviour 
 {
-	// Splash images
-	public SpriteRenderer logo;
+	#region Splash Screen Data
 
-	// Scene informaiton
-	public LoadingScreen load;
+	[SerializeField]
+	private SpriteRenderer logo;
 
+	[SerializeField]
+	private LoadingScreen load;
+
+	#endregion // Splash Screen Data
+
+	#region MonoBehaviour Functions
+	
 	/// <summary>
 	/// Loads the settings at the start of the game.
 	/// </summary>
@@ -28,6 +34,10 @@ public class SplashScreen : MonoBehaviour
 
 		// Set vsync
 		QualitySettings.vSyncCount = Settings.Vsync;
+
+		// Set music volume
+		MusicManager.Instance.AdjustVolume ( );
+		MusicManager.Instance.Play ( Scenes.SPLASH_SCREEN );
 	}
 
 	/// <summary>
@@ -43,8 +53,10 @@ public class SplashScreen : MonoBehaviour
 			.OnComplete ( () =>
 			{
 				// Load start menu
-				load.LoadScene ( Scenes.Menus );
+				load.LoadScene ( Scenes.MENUS );
 			} )
 			.Play ( );
 	}
+
+	#endregion // MonoBehaviour Functions
 }

@@ -47,7 +47,7 @@ public class Credits : MonoBehaviour
 			.OnComplete ( () =>
 				{
 					// Load the main menu
-					load.LoadScene ( Scenes.Menus );
+					load.LoadScene ( Scenes.MENUS );
 				} )
 			.Play ( );
 	}
@@ -72,6 +72,6 @@ public class Credits : MonoBehaviour
 	public void MainMenu ( )
 	{
 		// Load the main menu
-		load.LoadScene ( Scenes.Menus );
+		load.LoadScene ( Scenes.MENUS );
 	}
 }

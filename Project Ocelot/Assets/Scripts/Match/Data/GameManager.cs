@@ -434,7 +434,7 @@ public class GameManager : MonoBehaviour
 	public void SelectUnit ( Unit u )
 	{
 		// Check for previously selected unit
-		if ( SelectedUnit != null && IsStartOfTurn && !UI.timer.isOutOfTime )
+		if ( SelectedUnit != null && IsStartOfTurn && !UI.timer.IsOutOfTime )
 		{
 			// Reset any previous selected units
 			Board.ResetTiles ( );

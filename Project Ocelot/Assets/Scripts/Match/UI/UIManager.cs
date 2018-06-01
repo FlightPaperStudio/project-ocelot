@@ -136,11 +136,11 @@ public class UIManager : MonoBehaviour
 		case MatchType.Mirror:
 		case MatchType.CustomClassic:
 		case MatchType.CustomMirror:
-			load.LoadScene ( Scenes.Classic );
+			load.LoadScene ( Scenes.CLASSIC );
 			break;
 		case MatchType.Rumble:
 		case MatchType.CustomRumble:
-			load.LoadScene ( Scenes.Rumble );
+			load.LoadScene ( Scenes.RUMBLE );
 			break;
 		}
 	}
@@ -160,12 +160,12 @@ public class UIManager : MonoBehaviour
 		if ( MatchSettings.Type == MatchType.Mirror || MatchSettings.Type == MatchType.CustomMirror )
 		{
 			// Load the match
-			load.LoadScene ( Scenes.Classic );
+			load.LoadScene ( Scenes.CLASSIC );
 		}
 		else
 		{
 			// Load match setup
-			load.LoadScene ( Scenes.MatchSetup );
+			load.LoadScene ( Scenes.MATCH_SETUP );
 		}
 	}
 
@@ -175,7 +175,7 @@ public class UIManager : MonoBehaviour
 	public void MainMenu ( )
 	{
 		// Load main menu
-		load.LoadScene ( Scenes.Menus );
+		load.LoadScene ( Scenes.MENUS );
 	}
 
 	#endregion // Public Functions

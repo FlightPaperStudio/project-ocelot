@@ -1,4 +1,4 @@
-OSXStandalone
+WindowsStandalone
 SceneListBegin?
 Assets/Scenes/Splash Screen.unity
 Assets/Scenes/Menus.unity
@@ -207,7 +207,7 @@ a4a79f672c6da86fce533383580cf655 Assembly-CSharp.dll:.SettingsOverviewSlideMenu
 cc790577f6c0f131535bb589d362fa19 Assembly-CSharp.dll:.Player
 b57adb23c4736513a35897a668f21fab Assembly-CSharp.dll:.HeroUnit
 8a50d3d11bf0cc541f5c35347dd25633 Assembly-CSharp.dll:TMPro.Examples.ShaderPropAnimator
-2bd87fbaf067d5d773dfa01620570f6f Assembly-CSharp.dll:.TurnTimer
+df37384f15c70210d44a6da3cb077352 Assembly-CSharp.dll:.TurnTimer
 7e63f79d453194503246ff6be6c80f20 Assembly-CSharp.dll:.Pawn
 76015de5fcb247eeb8df66c001d5a22d Assembly-CSharp.dll:TMPro.Examples.TMP_FrameRateCounter
 b8f04bdad423045528c67dfa4c3dca0d Assembly-CSharp.dll:TMPro.Examples.VertexShakeA
@@ -229,12 +229,12 @@ e9bdabf9265d758d56f01bb188916fa8 UnityEngine.Networking.dll:UnityEngine.Networki
 08d1e0d0d3d0fa9f8d5851bf75c020ff Assembly-CSharp.dll:.Board
 227b0854e8106612a6b02df2b42576e1 Assembly-CSharp.dll:.Armor
 3734c942f3f4a8d8378d8dc1c7f09664 Assembly-CSharp.dll:.LoadingScreen
-d3cd2a58bc8175271558e6f97ba598be Assembly-CSharp.dll:.MusicManager
+6b8ab10d76e20b8eedaa2ecac6908274 Assembly-CSharp.dll:.MusicManager
 62229a3e4d53ca59bec192e89627ed52 Assembly-CSharp.dll:TMPro.Examples.CameraController
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.TestRunner.dll:UnityEngine.TestTools.TestRunner.Callbacks.PlayModeRunnerCallback
 96d0fbde9fd209878a0a291f82c9bcdd UnityEngine.TestRunner.dll:UnityEngine.TestTools.TestRunner.PlaymodeTestsController
 64eb32cc721b1cc68a91ed57461e188c UnityEngine.TestRunner.dll:UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender
-2262a8b0b4c1f3f9067d22b99ef256de Assembly-CSharp.dll:.SFXManager
+9e9ff7cd27d548b76fe0e349db9c0bd4 Assembly-CSharp.dll:.SFXManager
 e0f7ffd5d5c2abe4b2e16569a21163da UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioRoom
 aa9d1bd0cc771545f2ae1f63a6d0ed6a Assembly-CSharp.dll:TMPro.Examples.TMP_TextEventCheck
 ef6f7f7378327868d9a5ee9c20463cbc Assembly-CSharp.dll:.SlideMenu
@@ -245,7 +245,7 @@ dbd1ff5acfd8c74434eaa7f20d9bda02 DOTween.dll:DG.Tweening.Core.DOTweenSettings
 f0f0ab6b8a39d0572cfa4ea315d84fbf Assembly-CSharp.dll:TMPro.Examples.Benchmark04
 71a26abefd549bcff8c5270c7a577a98 Assembly-CSharp.dll:.CameraFit
 b57adb23c4736513a35897a668f21fab Assembly-CSharp.dll:.Torus
-b43d7abdbbfe1f1bb7a1fe94fede8a12 Assembly-CSharp.dll:.AudioSettingsMenu
+3863e7f4267a1b2c8b7d34112bf874e6 Assembly-CSharp.dll:.AudioSettingsMenu
 29273f491d11f6bdd02a43a9d8df84c7 Assembly-CSharp.dll:TMPro.Examples.TMP_ExampleScript_01
 bc68edb0af574bf79f9550ead8ebae5c UnityEngine.HoloLens.dll:UnityEngine.Audio.AudioSpatializerMicrosoft
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInput
@@ -274,6 +274,7 @@ b2c8a4721d641bab5910eeaa959aaf97 Assembly-CSharp.dll:.TileObject
 020550babdb991365f61c5bffe1f4f52 Assembly-CSharp.dll:TMPro.Examples.TextMeshSpawner
 af7666733efcc974926d7d470e1732a6 Assembly-CSharp.dll:TMPro.Examples.SkewTextExample
 42af4cad12f4e0ef64812d9f468c9eb0 Assembly-CSharp.dll:.PauseMenu
+8b14d4224438640f23246dc49b6f90d0 Assembly-CSharp.dll:.ButtonSFXPlayer
 64ced1d0250d72c1d7af6b824e3c71c3 Assembly-CSharp.dll:.HeroSettingSlideMenu
 fe1e6cceb8ff794c7d5ae42af8bc841c Assembly-CSharp.dll:.Leader
 a5bff19651cd62fe80f79b1eb781b071 Assembly-CSharp.dll:.UnitPortrait

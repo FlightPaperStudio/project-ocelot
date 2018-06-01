@@ -81,7 +81,7 @@ public class MatchTypeMenu : Menu
 		MatchSettings.SetMatchSettings ( MatchType.Classic );
 
 		// Load classic match
-		load.LoadScene ( Scenes.MatchSetup );
+		load.LoadScene ( Scenes.MATCH_SETUP );
 	}
 
 	private void LoadMirrorMatch ( )
@@ -93,7 +93,7 @@ public class MatchTypeMenu : Menu
 		MatchSettings.SetMatchSettings ( MatchType.Mirror );
 
 		// Load classic match
-		load.LoadScene ( Scenes.MatchSetup );
+		load.LoadScene ( Scenes.MATCH_SETUP );
 	}
 
 	/// <summary>
@@ -108,6 +108,6 @@ public class MatchTypeMenu : Menu
 		MatchSettings.SetMatchSettings ( MatchType.Rumble );
 
 		// Load rumble match
-		load.LoadScene ( Scenes.MatchSetup );
+		load.LoadScene ( Scenes.MATCH_SETUP );
 	}
 }

@@ -186,7 +186,7 @@ public class TeamSetup : MonoBehaviour
 	public void BeginMatch ( )
 	{
 		// Track scene
-		Scenes scene = Scenes.Classic;
+		Scenes scene = Scenes.CLASSIC;
 
 		// Check match type
 		switch ( MatchSettings.Type )
@@ -195,11 +195,11 @@ public class TeamSetup : MonoBehaviour
 		case MatchType.CustomClassic:
 		case MatchType.Mirror:
 		case MatchType.CustomMirror:
-			scene = Scenes.Classic;
+			scene = Scenes.CLASSIC;
 			break;
 		case MatchType.Rumble:
 		case MatchType.CustomRumble:
-			scene = Scenes.Rumble;
+			scene = Scenes.RUMBLE;
 			break;
 		}
 

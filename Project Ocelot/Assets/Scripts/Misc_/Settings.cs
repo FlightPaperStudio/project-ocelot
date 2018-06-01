@@ -3,6 +3,8 @@ using System.Collections;
 
 public class Settings : MonoBehaviour 
 {
+	#region Settings Data
+
 	// Tracks if the settings have been loaded
 	private static bool isSettingsLoaded = false;
 
@@ -38,9 +40,9 @@ public class Settings : MonoBehaviour
 	/// <summary>
 	/// This setting determines the absolute volume for the entire game.
 	/// </summary>
-	public static float MasterVolume;
-	private const string MASTER_VOLUME = "masterVolume";
-	private const float MASTER_VOLUME_DEFAULT = 1.0f;
+	public static bool MuteVolume;
+	private const string MUTE_VOLUME = "muteVolume";
+	private const bool MUTE_VOLUME_DEFAULT = false;
 
 	/// <summary>
 	/// This setting determines the volume of the music.
@@ -57,116 +59,48 @@ public class Settings : MonoBehaviour
 	private const float SOUND_VOLUME_DEFAULT = 1.0f;
 
 	/// <summary>
-	/// Loads the settings.
+	/// This setting determines the absolute volume for the entire game.
+	/// </summary>
+	public static float UIVolume;
+	private const string UI_VOLUME = "uiVolume";
+	private const float UI_VOLUME_DEFAULT = 1.0f;
+
+	#endregion // Settings Data
+
+	#region Public Functions
+
+	/// <summary>
+	/// Loads the settings from the save data.
 	/// </summary>
 	public static void LoadSettings ( )
 	{
 		// Ensure that the settings are only loaded once
 		if ( !isSettingsLoaded )
 		{
-			// Check for display setting
-			if ( PlayerPrefs.HasKey ( DISPLAY ) )
-			{
-				// Load display setting
-				Display = PlayerPrefsX.GetBool ( DISPLAY );
-			}
-			else
-			{
-				// Set default display setting
-				Display = DISPLAY_DEFAULT;
-				PlayerPrefsX.SetBool ( DISPLAY, Display );
-			}
+			// Load display setting
+			Display = LoadSetting ( DISPLAY_DEFAULT, DISPLAY );
 
-			// Check for resolution width setting
-			if ( PlayerPrefs.HasKey ( RESOLUTION_WIDTH ) )
-			{
-				// Load resolution width
-				ResolutionWidth = PlayerPrefs.GetInt ( RESOLUTION_WIDTH );
-			}
-			else
-			{
-				// Set default resolution width
-				ResolutionWidth = Screen.currentResolution.width;
-				PlayerPrefs.SetInt ( RESOLUTION_WIDTH, ResolutionWidth );
-			}
+			// Load resolution setting
+			ResolutionWidth = LoadSetting ( Screen.currentResolution.width, RESOLUTION_WIDTH );
+			ResolutionHeight = LoadSetting ( Screen.currentResolution.height, RESOLUTION_HEIGHT );
 
-			// Check for resolution height setting
-			if ( PlayerPrefs.HasKey ( RESOLUTION_HEIGHT ) )
-			{
-				// Load resolution height
-				ResolutionHeight = PlayerPrefs.GetInt ( RESOLUTION_HEIGHT );
-			}
-			else
-			{
-				// Set default resolution height
-				ResolutionHeight = Screen.currentResolution.height;
-				PlayerPrefs.SetInt ( RESOLUTION_HEIGHT, ResolutionHeight );
-			}
+			// Load quality setting
+			Quality = LoadSetting ( QUALITY_DEFAULT, QUALITY );
 
-			// Check for quality setting
-			if ( PlayerPrefs.HasKey ( QUALITY ) )
-			{
-				// Load quality setting
-				Quality = PlayerPrefs.GetInt ( QUALITY );
-			}
-			else
-			{
-				// Set default display setting
-				Quality = QUALITY_DEFAULT;
-				PlayerPrefs.SetInt ( QUALITY, Quality );
-			}
+			// Load vsync setting
+			Vsync = LoadSetting ( VSYNC_DEFAULT, VSYNC );
 
-			// Check for vsync setting
-			if ( PlayerPrefs.HasKey ( VSYNC ) )
-			{
-				// Load vsync setting
-				Vsync = PlayerPrefs.GetInt ( VSYNC );
-			}
-			else
-			{
-				// Set default vsync setting
-				Vsync = VSYNC_DEFAULT;
-				PlayerPrefs.SetInt ( VSYNC, Vsync );
-			}
+			// Load mute setting
+			MuteVolume = LoadSetting ( MUTE_VOLUME_DEFAULT, MUTE_VOLUME );
 
-			// Check for master volume setting
-			if ( PlayerPrefs.HasKey ( MASTER_VOLUME ) )
-			{
-				// Load master volume setting
-				MasterVolume = PlayerPrefs.GetFloat ( MASTER_VOLUME );
-			}
-			else
-			{
-				// Set default master volume setting
-				MasterVolume = MASTER_VOLUME_DEFAULT;
-				PlayerPrefs.SetFloat ( MASTER_VOLUME, MasterVolume );
-			}
+			// Load music volume setting
+			MusicVolume = LoadSetting ( MUSIC_VOLUME_DEFAULT, MUSIC_VOLUME );
 
-			// Check for music volume setting
-			if ( PlayerPrefs.HasKey ( MUSIC_VOLUME ) )
-			{
-				// Load music volume setting
-				MusicVolume = PlayerPrefs.GetFloat ( MUSIC_VOLUME );
-			}
-			else
-			{
-				// Set default music volume setting
-				MusicVolume = MUSIC_VOLUME_DEFAULT;
-				PlayerPrefs.SetFloat ( MUSIC_VOLUME, MusicVolume );
-			}
+			// Load sfx volume setting
+			SoundVolume = LoadSetting ( SOUND_VOLUME_DEFAULT, SOUND_VOLUME );
 
-			// Check for sound volume setting
-			if ( PlayerPrefs.HasKey ( SOUND_VOLUME ) )
-			{
-				// Load sound volume setting
-				SoundVolume = PlayerPrefs.GetFloat ( SOUND_VOLUME );
-			}
-			else
-			{
-				// Set default sound volume setting
-				SoundVolume = SOUND_VOLUME_DEFAULT;
-				PlayerPrefs.SetFloat ( SOUND_VOLUME, SoundVolume );
-			}
+			// Load ui volume setting
+			UIVolume = LoadSetting ( UI_VOLUME_DEFAULT, UI_VOLUME );
 
 			// Set that the settings have been loaded
 			isSettingsLoaded = true;
@@ -217,13 +151,16 @@ public class Settings : MonoBehaviour
 	public static void RestoreDefaultAudioSettings ( )
 	{
 		// Reset master volume
-		MasterVolume = MASTER_VOLUME_DEFAULT;
+		MuteVolume = MUTE_VOLUME_DEFAULT;
 
 		// Reset music volume
 		MusicVolume = MUSIC_VOLUME_DEFAULT;
 
 		// Reset sound volume
 		SoundVolume = SOUND_VOLUME_DEFAULT;
+
+		// Reset ui volume
+		UIVolume = UI_VOLUME_DEFAULT;
 	}
 
 	/// <summary>
@@ -231,15 +168,91 @@ public class Settings : MonoBehaviour
 	/// </summary>
 	public static void SaveAudioSettings ( )
 	{
-		// Save master volume
-		PlayerPrefs.SetFloat ( MASTER_VOLUME, MasterVolume );
+		// Save mute volume
+		PlayerPrefsX.SetBool ( MUTE_VOLUME, MuteVolume );
 
 		// Save music volume
 		PlayerPrefs.SetFloat ( MUSIC_VOLUME, MusicVolume );
 
 		// Save sound volume
 		PlayerPrefs.SetFloat ( SOUND_VOLUME, SoundVolume );
+
+		// Save ui volume
+		PlayerPrefs.SetFloat ( UI_VOLUME, UIVolume );
 	}
+
+	#endregion // Public Functions
+
+	#region Private Functions
+
+	/// <summary>
+	/// Loads a bool settings from the save data or assigns the setting its default value.
+	/// </summary>
+	/// <param name="defaultValue"> The default value of the setting. </param>
+	/// <param name="key"> The save data key for the setting. </param>
+	/// <returns> The value of the bool setting. </returns>
+	private static bool LoadSetting ( bool defaultValue, string key )
+	{
+		// Check for key
+		if ( PlayerPrefs.HasKey ( key ) )
+		{
+			// Load setting
+			return PlayerPrefsX.GetBool ( key );
+		}
+		else
+		{
+			// Assign setting to its default
+			PlayerPrefsX.SetBool ( key, defaultValue );
+			return defaultValue;
+		}
+	}
+
+	/// <summary>
+	/// Loads a integer settings from the save data or assigns the setting its default value.
+	/// </summary>
+	/// <param name="defaultValue"> The default value of the setting. </param>
+	/// <param name="key"> The save data key for the setting. </param>
+	/// <returns> The value of the integer setting. </returns>
+	private static int LoadSetting ( int defaultValue, string key )
+	{
+		// Check for key
+		if ( PlayerPrefs.HasKey ( key ) )
+		{
+			// Load setting
+			return PlayerPrefs.GetInt ( key );
+		}
+		else
+		{
+			// Assign setting to its default
+			PlayerPrefs.SetInt ( key, defaultValue );
+			return defaultValue;
+		}
+	}
+
+	/// <summary>
+	/// Loads a float settings from the save data or assigns the setting its default value.
+	/// </summary>
+	/// <param name="defaultValue"> The default value of the setting. </param>
+	/// <param name="key"> The save data key for the setting. </param>
+	/// <returns> The value of the float setting. </returns>
+	private static float LoadSetting ( float defaultValue, string key )
+	{
+		// Check for key
+		if ( PlayerPrefs.HasKey ( key ) )
+		{
+			// Load setting
+			return PlayerPrefs.GetFloat ( key );
+		}
+		else
+		{
+			Debug.Log ( "No save data found for " + key );
+			// Assign setting to its default
+			PlayerPrefs.SetFloat ( key, defaultValue );
+			return defaultValue;
+		}
+	}
+
+	#endregion // Private Functions
 
 //-------------------------------------------------DELETE EVERYTHING BELOW THIS LINE--------------------------------------------------------------------
 //
