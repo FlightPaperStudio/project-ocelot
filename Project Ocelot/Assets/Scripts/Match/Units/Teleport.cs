@@ -22,7 +22,7 @@ public class Teleport : HeroUnit
 	/// Name: Blink
 	/// Description: Instantly teleports a short distance
 	/// Type: Special
-	/// Cooldown: 2 Turns
+	/// Cooldown: 2 Rounds
 	/// Range: 3 Tiles
 	/// 
 	/// Ability 2
@@ -30,7 +30,7 @@ public class Teleport : HeroUnit
 	/// Name: Translocator
 	/// Description: Swaps the position of two allies
 	/// Type: Command
-	/// Cooldown: 4 Turns
+	/// Cooldown: 4 Rounds
 	/// Affect Leader: Active
 	/// 
 	/// </summary>
@@ -54,7 +54,7 @@ public class Teleport : HeroUnit
 
 		// Get Blink moves
 		if ( SpecialAvailabilityCheck ( InstanceData.Ability1, prerequisite ) )
-			GetBlink ( t, GetBackDirection ( owner.TeamDirection ), 2 );
+			GetBlink ( t, GetBackDirection ( Owner.TeamDirection ), InstanceData.Ability1.PerkValue - 1 );
 
 		// Get Translocator availability
 		InstanceData.Ability2.IsAvailable = CommandAvailabilityCheck ( InstanceData.Ability2, prerequisite );
@@ -73,10 +73,10 @@ public class Teleport : HeroUnit
 		base.StartCommand ( ability );
 
 		// Highlight team members
-		foreach ( Unit u in owner.UnitInstances )
+		foreach ( Unit u in Owner.UnitInstances )
 		{
 			// Check status effects
-			if ( u != this && !( u is Leader ) && u.Status.CanBeMoved )
+			if ( u != this && u.Status.CanBeMoved && u.Status.CanBeAffectedByAbility && ( InstanceData.Ability2.IsPerkEnabled || !( u is Leader ) ) )
 				u.currentTile.SetTileState ( TileState.AvailableCommand );
 		}
 	}
@@ -91,7 +91,7 @@ public class Teleport : HeroUnit
 		{
 			// Set command data
 			tile1 = t;
-			unit1 = t.currentUnit;
+			unit1 = t.CurrentUnit;
 
 			// Set tile as selected
 			t.SetTileState ( TileState.SelectedCommand );
@@ -100,7 +100,7 @@ public class Teleport : HeroUnit
 		{
 			// Set command data
 			tile2 = t;
-			unit2 = t.currentUnit;
+			unit2 = t.CurrentUnit;
 
 			// Set tile as selected
 			t.SetTileState ( TileState.SelectedCommand );
@@ -148,6 +148,24 @@ public class Teleport : HeroUnit
 	}
 
 	/// <summary>
+	/// Checks if there adjacent unoccupied tiles available for the Self-Destruct/Recall Ability.
+	/// Returns true if at least one adjacent tile is unoccupied.
+	/// </summary>
+	protected override bool CommandAvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
+	{
+		// Check base conditions
+		if ( !base.CommandAvailabilityCheck ( ability, prerequisite ) )
+			return false;
+
+		// Check for enough targets
+		if ( !TranslocatorCheck ( ) )
+			return false;
+
+		// Return that the ability is available
+		return true;
+	}
+
+	/// <summary>
 	/// Uses the unit's special ability.
 	/// Override this function to call specific special ability functions for a hero unit.
 	/// </summary>
@@ -155,19 +173,28 @@ public class Teleport : HeroUnit
 	{
 		// Create animation
 		Tween t1 = sprite.DOFade ( 0, MOVE_ANIMATION_TIME )
+			.OnStart ( ( ) =>
+			{
+				// Mark that the ability is active
+				InstanceData.Ability1.IsActive = true;
+				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+			} )
 			.OnComplete ( ( ) =>
 			{
 				// Move unit instantly
-				transform.position = data.Tile.transform.position;
+				transform.position = data.Destination.transform.position;
 			} );
 		Tween t2 = sprite.DOFade ( 1, MOVE_ANIMATION_TIME )
 			.OnComplete ( ( ) =>
 			{
+				// Mark that the ability is no longer active
+				InstanceData.Ability1.IsActive = false;
+
 				// Start teleport cooldown
 				StartCooldown ( InstanceData.Ability1 );
 
 				// Set unit and tile data
-				SetUnitToTile ( data.Tile );
+				SetUnitToTile ( data.Destination );
 			} );
 
 		// Add animations to queue
@@ -195,7 +222,7 @@ public class Teleport : HeroUnit
 			if ( t.neighbors [ i ] != null )
 			{
 				// Check if tile already has a move associated with it
-				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && !MoveList.Exists ( match => match.Tile == t.neighbors [ i ] && match.Prerequisite == null ) )
+				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && !MoveList.Exists ( match => match.Destination == t.neighbors [ i ] && match.PriorMove == null ) )
 				{
 					// Add as an available special move
 					MoveList.Add ( new MoveData ( t.neighbors [ i ], null, MoveData.MoveType.SPECIAL, i ) );
@@ -209,6 +236,42 @@ public class Teleport : HeroUnit
 				}
 			}
 		}
+	}
+
+	/// <summary>
+	/// Checks if there are a minimum number of allies to use Translocator.
+	/// </summary>
+	/// <returns> Whether or not there are enough targets. </returns>
+	private bool TranslocatorCheck ( )
+	{
+		// Start counter
+		int targetCounter = 0;
+
+		// Check each ally
+		foreach ( Unit u in Owner.UnitInstances )
+		{
+			// Check if the unit is this hero
+			if ( u == this )
+				continue;
+
+			// Check if the unit can be moved
+			if ( !u.Status.CanBeMoved )
+				continue;
+
+			// Check if the unit can be affected by abilities
+			if ( !u.Status.CanBeAffectedByAbility )
+				continue;
+
+			// Increment counter
+			targetCounter++;
+
+			// Check for minimum number of targets
+			if ( targetCounter >= 2 )
+				return true;
+		}
+
+		// Return that there are not enough targets
+		return false;
 	}
 
 	/// <summary>
@@ -228,8 +291,8 @@ public class Teleport : HeroUnit
 			GM.UI.timer.PauseTimer ( );
 
 		// Set units to their new tiles
-		tile1.currentUnit = unit2;
-		tile2.currentUnit = unit1;
+		tile1.CurrentUnit = unit2;
+		tile2.CurrentUnit = unit1;
 		unit1.currentTile = tile2;
 		unit2.currentTile = tile1;
 
@@ -255,6 +318,9 @@ public class Teleport : HeroUnit
 				tile2 = null;
 				unit1 = null;
 				unit2 = null;
+
+				// Mark that the ability is no longer active
+				InstanceData.Ability2.IsActive = false;
 
 				// Start cooldown
 				StartCooldown ( InstanceData.Ability2 );

@@ -29,8 +29,8 @@ public class Armor : HeroUnit
 	/// Name: Self-Destruct
 	/// Description: Detonate robotic minion after a brief period to KO any nearby opponents
 	/// Type: Toggle Command
-	/// Duration: 1 Turn
-	/// Cooldown: 3 Turns
+	/// Duration: 1 Round
+	/// Cooldown: 3 Rounds
 	/// Allies Immune: Active
 	/// 
 	/// Ability 3
@@ -38,8 +38,8 @@ public class Armor : HeroUnit
 	/// Name: Reconstruct
 	/// Description: Construct a new robotic minion after a brief period.
 	/// Type: Toggle Command
-	/// Duration: 1 Turn
-	/// Cooldown: 6 Turns
+	/// Duration: 1 Round
+	/// Cooldown: 6 Rounds
 	/// 
 	/// </summary>
 
@@ -55,7 +55,6 @@ public class Armor : HeroUnit
 	public TileObject currentRecall;
 	private const float ARMOR_ATTACK_ANIMATION_TIME = 0.75f;
 	private const float RECALL_ANIMATION_TIME = 0.75f;
-	private const string RECALL_STATUS_PROMPT = "Recall";
 
 	// Game objects
 	public SpriteRenderer mechAnimation;
@@ -109,7 +108,7 @@ public class Armor : HeroUnit
 						LoseMinion ( true );
 						mechAnimation.gameObject.SetActive ( true );
 						mechAnimation.transform.localScale = Vector3.one;
-						mechAnimation.color = Util.TeamColor ( owner.Team );
+						mechAnimation.color = Util.TeamColor ( Owner.Team );
 					} )
 					.OnComplete ( ( ) =>
 					{
@@ -179,15 +178,15 @@ public class Armor : HeroUnit
 			currentRecall = CreateTileOject ( recallPrefab, t, InstanceData.Ability3.Duration, RecallDurationComplete );
 
 			// Set team color
-			Color32 c = Util.TeamColor ( owner.Team );
-			currentRecall.sprite.color = new Color32 ( c.r, c.g, c.b, 150 );
+			Color32 c = Util.TeamColor ( Owner.Team );
+			currentRecall.Icon.color = new Color32 ( c.r, c.g, c.b, 150 );
 
 			// Set position
 			currentRecall.transform.position = t.transform.position;
 
 			// Begin animation
 			Sequence s = DOTween.Sequence ( )
-				.Append ( currentRecall.sprite.DOFade ( 0, RECALL_ANIMATION_TIME ).From ( ) )
+				.Append ( currentRecall.Icon.DOFade ( 0, RECALL_ANIMATION_TIME ).From ( ) )
 				.OnComplete ( ( ) =>
 				{
 					// Set that Recall is active
@@ -198,7 +197,7 @@ public class Armor : HeroUnit
 					StartCooldown ( InstanceData.Ability3 );
 
 					// Apply status effect
-					Status.AddStatusEffect ( withMechSprite, RECALL_STATUS_PROMPT, this, InstanceData.Ability3.Duration, StatusEffects.StatusType.CAN_MOVE );
+					//Status.AddStatusEffect ( withMechSprite, RECALL_STATUS_PROMPT, this, InstanceData.Ability3.Duration, StatusEffects.StatusType.CAN_MOVE );
 					GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
 
 					// Pause turn timer
@@ -219,7 +218,7 @@ public class Armor : HeroUnit
 			currentSelfDestruct = CreateTileOject ( selfDestructPrefab, t, InstanceData.Ability2.Duration, SelfDestructDurationComplete );
 
 			// Set team color
-			currentSelfDestruct.sprite.color = Util.TeamColor ( owner.Team );
+			currentSelfDestruct.Icon.color = Util.TeamColor ( Owner.Team );
 
 			// Remove Armor
 			LoseMinion ( false );
@@ -257,7 +256,7 @@ public class Armor : HeroUnit
 			EndReconstruct ( );
 
 			// Interupt status effect
-			Status.RemoveStatusEffect ( withMechSprite, RECALL_STATUS_PROMPT, this, StatusEffects.StatusType.CAN_MOVE );
+			//Status.RemoveStatusEffect ( withMechSprite, RECALL_STATUS_PROMPT, this, StatusEffects.StatusType.CAN_MOVE );
 			GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
 		}
 	}
@@ -331,7 +330,7 @@ public class Armor : HeroUnit
 	private bool AdjacentTilesCheck ( )
 	{
 		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.TeamDirection );
+		IntPair back = GetBackDirection ( Owner.TeamDirection );
 
 		// Check each neighboring tile
 		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
@@ -355,7 +354,7 @@ public class Armor : HeroUnit
 	private void GetAdjacentTiles ( )
 	{
 		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.TeamDirection );
+		IntPair back = GetBackDirection ( Owner.TeamDirection );
 
 		// Check each neighboring tile
 		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
@@ -382,16 +381,16 @@ public class Armor : HeroUnit
 				// Remove Self-Destruct
 				DestroyTileObject ( currentSelfDestruct );
 			} );
-		Tween t2 = currentSelfDestruct.sprite.DOFade ( 0, MOVE_ANIMATION_TIME );
+		Tween t2 = currentSelfDestruct.Icon.DOFade ( 0, MOVE_ANIMATION_TIME );
 
 		// Add animations to queue
 		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
 		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
 
 		// Attack any adjacent enemy units
-		foreach ( Tile t in currentSelfDestruct.tile.neighbors )
-			if ( t != null && t.currentUnit != null && t.currentUnit.UnitAttackCheck ( this ) )
-				t.currentUnit.GetAttacked ( );
+		foreach ( Tile t in currentSelfDestruct.CurrentHex.neighbors )
+			if ( t != null && t.CurrentUnit != null && t.CurrentUnit.UnitAttackCheck ( this ) )
+				t.CurrentUnit.GetAttacked ( );
 	}
 
 	/// <summary>
@@ -400,11 +399,11 @@ public class Armor : HeroUnit
 	private void RecallDurationComplete ( )
 	{
 		// Create animation
-		Tween t = transform.DOMove ( currentRecall.tile.transform.position, MOVE_ANIMATION_TIME )
+		Tween t = transform.DOMove ( currentRecall.CurrentHex.transform.position, MOVE_ANIMATION_TIME )
 			.OnComplete ( ( ) =>
 			{
 				// Set unit and tile data
-				SetUnitToTile ( currentRecall.tile );
+				SetUnitToTile ( currentRecall.CurrentHex );
 
 				// Replenish Armor
 				GainMinion ( );

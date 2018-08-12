@@ -240,12 +240,12 @@ public class PlayerHUD : MonoBehaviour
 		for ( int i = 0; i < instanceHUDs [ id ].StatusIcons.Length; i++ )
 		{
 			// Check for status effect
-			if ( i < status.effects.Count )
+			if ( i < status.Effects.Count )
 			{
 				// Display status effect
 				instanceHUDs [ id ].StatusIcons [ i ].gameObject.SetActive ( true );
-				instanceHUDs [ id ].StatusIcons [ i ].sprite = status.effects [ i ].info.icon;
-				instanceHUDs [ id ].StatusIcons [ i ].color = Util.TeamColor ( status.effects [ i ].info.caster.owner.Team );
+				instanceHUDs [ id ].StatusIcons [ i ].sprite = status.Effects [ i ].Icon;
+				instanceHUDs [ id ].StatusIcons [ i ].color = Util.TeamColor ( status.Effects [ i ].Caster.Owner.Team );
 			}
 			else
 			{

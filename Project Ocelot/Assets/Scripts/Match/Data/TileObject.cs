@@ -4,31 +4,39 @@ using UnityEngine;
 
 public class TileObject : MonoBehaviour
 {
-	// Object information
-	public SpriteRenderer sprite;
-	public HeroUnit hero;
-	public Tile tile;
-	public bool canBeOccupied;
-	public bool canBeJumped;
+	#region Tile Object Data
 
-	// Instance information
+	public SpriteRenderer Icon;
+	public HeroUnit Caster;
+	public Hex CurrentHex;
+
+	public bool CanBeOccupied;
+	public bool CanBeJumped;
+	public bool CanBeMoved;
+	public bool CanBeAttacked;
+
 	private int duration;
+
 	public delegate void TileObjectDelegate ( );
 	private TileObjectDelegate durationDelegate;
+
+	#endregion // Tile Object Data
+
+	#region Public Functions
 
 	/// <summary>
 	/// Sets the tile object instance information.
 	/// </summary>
-	public void SetTileObject ( HeroUnit _hero, Tile _tile, int _duration, TileObjectDelegate _delegate )
+	public void SetTileObject ( HeroUnit _hero, Hex _hex, int _duration, TileObjectDelegate _delegate )
 	{
 		// Set owner
-		hero = _hero;
+		Caster = _hero;
 
 		// Set tile
-		tile = _tile;
+		CurrentHex = _hex;
 
 		// Set position
-		transform.position = _tile.transform.position;
+		transform.position = _hex.transform.position;
 
 		// Set duration
 		duration = _duration;
@@ -51,6 +59,19 @@ public class TileObject : MonoBehaviour
 	}
 
 	/// <summary>
+	/// Responds to getting attacked by an opponent.
+	/// </summary>
+	public void GetAttacked ( )
+	{
+		// End duration
+		OnDurationExpire ( );
+	}
+
+	#endregion // Public Functions
+
+	#region Private Functions
+
+	/// <summary>
 	/// Executes the delegate on the duration of this tile object expiring.
 	/// </summary>
 	private void OnDurationExpire ( )
@@ -58,4 +79,6 @@ public class TileObject : MonoBehaviour
 		// Execute delegate
 		durationDelegate ( );
 	}
+
+	#endregion // Private Functions
 }

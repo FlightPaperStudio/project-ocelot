@@ -40,7 +40,6 @@ public class GrimReaper : HeroUnit
 	public List<Tile> grimReaperTiles = new List<Tile> ( );
 	private const float LIFE_DRAIN_FADE = 200f / 255f;
 	private const float LIFE_DRAIN_ANIMATION_TIME = 0.75f;
-	private const string LIFE_DRAIN_STATUS_PROMPT = "Life Drain";
 
 	#region MonoBehaviour Functions
 
@@ -51,7 +50,7 @@ public class GrimReaper : HeroUnit
 	{
 		// Set Grim Reaper
 		if ( InstanceData.Ability2.IsEnabled )
-			owner.standardKOdelegate += AddGrimReaperTile;
+			Owner.standardKOdelegate += AddGrimReaperTile;
 	}
 
 	#endregion // MonoBehaviour Functions
@@ -84,7 +83,8 @@ public class GrimReaper : HeroUnit
 			DeactivateLifeDrain ( );
 
 			// Remove status effect
-			Status.RemoveStatusEffect ( InstanceData.Ability1.Icon, LIFE_DRAIN_STATUS_PROMPT, this );
+			Status.RemoveStatusEffect ( StatusEffectDatabase.StatusEffectType.OVERPOWERED, this );
+			//Status.RemoveStatusEffect ( InstanceData.Ability1.Icon, LIFE_DRAIN_STATUS_PROMPT, this );
 			GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
 		}
 		else
@@ -99,7 +99,7 @@ public class GrimReaper : HeroUnit
 				{
 					// Remove delegates
 					if ( InstanceData.Ability2.IsEnabled )
-						foreach ( Unit u in owner.UnitInstances )
+						foreach ( Unit u in Owner.UnitInstances )
 							if ( u != null )
 								u.koDelegate -= AddGrimReaperTile;
 
@@ -112,10 +112,10 @@ public class GrimReaper : HeroUnit
 					GM.UI.matchInfoMenu.GetPlayerHUD ( this ).DisplayKO ( InstanceID );
 
 					// Remove unit from the team
-					owner.UnitInstances.Remove ( this );
+					Owner.UnitInstances.Remove ( this );
 
 					// Remove unit reference from the tile
-					currentTile.currentUnit = null;
+					currentTile.CurrentUnit = null;
 
 					// Delete the unit
 					Destroy ( this.gameObject );
@@ -127,7 +127,7 @@ public class GrimReaper : HeroUnit
 			// Add animations to queue
 			if ( usePostAnimationQueue )
 			{
-				GM.PostAnimationQueue.Add ( new GameManager.PostTurnAnimation ( this, owner, new GameManager.TurnAnimation ( t1, false ), new GameManager.TurnAnimation ( t2, false ) ) );
+				GM.PostAnimationQueue.Add ( new GameManager.PostTurnAnimation ( this, Owner, new GameManager.TurnAnimation ( t1, false ), new GameManager.TurnAnimation ( t2, false ) ) );
 			}
 			else
 			{
@@ -214,20 +214,29 @@ public class GrimReaper : HeroUnit
 	{
 		// Create animation
 		Tween t1 = sprite.DOFade ( 0, MOVE_ANIMATION_TIME )
+			.OnStart ( ( ) =>
+			{
+				// Mark that the ability is active
+				InstanceData.Ability2.IsActive = true;
+				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability2 );
+			} )
 			.OnComplete ( ( ) =>
 			{
 				// Move unit instantly
-				transform.position = data.Tile.transform.position;
+				transform.position = data.Destination.transform.position;
 			} );
 		Tween t2 = barrier.DOFade ( 0, MOVE_ANIMATION_TIME );
 		Tween t3 = sprite.DOFade ( 1, MOVE_ANIMATION_TIME )
 			.OnComplete ( ( ) =>
 			{
+				// Mark that the ability is no longer active
+				InstanceData.Ability2.IsActive = false;
+
 				// Start teleport cooldown
 				StartCooldown ( InstanceData.Ability2 );
 
 				// Set unit and tile data
-				SetUnitToTile ( data.Tile );
+				SetUnitToTile ( data.Destination );
 			} );
 		Tween t4 = barrier.DOFade ( LIFE_DRAIN_FADE, MOVE_ANIMATION_TIME );
 
@@ -257,7 +266,7 @@ public class GrimReaper : HeroUnit
 	private void AddGrimReaperTile ( Unit u )
 	{
 		// Add tile
-		if ( u.owner == owner )
+		if ( u.Owner == Owner )
 			grimReaperTiles.Add ( u.currentTile );
 	}
 
@@ -279,7 +288,8 @@ public class GrimReaper : HeroUnit
 				MoveList.Add ( m );
 
 				// Continue movement
-				FindMoves ( t, m, false );
+				if ( InstanceData.Ability2.IsPerkEnabled )
+					FindMoves ( t, m, false );
 			}
 		}
 	}
@@ -290,26 +300,33 @@ public class GrimReaper : HeroUnit
 	/// </summary>
 	private void ActivateLifeDrain ( )
 	{
-		// Display barrier
-		barrier.gameObject.SetActive ( true );
-		barrier.color = new Color32 ( 255, 255, 255, 0 );
-
 		// Create animation
 		Tween t = barrier.DOFade ( LIFE_DRAIN_FADE, LIFE_DRAIN_ANIMATION_TIME )
+			.OnStart ( ( ) =>
+			{
+				// Mark that the ability is active
+				InstanceData.Ability1.IsActive = true;
+				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+
+				// Display barrier
+				barrier.gameObject.SetActive ( true );
+				barrier.color = new Color32 ( 255, 255, 255, 0 );
+			} )
 			.OnComplete ( ( ) =>
 			{
 				// Refresh abilities
 				InstanceData.Ability1.CurrentDuration = InstanceData.Ability1.Duration;
-				if ( InstanceData.Ability2.IsEnabled )
+				if ( InstanceData.Ability1.IsPerkEnabled && InstanceData.Ability2.IsEnabled )
 					InstanceData.Ability2.CurrentCooldown = 0;
 
 				// Update HUD
 				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
-				if ( InstanceData.Ability2.IsEnabled )
+				if ( InstanceData.Ability1.IsPerkEnabled && InstanceData.Ability2.IsEnabled )
 					GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability2 );
 
 				// Apply status effect
-				Status.AddStatusEffect ( InstanceData.Ability1.Icon, LIFE_DRAIN_STATUS_PROMPT, this, InstanceData.Ability1.Duration );
+				Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.OVERPOWERED, InstanceData.Ability1.Duration, this );
+				//Status.AddStatusEffect ( InstanceData.Ability1.Icon, LIFE_DRAIN_STATUS_PROMPT, this, InstanceData.Ability1.Duration );
 				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
 				GM.UI.unitHUD.UpdateStatusEffects ( );
 			} );
@@ -328,6 +345,9 @@ public class GrimReaper : HeroUnit
 		Tween t = barrier.DOFade ( 0, LIFE_DRAIN_ANIMATION_TIME )
 			.OnComplete ( ( ) =>
 			{
+				// Mark that the ability is no longer active
+				InstanceData.Ability1.IsActive = false;
+
 				// Hide barrier
 				barrier.gameObject.SetActive ( false );
 

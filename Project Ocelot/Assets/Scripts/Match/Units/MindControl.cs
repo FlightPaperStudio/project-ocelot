@@ -22,15 +22,16 @@ public class MindControl : HeroUnit
 	/// Name: Mind Control
 	/// Description: Attacked opponents can be controlled for a short period before they are eventually KO'd
 	/// Type: Passive
-	/// Duration: 3 Turns
+	/// Duration: 3 Rounds
+	/// Refresh Mind Control: Active
 	/// 
 	/// Ability 2
 	/// ID: 16
 	/// Name: Clone
 	/// Description: Creates a temporary clone of itself for an assist
 	/// Type: Special
-	/// Duration: 1 Turn
-	/// Cooldown: 4 Turns
+	/// Duration: 1 Round
+	/// Cooldown: 4 Rounds
 	/// Continue Movement: Active
 	/// 
 	/// </summary>
@@ -107,10 +108,10 @@ public class MindControl : HeroUnit
 			foreach ( Tile t in data.Attacks )
 			{
 				// Interupt unit
-				t.currentUnit.InteruptUnit ( );
+				t.CurrentUnit.InteruptUnit ( );
 
 				// Activate Mind Control
-				ActivateMindControl ( t.currentUnit );
+				ActivateMindControl ( t.CurrentUnit );
 			}
 		}
 		else
@@ -134,20 +135,24 @@ public class MindControl : HeroUnit
 		if ( !base.PassiveAvailabilityCheck ( ability, prerequisite ) )
 			return false;
 
+		// Check ability status effect
+		if ( !Status.CanUseAbility )
+			return false;
+
 		// Check the opponent
 		foreach ( Tile t in prerequisite.Attacks )
 		{
 			// Check for Leader
-			if ( t.currentUnit is Leader )
+			if ( t.CurrentUnit is Leader )
 				return false;
 
 			// Check for Hero 6's Ghost ability
-			if ( t.currentUnit is Pacifist )
-			{
-				HeroUnit h = t.currentUnit as HeroUnit;
-				if ( h.InstanceData.Ability1.IsEnabled )
-					return false;
-			}
+			//if ( t.currentUnit is Pacifist )
+			//{
+			//	HeroUnit h = t.currentUnit as HeroUnit;
+			//	if ( h.InstanceData.Ability1.IsEnabled )
+			//		return false;
+			//}
 		}
 
 		// Return that the ability is available
@@ -165,7 +170,7 @@ public class MindControl : HeroUnit
 			return false;
 
 		// Check previous moves
-		if ( CheckPrequisiteType ( prerequisite ) )
+		if ( PriorMoveTypeCheck ( prerequisite ) )
 			return false;
 
 		// Return that the ability is available
@@ -179,28 +184,28 @@ public class MindControl : HeroUnit
 	protected override void UseSpecial ( MoveData data )
 	{
 		// Create clone
-		currentCloneDisplay = Instantiate ( cloneDisplayPrefab, owner.transform );
-		currentCloneDisplay.transform.position = data.Tile.neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].transform.position;
-		Color32 c = Util.TeamColor ( owner.Team );
+		currentCloneDisplay = Instantiate ( cloneDisplayPrefab, Owner.transform );
+		currentCloneDisplay.transform.position = data.Destination.neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].transform.position;
+		Color32 c = Util.TeamColor ( Owner.Team );
 		currentCloneDisplay.color = new Color32 ( c.r, c.g, c.b, 150 );
-		Util.OrientSpriteToDirection ( currentCloneDisplay, owner.TeamDirection );
+		Util.OrientSpriteToDirection ( currentCloneDisplay, Owner.TeamDirection );
 		currentCloneDisplay.gameObject.SetActive ( false );
 
 		// Create animations
-		Tween t1 = currentCloneDisplay.transform.DOMove ( data.Tile.neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].transform.position, MOVE_ANIMATION_TIME )
+		Tween t1 = currentCloneDisplay.transform.DOMove ( data.Destination.neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].transform.position, MOVE_ANIMATION_TIME )
 			.OnStart ( ( ) =>
 			{
 				// Display clone
 				currentCloneDisplay.gameObject.SetActive ( true );
 			} );
-		Tween t2 = transform.DOMove ( data.Tile.transform.position, MOVE_ANIMATION_TIME * 2 )
+		Tween t2 = transform.DOMove ( data.Destination.transform.position, MOVE_ANIMATION_TIME * 2 )
 			.OnComplete ( ( ) =>
 			{
 				// Start teleport cooldown
 				StartCooldown ( InstanceData.Ability2 );
 
 				// Set unit and tile data
-				SetUnitToTile ( data.Tile );
+				SetUnitToTile ( data.Destination );
 			} );
 		Tween t3 = currentCloneDisplay.transform.DOScale ( new Vector3 ( 5, 5, 5 ), KO_ANIMATION_TIME )
 			.OnComplete ( ( ) =>
@@ -228,7 +233,7 @@ public class MindControl : HeroUnit
 	private void GetCloneAssist ( Tile t, MoveData prerequisite )
 	{
 		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.TeamDirection );
+		IntPair back = GetBackDirection ( Owner.TeamDirection );
 
 		// Check each neighboring tile
 		for ( int i = 0; i < t.neighbors.Length; i++ )
@@ -259,14 +264,14 @@ public class MindControl : HeroUnit
 	private void ActivateMindControl ( Unit u )
 	{
 		// Create animation
-		Tween t = u.sprite.DOColor ( Util.TeamColor ( owner.Team ), MIND_CONTROL_ANIMATION_TIME )
+		Tween t = u.sprite.DOColor ( Util.TeamColor ( Owner.Team ), MIND_CONTROL_ANIMATION_TIME )
 			.OnStart ( ( ) =>
 			{
 				// Check for pre-existing Mind Control
-				if ( u.Status.effects.Exists ( match => match.info.icon == InstanceData.Ability1.Icon && match.info.text == MIND_CONTROL_STATUS_PROMPT ) )
+				if ( u.Status.Effects.Exists ( x => x.ID == (int)StatusEffectDatabase.StatusEffectType.MIND_CONTROLLED ) ) //match => match.info.icon == InstanceData.Ability1.Icon && match.info.text == MIND_CONTROL_STATUS_PROMPT ) )
 				{
 					// Remove pre-existing Mind Control
-					MindControl original = u.Status.effects.Find ( match => match.info.icon == InstanceData.Ability1.Icon && match.info.text == MIND_CONTROL_STATUS_PROMPT ).info.caster as MindControl;
+					MindControl original = u.Status.Effects.Find ( x => x.ID == (int)StatusEffectDatabase.StatusEffectType.MIND_CONTROLLED ).Caster as MindControl; //u.Status.effects.Find ( match => match.info.icon == InstanceData.Ability1.Icon && match.info.text == MIND_CONTROL_STATUS_PROMPT ).info.caster as MindControl;
 					original.RemoveMindControlledUnit ( u );
 				}
 
@@ -277,35 +282,44 @@ public class MindControl : HeroUnit
 					MindControl hero3 = u as MindControl;
 					hero3.DeactivateMindControl ( );
 				}
+
+				// Mark that the ability is active
+				InstanceData.Ability1.IsActive = true;
+				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
 			} )
 			.OnComplete ( ( ) =>
 			{
+				// Mark that the ability is no longer active
+				InstanceData.Ability1.IsActive = false;
+				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+
 				// Store unit
 				//mindControlledUnits.Add ( new MindControlledUnit ( u, u.owner, currentAbility1.duration ) );
 
 				// Remove unit from unit's player's team
-				u.owner.UnitInstances.Remove ( u );
-				if ( u.owner.standardKOdelegate != null )
-					u.koDelegate -= u.owner.standardKOdelegate;
+				u.Owner.UnitInstances.Remove ( u );
+				if ( u.Owner.standardKOdelegate != null )
+					u.koDelegate -= u.Owner.standardKOdelegate;
 
 				// Add unit to player's team
-				owner.UnitInstances.Add ( u );
-				u.owner = owner;
-				if ( owner.standardKOdelegate != null )
-					u.koDelegate += owner.standardKOdelegate;
+				Owner.UnitInstances.Add ( u );
+				u.Owner = Owner;
+				if ( Owner.standardKOdelegate != null )
+					u.koDelegate += Owner.standardKOdelegate;
 
 				// Apply status effect
-				u.Status.AddStatusEffect ( InstanceData.Ability1.Icon, MIND_CONTROL_STATUS_PROMPT, this, InstanceData.Ability1.Duration );
+				u.Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.MIND_CONTROLLED, InstanceData.Ability1.Duration, this );
+				//u.Status.AddStatusEffect ( InstanceData.Ability1.Icon, MIND_CONTROL_STATUS_PROMPT, this, InstanceData.Ability1.Duration );
 
 				// Add KO delegate
 				//u.koDelegate += MindControlKO;
 
 				// Face unit in correct direction
-				Util.OrientSpriteToDirection ( u.sprite, u.owner.TeamDirection );
+				Util.OrientSpriteToDirection ( u.sprite, u.Owner.TeamDirection );
 
 				// Update HUD
 				GM.UI.matchInfoMenu.GetPlayerHUD ( u ).UpdateStatusEffects ( u.InstanceID, u.Status );
-				GM.UI.matchInfoMenu.GetPlayerHUD ( u ).UpdatePortrait ( u.InstanceID, Util.TeamColor ( owner.Team ) );
+				GM.UI.matchInfoMenu.GetPlayerHUD ( u ).UpdatePortrait ( u.InstanceID, Util.TeamColor ( Owner.Team ) );
 			} );
 
 		// Add animation to queue

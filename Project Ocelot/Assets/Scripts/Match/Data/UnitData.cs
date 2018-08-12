@@ -148,7 +148,7 @@ public interface IReadOnlyAbilityData
 	/// <summary>
 	/// The name of a setting that is unique to the ability.
 	/// </summary>
-	string CustomFeatureName
+	string PerkName
 	{
 		get;
 	}
@@ -157,7 +157,7 @@ public interface IReadOnlyAbilityData
 	/// The value of a setting that is unique to the ability.
 	/// For toggle settings, 1 = true and 0 = false.
 	/// </summary>
-	int CustomFeatureValue
+	int PerkValue
 	{
 		get;
 	}
@@ -336,22 +336,34 @@ public class AbilityData : IReadOnlyAbilityData
 	}
 
 	/// <summary>
-	/// The name of a setting that is unique to the ability.
+	/// The name of the ability's perk.
 	/// </summary>
-	public string CustomFeatureName
+	public string PerkName
 	{
 		get;
 		set;
 	}
 
 	/// <summary>
-	/// The value of a setting that is unique to the ability.
+	/// The value of the ability's perk.
 	/// For toggle settings, 1 = true and 0 = false.
 	/// </summary>
-	public int CustomFeatureValue
+	public int PerkValue
 	{
 		get;
 		set;
+	}
+
+	/// <summary>
+	/// Whether or not the perk for the ability is enabled.
+	/// </summary>
+	public bool IsPerkEnabled
+	{
+		get
+		{
+			// Check value
+			return PerkValue > 0;
+		}
 	}
 
 	public enum AbilityType

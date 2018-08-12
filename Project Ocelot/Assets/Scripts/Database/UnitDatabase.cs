@@ -65,8 +65,8 @@ public static class UnitDatabase
 				IsEnabled = true,
 				Duration = System.Convert.ToInt32 ( data [ "Duration" ] ),
 				Cooldown = System.Convert.ToInt32 ( data [ "Cooldown" ] ),
-				CustomFeatureName = data [ "CustomFeatureName" ].ToString ( ),
-				CustomFeatureValue = data [ "CustomFeatureValue" ].ToString ( ) != "" ? System.Convert.ToInt32 ( data [ "CustomFeatureValue" ] ) : -1
+				PerkName = data [ "PerkName" ].ToString ( ),
+				PerkValue = data [ "PerkValue" ].ToString ( ) != "" ? System.Convert.ToInt32 ( data [ "PerkValue" ] ) : -1
 			} );
 		unit.InitializeAbilities ( abilities.ToArray ( ) );
 
@@ -135,8 +135,8 @@ public static class UnitDatabase
 					IsEnabled = true,
 					Duration = System.Convert.ToInt32 ( data [ "Duration" ] ),
 					Cooldown = System.Convert.ToInt32 ( data [ "Cooldown" ] ),
-					CustomFeatureName = data [ "CustomFeatureName" ].ToString ( ),
-					CustomFeatureValue = data [ "CustomFeatureValue" ].ToString ( ) != "" ? System.Convert.ToInt32 ( data [ "CustomFeatureValue" ] ) : -1
+					PerkName = data [ "PerkName" ].ToString ( ),
+					PerkValue = data [ "PerkValue" ].ToString ( ) != "" ? System.Convert.ToInt32 ( data [ "PerkValue" ] ) : -1
 				} );
 			units [ i ].InitializeAbilities ( abilities.ToArray ( ) );
 
@@ -209,8 +209,8 @@ public static class UnitDatabase
 					IsEnabled = true,
 					Duration = System.Convert.ToInt32 ( data [ "Duration" ] ),
 					Cooldown = System.Convert.ToInt32 ( data [ "Cooldown" ] ),
-					CustomFeatureName = data [ "CustomFeatureName" ].ToString ( ),
-					CustomFeatureValue = data [ "CustomFeatureValue" ].ToString ( ) != "" ? System.Convert.ToInt32 ( data [ "CustomFeatureValue" ] ) : -1
+					PerkName = data [ "PerkName" ].ToString ( ),
+					PerkValue = data [ "PerkValue" ].ToString ( ) != "" ? System.Convert.ToInt32 ( data [ "PerkValue" ] ) : -1
 				} );
 			heroes [ i ].InitializeAbilities ( abilities.ToArray ( ) );
 

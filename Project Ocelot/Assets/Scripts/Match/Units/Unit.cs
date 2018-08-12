@@ -19,6 +19,15 @@ public class Unit : MonoBehaviour
 	}
 
 	/// <summary>
+	/// The ID for this unit type.
+	/// </summary>
+	protected int ID
+	{
+		get;
+		private set;
+	}
+
+	/// <summary>
 	/// The unique ID for this particular unit instance in a match.
 	/// </summary>
 	public int InstanceID
@@ -40,8 +49,8 @@ public class Unit : MonoBehaviour
 
 	#region Instance Data
 
-	public Tile currentTile;
-	public Player owner;
+	public Hex CurrentHex;
+	public Player Owner;
 	public SpriteRenderer sprite;
 	public delegate void KOdelegate ( Unit u );
 	public KOdelegate koDelegate;
@@ -73,6 +82,9 @@ public class Unit : MonoBehaviour
 	{
 		// Set manager
 		GM = gm;
+
+		// Set unit ID
+		ID = settingData.ID;
 
 		// Set instance's ID
 		InstanceID = instanceID;
@@ -106,8 +118,8 @@ public class Unit : MonoBehaviour
 				IsEnabled          = settingData.Ability1.IsEnabled,
 				Duration           = settingData.Ability1.Duration,
 				Cooldown           = settingData.Ability1.Cooldown,
-				CustomFeatureName  = settingData.Ability1.CustomFeatureName,
-				CustomFeatureValue = settingData.Ability1.CustomFeatureValue,
+				PerkName  = settingData.Ability1.PerkName,
+				PerkValue = settingData.Ability1.PerkValue,
 
 				IsAvailable     = true,
 				CurrentDuration = 0,
@@ -126,8 +138,8 @@ public class Unit : MonoBehaviour
 				IsEnabled          = settingData.Ability2.IsEnabled,
 				Duration           = settingData.Ability2.Duration,
 				Cooldown           = settingData.Ability2.Cooldown,
-				CustomFeatureName  = settingData.Ability2.CustomFeatureName,
-				CustomFeatureValue = settingData.Ability2.CustomFeatureValue,
+				PerkName  = settingData.Ability2.PerkName,
+				PerkValue = settingData.Ability2.PerkValue,
 
 				IsAvailable     = true,
 				CurrentDuration = 0,
@@ -146,8 +158,8 @@ public class Unit : MonoBehaviour
 				IsEnabled          = settingData.Ability3.IsEnabled,
 				Duration           = settingData.Ability3.Duration,
 				Cooldown           = settingData.Ability3.Cooldown,
-				CustomFeatureName  = settingData.Ability3.CustomFeatureName,
-				CustomFeatureValue = settingData.Ability3.CustomFeatureValue,
+				PerkName  = settingData.Ability3.PerkName,
+				PerkValue = settingData.Ability3.PerkValue,
 
 				IsAvailable     = true,
 				CurrentDuration = 0,
@@ -161,57 +173,54 @@ public class Unit : MonoBehaviour
 	/// <summary>
 	/// Calculates all base moves available to a unit.
 	/// </summary>
-	/// <param name="t"> The tile who's neighbor will be checked for moves. </param>
-	/// <param name="prerequisite"> The Move Data for any moves required for the unit to reach this tile. </param>
+	/// <param name="hex"> The tile who's neighbor will be checked for moves. </param>
+	/// <param name="prior"> The Move Data for any moves required for the unit to reach this tile. </param>
 	/// /// <param name="returnOnlyJumps"> Whether or not only jump moves should be stored as available moves. </param>
-	public virtual void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
+	public virtual void FindMoves ( Hex hex, MoveData prior, bool returnOnlyJumps )
 	{
 		// Clear previous move list
-		if ( prerequisite == null )
+		if ( prior == null )
 			MoveList.Clear ( );
 
 		// Check status effects
 		if ( Status.CanMove )
 		{
-			// Store which tiles are to be ignored
-			IntPair back = GetBackDirection ( owner.TeamDirection );
-
 			// Check each neighboring tile
-			for ( int i = 0; i < t.neighbors.Length; i++ )
+			for ( int i = 0; i < hex.Neighbors.Length; i++ )
 			{
 				// Ignore tiles that would allow for backward movement
-				if ( i == back.FirstInt || i == back.SecondInt )
-					continue;
+				//if ( hex.Grid.IsBackDirection ( CurrentTile.Cube, hex.Cube, owner.TeamDirection ) )
+				//	continue;
 
 				// Check if this unit can move to the neighboring tile
-				if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
+				if ( !returnOnlyJumps && OccupyTileCheck ( hex.Neighbors [ i ], prior ) )
 				{
 					// Add as an available move
-					MoveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
+					MoveList.Add ( new MoveData ( hex.Neighbors [ i ], prior, MoveData.MoveType.MOVE, i ) );
 				}
 				// Check if this unit can jump the neighboring tile
-				else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
+				else if ( JumpTileCheck ( hex.Neighbors [ i ] ) && OccupyTileCheck ( hex.Neighbors [ i ].Neighbors [ i ], prior ) )
 				{
 					// Track move data
 					MoveData m;
 
 					// Check if the neighboring unit can be attacked
-					if ( t.neighbors [ i ].currentUnit != null && t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
+					if ( hex.Neighbors [ i ].Tile.CurrentUnit != null && hex.Neighbors [ i ].Tile.CurrentUnit.UnitAttackCheck ( this ) )
 					{
 						// Add as an available attack
-						m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.ATTACK, i, t.neighbors [ i ] );
+						m = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prior, MoveData.MoveType.ATTACK, i, hex.Neighbors [ i ] );
 					}
 					else
 					{
 						// Add as an available jump
-						m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.JUMP, i );
+						m = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prior, MoveData.MoveType.JUMP, i );
 					}
 
 					// Add move to the move list
 					MoveList.Add ( m );
 
 					// Find additional jumps
-					FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
+					FindMoves ( hex.Neighbors [ i ].Neighbors [ i ], m, true );
 				}
 			}
 		}
@@ -226,11 +235,20 @@ public class Unit : MonoBehaviour
 	/// <returns> Whether or not this unit can be attacked by another unit. </returns>
 	public virtual bool UnitAttackCheck ( Unit attacker )
 	{
-		// Check if the unit to be attacked is on the same team
-		if ( attacker.owner == owner )
+		// Check if the units are on the same team
+		if ( attacker.Owner == Owner )
 			return false;
-		else
-			return true;
+
+		// Check if the attacking unit can attack
+		if ( !attacker.Status.CanAttack )
+			return false;
+
+		// Check if this unit can be attacked
+		if ( !Status.CanBeAttacked )
+			return false;
+
+		// Return that this unit can be attacked by the attacking unit
+		return true;
 	}
 
 	/// <summary>
@@ -275,10 +293,10 @@ public class Unit : MonoBehaviour
 				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).DisplayKO ( InstanceID );
 
 				// Remove unit from the team
-				owner.UnitInstances.Remove ( this );
+				Owner.UnitInstances.Remove ( this );
 
 				// Remove unit reference from the tile
-				currentTile.currentUnit = null;
+				CurrentHex.Tile.CurrentUnit = null;
 
 				// Delete the unit
 				Destroy ( this.gameObject );
@@ -290,7 +308,7 @@ public class Unit : MonoBehaviour
 		// Add animations to queue
 		if ( usePostAnimationQueue )
 		{
-			GM.PostAnimationQueue.Add ( new GameManager.PostTurnAnimation ( this, owner, new GameManager.TurnAnimation ( t1, false ), new GameManager.TurnAnimation ( t2, false ) ) );
+			GM.PostAnimationQueue.Add ( new GameManager.PostTurnAnimation ( this, Owner, new GameManager.TurnAnimation ( t1, false ), new GameManager.TurnAnimation ( t2, false ) ) );
 		}
 		else
 		{
@@ -322,10 +340,10 @@ public class Unit : MonoBehaviour
 		foreach ( MoveData move in MoveList )
 		{
 			// Check for conflicted tiles
-			if ( MoveList.Exists ( x => x.Tile == move.Tile && x.Prerequisite == move.Prerequisite && !x.isConflicted && x != move ) )
+			if ( MoveList.Exists ( x => x.Destination == move.Destination && x.PriorMove == move.PriorMove && !x.isConflicted && x != move ) )
 			{
 				// Create list of conflicted moves 
-				List<MoveData> conflicts = MoveList.FindAll ( x => x.Tile == move.Tile && x.Prerequisite == move.Prerequisite && !x.isConflicted );
+				List<MoveData> conflicts = MoveList.FindAll ( x => x.Destination == move.Destination && x.PriorMove == move.PriorMove && !x.isConflicted );
 
 				// Mark moves as conflicted
 				foreach ( MoveData m in conflicts )
@@ -351,25 +369,21 @@ public class Unit : MonoBehaviour
 	/// Determines if a tile can be moved to by this unit.
 	/// Returns true if the tile can be moved to.
 	/// </summary>
-	/// <param name="t"> The tile being checked. </param>
+	/// <param name="hex"> The tile being checked. </param>
 	/// <param name="prerequisite"> The Move Data for any moves required for the unit to reach the given tile. </param>
 	/// <returns> Whether or not this unit can move to the given tile. </returns>
-	protected virtual bool OccupyTileCheck ( Tile t, MoveData prerequisite )
+	protected virtual bool OccupyTileCheck ( Hex hex, MoveData prerequisite )
 	{
 		// Check if the tile exists
-		if ( t == null )
+		if ( hex == null )
 			return false;
 
 		// Check if the tile is blocked by a previous move that turn
-		if ( CheckPrequisiteTiles ( t, prerequisite ) )
+		if ( PriorMoveCheck ( hex, prerequisite ) )
 			return false;
 
-		// Check if the tile currently occupied
-		if ( t.currentUnit != null )
-			return false;
-
-		// Check if the tile has a tile object blocking it
-		if ( t.currentObject != null && !t.currentObject.canBeOccupied )
+		// Check if the tile is currently occupied
+		if ( hex.Tile.IsOccupied )
 			return false;
 
 		// Return that the tile can be occupied by this unit
@@ -380,20 +394,28 @@ public class Unit : MonoBehaviour
 	/// Determines if a tile can be jumped by this unit.
 	/// Returns true if the tile can be jumped.
 	/// </summary>
-	/// <param name="t"> The tile being checked. </param>
+	/// <param name="hex"> The tile being checked. </param>
 	/// <returns> Whether or not this unit can jump over the given tile. </returns>
-	protected virtual bool JumpTileCheck ( Tile t )
+	protected virtual bool JumpTileCheck ( Hex hex )
 	{
 		// Check if the tile exists
-		if ( t == null )
+		if ( hex == null )
+			return false;
+
+		// For starting tile
+		if ( hex == CurrentHex )
 			return false;
 
 		// Check if the tile is occupied
-		if ( t.currentUnit == null && t.currentObject == null )
+		if ( !hex.Tile.IsOccupied )
+			return false;
+
+		// Check if the unit on the tile can assist
+		if ( hex.Tile.CurrentUnit != null && !hex.Tile.CurrentUnit.Status.CanAssist )
 			return false;
 
 		// Check if the tile has a tile object blocking it
-		if ( t.currentObject != null && !t.currentObject.canBeJumped )
+		if ( hex.Tile.CurrentObject != null && !hex.Tile.CurrentObject.CanBeJumped )
 			return false;
 
 		// Return that the tile can be jumped by this unit
@@ -408,11 +430,11 @@ public class Unit : MonoBehaviour
 	protected virtual void Move ( MoveData data )
 	{
 		// Create animation
-		Tween t = transform.DOMove ( data.Tile.transform.position, MOVE_ANIMATION_TIME )
+		Tween t = transform.DOMove ( data.Destination.transform.position, MOVE_ANIMATION_TIME )
 			.OnComplete ( ( ) =>
 			{
 				// Set unit and tile data
-				SetUnitToTile ( data.Tile );
+				SetUnitToTile ( data.Destination );
 			} );
 
 		// Add animation to queue
@@ -427,11 +449,11 @@ public class Unit : MonoBehaviour
 	protected virtual void Jump ( MoveData data )
 	{
 		// Create animation
-		Tween t = transform.DOMove ( data.Tile.transform.position, MOVE_ANIMATION_TIME * 2 )
+		Tween t = transform.DOMove ( data.Destination.transform.position, MOVE_ANIMATION_TIME * 2 )
 			.OnComplete ( ( ) =>
 			{
 				// Set unit and tile data
-				SetUnitToTile ( data.Tile );
+				SetUnitToTile ( data.Destination );
 			} );
 
 		// Add animation to queue
@@ -447,13 +469,13 @@ public class Unit : MonoBehaviour
 	protected virtual void AttackUnit ( MoveData data )
 	{
 		// KO unit(s) being attacked
-		foreach ( Tile t in data.Attacks )
+		foreach ( Hex hex in data.Attacks )
 		{
 			// Interupt unit
-			t.currentUnit.InteruptUnit ( );
+			hex.Tile.CurrentUnit.InteruptUnit ( );
 
 			// Attack unit
-			t.currentUnit.GetAttacked ( );
+			hex.Tile.CurrentUnit.GetAttacked ( );
 		}
 	}
 
@@ -466,63 +488,67 @@ public class Unit : MonoBehaviour
 	/// </summary>
 	/// <param name="direction"> The unit's movement direction. </param>
 	/// <returns> The pair of integers that represent the direction of the two tiles to be considered behind the unit. </returns>
-	protected IntPair GetBackDirection ( Player.Direction direction )
-	{
-		// Store which tiles are to be ignored
-		IntPair back = new IntPair ( 0, 1 );
+	//protected IntPair GetBackDirection ( Player.Direction direction )
+	//{
+	//	// Store which tiles are to be ignored
+	//	IntPair back = new IntPair ( 0, 1 );
 
-		// Check the team's movement direction
-		switch ( direction )
-		{
-		// Left to right movement
-		case Player.Direction.LEFT_TO_RIGHT:
-			back = new IntPair ( (int)MoveData.MoveDirection.LEFT_BELOW, (int)MoveData.MoveDirection.LEFT_ABOVE );
-			break;
+	//	// Check the team's movement direction
+	//	switch ( direction )
+	//	{
+	//	// Left to right movement
+	//	case Player.Direction.LEFT_TO_RIGHT:
+	//		back = new IntPair ( (int)MoveData.Direction.SOUTHWEST, (int)MoveData.Direction.NORTHWEST );
+	//		break;
 
-		// Right to left movement
-		case Player.Direction.RIGHT_TO_LEFT:
-			back = new IntPair ( (int)MoveData.MoveDirection.RIGHT_ABOVE, (int)MoveData.MoveDirection.RIGHT_BELOW );
-			break;
+	//	// Right to left movement
+	//	case Player.Direction.RIGHT_TO_LEFT:
+	//		back = new IntPair ( (int)MoveData.Direction.NORTHEAST, (int)MoveData.Direction.SOUTHEAST );
+	//		break;
 
-		// Top left to bottom right movement
-		case Player.Direction.TOP_LEFT_TO_BOTTOM_RIGHT:
-			back = new IntPair ( (int)MoveData.MoveDirection.ABOVE, (int)MoveData.MoveDirection.LEFT_ABOVE );
-			break;
+	//	// Top left to bottom right movement
+	//	case Player.Direction.TOP_LEFT_TO_BOTTOM_RIGHT:
+	//		back = new IntPair ( (int)MoveData.Direction.NORTH, (int)MoveData.Direction.NORTHWEST );
+	//		break;
 
-		// Top right to bottom left movement
-		case Player.Direction.TOP_RIGHT_TO_BOTTOM_LEFT:
-			back = new IntPair ( (int)MoveData.MoveDirection.ABOVE, (int)MoveData.MoveDirection.RIGHT_ABOVE );
-			break;
+	//	// Top right to bottom left movement
+	//	case Player.Direction.TOP_RIGHT_TO_BOTTOM_LEFT:
+	//		back = new IntPair ( (int)MoveData.Direction.NORTH, (int)MoveData.Direction.NORTHEAST );
+	//		break;
 
-		// Bottom left to top right movement
-		case Player.Direction.BOTTOM_LEFT_TO_TOP_RIGHT:
-			back = new IntPair ( (int)MoveData.MoveDirection.BELOW, (int)MoveData.MoveDirection.LEFT_BELOW );
-			break;
+	//	// Bottom left to top right movement
+	//	case Player.Direction.BOTTOM_LEFT_TO_TOP_RIGHT:
+	//		back = new IntPair ( (int)MoveData.Direction.SOUTH, (int)MoveData.Direction.SOUTHWEST );
+	//		break;
 
-		// Bottom right to top left movement
-		case Player.Direction.BOTTOM_RIGHT_TO_TOP_LEFT:
-			back = new IntPair ( (int)MoveData.MoveDirection.RIGHT_BELOW, (int)MoveData.MoveDirection.BELOW );
-			break;
-		}
+	//	// Bottom right to top left movement
+	//	case Player.Direction.BOTTOM_RIGHT_TO_TOP_LEFT:
+	//		back = new IntPair ( (int)MoveData.Direction.SOUTHEAST, (int)MoveData.Direction.SOUTH );
+	//		break;
+	//	}
 
-		// Return back tile elements
-		return back;
-	}
+	//	// Return back tile elements
+	//	return back;
+	//}
 
 	/// <summary>
-	/// Determines if a tile matches any of the tiles in the prerequisite moves.
+	/// Determines if a tile matches any of the tiles in the prior moves.
 	/// Returns true if a match is found.
 	/// </summary>
-	/// <param name="t"> The tile being checked. </param>
+	/// <param name="hex"> The tile being checked. </param>
 	/// <param name="prerequisite"> The Move Data for any moves required for the unit to reach the given tile. </param>
 	/// <returns> Whether or not this tile arleady exists in a path of moves. </returns>
-	protected bool CheckPrequisiteTiles ( Tile t, MoveData m )
+	protected bool PriorMoveCheck ( Hex hex, MoveData move )
 	{
+		// Check for starting tile
+		if ( hex == CurrentHex )
+			return false;
+
 		// Check for prerequisite move
-		if ( m != null )
+		if ( move != null )
 		{
 			// Check if the tile matches
-			if ( t == m.Tile )
+			if ( hex == move.Destination )
 			{
 				// Return that a match has been found
 				return true;
@@ -530,7 +556,7 @@ public class Unit : MonoBehaviour
 			else
 			{
 				// Check prerequisite move's tile
-				return CheckPrequisiteTiles ( t, m.Prerequisite );
+				return PriorMoveCheck ( hex, move.PriorMove );
 			}
 		}
 
@@ -541,15 +567,15 @@ public class Unit : MonoBehaviour
 	/// <summary>
 	/// Sets all of the unit and tile data for moving a unit to a tile.
 	/// </summary>
-	/// <param name="t"> The tile this unit is moving to. </param>
-	protected void SetUnitToTile ( Tile t )
+	/// <param name="hex"> The tile this unit is moving to. </param>
+	protected void SetUnitToTile ( Hex hex )
 	{
 		// Remove unit from previous tile
-		currentTile.currentUnit = null;
+		CurrentHex.Tile.CurrentUnit = null;
 
 		// Set the unit's new current tile
-		currentTile = t;
-		t.currentUnit = this;
+		CurrentHex = hex;
+		hex.Tile.CurrentUnit = this;
 	}
 
 	#endregion // Protected Functions

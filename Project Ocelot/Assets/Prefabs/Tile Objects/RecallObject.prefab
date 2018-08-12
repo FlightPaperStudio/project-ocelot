@@ -52,11 +52,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43fcc82e3e8409642a6ee9430bbcc687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sprite: {fileID: 212226588668657442}
-  hero: {fileID: 0}
-  tile: {fileID: 0}
-  canBeOccupied: 0
-  canBeJumped: 0
+  Icon: {fileID: 0}
+  Caster: {fileID: 0}
+  CurrentTile: {fileID: 0}
+  CanBeOccupied: 0
+  CanBeJumped: 0
+  CanBeMoved: 0
+  CanBeAttacked: 1
 --- !u!212 &212226588668657442
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -66,6 +68,7 @@ SpriteRenderer:
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -81,6 +84,7 @@ SpriteRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -97,3 +101,5 @@ SpriteRenderer:
   m_Size: {x: 0.64, y: 0.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0

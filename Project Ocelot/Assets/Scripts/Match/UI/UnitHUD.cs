@@ -85,7 +85,7 @@ public class UnitHUD : MonoBehaviour
 		container.SetActive ( true );
 
 		// Display unit in the portrait
-		portrait.SetPortrait ( currentUnit.InstanceData, currentUnit.owner.Team );
+		portrait.SetPortrait ( currentUnit.InstanceData, currentUnit.Owner.Team );
 
 		// Check if the unit has any abilities
 		if ( currentUnit.InstanceData.Ability1 == null && currentUnit.InstanceData.Ability2 == null && currentUnit.InstanceData.Ability3 == null )
@@ -159,16 +159,16 @@ public class UnitHUD : MonoBehaviour
 		for ( int i = 0; i < statuses.Length; i++ )
 		{
 			// Check for status
-			if ( i < currentUnit.Status.effects.Count )
+			if ( i < currentUnit.Status.Effects.Count )
 			{
 				// Display container
 				statuses [ i ].Container.SetActive ( true );
 
 				// Display icon
-				statuses [ i ].StatusIcon.sprite = currentUnit.Status.effects [ i ].info.icon;
+				statuses [ i ].StatusIcon.sprite = currentUnit.Status.Effects [ i ].Icon;
 
 				// Display text
-				statuses [ i ].StatusText.text = currentUnit.Status.effects [ i ].info.text;
+				statuses [ i ].StatusText.text = currentUnit.Status.Effects [ i ].StatusName;
 			}
 			else
 			{
@@ -315,8 +315,8 @@ public class UnitHUD : MonoBehaviour
 		hud.AbilityIcon.sprite = ability.Icon;
 
 		// Set team colors
-		hud.CooldownDisplay.color = Util.TeamColor ( currentUnit.owner.Team );
-		hud.ActiveDisplay.color = Util.TeamColor ( currentUnit.owner.Team );
+		hud.CooldownDisplay.color = Util.TeamColor ( currentUnit.Owner.Team );
+		hud.ActiveDisplay.color = Util.AccentColor ( currentUnit.Owner.Team );
 
 		// Hide duration by default
 		hud.DurationDisplay.gameObject.SetActive ( false );

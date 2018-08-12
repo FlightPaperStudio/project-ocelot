@@ -23,23 +23,21 @@ public class Rally : HeroUnit
 	/// Description: Assisted allies are inspired to gain additional movement
 	/// Type: Passive
 	/// Duration: 3 Uses
-	/// Regeneration: 1 Use Per 2 Turns
+	/// Regeneration: 1 Use Per 2 Rounds
 	/// 
 	/// Ability 2
 	/// ID: 20
 	/// Name: Backflip
 	/// Description: Jumps backwards for increased mobility
 	/// Type: Special
-	/// Cooldown: 3 Turns
+	/// Cooldown: 3 Rounds
 	/// KO Opponents: Active
 	/// 
 	/// </summary>
 
 	// Ability information
-	private int rallyRegen = 2;
-	private const int RALLY_REGEN_RATE = 2;
+	private int rallyRegen;
 	private const float RALLY_ANIMATION_TIME = 0.75f;
-	private const string RALLY_STATUS_PROMPT = "Rally";
 
 	#region Public Unit Override Functions
 
@@ -50,6 +48,9 @@ public class Rally : HeroUnit
 
 		// Set the duration of Rally
 		InstanceData.Ability1.CurrentDuration = InstanceData.Ability1.Duration;
+
+		// Set the regeneration rate of Rally
+		rallyRegen = InstanceData.Ability1.PerkValue;
 	}
 
 	/// <summary>
@@ -83,10 +84,10 @@ public class Rally : HeroUnit
 		{
 			// Get unit
 			Unit u;
-			if ( data.Prerequisite == null )
-				u = currentTile.neighbors [ (int)data.Direction ].currentUnit;
+			if ( data.PriorMove == null )
+				u = currentTile.neighbors [ (int)data.Direction ].CurrentUnit;
 			else
-				u = data.Prerequisite.Tile.neighbors [ (int)data.Direction ].currentUnit;
+				u = data.PriorMove.Destination.neighbors [ (int)data.Direction ].CurrentUnit;
 
 			// Check unit status
 			if ( u.Status.CanMove )
@@ -122,7 +123,7 @@ public class Rally : HeroUnit
 						InstanceData.Ability1.CurrentDuration++;
 
 						// Reset regen
-						rallyRegen = RALLY_REGEN_RATE;
+						rallyRegen = InstanceData.Ability1.PerkValue;
 					}
 				}
 			}
@@ -169,7 +170,7 @@ public class Rally : HeroUnit
 			return false;
 
 		// Check previous moves
-		if ( CheckPrequisiteType ( prerequisite ) )
+		if ( PriorMoveTypeCheck ( prerequisite ) )
 			return false;
 
 		// Return that the ability is available
@@ -186,14 +187,23 @@ public class Rally : HeroUnit
 		if ( data.Type == MoveData.MoveType.SPECIAL_ATTACK )
 		{
 			// Create animation
-			Tween t = transform.DOMove ( data.Tile.transform.position, MOVE_ANIMATION_TIME * 2 )
+			Tween t = transform.DOMove ( data.Destination.transform.position, MOVE_ANIMATION_TIME * 2 )
+				.OnStart ( ( ) =>
+				{
+					// Mark that the ability is active
+					InstanceData.Ability2.IsActive = true;
+					GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability2 );
+				} )
 				.OnComplete ( ( ) =>
 				{
+					// Mark that the ability is no longer active
+					InstanceData.Ability2.IsActive = false;
+
 					// Start teleport cooldown
 					StartCooldown ( InstanceData.Ability2 );
 
 					// Set unit and tile data
-					SetUnitToTile ( data.Tile );
+					SetUnitToTile ( data.Destination );
 				} );
 
 			// Add animation to queue
@@ -205,17 +215,26 @@ public class Rally : HeroUnit
 		else
 		{
 			// Check for normal move
-			if ( data.Prerequisite == null && currentTile.neighbors [ (int)data.Direction ] == data.Tile )
+			if ( data.PriorMove == null && currentTile.neighbors [ (int)data.Direction ] == data.Destination )
 			{
 				// Create animation
-				Tween t = transform.DOMove ( data.Tile.transform.position, MOVE_ANIMATION_TIME )
+				Tween t = transform.DOMove ( data.Destination.transform.position, MOVE_ANIMATION_TIME )
+					.OnStart ( ( ) =>
+					{
+						// Mark that the ability is active
+						InstanceData.Ability2.IsActive = true;
+						GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability2 );
+					} )
 					.OnComplete ( ( ) =>
 					{
+						// Mark that the ability is no longer active
+						InstanceData.Ability2.IsActive = false;
+
 						// Start teleport cooldown
 						StartCooldown ( InstanceData.Ability2 );
 
 						// Set unit and tile data
-						SetUnitToTile ( data.Tile );
+						SetUnitToTile ( data.Destination );
 					} );
 
 				// Add animation to queue
@@ -224,14 +243,23 @@ public class Rally : HeroUnit
 			else
 			{
 				// Create animation
-				Tween t = transform.DOMove ( data.Tile.transform.position, MOVE_ANIMATION_TIME * 2 )
+				Tween t = transform.DOMove ( data.Destination.transform.position, MOVE_ANIMATION_TIME * 2 )
+					.OnStart ( ( ) =>
+					{
+						// Mark that the ability is active
+						InstanceData.Ability2.IsActive = true;
+						GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability2 );
+					} )
 					.OnComplete ( ( ) =>
 					{
+						// Mark that the ability is no longer active
+						InstanceData.Ability2.IsActive = false;
+
 						// Start teleport cooldown
 						StartCooldown ( InstanceData.Ability2 );
 
 						// Set unit and tile data
-						SetUnitToTile ( data.Tile );
+						SetUnitToTile ( data.Destination );
 					} );
 
 				// Add animation to queue
@@ -242,13 +270,13 @@ public class Rally : HeroUnit
 				{
 					// Get unit
 					Unit u;
-					if ( data.Prerequisite == null )
-						u = currentTile.neighbors [ (int)data.Direction ].currentUnit;
+					if ( data.PriorMove == null )
+						u = currentTile.neighbors [ (int)data.Direction ].CurrentUnit;
 					else
-						u = data.Prerequisite.Tile.neighbors [ (int)data.Direction ].currentUnit;
+						u = data.PriorMove.Destination.neighbors [ (int)data.Direction ].CurrentUnit;
 
 					// Check unit status
-					if ( u.Status.CanMove )
+					if ( u.Status.CanMove && u.Owner == Owner )
 						ActivateRally ( u );
 				}
 			}
@@ -268,8 +296,17 @@ public class Rally : HeroUnit
 		// Create animation
 		Tween t = u.sprite.DOColor ( Color.white, RALLY_ANIMATION_TIME )
 			.SetLoops ( 2, LoopType.Yoyo )
+			.OnStart ( ( ) =>
+			{
+				// Mark that the ability is active
+				InstanceData.Ability1.IsActive = true;
+				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+			} )
 			.OnComplete ( ( ) =>
 			{
+				// Mark that the ability is no longer active
+				InstanceData.Ability1.IsActive = false;
+
 				// Decrease Rally duration
 				InstanceData.Ability1.CurrentDuration--;
 
@@ -277,7 +314,8 @@ public class Rally : HeroUnit
 				GM.UnitQueue.Add ( u );
 
 				// Apply the unit's status effect
-				u.Status.AddStatusEffect ( InstanceData.Ability1.Icon, RALLY_STATUS_PROMPT, this, 1 );
+				u.Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.RALLIED, 1, this );
+				//u.Status.AddStatusEffect ( InstanceData.Ability1.Icon, RALLY_STATUS_PROMPT, this, 1 );
 
 				// Update HUD
 				GM.UI.matchInfoMenu.GetPlayerHUD ( u ).UpdateStatusEffects ( u.InstanceID, u.Status );
@@ -294,7 +332,7 @@ public class Rally : HeroUnit
 	private void GetBackflip ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.TeamDirection );
+		IntPair back = GetBackDirection ( Owner.TeamDirection );
 
 		// Check each neighboring tile
 		for ( int i = 0; i < t.neighbors.Length; i++ )
@@ -316,7 +354,7 @@ public class Rally : HeroUnit
 				MoveData m;
 
 				// Check if the neighboring unit can be attacked
-				if ( t.neighbors [ i ].currentUnit != null && t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
+				if ( InstanceData.Ability2.IsPerkEnabled && t.neighbors [ i ].CurrentUnit != null && t.neighbors [ i ].CurrentUnit.UnitAttackCheck ( this ) )
 				{
 					// Add as an available attack
 					m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL_ATTACK, i, t.neighbors [ i ] );

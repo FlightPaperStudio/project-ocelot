@@ -40,6 +40,41 @@ public class Util
 	}
 
 	/// <summary>
+	/// Returns the appropriate accent color value for the given team.
+	/// </summary>
+	/// <param name="team"> The team associated with the accent color. </param>
+	/// <returns> The accent color for the team. </returns>
+	public static Color32 AccentColor ( Player.TeamColor team )
+	{
+		// Get team color
+		Color32 col = Color.white;
+		switch ( team )
+		{
+		case Player.TeamColor.BLUE:
+			col = new Color32 (   0, 101, 131, 255 );
+			break;
+		case Player.TeamColor.GREEN:
+			col = new Color32 (   0, 127,  63, 255 );
+			break;
+		case Player.TeamColor.YELLOW:
+			col = new Color32 ( 255, 244, 164, 255 );
+			break;
+		case Player.TeamColor.ORANGE:
+			col = new Color32 ( 239,  66,  54, 255 );
+			break;
+		case Player.TeamColor.PINK:
+			col = new Color32 ( 158,  32,  99, 255 ); 
+			break;
+		case Player.TeamColor.PURPLE:
+			col = new Color32 ( 102,  45, 145, 255 ); 
+			break;
+		}
+
+		// Return the accent color
+		return col;
+	}
+
+	/// <summary>
 	/// Returns the opposite direction for a tile neighbor.
 	/// </summary>
 	public static int GetOppositeDirection ( int direction )
@@ -84,27 +119,27 @@ public class Util
 		switch ( direction )
 		{
 		// Above
-		case MoveData.MoveDirection.ABOVE:
+		case MoveData.Direction.NORTH:
 			return new Vector3 (  0.0f,  1.5f, 0f );
 
 		// Right above
-		case MoveData.MoveDirection.RIGHT_ABOVE:
+		case MoveData.Direction.NORTHEAST:
 			return new Vector3 (  1.3f,  0.75f, 0f );
 
 		// Right below
-		case MoveData.MoveDirection.RIGHT_BELOW:
+		case MoveData.Direction.SOUTHEAST:
 			return new Vector3 (  1.3f, -0.75f, 0f );
 
 		// Below
-		case MoveData.MoveDirection.BELOW:
+		case MoveData.Direction.SOUTH:
 			return new Vector3 (  0.0f, -1.5f, 0f );
 
 		// Left Below
-		case MoveData.MoveDirection.LEFT_BELOW:
+		case MoveData.Direction.SOUTHWEST:
 			return new Vector3 ( -1.3f, -0.75f, 0f );
 
 		// Left above
-		case MoveData.MoveDirection.LEFT_ABOVE:
+		case MoveData.Direction.NORTHWEST:
 			return new Vector3 ( -1.3f,  0.75f, 0f );
 		}
 

@@ -25,8 +25,8 @@ public class MainMenu : Menu
 		popUpDelegate += QuitToDesktop;
 
 		// Name generator test
-		for ( int i = 0; i < 50; i++ )
-			Debug.Log ( "Name: " + NameGenerator.CreateName ( ) + "      Nickname: " + NameGenerator.CreateNickname ( ) );
+		//for ( int i = 0; i < 50; i++ )
+		//	Debug.Log ( "Name: " + NameGenerator.CreateName ( ) + "      Nickname: " + NameGenerator.CreateNickname ( ) );
 	}
 
 	/// <summary>

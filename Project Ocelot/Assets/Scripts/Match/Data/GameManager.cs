@@ -160,6 +160,9 @@ public class GameManager : MonoBehaviour
 			// Set team color
 			players [ i ].Team = MatchSettings.Players [ i ].Team;
 
+			// Set turn order
+			players [ i ].TurnOrder = MatchSettings.Players [ i ].TurnOrder;
+
 			// Set direction
 			players [ i ].TeamDirection = MatchSettings.Players [ i ].TeamDirection;
 
@@ -182,7 +185,7 @@ public class GameManager : MonoBehaviour
 				u.InitializeInstance ( this, ( i * 10 ) + j, players [ i ].Units [ j ] );
 
 				// Set unit's owner
-				u.owner = players [ i ];
+				u.Owner = players [ i ];
 
 				// Set unit team color
 				u.SetTeamColor ( players [ i ].Team );
@@ -193,7 +196,7 @@ public class GameManager : MonoBehaviour
 				// Position unit to starting tile
 				u.transform.position = players [ i ].startArea.tiles [ MatchSettings.Players [ i ].UnitFormation [ players [ i ].Units [ j ] ] ].transform.position;
 				u.currentTile = players [ i ].startArea.tiles [ MatchSettings.Players [ i ].UnitFormation [ players [ i ].Units [ j ] ] ];
-				players [ i ].startArea.tiles [ MatchSettings.Players [ i ].UnitFormation [ players [ i ].Units [ j ] ] ].currentUnit = u;
+				players [ i ].startArea.tiles [ MatchSettings.Players [ i ].UnitFormation [ players [ i ].Units [ j ] ] ].CurrentUnit = u;
 
 				// Add unit to team
 				players [ i ].UnitInstances.Add ( u );
@@ -319,7 +322,8 @@ public class GameManager : MonoBehaviour
 		foreach ( Unit u in CurrentPlayer.UnitInstances )
 		{
 			// Set status effects
-			u.Status.UpdateDurations ( );
+			u.Status.UpdateDurations ( ); // Old
+			u.Status.UpdateStatus ( );
 
 			// Set cooldowns
 			if ( u is HeroUnit )
@@ -477,13 +481,13 @@ public class GameManager : MonoBehaviour
 		if ( isConflict )
 		{
 			if ( isLeftClick )
-				data = SelectedUnit.MoveList.Find ( x => x.Tile == t && x.Prerequisite == SelectedMove && ( x.Type != MoveData.MoveType.SPECIAL && x.Type != MoveData.MoveType.SPECIAL_ATTACK ) );
+				data = SelectedUnit.MoveList.Find ( x => x.Destination == t && x.PriorMove == SelectedMove && ( x.Type != MoveData.MoveType.SPECIAL && x.Type != MoveData.MoveType.SPECIAL_ATTACK ) );
 			else
-				data = SelectedUnit.MoveList.Find ( x => x.Tile == t && x.Prerequisite == SelectedMove && ( x.Type == MoveData.MoveType.SPECIAL || x.Type == MoveData.MoveType.SPECIAL_ATTACK ) );
+				data = SelectedUnit.MoveList.Find ( x => x.Destination == t && x.PriorMove == SelectedMove && ( x.Type == MoveData.MoveType.SPECIAL || x.Type == MoveData.MoveType.SPECIAL_ATTACK ) );
 		}
 		else
 		{
-			data = SelectedUnit.MoveList.Find ( x => x.Tile == t && x.Prerequisite == SelectedMove );
+			data = SelectedUnit.MoveList.Find ( x => x.Destination == t && x.PriorMove == SelectedMove );
 		}
 
 		// Store selected move
@@ -603,13 +607,13 @@ public class GameManager : MonoBehaviour
 	private void DisplayAvailableMoves ( MoveData prerequisite )
 	{
 		// Get only the moves for the prerequisite
-		foreach ( MoveData m in SelectedUnit.MoveList.FindAll ( x => x.Prerequisite == prerequisite ) )
+		foreach ( MoveData m in SelectedUnit.MoveList.FindAll ( x => x.PriorMove == prerequisite ) )
 		{
 			// Check if conflicted
 			if ( m.isConflicted )
 			{
 				// Set tile state and highlight tile
-				m.Tile.SetTileState ( TileState.ConflictedTile );
+				m.Destination.SetTileState ( TileState.ConflictedTile );
 			}
 			else
 			{
@@ -620,21 +624,21 @@ public class GameManager : MonoBehaviour
 				case MoveData.MoveType.MOVE:
 				case MoveData.MoveType.MOVE_TO_WIN:
 					// Set tile state and highlight tile
-					m.Tile.SetTileState ( TileState.AvailableMove );
+					m.Destination.SetTileState ( TileState.AvailableMove );
 					break;
 
 				// Basic jump
 				case MoveData.MoveType.JUMP:
 				case MoveData.MoveType.JUMP_TO_WIN:
 					// Set tile state and highlight tile
-					m.Tile.SetTileState ( TileState.AvailableMove );
+					m.Destination.SetTileState ( TileState.AvailableMove );
 					break;
 
 				// Jump and capture enemy
 				case MoveData.MoveType.ATTACK:
 				case MoveData.MoveType.ATTACK_TO_WIN:
 					// Set tile state and highlight tile
-					m.Tile.SetTileState ( TileState.AvailableMoveAttack );
+					m.Destination.SetTileState ( TileState.AvailableMoveAttack );
 
 					// Set tile state and highlight tile for the unit available for attack
 					foreach ( Tile t in m.Attacks )
@@ -644,13 +648,13 @@ public class GameManager : MonoBehaviour
 				// Special ability move
 				case MoveData.MoveType.SPECIAL:
 					// Set tile state and highlight tile
-					m.Tile.SetTileState ( TileState.AvailableSpecial );
+					m.Destination.SetTileState ( TileState.AvailableSpecial );
 					break;
 
 				// Special ability move and attack enemy
 				case MoveData.MoveType.SPECIAL_ATTACK:
 					// Set tile state and highlight tile
-					m.Tile.SetTileState ( TileState.AvailableSpecialAttack );
+					m.Destination.SetTileState ( TileState.AvailableSpecialAttack );
 
 					// Set tile state and highlight tile for the unit available for attack
 					foreach ( Tile t in m.Attacks )
@@ -749,8 +753,8 @@ public class GameManager : MonoBehaviour
 	private void GetMoves ( MoveData move )
 	{
 		// Check for previous moves
-		if ( move.Prerequisite != null )
-			GetMoves ( move.Prerequisite );
+		if ( move.PriorMove != null )
+			GetMoves ( move.PriorMove );
 
 		// Get the move
 		SelectedUnit.MoveUnit ( move );

@@ -64,7 +64,7 @@ public class Board : MonoBehaviour
 		for ( int i = 0; i < tiles.Length; i++ )
 		{
 			// Set tile to default
-			if ( tiles [ i ] != unitTile && tiles [ i ].state != TileState.SelectedMove && tiles [ i ].state != TileState.SelectedMoveAttack && tiles [ i ].state != TileState.SelectedAttack && tiles [ i ].state != TileState.SelectedSpecial && tiles [ i ].state != TileState.SelectedSpecialAttack && tiles [ i ].state != TileState.SelectedCommand )
+			if ( tiles [ i ] != unitTile && tiles [ i ].State != TileState.SelectedMove && tiles [ i ].State != TileState.SelectedMoveAttack && tiles [ i ].State != TileState.SelectedAttack && tiles [ i ].State != TileState.SelectedSpecial && tiles [ i ].State != TileState.SelectedSpecialAttack && tiles [ i ].State != TileState.SelectedCommand )
 				tiles [ i ].SetTileState ( TileState.Default );
 		}
 	}

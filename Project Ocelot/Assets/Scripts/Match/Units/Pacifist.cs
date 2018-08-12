@@ -54,7 +54,7 @@ public class Pacifist : HeroUnit
 		if ( Status.CanMove )
 		{
 			// Store which tiles are to be ignored
-			IntPair back = GetBackDirection ( owner.TeamDirection );
+			IntPair back = GetBackDirection ( Owner.TeamDirection );
 
 			// Check each neighboring tile
 			for ( int i = 0; i < t.neighbors.Length; i++ )
@@ -143,7 +143,7 @@ public class Pacifist : HeroUnit
 
 		// Begin animation
 		Sequence s = DOTween.Sequence ( )
-			.Append ( currentObstruction.sprite.DOFade ( 0f, OBSTRUCTION_ANIMATION_TIME ).From ( ) )
+			.Append ( currentObstruction.Icon.DOFade ( 0f, OBSTRUCTION_ANIMATION_TIME ).From ( ) )
 			.OnComplete ( ( ) =>
 			{
 				// Start cooldown
@@ -178,7 +178,7 @@ public class Pacifist : HeroUnit
 			if ( t.neighbors [ i ] != null )
 			{
 				// Mark as available if unoccupied and not previously marked
-				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && t.neighbors [ i ].state == TileState.Default )
+				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && t.neighbors [ i ].State == TileState.Default )
 					t.neighbors [ i ].SetTileState ( TileState.AvailableCommand );
 
 				// Continue navigation
@@ -194,14 +194,14 @@ public class Pacifist : HeroUnit
 	private void ObstructionDurationComplete ( )
 	{
 		// Create animation
-		Tween t = currentObstruction.sprite.DOFade ( 0f, OBSTRUCTION_ANIMATION_TIME )
+		Tween t = currentObstruction.Icon.DOFade ( 0f, OBSTRUCTION_ANIMATION_TIME )
 			.OnComplete ( ( ) =>
 			{
 				// Remove obstruction from player data
-				owner.tileObjects.Remove ( currentObstruction );
+				Owner.tileObjects.Remove ( currentObstruction );
 
 				// Remove obstruction from the board
-				currentObstruction.tile.currentObject = null;
+				currentObstruction.CurrentHex.CurrentObject = null;
 
 				// Remove obstruction
 				Destroy ( currentObstruction.gameObject );

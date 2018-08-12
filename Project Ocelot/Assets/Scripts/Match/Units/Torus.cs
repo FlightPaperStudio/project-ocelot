@@ -22,36 +22,35 @@ public class Torus : HeroUnit
 	/// Name: Run the Ropes
 	/// Description: Launches themself off the ropes to reach the other side of the arena
 	/// Type: Special
-	/// Cooldown: 2 Turns
-	/// KO Opponents: Active
+	/// Cooldown: 2 Rounds
+	/// Attack Opponents: Active
 	/// 
 	/// Ability 2
 	/// ID: 35
 	/// Name: Taunt
 	/// Description: Insults an opponent, forcing the opponent out of position
 	/// Type: Command
-	/// Cooldown: 6 Turns
+	/// Cooldown: 6 Rounds
 	/// Range: 4 Tiles
 	/// 
 	/// </summary>
 
 	// Ability information
 	private Dictionary<Tile, int> tauntTargetDirection = new Dictionary<Tile, int> ( );
-	private const int TAUNT_RANGE = 4;
 
 	#region Public Unit Override Functions
 
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves.
 	/// </summary>
-	public override void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
+	public override void FindMoves ( Hex hex, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Get base moves
-		base.FindMoves ( t, prerequisite, returnOnlyJumps );
+		base.FindMoves ( hex, prerequisite, returnOnlyJumps );
 
 		// Get Run The Ropes moves
 		if ( SpecialAvailabilityCheck ( InstanceData.Ability1, prerequisite ) )
-			GetRunTheRopes ( t, prerequisite, returnOnlyJumps );
+			GetRunTheRopes ( hex, prerequisite, returnOnlyJumps );
 
 		// Get Taunt availability
 		InstanceData.Ability2.IsAvailable = CommandAvailabilityCheck ( InstanceData.Ability2, prerequisite );
@@ -73,7 +72,7 @@ public class Torus : HeroUnit
 		tauntTargetDirection.Clear ( );
 
 		// Get every Taunt target
-		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
+		for ( int i = 0; i < CurrentHex.Neighbors.Length; i++ )
 		{
 			// Get target
 			Tile t = GetTaunt ( currentTile.neighbors [ i ], i, 1 );
@@ -93,7 +92,7 @@ public class Torus : HeroUnit
 	/// <summary>
 	/// Select the tile for Taunt.
 	/// </summary>
-	public override void SelectCommandTile ( Tile t )
+	public override void SelectCommandTile ( Hex hex )
 	{
 		// Pause turn timer
 		if ( MatchSettings.TurnTimer )
@@ -106,8 +105,8 @@ public class Torus : HeroUnit
 		GM.Board.ResetTiles ( );
 
 		// Store target and destination
-		Unit u = t.currentUnit;
-		Tile destination = t.neighbors [ Util.GetOppositeDirection ( tauntTargetDirection [ t ] ) ];
+		Unit u = hex.Tile.CurrentUnit;
+		Tile destination = hex.Neighbors [ Util.GetOppositeDirection ( tauntTargetDirection [ hex ] ) ];
 
 		// Interupt target
 		u.InteruptUnit ( );
@@ -117,12 +116,15 @@ public class Torus : HeroUnit
 			.Append ( u.transform.DOMove ( destination.transform.position, MOVE_ANIMATION_TIME ) )
 			.OnComplete ( ( ) =>
 			{
+				// Mark that the ability is no longer active
+				InstanceData.Ability2.IsActive = false;
+
 				// Remove target from previous tile
-				t.currentUnit = null;
+				hex.CurrentUnit = null;
 
 				// Set the target's new current tile
 				u.currentTile = destination;
-				destination.currentUnit = u;
+				destination.CurrentUnit = u;
 
 				// Start cooldown
 				StartCooldown ( InstanceData.Ability2 );
@@ -155,7 +157,7 @@ public class Torus : HeroUnit
 			return false;
 
 		// Check previous moves
-		if ( CheckPrequisiteType ( prerequisite ) )
+		if ( PriorMoveTypeCheck ( prerequisite ) )
 			return false;
 
 		// Return that the ability is available
@@ -188,11 +190,11 @@ public class Torus : HeroUnit
 	{
 		// Get tiles
 		Tile startTile;
-		Tile endTile = data.Tile;
-		if ( data.Prerequisite == null )
+		Tile endTile = data.Destination;
+		if ( data.PriorMove == null )
 			startTile = currentTile;
 		else
-			startTile = data.Prerequisite.Tile;
+			startTile = data.PriorMove.Destination;
 
 		// Get rope positions
 		Vector3 ropesPos1 = startTile.transform.position;
@@ -207,16 +209,25 @@ public class Torus : HeroUnit
 			ropesPos2 += Util.GetTileDistance ( Util.GetOppositeDirection ( (int)data.Direction ) );
 
 		// Create animations
-		Tween t1 = transform.DOMove ( ropesPos1, NumberOfTilesToEdge ( startTile, (int)data.Direction, 1 ) * MOVE_ANIMATION_TIME ); // Move from the start position to the first ropes
+		Tween t1 = transform.DOMove ( ropesPos1, NumberOfTilesToEdge ( startTile, (int)data.Direction, 1 ) * MOVE_ANIMATION_TIME ) // Move from the start position to the first ropes
+			.OnStart ( ( ) =>
+			{
+				// Mark that the ability is active
+				InstanceData.Ability1.IsActive = true;
+				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+			} );
 		Tween t2 = transform.DOMove ( ropesPos2, ( NumberOfTilesToEdge ( startTile, (int)data.Direction, 1 ) + NumberOfTilesToEdge ( startTile, Util.GetOppositeDirection ( (int)data.Direction ), 1 ) ) * MOVE_ANIMATION_TIME ); // Move across the arena from the first ropes to the second ropes
 		Tween t3 = transform.DOMove ( endTile.transform.position, NumberOfTilesToEdge ( endTile, Util.GetOppositeDirection ( (int)data.Direction ), 1 ) * MOVE_ANIMATION_TIME ) // Move from the second ropes to the end position
 			.OnComplete ( ( ) =>
 			{
+				// Mark that the ability is no longer active
+				InstanceData.Ability1.IsActive = false;
+
 				// Start Run The Ropes cooldown
 				StartCooldown ( InstanceData.Ability1 );
 
 				// Set unit and tile data
-				SetUnitToTile ( data.Tile );
+				SetUnitToTile ( data.Destination );
 			} );
 
 		// Add animation to queue
@@ -232,90 +243,92 @@ public class Torus : HeroUnit
 	/// <summary>
 	/// Marks every tiles available to the Run The Ropes ability.
 	/// </summary>
-	private void GetRunTheRopes ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
+	private void GetRunTheRopes ( Hex hex, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( owner.TeamDirection );
+		//IntPair back = GetBackDirection ( owner.TeamDirection );
 
 		// Check each neighboring tile
-		for ( int i = 0; i < t.neighbors.Length; i++ )
+		for ( int i = 0; i < hex.Neighbors.Length; i++ )
 		{
 			// Ignore tiles that would allow for backward movement
-			if ( i == back.FirstInt || i == back.SecondInt )
-				continue;
+			//if ( i == back.FirstInt || i == back.SecondInt )
+			//	continue;
 
 			// Check for edge tiles
-			if ( t.neighbors [ i ] == null )
+			if ( hex.Neighbors [ i ] == null )
 			{
 				// Get opposite direction
-				int direction = Util.GetOppositeDirection ( i );
+				//int direction = Util.GetOppositeDirection ( i );
+				Hex.Direction direction = hex.Grid.GetOppositeDirection ( (Hex.Direction)i );
 
 				// Get opposite edge tile
-				Tile torusTile = GetEdgeTile ( t, direction );
+				Hex targetHex = GetEdgeTile ( direction );
 
 				// Check if this unit can move to the edge tile
-				if ( !returnOnlyJumps && OccupyTileCheck ( torusTile, prerequisite ) )
+				if ( !returnOnlyJumps && OccupyTileCheck ( targetHex, prerequisite ) )
 				{
 					// Add as an available move
-					MoveList.Add ( new MoveData ( torusTile, prerequisite, MoveData.MoveType.SPECIAL, i ) );
+					MoveList.Add ( new MoveData ( targetHex, prerequisite, MoveData.MoveType.SPECIAL, i ) );
 				}
 				// Check if this unit can jump the edge tile
-				else if ( JumpTileCheck ( torusTile ) && OccupyTileCheck ( torusTile.neighbors [ i ], prerequisite ) )
+				else if ( JumpTileCheck ( targetHex ) && OccupyTileCheck ( targetHex.Neighbors [ i ], prerequisite ) )
 				{
 					// Track move data
 					MoveData m;
 
 					// Check if the unit can be attacked
-					if ( torusTile.currentUnit.UnitAttackCheck ( this ) )
+					if ( InstanceData.Ability1.IsPerkEnabled && targetHex.Tile.CurrentUnit.UnitAttackCheck ( this ) )
 					{
 						// Add as an available attack
-						m = new MoveData ( torusTile.neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL_ATTACK, i, torusTile );
+						m = new MoveData ( targetHex.Neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL_ATTACK, i, targetHex );
 					}
 					else
 					{
 						// Add as an available jump
-						m = new MoveData ( torusTile.neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i );
+						m = new MoveData ( targetHex.Neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i );
 					}
 
 					// Add move to the move list
 					MoveList.Add ( m );
 
 					// Find additional jumps
-					FindMoves ( torusTile.neighbors [ i ], m, true );
+					FindMoves ( targetHex.Neighbors [ i ], m, true );
 				}
 			}
 			// Check for neighboring edge tiles
-			else if ( JumpTileCheck ( t.neighbors [ i ] ) && t.neighbors [ i ].neighbors [ i ] == null )
+			else if ( JumpTileCheck ( hex.Neighbors [ i ] ) && hex.Neighbors [ i ].Neighbors [ i ] == null )
 			{
 				// Get opposite direction
-				int direction = Util.GetOppositeDirection ( i );
+				//int direction = Util.GetOppositeDirection ( i );
+				Hex.Direction direction = hex.Grid.GetOppositeDirection ( (Hex.Direction)i );
 
 				// Get opposite edge tile
-				Tile torusTile = GetEdgeTile ( t, direction );
+				Hex targetHex = GetEdgeTile ( direction );
 
 				// Check if this unit can move to the edge tile
-				if ( OccupyTileCheck ( torusTile, prerequisite ) )
+				if ( OccupyTileCheck ( targetHex, prerequisite ) )
 				{
 					// Track move data
 					MoveData m;
 
 					// Check if the unit can be attacked
-					if ( t.neighbors [ i ].currentUnit.UnitAttackCheck ( this ) )
+					if ( InstanceData.Ability1.IsPerkEnabled && hex.neighbors [ i ].CurrentUnit.UnitAttackCheck ( this ) )
 					{
 						// Add as an available attack
-						m = new MoveData ( torusTile, prerequisite, MoveData.MoveType.SPECIAL_ATTACK, i, t.neighbors [ i ] );
+						m = new MoveData ( targetHex, prerequisite, MoveData.MoveType.SPECIAL_ATTACK, i, hex.neighbors [ i ] );
 					}
 					else
 					{
 						// Add as an available jump
-						m = new MoveData ( torusTile, prerequisite, MoveData.MoveType.SPECIAL, i );
+						m = new MoveData ( targetHex, prerequisite, MoveData.MoveType.SPECIAL, i );
 					}
 
 					// Add move to the move list
 					MoveList.Add ( m );
 
 					// Find additional jumps
-					FindMoves ( torusTile, m, true );
+					FindMoves ( targetHex, m, true );
 				}
 			}
 		}
@@ -324,73 +337,99 @@ public class Torus : HeroUnit
 	/// <summary>
 	/// Navigates the hex grid in a direction until it finds an edge tile and returns it.
 	/// </summary>
-	private Tile GetEdgeTile ( Tile t, int direction )
+	/// <param name="direction"> The direction being searched in. </param>
+	/// <returns> The edge tile in the given direction. </returns>
+	private Hex GetEdgeTile ( Hex.Direction direction )
 	{
-		// Check for edge
-		if ( t.neighbors [ direction ] == null )
-		{
-			// Return the edge tile
-			return t;
-		}
-		else
-		{
-			// Continue searching for the edge tile
-			return GetEdgeTile ( t.neighbors [ direction ], direction );
-		}
+		// Get the distance to the edge
+		int distance = DistanceToEdge ( direction );
+
+		// Return the edge tile
+		return CurrentHex.Neighbor ( direction, distance );
 	}
 
 	/// <summary>
-	/// Calculates the number of tiles between the hero and the edge of the arena in a given direction.
+	/// Calculates the distance between the hero and the edge of the arena in a given direction.
 	/// </summary>
-	private int NumberOfTilesToEdge ( Tile t, int direction, int count )
+	/// <param name="direction"> The direction being searched in. </param>
+	/// <returns> The distance between the hero and the edge of the arena. </returns>
+	private int DistanceToEdge ( Hex.Direction direction )
 	{
-		// Check for edge
-		if ( t.neighbors [ direction ] != null )
-			return NumberOfTilesToEdge ( t.neighbors [ direction ], direction, count + 1 );
+		// Track the number of tiles to the edge
+		int count = 1;
 
-		// Return count
-		return count;
+		// Check each tile until the edge is found
+		while ( CurrentHex.Neighbor ( direction, count ) != null )
+			count++;
+
+		// Return the count
+		return count - 1;
 	}
 
 	/// <summary>
-	/// Checks to see if an enemy unit is within range of and capable of being targeted by the Taunt ability.
-	/// Returns true if at least one unit can be targeted by the Taunt ability.
+	/// Checks to see if an opposing unit is within Range of and capable of being targeted by Taunt.
+	/// Returns true if at least one unit can be targeted by Taunt.
 	/// </summary>
+	/// <returns> Whether or not an opposing unit can be targeted by Taunt. </returns>
 	private bool TauntCheck ( )
 	{
-		// Track potential target
-		bool targetFound = false;
-
 		// Check every direction
-		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
+		for ( int i = 0; i < CurrentHex.Neighbors.Length; i++ )
 		{
 			// Search for target
-			if ( GetTaunt ( currentTile.neighbors [ i ], i, 1 ) != null )
+			if ( GetTaunt ( (Hex.Direction)i ) != null )
 			{
 				// Mark that a target was found
-				targetFound = true;
-				break;
+				return true;
 			}
 		}
 
-		// Return if target was found
-		return targetFound;
+		// Return that no target was found
+		return false;
 	}
 
 	/// <summary>
-	/// Finds an enemy unit that is within the 2 to 4 tile range and can be moved to an unoccupied tile toward the hero by the Taunt ability.
-	/// Only returns the closest available target.
+	/// Finds an opposing unit that is within Range and can be moved to an unoccupied tile toward the hero by Taunt.
 	/// </summary>
-	private Tile GetTaunt ( Tile t, int direction, int count )
+	/// <param name="direction"> The direction of the tiles to be checked. </param>
+	/// <returns> The hex tile of a potential target for Taunt. </returns>
+	private Hex GetTaunt ( Hex.Direction direction )
 	{
-		// Check tile
-		if ( t != null && count <= TAUNT_RANGE )
+		// Check all tiles within range
+		for ( int i = 2; i <= InstanceData.Ability2.PerkValue; i++ )
 		{
-			// Check target and move location
-			if ( t.currentUnit != null && t.currentUnit.owner != owner && t.currentUnit.Status.CanBeMoved && OccupyTileCheck ( t.neighbors [ Util.GetOppositeDirection ( direction ) ], null ) )
-				return t;
-			else
-				return GetTaunt ( t.neighbors [ direction ], direction, count + 1 );
+			// Get the tile
+			Hex targetHex = CurrentHex.Neighbor ( direction, i );
+
+			// Check for tile
+			if ( targetHex == null )
+				continue;
+
+			// Check for unit
+			if ( targetHex.Tile.CurrentUnit == null )
+				continue;
+
+			// Check for ally
+			if ( targetHex.Tile.CurrentUnit.Owner == Owner )
+				continue;
+
+			// Check unit status
+			if ( !targetHex.Tile.CurrentUnit.Status.CanBeMoved || !targetHex.Tile.CurrentUnit.Status.CanBeAffectedByAbility )
+				continue;
+
+			// Get the destination tile
+			Hex destinationHex = CurrentHex.Neighbor ( direction, i - 1 );
+
+			// Check for tile
+			if ( destinationHex == null )
+				continue;
+
+			// Check if the tile is occupied
+			if ( destinationHex.Tile.IsOccupied )
+				continue;
+
+			// Return the target
+			return targetHex;
 		}
 
 		// Return that no target was found

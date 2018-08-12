@@ -27,7 +27,6 @@ public class UnitPortrait : MonoBehaviour
 	private bool isBorderHighlighted;
 
 	private readonly Color32 UNAVAILABLE_COLOR = Color.grey;
-	private readonly Color32 HIGHLIGHT_COLOR = new Color32 ( 255, 210, 75, 255 );
 
 	/// <summary>
 	/// Whether or not the portrait is to be displayed.
@@ -89,7 +88,7 @@ public class UnitPortrait : MonoBehaviour
 			if ( isBorderHighlighted )
 			{
 				// Set border color to highlighted
-				border.color = HIGHLIGHT_COLOR;
+				border.color = Util.AccentColor ( _teamColor );
 			}
 			else
 			{

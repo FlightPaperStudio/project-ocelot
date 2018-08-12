@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class MoveData
 {
+	#region Public Classes
+
 	public enum MoveType
 	{
 		MOVE,
@@ -18,49 +20,94 @@ public class MoveData
 
 	public enum MoveDirection
 	{
-		ABOVE = 0,
-		RIGHT_ABOVE = 1,
-		RIGHT_BELOW = 2,
-		BELOW = 3,
-		LEFT_BELOW = 4,
-		LEFT_ABOVE = 5
+		NORTH = 0,
+		NORTHEAST = 1,
+		SOUTHEAST = 2,
+		SOUTH = 3,
+		SOUTHWEST = 4,
+		NORTHWEST = 5,
+		NONE = 6,
+		DIRECT = 7
 	}
 
-	// Tracks the tile a unit could potentially move to
-	public Tile Tile
+	#endregion // Public Classes
+
+	#region Move Data
+
+	/// <summary>
+	/// The destination of this potential move.
+	/// </summary>
+	public Hex Destination
 	{
 		get;
 		private set;
 	}
 
-	// Tracks the move required to make this move
-	public MoveData Prerequisite
+	/// <summary>
+	/// The move required to make this move.
+	/// </summary>
+	public MoveData PriorMove
 	{
 		get;
 		private set;
 	}
 
-	// Tracks what type of move is available
+	/// <summary>
+	/// The type of move.
+	/// </summary>
 	public MoveType Type
 	{
 		get;
 		private set;
 	}
 
-	// Tracks the direction the unit has to move
-	// This is used for tracking tiles being jumped
+	/// <summary>
+	/// The direction of the move from the previous tile.
+	/// </summary>
 	public MoveDirection Direction
 	{
 		get;
 		private set;
 	}
 
-	// Tracks the tiles of units that could be attacked from this move.
-	public Tile [ ] Attacks
+	/// <summary>
+	/// The tiles of units that would be attacked from this move.
+	/// </summary>
+	public Hex [ ] Attacks
 	{
 		get;
 		private set;
 	}
+
+	public MoveData ( Hex hex, MoveData prior, MoveType type, MoveDirection direction, params Hex [ ] attacks )
+	{
+		Destination = hex;
+		PriorMove = prior;
+		Type = type;
+		Direction = direction;
+		Attacks = attacks;
+		isConflicted = false;
+		Value = 0;
+	}
+
+	public MoveData ( Hex hex, MoveData prior, MoveType type, int direction, params Hex [ ] attacks )
+	{
+		Destination = hex;
+		PriorMove = prior;
+		Type = type;
+		Direction = (MoveDirection)direction;
+		Attacks = attacks;
+		isConflicted = false;
+		Value = 0;
+	}
+
+	#endregion // Move Data
+
+
+
+
+
+
 
 	public bool isConflicted;
 
@@ -72,27 +119,7 @@ public class MoveData
 		private set;
 	}
 
-	public MoveData ( Tile _tile, MoveData _prereq, MoveType _type, MoveDirection _dir, params Tile [ ] _capture )
-	{
-		Tile = _tile;
-		Prerequisite = _prereq;
-		Type = _type;
-		Direction = _dir;
-		Attacks = _capture;
-		isConflicted = false;
-		Value = 0;
-	}
-
-	public MoveData ( Tile _tile, MoveData _prereq, MoveType _type, int _dir, params Tile [ ] _capture )
-	{
-		Tile = _tile;
-		Prerequisite = _prereq;
-		Type = _type;
-		Direction = ( MoveDirection )_dir;
-		Attacks = _capture;
-		isConflicted = false;
-		Value = 0;
-	}
+	
 
 	/// <summary>
 	/// Determines the value of a move for the AI.

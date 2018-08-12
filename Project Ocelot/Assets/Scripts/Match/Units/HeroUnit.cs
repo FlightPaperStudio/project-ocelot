@@ -59,15 +59,15 @@ public class HeroUnit : Unit
 		activeAbility = ability;
 
 		// Highlight current tile
-		currentTile.SetTileState ( TileState.SelectedUnit );
+		CurrentHex.Tile.SetTileState ( TileState.SelectedUnit );
 	}
 
 	/// <summary>
 	/// Selects a particular tile for the setup of a command.
 	/// This function should be called as many times as needed until all necessary tils are selected. The command should execute on the last call of this function.
 	/// </summary>
-	/// <param name="t"> The selected tile for the command. </param>
-	public virtual void SelectCommandTile ( Tile t )
+	/// <param name="hex"> The selected tile for the command. </param>
+	public virtual void SelectCommandTile ( Hex hex )
 	{
 
 	}
@@ -78,7 +78,9 @@ public class HeroUnit : Unit
 	/// </summary>
 	public virtual void EndCommand ( )
 	{
+		// Mark that the ability is no longer active
 		activeAbility.IsActive = false;
+		activeAbility = null;
 
 		// Clear the current board
 		GM.Board.ResetTiles ( );
@@ -106,50 +108,6 @@ public class HeroUnit : Unit
 		// Set the cooldown for ability 3
 		if ( InstanceData.Ability3 != null )
 			Cooldown ( InstanceData.Ability3 );
-
-		//// Check for active ability type for ability 1
-		//if ( CurrentAbility1.enabled && CurrentAbility1.type != Ability.AbilityType.PASSIVE )
-		//{
-		//	// Check if current duration is active
-		//	if ( CurrentAbility1.duration > 0 )
-		//	{
-		//		// Decrement duration
-		//		CurrentAbility1.duration--;
-
-		//		// Check if duration is complete
-		//		if ( CurrentAbility1.duration == 0 )
-		//			OnDurationComplete ( CurrentAbility1 );
-		//	}
-
-		//	// Check if current cooldown is active
-		//	if ( CurrentAbility1.cooldown > 0 )
-		//	{
-		//		// Decrement cooldown
-		//		CurrentAbility1.cooldown--;
-		//	}
-		//}
-
-		//// Check for active ability type for ability 2
-		//if ( CurrentAbility2.enabled && CurrentAbility2.type != Ability.AbilityType.PASSIVE )
-		//{
-		//	// Check if current duration is active
-		//	if ( CurrentAbility2.duration > 0 )
-		//	{
-		//		// Decrement duration
-		//		CurrentAbility2.duration--;
-
-		//		// Check if duration is complete
-		//		if ( CurrentAbility2.duration == 0 )
-		//			OnDurationComplete ( CurrentAbility2 );
-		//	}
-
-		//	// Check if current cooldown is active
-		//	if ( CurrentAbility2.cooldown > 0 )
-		//	{
-		//		// Decrement cooldown
-		//		CurrentAbility2.cooldown--;
-		//	}
-		//}
 	}
 
 	#endregion // Public Virtual Functions
@@ -360,7 +318,7 @@ public class HeroUnit : Unit
 	/// </summary>
 	/// <param name="m"> The Move Data for any moves required for this move. </param>
 	/// <returns> Whether or not a special ability move was used for the given move. </returns>
-	protected bool CheckPrequisiteType ( MoveData m )
+	protected bool PriorMoveTypeCheck ( MoveData m )
 	{
 		// Check for prerequisite move
 		if ( m != null )
@@ -374,7 +332,7 @@ public class HeroUnit : Unit
 			else
 			{
 				// Check prerequisite move's type
-				return CheckPrequisiteType ( m.Prerequisite );
+				return PriorMoveTypeCheck ( m.PriorMove );
 			}
 		}
 
@@ -401,28 +359,54 @@ public class HeroUnit : Unit
 	}
 
 	/// <summary>
+	/// Starts the cooldown and duration for this unit's toggle command ability.
+	/// </summary>
+	/// <param name="durationAbility"> The instance data for the toggle command ability being used. </param>
+	/// <param name="cooldownAbility"> The instance data for the toggle command ability not being used. </param>
+	/// <param name="updateHUD"> Whether or not the Unit HUD should be updated for this unit. </param>
+	protected void StartToggleCooldown ( AbilityInstanceData durationAbility, AbilityInstanceData cooldownAbility, bool updateHUD = true )
+	{
+		// Set duration
+		if ( durationAbility.IsEnabled )
+			durationAbility.CurrentDuration = durationAbility.Duration;
+
+		// Set cooldown
+		if ( cooldownAbility.IsEnabled )
+			cooldownAbility.CurrentCooldown = cooldownAbility.Cooldown;
+
+		// Display cooldown
+		if ( updateHUD )
+		{
+			if ( durationAbility.IsEnabled )
+				GM.UI.unitHUD.UpdateAbilityHUD ( durationAbility );
+			if ( cooldownAbility.IsEnabled )
+				GM.UI.unitHUD.UpdateAbilityHUD ( cooldownAbility );
+		}	
+	}
+
+	/// <summary>
 	/// Creates the hero's tile object in the arena.
 	/// </summary>
 	/// <param name="prefab"> The tile object to be created. </param>
-	/// <param name="t"> The tile where the tile object is being placed. </param>
+	/// <param name="hex"> The tile where the tile object is being placed. </param>
 	/// <param name="duration"> The amount of turns the tile object will exist for. </param>
 	/// <param name="tileObjectDelegate"> The delegate for when the tile object's duration expires. </param>
-	protected TileObject CreateTileOject ( TileObject prefab, Tile t, int duration, TileObject.TileObjectDelegate tileObjectDelegate )
+	protected TileObject CreateTileOject ( TileObject prefab, Hex hex, int duration, TileObject.TileObjectDelegate tileObjectDelegate )
 	{
 		// Create game object
-		TileObject obj = Instantiate ( prefab, owner.transform );
+		TileObject obj = Instantiate ( prefab, Owner.transform );
 
 		// Set tile object information
-		obj.SetTileObject ( this, t, duration, tileObjectDelegate );
+		obj.SetTileObject ( this, hex, duration, tileObjectDelegate );
 
 		// Add tile object to player's list
-		owner.tileObjects.Add ( obj );
+		Owner.tileObjects.Add ( obj );
 
 		// Add tile object to tile
-		t.currentObject = obj;
+		hex.Tile.CurrentObject = obj;
 
 		// Set sprite direction
-		Util.OrientSpriteToDirection ( obj.sprite, owner.TeamDirection );
+		Util.OrientSpriteToDirection ( obj.Icon, Owner.TeamDirection );
 
 		// Return the newly created tile object
 		return obj;
@@ -435,10 +419,10 @@ public class HeroUnit : Unit
 	protected void DestroyTileObject ( TileObject current )
 	{
 		// Remove tile object from player's list
-		owner.tileObjects.Remove ( current );
+		Owner.tileObjects.Remove ( current );
 
 		// Remove tile object from tile
-		current.tile.currentObject = null;
+		current.CurrentHex.Tile.CurrentObject = null;
 
 		// Destroy game object
 		Destroy ( current.gameObject );

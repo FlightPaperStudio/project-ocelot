@@ -197,13 +197,21 @@ public class TeamSelectionMenu : Menu
 		{
 			// Unselect the previously selected hero
 			if ( selectedHero != null )
-				portraits.First ( x => x.UnitID == selectedHero.ID ).Portrait.ResetSize ( );
+			{
+				SelectionPortraits p = portraits.First ( x => x.UnitID == selectedHero.ID );
+				p.Portrait.ResetSize ( );
+				p.Portrait.IsBorderHighlighted = false;
+			}
+				
 
 			// Store the currently selected hero
 			selectedHero = MatchSettings.GetHero ( portraits [ index ].UnitID );
 
 			// Enlarge the portrait to indicate that the hero is selected
 			portraits [ index ].Portrait.ChangeSize ( 5 );
+
+			// Highlight border
+			portraits [ index ].Portrait.IsBorderHighlighted = true;
 
 			// Display hero in card
 			cards [ confirmedHeroesCounter ].Card.SetCard ( selectedHero, setupManager.CurrentPlayer.Team );
@@ -312,8 +320,14 @@ public class TeamSelectionMenu : Menu
 
 		// Enable any portraits that were disabled for being over the limit from the previous hero
 		for ( int i = 0; i < portraits.Length; i++ )
+		{
 			if ( MatchSettings.GetUnitData ( portraits [ i ].UnitID ).Slots + setupManager.SlotMeter.FilledSlots <= setupManager.SlotMeter.TotalSlots && ( !MatchSettings.HeroLimit || ( MatchSettings.HeroLimit && !setupManager.CurrentPlayer.Units.Exists ( x => x.ID == portraits [ i ].UnitID ) ) ) )
+			{
 				portraits [ i ].Portrait.IsAvailable = true;
+				portraits [ i ].Portrait.IsBorderHighlighted = false;
+			}
+		}
+			
 
 		// Select previous hero
 		SelectUnit ( System.Array.IndexOf ( portraits, portraits.First ( x => x.UnitID == previousHero.ID ) ) );
