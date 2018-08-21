@@ -1,4 +1,4 @@
-WindowsStandalone
+OSXStandalone
 SceneListBegin?
 Assets/Scenes/Splash Screen.unity
 Assets/Scenes/Menus.unity

@@ -8,7 +8,7 @@ public static class DatabaseManager
 {
 	#region Database Data
 
-	private const string FILE_PATH = "URI=file:Assets/Plugins/ProjectOcelotDatabase.s3db";
+	private static string FILE_PATH = "URI=file:" + Application.streamingAssetsPath + "/ProjectOcelotDatabase.s3db";
 
 	private static IDbConnection dbConnection;
 	private static IDbCommand dbCommand;
