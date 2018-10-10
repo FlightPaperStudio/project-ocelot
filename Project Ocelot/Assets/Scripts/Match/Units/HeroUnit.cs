@@ -10,7 +10,7 @@ public class HeroUnit : Unit
 
 	#endregion // Hero Data
 
-	#region Unit Override Functions
+	#region Public Unit Override Functions
 
 	/// <summary>
 	/// Determines how the unit should move based on the Move Data given.
@@ -26,17 +26,15 @@ public class HeroUnit : Unit
 			break;
 		case MoveData.MoveType.JUMP:
 			Jump ( data );
-			break;
-		case MoveData.MoveType.ATTACK:
-			Jump ( data );
-			AttackUnit ( data );
+			if ( data.IsAssist )
+				GetAssisted ( data );
+			else if ( data.IsAttack )
+				AttackUnit ( data );
 			break;
 		case MoveData.MoveType.SPECIAL:
 			UseSpecial ( data );
-			break;
-		case MoveData.MoveType.SPECIAL_ATTACK:
-			UseSpecial ( data );
-			AttackUnit ( data );
+			if ( data.IsAttack )
+				AttackUnit ( data );
 			break;
 		}
 	}
@@ -46,28 +44,9 @@ public class HeroUnit : Unit
 	#region Public Virtual Functions
 
 	/// <summary>
-	/// Sets up the hero's command use.
-	/// Base function clears the board for its command state.
+	/// Executes the command for the hero.
 	/// </summary>
-	public virtual void StartCommand ( AbilityInstanceData ability )
-	{
-		// Clear the current board
-		GM.Board.ResetTiles ( );
-
-		// Set the active ability
-		ability.IsActive = true;
-		activeAbility = ability;
-
-		// Highlight current tile
-		CurrentHex.Tile.SetTileState ( TileState.SelectedUnit );
-	}
-
-	/// <summary>
-	/// Selects a particular tile for the setup of a command.
-	/// This function should be called as many times as needed until all necessary tils are selected. The command should execute on the last call of this function.
-	/// </summary>
-	/// <param name="hex"> The selected tile for the command. </param>
-	public virtual void SelectCommandTile ( Hex hex )
+	public virtual void ExecuteCommand ( )
 	{
 
 	}
@@ -76,14 +55,14 @@ public class HeroUnit : Unit
 	/// Cancels the hero's command use.
 	/// Base function returns the board to its non-command state.
 	/// </summary>
-	public virtual void EndCommand ( )
+	public virtual void CancelCommand ( )
 	{
 		// Mark that the ability is no longer active
 		activeAbility.IsActive = false;
 		activeAbility = null;
 
 		// Clear the current board
-		GM.Board.ResetTiles ( );
+		GM.Grid.ResetTiles ( );
 
 		// Get available units
 		GM.DisplayAvailableUnits ( );
@@ -112,7 +91,69 @@ public class HeroUnit : Unit
 
 	#endregion // Public Virtual Functions
 
+	#region Public Functions
+
+	/// <summary>
+	/// Sets up the hero's command use.
+	/// Base function clears the board for its command state.
+	/// </summary>
+	public void StartCommand ( AbilityInstanceData ability )
+	{
+		// Clear the current board
+		GM.Grid.ResetTiles ( true );
+
+		// Set the active ability
+		ability.IsActive = true;
+		activeAbility = ability;
+
+		// Set the command data
+		GM.SelectedCommand = SetCommandData ( );
+
+		// Get targets
+		GetCommandTargets ( );
+	}
+
+	/// <summary>
+	/// Selects a particular tile for the setup of a command.
+	/// This function should be called as many times as needed until all necessary tils are selected. The command should execute on the last call of this function.
+	/// </summary>
+	/// <param name="hex"> The selected tile for the command. </param>
+	public void SelectCommandTile ( Hex hex )
+	{
+		// Mark tile as selected
+		hex.Tile.SetTileState ( TileState.SelectedCommand );
+
+		// Reset tiles
+		GM.Grid.ResetTiles ( TileState.SelectedCommand );
+
+		// Check for remaining targets to select
+		if ( GM.SelectedCommand.Targets.Count < GM.SelectedCommand.MaxTargets )
+			GetCommandTargets ( );
+	}
+
+	#endregion // Public Functions
+
 	#region Protected Virtual Functions
+
+	/// <summary>
+	/// Sets the command data for the currently active command.
+	/// Override this function to specify the number of targets for a command.
+	/// </summary>
+	/// <returns></returns>
+	protected virtual CommandData SetCommandData ( )
+	{
+		// Set default command data
+		return new CommandData ( this, 1 );
+	}
+
+	/// <summary>
+	/// Determines any and all potential targets from a command ability.
+	/// Override this function to specify how targets are selected.
+	/// </summary>
+	protected virtual void GetCommandTargets ( )
+	{
+		
+	}
 
 	/// <summary>
 	/// Uses this hero unit's special ability.
@@ -324,7 +365,7 @@ public class HeroUnit : Unit
 		if ( m != null )
 		{
 			// Check if the type matches
-			if ( m.Type == MoveData.MoveType.SPECIAL || m.Type == MoveData.MoveType.SPECIAL_ATTACK )
+			if ( m.Type == MoveData.MoveType.SPECIAL )
 			{
 				// Return that an ability has been used
 				return true;

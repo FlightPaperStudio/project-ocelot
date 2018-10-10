@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
 
 	#region GameObjects
 
-	public Board Board;
+	public HexGrid Grid;
 
 	#endregion // GameObjects
 
@@ -53,10 +53,30 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// All of the players in the match.
+	/// </summary>
+	public Player [ ] Players
+	{
+		get
+		{
+			// Get all players
+			return players;
+		}
+	}
 
 	#endregion // Match Data
 
 	#region Turn Data
+
+	public enum TurnState
+	{
+		NO_SELECTION,
+		UNIT_SELECTED,
+		COMMAND_SELECTED,
+		MOVE_SELECTED,
+		ANIMATING
+	}
 
 	/// <summary>
 	/// A single animation to be played during a turn.
@@ -99,6 +119,8 @@ public class GameManager : MonoBehaviour
 	[HideInInspector]
 	public List<PostTurnAnimation> PostAnimationQueue = new List<PostTurnAnimation> ( );
 
+	private bool isSkippableTurn;
+
 	private const float ANIMATION_BUFFER = 0.1f;
 
 	/// <summary>
@@ -126,6 +148,15 @@ public class GameManager : MonoBehaviour
 	{
 		get;
 		private set;
+	}
+
+	/// <summary>
+	/// The currently selected set of hexes for the command by the selected unit.
+	/// </summary>
+	public CommandData SelectedCommand
+	{
+		get;
+		set;
 	}
 
 	#endregion // Turn Data
@@ -167,39 +198,36 @@ public class GameManager : MonoBehaviour
 			players [ i ].TeamDirection = MatchSettings.Players [ i ].TeamDirection;
 
 			// Set goal area
-			players [ i ].startArea.SetColor ( players [ i ].Team );
+			players [ i ].Objective.SetColor ( players [ i ].Team );
 
 			// Set unit data
 			players [ i ].Units = MatchSettings.Players [ i ].Units;
-
-			// Set special IDs
-			//players [ i ].specialIDs = MatchSettings.playerSettings [ i ].heroIDs.ToArray ( );
 
 			// Spawn units
 			for ( int j = 0; j < players [ i ].Units.Count; j++ )
 			{
 				// Create unit instance
-				Unit u = Instantiate ( unitPrefabDictionary [ players [ i ].Units [ j ].ID ], players [ i ].transform );
+				Unit unit = Instantiate ( unitPrefabDictionary [ players [ i ].Units [ j ].ID ], players [ i ].transform );
 
 				// Set the instance data
-				u.InitializeInstance ( this, ( i * 10 ) + j, players [ i ].Units [ j ] );
+				unit.InitializeInstance ( this, ( i * 10 ) + j, players [ i ].Units [ j ] );
 
 				// Set unit's owner
-				u.Owner = players [ i ];
+				unit.Owner = players [ i ];
 
 				// Set unit team color
-				u.SetTeamColor ( players [ i ].Team );
+				unit.SetTeamColor ( players [ i ].Team );
 
 				// Set unit direction
-				Util.OrientSpriteToDirection ( u.sprite, players [ i ].TeamDirection );
+				Util.OrientSpriteToDirection ( unit.sprite, players [ i ].TeamDirection );
 
-				// Position unit to starting tile
-				u.transform.position = players [ i ].startArea.tiles [ MatchSettings.Players [ i ].UnitFormation [ players [ i ].Units [ j ] ] ].transform.position;
-				u.currentTile = players [ i ].startArea.tiles [ MatchSettings.Players [ i ].UnitFormation [ players [ i ].Units [ j ] ] ];
-				players [ i ].startArea.tiles [ MatchSettings.Players [ i ].UnitFormation [ players [ i ].Units [ j ] ] ].CurrentUnit = u;
+				// Position unit to starting hex
+				unit.transform.position = players [ i ].Entrance.Hexes [ MatchSettings.Players [ i ].UnitFormation [ players [ i ].Units [ j ] ] ].transform.position;
+				unit.CurrentHex = players [ i ].Entrance.Hexes [ MatchSettings.Players [ i ].UnitFormation [ players [ i ].Units [ j ] ] ];
+				players [ i ].Entrance.Hexes [ MatchSettings.Players [ i ].UnitFormation [ players [ i ].Units [ j ] ] ].Tile.CurrentUnit = unit;
 
 				// Add unit to team
-				players [ i ].UnitInstances.Add ( u );
+				players [ i ].UnitInstances.Add ( unit );
 			}
 
 			// Add standard KO delegate to each unit
@@ -228,11 +256,11 @@ public class GameManager : MonoBehaviour
 	public void GetTeamMoves ( )
 	{
 		// Access each of the player's units
-		foreach ( Unit u in CurrentPlayer.UnitInstances )
+		foreach ( Unit unit in CurrentPlayer.UnitInstances )
 		{
 			// Set move list
-			u.FindMoves ( u.currentTile, null, false );
-			u.MoveConflictCheck ( );
+			unit.FindMoves ( unit.CurrentHex, null, false );
+			unit.MoveConflictCheck ( );
 		}
 	}
 
@@ -242,9 +270,9 @@ public class GameManager : MonoBehaviour
 	public void DisplayAvailableUnits ( )
 	{
 		// Highlight each unit
-		foreach ( Unit u in CurrentPlayer.UnitInstances )
+		foreach ( Unit unit in CurrentPlayer.UnitInstances )
 		{
-			u.currentTile.SetTileState ( TileState.AvailableUnit );
+			unit.CurrentHex.Tile.SetTileState ( TileState.AvailableUnit );
 		}
 	}
 
@@ -263,6 +291,10 @@ public class GameManager : MonoBehaviour
 		
 		// Begin turn
 		IsStartOfTurn = true;
+		isSkippableTurn = false;
+
+		// Hide controls
+		UI.SetControls ( TurnState.NO_SELECTION );
 
 		// Start new turn animation
 		StartCoroutine ( StartTurnCoroutine ( ) );
@@ -434,19 +466,19 @@ public class GameManager : MonoBehaviour
 	/// <summary>
 	/// Selects the current unit and displays any and all available moves for the unit.
 	/// </summary>
-	/// <param name="u"> The unit being selected. </param>
-	public void SelectUnit ( Unit u )
+	/// <param name="unit"> The unit being selected. </param>
+	public void SelectUnit ( Unit unit )
 	{
 		// Check for previously selected unit
 		if ( SelectedUnit != null && IsStartOfTurn && !UI.timer.IsOutOfTime )
 		{
 			// Reset any previous selected units
-			Board.ResetTiles ( );
+			Grid.ResetTiles ( );
 			DisplayAvailableUnits ( );
 		}
 
 		// Set unit as the currently selected unit
-		SelectedUnit = u;
+		SelectedUnit = unit;
 
 		// Set that there are no currently selected moves
 		SelectedMove = null;
@@ -455,7 +487,7 @@ public class GameManager : MonoBehaviour
 		UI.unitHUD.DisplayUnit ( SelectedUnit );
 
 		// Highlight the tile of the selected unit
-		SelectedUnit.currentTile.SetTileState ( TileState.SelectedUnit );
+		SelectedUnit.CurrentHex.Tile.SetTileState ( TileState.SelectedUnit );
 		BringUnitToTheFront ( SelectedUnit );
 
 		// Display the unit's available moves
@@ -465,29 +497,29 @@ public class GameManager : MonoBehaviour
 	/// <summary>
 	/// Selects the move for the currently selected unit to make.
 	/// </summary>
-	public void SelectMove ( Tile t, bool isConflict = false, bool isLeftClick = true )
+	public void SelectMove ( Hex hex, bool isConflict = false, bool isLeftClick = true )
 	{
 		// Display mid-turn controls
-		UI.ToggleMidTurnControls ( true, false );
+		UI.SetControls ( TurnState.MOVE_SELECTED, isSkippableTurn, isConflict );
 
 		// Prevent any command usage
 		UI.unitHUD.DisableCommandButtons ( );
 
 		// Clear previous moves and units
-		Board.ResetTiles ( SelectedUnit.currentTile );
+		Grid.ResetTiles ( TileState.SelectedAttack, TileState.SelectedMove, TileState.SelectedMoveAttack, TileState.SelectedSpecial, TileState.SelectedSpecialAttack );
 
 		// Get move data
 		MoveData data;
 		if ( isConflict )
 		{
 			if ( isLeftClick )
-				data = SelectedUnit.MoveList.Find ( x => x.Destination == t && x.PriorMove == SelectedMove && ( x.Type != MoveData.MoveType.SPECIAL && x.Type != MoveData.MoveType.SPECIAL_ATTACK ) );
+				data = SelectedUnit.MoveList.Find ( x => x.Destination == hex && x.PriorMove == SelectedMove && x.Type != MoveData.MoveType.SPECIAL );
 			else
-				data = SelectedUnit.MoveList.Find ( x => x.Destination == t && x.PriorMove == SelectedMove && ( x.Type == MoveData.MoveType.SPECIAL || x.Type == MoveData.MoveType.SPECIAL_ATTACK ) );
+				data = SelectedUnit.MoveList.Find ( x => x.Destination == hex && x.PriorMove == SelectedMove && x.Type == MoveData.MoveType.SPECIAL );
 		}
 		else
 		{
-			data = SelectedUnit.MoveList.Find ( x => x.Destination == t && x.PriorMove == SelectedMove );
+			data = SelectedUnit.MoveList.Find ( x => x.Destination == hex && x.PriorMove == SelectedMove );
 		}
 
 		// Store selected move
@@ -522,14 +554,54 @@ public class GameManager : MonoBehaviour
 	/// </summary>
 	public void CancelMove ( )
 	{
-		// Hide mid-turn controls
-		UI.ToggleMidTurnControls ( false, !IsStartOfTurn );
+		// Hide controls
+		UI.SetControls ( TurnState.UNIT_SELECTED, isSkippableTurn );
 
 		// Remove selected move
 		SelectedMove = null;
 
 		// Reset board
 		SelectUnit ( SelectedUnit );
+	}
+
+	/// <summary>
+	/// Selects a target for the current command for the unit.
+	/// </summary>
+	/// <param name="hex"> The target hex. </param>
+	public void SelectCommandTarget ( Hex hex )
+	{
+		// Add target to list
+		SelectedCommand.Targets.Add ( hex );
+
+		// Set controls
+		UI.SetControls ( SelectedCommand.Targets.Count >= SelectedCommand.MinTargets ? TurnState.COMMAND_SELECTED : TurnState.NO_SELECTION );
+
+		// Select a target for the unit's command
+		( SelectedUnit as HeroUnit ).SelectCommandTile ( hex );
+	}
+
+	/// <summary>
+	/// Executes the current command for the unit.
+	/// </summary>
+	public void ExecuteCommand ( )
+	{
+		// Execute the unit's command
+		( SelectedUnit as HeroUnit ).ExecuteCommand ( );
+
+		// Hide controls
+		UI.SetControls ( TurnState.ANIMATING );
+	}
+
+	/// <summary>
+	/// Cancels the current command for the unit.
+	/// </summary>
+	public void CancelCommand ( )
+	{
+		// Cancel the unit's command
+		( SelectedUnit as HeroUnit ).CancelCommand ( );
+
+		// Hide controls
+		UI.SetControls ( TurnState.NO_SELECTION );
 	}
 
 	/// <summary>
@@ -544,11 +616,8 @@ public class GameManager : MonoBehaviour
 		// Hide unit HUD
 		UI.unitHUD.HideHUD ( );
 
-		// Hide mid-turn controls
-		UI.ToggleMidTurnControls ( false, false );
-
 		// Reset tiles from previous turn
-		Board.ResetTiles ( );
+		Grid.ResetTiles ( );
 
 		// Remove selected unit from the unit queue
 		UnitQueue.Remove ( SelectedUnit );
@@ -583,11 +652,14 @@ public class GameManager : MonoBehaviour
 		SelectedMove = null;
 
 		// Find unit moves
-		SelectedUnit.FindMoves ( SelectedUnit.currentTile, null, false );
+		SelectedUnit.FindMoves ( SelectedUnit.CurrentHex, null, false );
 		SelectedUnit.MoveConflictCheck ( );
 
-		// Hide mid-turn controls
-		UI.ToggleMidTurnControls ( false, true );
+		// Set that turns are skippable
+		isSkippableTurn = true;
+
+		// Hide controls
+		UI.SetControls ( TurnState.UNIT_SELECTED, isSkippableTurn );
 
 		// Resume turn timer
 		if ( MatchSettings.TurnTimer )
@@ -607,58 +679,45 @@ public class GameManager : MonoBehaviour
 	private void DisplayAvailableMoves ( MoveData prerequisite )
 	{
 		// Get only the moves for the prerequisite
-		foreach ( MoveData m in SelectedUnit.MoveList.FindAll ( x => x.PriorMove == prerequisite ) )
+		foreach ( MoveData move in SelectedUnit.MoveList.FindAll ( x => x.PriorMove == prerequisite ) )
 		{
 			// Check if conflicted
-			if ( m.isConflicted )
+			if ( move.IsConflicted )
 			{
 				// Set tile state and highlight tile
-				m.Destination.SetTileState ( TileState.ConflictedTile );
+				move.Destination.Tile.SetTileState ( TileState.ConflictedTile );
 			}
 			else
 			{
 				// Check move type
-				switch ( m.Type )
+				switch ( move.Type )
 				{
 				// Basic moves
 				case MoveData.MoveType.MOVE:
-				case MoveData.MoveType.MOVE_TO_WIN:
 					// Set tile state and highlight tile
-					m.Destination.SetTileState ( TileState.AvailableMove );
+					move.Destination.Tile.SetTileState ( TileState.AvailableMove );
 					break;
 
 				// Basic jump
 				case MoveData.MoveType.JUMP:
-				case MoveData.MoveType.JUMP_TO_WIN:
 					// Set tile state and highlight tile
-					m.Destination.SetTileState ( TileState.AvailableMove );
-					break;
-
-				// Jump and capture enemy
-				case MoveData.MoveType.ATTACK:
-				case MoveData.MoveType.ATTACK_TO_WIN:
-					// Set tile state and highlight tile
-					m.Destination.SetTileState ( TileState.AvailableMoveAttack );
+					move.Destination.Tile.SetTileState ( TileState.AvailableMove );
 
 					// Set tile state and highlight tile for the unit available for attack
-					foreach ( Tile t in m.Attacks )
-						t.SetTileState ( TileState.AvailableAttack );
+					if ( move.IsAttack )
+						foreach ( Hex hex in move.AttackTargets )
+							hex.Tile.SetTileState ( TileState.AvailableAttack );
 					break;
 
 				// Special ability move
 				case MoveData.MoveType.SPECIAL:
 					// Set tile state and highlight tile
-					m.Destination.SetTileState ( TileState.AvailableSpecial );
-					break;
-
-				// Special ability move and attack enemy
-				case MoveData.MoveType.SPECIAL_ATTACK:
-					// Set tile state and highlight tile
-					m.Destination.SetTileState ( TileState.AvailableSpecialAttack );
+					move.Destination.Tile.SetTileState ( TileState.AvailableSpecial );
 
 					// Set tile state and highlight tile for the unit available for attack
-					foreach ( Tile t in m.Attacks )
-						t.SetTileState ( TileState.AvailableAttack );
+					if ( move.IsAttack )
+						foreach ( Hex hex in move.AttackTargets )
+							hex.Tile.SetTileState ( TileState.AvailableAttack );
 					break;
 				}
 			}
@@ -683,10 +742,10 @@ public class GameManager : MonoBehaviour
 		GetMoves ( SelectedMove );
 
 		// Clear board
-		Board.ResetTiles ( );
+		Grid.ResetTiles ( );
 
-		// Hide mid-turn controls
-		UI.ToggleMidTurnControls ( false, false );
+		// Hide controls
+		UI.SetControls ( TurnState.ANIMATING );
 
 		// Pause turn timer
 		if ( MatchSettings.TurnTimer )
@@ -715,7 +774,7 @@ public class GameManager : MonoBehaviour
 		UI.unitHUD.HideHUD ( );
 
 		// Reset tiles from previous turn
-		Board.ResetTiles ( );
+		Grid.ResetTiles ( );
 
 		// Check for winner
 		if ( WinnerCheck ( ) )
@@ -853,10 +912,10 @@ public class GameManager : MonoBehaviour
 	private bool WinnerCheck ( )
 	{
 		// Check each player to see if their Leader has reached the goal
-		foreach ( Player p in players )
+		foreach ( Player player in players )
 		{
-			Unit l = p.UnitInstances.Find ( x => x is Leader );
-			if ( l != null && p.startArea.IsGoalTile ( l.currentTile ) )
+			Unit leader = player.UnitInstances.Find ( x => x is Leader );
+			if ( leader != null && player.Objective.Contains ( leader.CurrentHex ) )
 				return true;
 		}
 

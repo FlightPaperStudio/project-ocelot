@@ -5,7 +5,7 @@ using DG.Tweening;
 
 public class TagTeam : HeroUnit
 {
-	/// <summary>
+	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
 	///
 	/// Hero 7 Unit Data
 	/// 
@@ -43,35 +43,20 @@ public class TagTeam : HeroUnit
 	/// Type: Toggle Command
 	/// Cooldown: 5 Rounds
 	/// 
-	/// </summary>
-
-	#region Hero Data
-	// Hero information
-	public Sprite unitedDisplay;
-	public Sprite splitDisplay;
-
-	#endregion // Hero Data
+	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
 
 	#region Ability Data
 	
-	public TagTeam tagTeamPartner;
-	public TagTeam originalPartner;
-	public bool isSplit = false;
-	public bool hasDivideAndConquerMove = false;
+	private TagTeam tagTeamPartner;
+	private TagTeam originalPartner;
+	private bool isSplit = false;
+	private bool hasInUnisonMove = false;
+
+	private IReadOnlyUnitData duoData;
+	private IReadOnlyUnitData partner1Data;
+	private IReadOnlyUnitData partner2Data;
 
 	#endregion // Ability Data
-
-	#region MonoBehaviour Functions
-
-	/// <summary>
-	/// Sets up both abilities at the start of a match.
-	/// </summary>
-	private void Start ( )
-	{
-		
-	}
-
-	#endregion // MonoBehaviour Functions
 
 	#region Public Unit Override Functions
 
@@ -91,15 +76,24 @@ public class TagTeam : HeroUnit
 		// Set Divide And Conquer
 		if ( InstanceData.Ability3.IsEnabled && isSplit )
 			StartToggleCooldown ( InstanceData.Ability2, InstanceData.Ability3 );
+
+		// Store unit data for transitions
+		duoData = UnitDatabase.GetUnit ( InstanceData.ID );
+		partner1Data = UnitDatabase.GetUnit ( InstanceData.ID + 1 );
+		partner2Data = UnitDatabase.GetUnit ( InstanceData.ID + 2 );
+
+		// Update unit data
+		if ( isSplit )
+			UpdateUnitData ( partner2Data );
 	}
 
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves.
 	/// </summary>
-	/// <param name="t"> The tile who's neighbor will be checked for moves. </param>
+	/// <param name="hex"> The tile who's neighbor will be checked for moves. </param>
 	/// <param name="prerequisite"> The Move Data for any moves required for the unit to reach this tile. </param>
 	/// <param name="returnOnlyJumps"> Whether or not only jump moves should be stored as available moves. </param>
-	public override void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
+	public override void FindMoves ( Hex hex, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Clear previous move list
 		if ( prerequisite == null )
@@ -108,18 +102,11 @@ public class TagTeam : HeroUnit
 		// Check status effects
 		if ( Status.CanMove )
 		{
-			// Store which tiles are to be ignored
-			IntPair back = GetBackDirection ( Owner.TeamDirection );
-
 			// Check each neighboring tile
-			for ( int i = 0; i < t.neighbors.Length; i++ )
+			for ( int i = 0; i < hex.Neighbors.Length; i++ )
 			{
-				// Ignore tiles that would allow for backward movement
-				if ( i == back.FirstInt || i == back.SecondInt )
-					continue;
-
 				// Check if this unit can move to the neighboring tile
-				if ( OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
+				if ( OccupyTileCheck ( hex.Neighbors [ i ], prerequisite ) )
 				{
 					// Check if only jumps are being returned
 					if ( returnOnlyJumps )
@@ -128,39 +115,39 @@ public class TagTeam : HeroUnit
 						if ( PassiveAvailabilityCheck ( InstanceData.Ability1, prerequisite ) )
 						{
 							// Add as an available Tag Team move
-							MoveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i ) );
+							MoveList.Add ( new MoveData ( hex.Neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i ) );
 						}
 					}
 					else
 					{
 						// Add as an available move
-						MoveData m = new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i );
-						MoveList.Add ( m );
+						MoveData move = new MoveData ( hex.Neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i );
+						MoveList.Add ( move );
 
 						// Check for additional move with the Tag Team ability
 						if ( PassiveAvailabilityCheck ( InstanceData.Ability1, prerequisite ) )
-							FindMoves ( t.neighbors [ i ], m, true );
+							FindMoves ( hex.Neighbors [ i ], move, true );
 					}
 				}
 				// Check if this unit can jump the neighboring tile
-				else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
+				else if ( JumpTileCheck ( hex.Neighbors [ i ] ) && OccupyTileCheck ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite ) )
 				{
 					// Track move data
-					MoveData m;
+					MoveData move;
 
 					// Check if the neighboring unit can be attacked
-					if ( t.neighbors [ i ].CurrentUnit != null && t.neighbors [ i ].CurrentUnit.UnitAttackCheck ( this ) )
+					if ( hex.Neighbors [ i ].Tile.CurrentUnit != null && hex.Neighbors [ i ].Tile.CurrentUnit.UnitAttackCheck ( this ) )
 					{
 						// Check for Tag Team move
 						if ( PassiveAvailabilityCheck ( InstanceData.Ability1, prerequisite ) && prerequisite != null && prerequisite.Type == MoveData.MoveType.MOVE )
 						{
 							// Add as an available attack with Tag Team
-							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL_ATTACK, i, t.neighbors [ i ] );
+							move = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i, null, hex.Neighbors [ i ] );
 						}
 						else
 						{
 							// Add as an available attack
-							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.ATTACK, i, t.neighbors [ i ] );
+							move = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite, MoveData.MoveType.JUMP, i, null, hex.Neighbors [ i ] );
 						}
 					}
 					else
@@ -169,21 +156,21 @@ public class TagTeam : HeroUnit
 						if ( PassiveAvailabilityCheck ( InstanceData.Ability1, prerequisite ) && prerequisite != null && prerequisite.Type == MoveData.MoveType.MOVE )
 						{
 							// Add as an available jump with Tag Team
-							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i );
+							move = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i, hex.Neighbors [ i ].Neighbors [ i ], null );
 						}
 						else
 						{
 							// Add as an available jump
-							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.JUMP, i );
+							move = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite, MoveData.MoveType.JUMP, i, hex.Neighbors [ i ].Neighbors [ i ], null );
 						}
 					}
 
 					// Add move to the move list
-					MoveList.Add ( m );
+					MoveList.Add ( move );
 
 					// Find additional jumps
-					if ( InstanceData.Ability1.IsPerkEnabled || ( m.Type != MoveData.MoveType.SPECIAL && m.Type != MoveData.MoveType.SPECIAL_ATTACK ) )
-						FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
+					if ( InstanceData.Ability1.IsPerkEnabled || ( move.Type != MoveData.MoveType.SPECIAL ) )
+						FindMoves ( hex.Neighbors [ i ].Neighbors [ i ], move, true );
 				}
 			}
 		}
@@ -203,11 +190,11 @@ public class TagTeam : HeroUnit
 		base.MoveUnit ( data );
 
 		// Check if tag team partner needs to be added to the unit queue
-		if ( DivideAndConquerMoveCheck ( data ) )
+		if ( PartnerMoveCheck ( data ) )
 		{
 			// Mark that the divide and conquer move has been used
-			hasDivideAndConquerMove = true;
-			tagTeamPartner.hasDivideAndConquerMove = true;
+			hasInUnisonMove = true;
+			tagTeamPartner.hasInUnisonMove = true;
 
 			// Add tag team partner to unit queue
 			GM.UnitQueue.Add ( tagTeamPartner );
@@ -226,59 +213,22 @@ public class TagTeam : HeroUnit
 		// Decrement cooldowns and durations
 		base.Cooldown ( );
 
-		// Mark that the the Divide And Conquer move has not been used
-		hasDivideAndConquerMove = false;
+		// Mark that the the In Unison move has not been used
+		hasInUnisonMove = false;
 	}
 
-	/// <summary>
-	/// Sets up the hero's command use.
-	/// </summary>
-	public override void StartCommand ( AbilityInstanceData ability )
-	{
-		// Clear board
-		base.StartCommand ( ability );
-
-		// Check if the hero is split
-		if ( isSplit )
-		{
-			// Highlight partner
-			tagTeamPartner.currentTile.SetTileState ( TileState.AvailableCommand );
-		}
-		else
-		{
-			// Store which tiles are to be ignored
-			IntPair back = GetBackDirection ( Owner.TeamDirection );
-
-			// Check each neighboring tile
-			for ( int i = 0; i < currentTile.neighbors.Length; i++ )
-			{
-				// Check for back direction
-				if ( i == back.FirstInt || i == back.SecondInt )
-					continue;
-
-				// Highlight available tiles
-				if ( OccupyTileCheck ( currentTile.neighbors [ i ], null ) )
-					currentTile.neighbors [ i ].SetTileState ( TileState.AvailableCommand );
-			}
-		}
-	}
-
-	/// <summary>
-	/// Selects the unit's to swap places.
-	/// </summary>
-	/// <param name="t"> The selected tile for the command. </param>
-	public override void SelectCommandTile ( Tile t )
+	public override void ExecuteCommand ( )
 	{
 		// Check if the hero is split
 		if ( isSplit )
 		{
 			// Reunite heroes
-			UniteTagTeam ( t );
+			Regroup ( GM.SelectedCommand.PrimaryTarget );
 		}
 		else
 		{
 			// Split heroes
-			SplitTagTeam ( t );
+			SplitUp ( GM.SelectedCommand.PrimaryTarget );
 		}
 	}
 
@@ -333,7 +283,7 @@ public class TagTeam : HeroUnit
 			return false;
 
 		// Check if the ability can be used
-		if ( !DivideAndConquerCheck ( ) )
+		if ( !ToggleCommandCheck ( ) )
 			return false;
 
 		// Return that the ability is available
@@ -362,7 +312,7 @@ public class TagTeam : HeroUnit
 			return false;
 
 		// Check if the ability can be used
-		if ( !DivideAndConquerCheck ( ) )
+		if ( !ToggleCommandCheck ( ) )
 			return false;
 
 		// Return that the ability is available
@@ -378,7 +328,7 @@ public class TagTeam : HeroUnit
 	protected override void UseSpecial ( MoveData data )
 	{
 		// Check for attack
-		if ( data.Type == MoveData.MoveType.SPECIAL_ATTACK )
+		if ( data.IsAttack )
 		{
 			// Create animation
 			Tween t = transform.DOMove ( data.Destination.transform.position, MOVE_ANIMATION_TIME * 2 )
@@ -407,7 +357,7 @@ public class TagTeam : HeroUnit
 		else
 		{
 			// Check for normal move
-			if ( data.PriorMove == null && currentTile.neighbors [ (int)data.Direction ] == data.Destination )
+			if ( data.PriorMove == null && CurrentHex.Neighbors [ (int)data.Direction ] == data.Destination )
 			{
 				// Create animation
 				Tween t = transform.DOMove ( data.Destination.transform.position, MOVE_ANIMATION_TIME )
@@ -456,34 +406,70 @@ public class TagTeam : HeroUnit
 		}
 	}
 
+	protected override void GetCommandTargets ( )
+	{
+		// Check if the hero is split
+		if ( isSplit )
+		{
+			// Highlight partner
+			tagTeamPartner.CurrentHex.Tile.SetTileState ( TileState.AvailableCommand );
+		}
+		else
+		{
+			// Check each neighboring tile
+			for ( int i = 0; i < CurrentHex.Neighbors.Length; i++ )
+			{
+				// Highlight available tiles
+				if ( OccupyTileCheck ( CurrentHex.Neighbors [ i ], null ) )
+					CurrentHex.Neighbors [ i ].Tile.SetTileState ( TileState.AvailableCommand );
+			}
+		}
+	}
+
 	#endregion // Protected HeroUnit Override Functions
 
 	#region Private Functions
 
 	/// <summary>
-	/// Checks if the conditions are met to use the Divide And Conquer ability.
+	/// Checks if the conditions are met to use the Split Up or Regroup ability.
 	/// Returns true if the ability can be used.
 	/// </summary>
 	/// <returns> Whether or not the Divided And Conquer ability can be used. </returns>
-	private bool DivideAndConquerCheck ( )
+	private bool ToggleCommandCheck ( )
 	{
-		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( Owner.TeamDirection );
-
 		// Check each neighboring tile
-		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
+		for ( int i = 0; i < CurrentHex.Neighbors.Length; i++ )
 		{
 			// Check if the hero is split
 			if ( isSplit )
 			{
-				// Check for partner
-				if ( tagTeamPartner != null && tagTeamPartner.Owner == Owner && currentTile.neighbors [ i ] != null && currentTile.neighbors [ i ].CurrentUnit != null && currentTile.neighbors [ i ].CurrentUnit == tagTeamPartner )
-					return true;
+				// Check if partner exists
+				if ( tagTeamPartner == null )
+					continue;
+
+				// Check if partner is still on the same team
+				if ( tagTeamPartner.Owner != Owner )
+					continue;
+
+				// Check for tile
+				if ( CurrentHex.Neighbors [ i ] == null )
+					continue;
+
+				// Check if the tile is occupied
+				if ( CurrentHex.Neighbors [ i ].Tile.CurrentUnit == null )
+					continue;
+
+				// Check if partner is on tile
+				if ( CurrentHex.Neighbors [ i ].Tile.CurrentUnit != tagTeamPartner )
+					continue;
+
+				// Return that the command is available
+				return true;
 			}
 			else
 			{
 				// Check for available tile
-				if ( i != back.FirstInt && i != back.SecondInt && OccupyTileCheck ( currentTile.neighbors [ i ], null ) )
+				if ( OccupyTileCheck ( CurrentHex.Neighbors [ i ], null ) )
 					return true;
 			}
 		}
@@ -498,10 +484,14 @@ public class TagTeam : HeroUnit
 	/// </summary>
 	/// <param name="data"> The Move Data for the selected move. </param>
 	/// <returns> Whether or not the tag team partner should be added to the unit queue. </returns>
-	private bool DivideAndConquerMoveCheck ( MoveData data )
+	private bool PartnerMoveCheck ( MoveData data )
 	{
 		// Check if ability is enabled
 		if ( !InstanceData.Ability2.IsEnabled )
+			return false;
+
+		// Check if perk is enabled
+		if ( !InstanceData.Ability2.IsPerkEnabled )
 			return false;
 		
 		// Check if partners are split
@@ -527,13 +517,17 @@ public class TagTeam : HeroUnit
 		// Check that both partners can move
 		if ( !Status.CanMove || !tagTeamPartner.Status.CanMove )
 			return false;
+
+		// Check for status effect
+		if ( !Status.HasStatusEffect ( StatusEffectDatabase.StatusEffectType.IN_UNISON ) || !tagTeamPartner.Status.HasStatusEffect ( StatusEffectDatabase.StatusEffectType.IN_UNISON ) )
+			return false;
 		
 		// Check if its the first move
 		if ( data.PriorMove != null )
 			return false;
 		
 		// Check if the Divide And Conquer move has already be used this turn
-		if ( hasDivideAndConquerMove )
+		if ( hasInUnisonMove )
 			return false;
 		
 		// Return that the tag team partner needs to be added to the unit queue
@@ -543,8 +537,8 @@ public class TagTeam : HeroUnit
 	/// <summary>
 	/// Splits the hero into two individual hero units.
 	/// </summary>
-	/// <param name="tile"> The tile where the seperate tag team partner will be placed. </param>
-	private void SplitTagTeam ( Tile tile )
+	/// <param name="hex"> The tile where the seperate tag team partner will be placed. </param>
+	private void SplitUp ( Hex hex )
 	{
 		// Pause turn timer
 		if ( MatchSettings.TurnTimer )
@@ -554,35 +548,41 @@ public class TagTeam : HeroUnit
 		GM.UI.unitHUD.HideCancelButton ( InstanceData.Ability2 );
 
 		// Clear board
-		GM.Board.ResetTiles ( );
+		GM.Grid.ResetTiles ( );
 
-		// Update hero as being split
-		displaySprite = splitDisplay;
-		sprite.sprite = splitDisplay;
-		GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( InstanceID, splitDisplay );
-		isSplit = true;
-		originalPartner = this;
-
-		// Create partner
+		// Create partner instance
 		tagTeamPartner = Instantiate ( this, Owner.transform );
-		tagTeamPartner.isSplit = true;
-		tagTeamPartner.tagTeamPartner = this;
-		tagTeamPartner.originalPartner = this;
-		originalPartner = this;
 		tagTeamPartner.transform.position = transform.position;
+
+		// Add partner to team
 		Owner.UnitInstances.Add ( tagTeamPartner );
-		tagTeamPartner.InitializeInstance ( GM, InstanceID * 10, Owner.Units.Find ( x => x.ID == ID ) );
+
+		// Set that both partners are split
+		isSplit = true;
+		tagTeamPartner.isSplit = true;
+
+		// Set original partner
+		originalPartner = this;
+		tagTeamPartner.originalPartner = this;
+
+		// Set new partner
+		tagTeamPartner.tagTeamPartner = this;
+
+		// Update each partner's unit 
+		UpdateUnitData ( partner1Data );
+		GM.UI.matchInfoMenu.GetPlayerHUD ( this ).AddPortrait ( tagTeamPartner, InstanceID * 10 );
+		tagTeamPartner.InitializeInstance ( GM, InstanceID * 10, Owner.Units.Find ( x => x.ID == duoData.ID ) );
 
 		// Create animation
-		Tween t = tagTeamPartner.transform.DOMove ( tile.transform.position, MOVE_ANIMATION_TIME )
+		Tween t = tagTeamPartner.transform.DOMove ( hex.transform.position, MOVE_ANIMATION_TIME )
 			.OnComplete ( ( ) =>
 			{
+				// Mark that the ability is no longer active
+				InstanceData.Ability2.IsActive = false;
+
 				// Set unit and tile data
-				//tagTeamPartner.characterName = "Hero 7.5";
-				//tagTeamPartner.InstanceID *= 10;
-				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).AddPortrait ( tagTeamPartner, InstanceID );
-				tagTeamPartner.currentTile = tile;
-				tile.CurrentUnit = tagTeamPartner;
+				tagTeamPartner.CurrentHex = hex;
+				hex.Tile.CurrentUnit = tagTeamPartner;
 
 				// Start cooldown
 				StartToggleCooldown ( InstanceData.Ability2, InstanceData.Ability3 );
@@ -618,8 +618,8 @@ public class TagTeam : HeroUnit
 	/// <summary>
 	/// Unites the two individual hero units into one hero unit.
 	/// </summary>
-	/// <param name="tile"> The tile where the two tag team partners are reuniting. </param>
-	private void UniteTagTeam ( Tile tile )
+	/// <param name="hex"> The tile where the two tag team partners are reuniting. </param>
+	private void Regroup ( Hex hex )
 	{
 		// Pause turn timer
 		if ( MatchSettings.TurnTimer )
@@ -629,10 +629,10 @@ public class TagTeam : HeroUnit
 		GM.UI.unitHUD.HideCancelButton ( InstanceData.Ability2 );
 
 		// Clear board
-		GM.Board.ResetTiles ( );
+		GM.Grid.ResetTiles ( );
 
 		// Create animation
-		Tween t = transform.DOMove ( tile.transform.position, MOVE_ANIMATION_TIME )
+		Tween t = transform.DOMove ( hex.transform.position, MOVE_ANIMATION_TIME )
 			.OnComplete ( ( ) =>
 			{
 				// Check for original
@@ -643,13 +643,14 @@ public class TagTeam : HeroUnit
 
 					// Reunite heroes
 					isSplit = false;
-					displaySprite = unitedDisplay;
-					sprite.sprite = unitedDisplay;
+					UpdateUnitData ( duoData );
+					displaySprite = InstanceData.Portrait;
+					sprite.sprite = InstanceData.Portrait;
 					GM.UI.matchInfoMenu.GetPlayerHUD ( tagTeamPartner ).RemovePortrait ( tagTeamPartner.InstanceID );
 
 					// Remove partner
 					Owner.UnitInstances.Remove ( tagTeamPartner );
-					tile.CurrentUnit = null;
+					hex.Tile.CurrentUnit = null;
 					Destroy ( tagTeamPartner.gameObject );
 					tagTeamPartner = null;
 					originalPartner = null;
@@ -664,7 +665,7 @@ public class TagTeam : HeroUnit
 					GM.UI.matchInfoMenu.GetPlayerHUD ( Owner ).UpdateStatusEffects ( InstanceID, Status );
 
 					// Set unit and tile data
-					SetUnitToTile ( tile );
+					SetUnitToTile ( hex );
 
 					// Start cooldown
 					if ( InstanceData.Ability2.IsEnabled )
@@ -690,8 +691,9 @@ public class TagTeam : HeroUnit
 
 					// Reunite heroes
 					tagTeamPartner.isSplit = false;
-					tagTeamPartner.displaySprite = unitedDisplay;
-					tagTeamPartner.sprite.sprite = unitedDisplay;
+					tagTeamPartner.UpdateUnitData ( duoData );
+					tagTeamPartner.displaySprite = tagTeamPartner.InstanceData.Portrait;
+					tagTeamPartner.sprite.sprite = tagTeamPartner.InstanceData.Portrait;
 					GM.UI.matchInfoMenu.GetPlayerHUD ( this ).RemovePortrait ( InstanceID );
 
 					// Start cooldown
@@ -715,7 +717,7 @@ public class TagTeam : HeroUnit
 
 					// Remove hero
 					Owner.UnitInstances.Remove ( this );
-					currentTile.CurrentUnit = null;
+					CurrentHex.Tile.CurrentUnit = null;
 					tagTeamPartner.tagTeamPartner = null;
 					tagTeamPartner.originalPartner = null;
 

@@ -46,6 +46,19 @@ public class Hex : MonoBehaviour
 		}
 
 		/// <summary>
+		/// Checks whether or not the provided coordinates are valid Cube coordinates.
+		/// </summary>
+		/// <param name="x"> The Cube X axis. </param>
+		/// <param name="y"> The Cube Y axis. </param>
+		/// <param name="z"> The Cube Z axis. </param>
+		/// <returns> Whether or not the coordinates are valid. </returns>
+		public static bool Validate ( int x, int y, int z )
+		{
+			// Return whether or not the coordinates are valide
+			return x + y + z == 0;
+		}
+
+		/// <summary>
 		/// Gets the sum of this and another cube coordinate.
 		/// </summary>
 		/// <param name="cube"> The cube coordinate being added to this. </param>
@@ -264,11 +277,23 @@ public class Hex : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Whether or not the hex is on the edge of the grid.
+	/// </summary>
+	public bool IsEdge
+	{
+		get
+		{
+			// Check for the edge of the grid.
+			return Edge ( );
+		}
+	}
+
 	#endregion // Hex Data
 
 	#region MonoBehaviour Functions
 
-	private void Start ( )
+	private void Awake ( )
 	{
 		// Set coordinates
 		coordinates = new AxialCoord ( hexCol, hexRow );
@@ -292,7 +317,7 @@ public class Hex : MonoBehaviour
 			currentCoordinates = new AxialCoord ( hexCol, hexRow );
 
 			// Reposition hex
-			transform.localPosition = new Vector3 ( currentCoordinates.Col * X_SHIFT, currentCoordinates.Row * Y_SHIFT + ( currentCoordinates.Col % 2 == 0 ? 0 : Y_SHIFT / 2 ), 0 );
+			transform.localPosition = new Vector3 ( currentCoordinates.Col * X_SHIFT, currentCoordinates.Row * Y_SHIFT + ( ( Y_SHIFT * currentCoordinates.Col ) / 2 ), 0 );
 		}
 
 		#endif 
@@ -416,9 +441,23 @@ public class Hex : MonoBehaviour
 
 	#region Private Functions
 
-	
+	/// <summary>
+	/// Checks if the hex is on the edge of the grid ( i.e. at least one neighboring hex is missing ).
+	/// </summary>
+	/// <returns> Whether or not the hex is on the edge of the grid. </returns>
+	private bool Edge ( )
+	{
+		// Check each neighboring hex
+		for ( int i = 0; i < Neighbors.Length; i++ )
+		{
+			// Check if neighboring hex exists
+			if ( Neighbor ( (Direction)i ) == null )
+				return true;
+		}
 
-	
+		// Return that the hex is not an edge hex
+		return false;
+	}
 
 	#endregion // Private Functions
 }

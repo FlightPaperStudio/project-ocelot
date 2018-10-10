@@ -11,7 +11,7 @@ public class TileObject : MonoBehaviour
 	public Hex CurrentHex;
 
 	public bool CanBeOccupied;
-	public bool CanBeJumped;
+	public bool CanAssist;
 	public bool CanBeMoved;
 	public bool CanBeAttacked;
 
@@ -27,16 +27,16 @@ public class TileObject : MonoBehaviour
 	/// <summary>
 	/// Sets the tile object instance information.
 	/// </summary>
-	public void SetTileObject ( HeroUnit _hero, Hex _hex, int _duration, TileObjectDelegate _delegate )
+	public void SetTileObject ( HeroUnit caster, Hex hex, int _duration, TileObjectDelegate _delegate )
 	{
 		// Set owner
-		Caster = _hero;
+		Caster = caster;
 
 		// Set tile
-		CurrentHex = _hex;
+		CurrentHex = hex;
 
 		// Set position
-		transform.position = _hex.transform.position;
+		transform.position = hex.transform.position;
 
 		// Set duration
 		duration = _duration;
@@ -56,6 +56,15 @@ public class TileObject : MonoBehaviour
 		// Check if duration has expired
 		if ( duration == 0 )
 			OnDurationExpire ( );
+	}
+
+	/// <summary>
+	/// Assists a unit.
+	/// </summary>
+	public void Assist ( )
+	{
+		// Add assist for the caster
+		Caster.Assist ( );
 	}
 
 	/// <summary>

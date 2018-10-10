@@ -5,7 +5,7 @@ using DG.Tweening;
 
 public class Armor : HeroUnit
 {
-	/// <summary>
+	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
 	///
 	/// Hero 1 Unit Data
 	/// 
@@ -41,23 +41,29 @@ public class Armor : HeroUnit
 	/// Duration: 1 Round
 	/// Cooldown: 6 Rounds
 	/// 
-	/// </summary>
+	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
 
-	// Hero information
-	public Sprite withMechSprite;
-	public Sprite withoutMechSprite;
+	#region Ability Data
+
+	[SerializeField]
+	private SpriteRenderer mechAnimation;
+
+	[SerializeField]
+	private TileObject selfDestructPrefab;
+
+	[SerializeField]
+	private TileObject recallPrefab;
+
+	private IReadOnlyUnitData duoData;
+	private IReadOnlyUnitData singleData;
+	private TileObject currentSelfDestruct;
+	private TileObject currentRecall;
 	private bool isRecalling;
 
-	// Ability information
-	public TileObject selfDestructPrefab;
-	public TileObject currentSelfDestruct;
-	public TileObject recallPrefab;
-	public TileObject currentRecall;
 	private const float ARMOR_ATTACK_ANIMATION_TIME = 0.75f;
 	private const float RECALL_ANIMATION_TIME = 0.75f;
 
-	// Game objects
-	public SpriteRenderer mechAnimation;
+	#endregion // Ability Data
 
 	#region Public Unit Override Functions
 
@@ -68,15 +74,19 @@ public class Armor : HeroUnit
 
 		// Set current bodyguard duration
 		InstanceData.Ability1.CurrentDuration = InstanceData.Ability1.Duration;
+
+		// Store unit data for transitions
+		duoData = InstanceData;
+		singleData = UnitDatabase.GetUnit ( InstanceData.ID + 1 );
 	}
 
 	/// <summary>
 	/// Calculates all base moves available to a unit.
 	/// </summary>
-	public override void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
+	public override void FindMoves ( Hex hex, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Find base moves
-		base.FindMoves ( t, prerequisite, returnOnlyJumps );
+		base.FindMoves ( hex, prerequisite, returnOnlyJumps );
 
 		// Get Self-Destruct availability
 		InstanceData.Ability2.IsAvailable = ToggleCommand1AvailabilityCheck ( InstanceData.Ability2, prerequisite );
@@ -144,45 +154,30 @@ public class Armor : HeroUnit
 
 	#region Public HeroUnit Override Functions
 
-	/// <summary>
-	/// Sets up the hero's command use.
-	/// </summary>
-	public override void StartCommand ( AbilityInstanceData ability )
-	{
-		// Clear the board
-		base.StartCommand ( ability );
-
-		// Highlight available adjacent tiles
-		GetAdjacentTiles ( );
-	}
-
-	/// <summary>
-	/// Select the tile for Self-Destruct/Recall.
-	/// </summary>
-	public override void SelectCommandTile ( Tile t )
+	public override void ExecuteCommand ( )
 	{
 		// Pause turn timer
 		if ( MatchSettings.TurnTimer )
 			GM.UI.timer.PauseTimer ( );
 
 		// Hide cancel button
-		GM.UI.unitHUD.HideCancelButton ( InstanceData.Ability2 );
+		GM.UI.unitHUD.HideCancelButton ( activeAbility );
 
 		// Clear board
-		GM.Board.ResetTiles ( );
+		GM.Grid.ResetTiles ( );
 
-		// Check for Recall or Self-Destruct
+		// Check for Reconstruct or Self-Destruct
 		if ( activeAbility == InstanceData.Ability3 )
 		{
 			// Create Recall
-			currentRecall = CreateTileOject ( recallPrefab, t, InstanceData.Ability3.Duration, RecallDurationComplete );
+			currentRecall = CreateTileOject ( recallPrefab, GM.SelectedCommand.PrimaryTarget, InstanceData.Ability3.Duration, RecallDurationComplete );
 
 			// Set team color
 			Color32 c = Util.TeamColor ( Owner.Team );
 			currentRecall.Icon.color = new Color32 ( c.r, c.g, c.b, 150 );
 
 			// Set position
-			currentRecall.transform.position = t.transform.position;
+			currentRecall.transform.position = GM.SelectedCommand.PrimaryTarget.transform.position;
 
 			// Begin animation
 			Sequence s = DOTween.Sequence ( )
@@ -197,7 +192,6 @@ public class Armor : HeroUnit
 					StartCooldown ( InstanceData.Ability3 );
 
 					// Apply status effect
-					//Status.AddStatusEffect ( withMechSprite, RECALL_STATUS_PROMPT, this, InstanceData.Ability3.Duration, StatusEffects.StatusType.CAN_MOVE );
 					GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
 
 					// Pause turn timer
@@ -215,7 +209,7 @@ public class Armor : HeroUnit
 		else
 		{
 			// Create Self-Destruct
-			currentSelfDestruct = CreateTileOject ( selfDestructPrefab, t, InstanceData.Ability2.Duration, SelfDestructDurationComplete );
+			currentSelfDestruct = CreateTileOject ( selfDestructPrefab, GM.SelectedCommand.PrimaryTarget, InstanceData.Ability2.Duration, SelfDestructDurationComplete );
 
 			// Set team color
 			currentSelfDestruct.Icon.color = Util.TeamColor ( Owner.Team );
@@ -225,7 +219,7 @@ public class Armor : HeroUnit
 
 			// Begin animation
 			Sequence s = DOTween.Sequence ( )
-				.Append ( currentSelfDestruct.transform.DOMove ( currentTile.transform.position, MOVE_ANIMATION_TIME ).From ( ) )
+				.Append ( currentSelfDestruct.transform.DOMove ( CurrentHex.transform.position, MOVE_ANIMATION_TIME ).From ( ) )
 				.OnComplete ( ( ) =>
 				{
 					// Pause turn timer
@@ -256,7 +250,6 @@ public class Armor : HeroUnit
 			EndReconstruct ( );
 
 			// Interupt status effect
-			//Status.RemoveStatusEffect ( withMechSprite, RECALL_STATUS_PROMPT, this, StatusEffects.StatusType.CAN_MOVE );
 			GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
 		}
 	}
@@ -319,6 +312,17 @@ public class Armor : HeroUnit
 		return true;
 	}
 
+	protected override void GetCommandTargets ( )
+	{
+		// Check each neighboring tile
+		for ( int i = 0; i < CurrentHex.Neighbors.Length; i++ )
+		{
+			// Check if the tile is unoccupied
+			if ( OccupyTileCheck ( CurrentHex.Neighbors [ i ], null ) )
+				CurrentHex.Neighbors [ i ].Tile.SetTileState ( TileState.AvailableCommand );
+		}
+	}
+
 	#endregion // Protected HeroUnit Override Functions
 
 	#region Private Functions
@@ -329,44 +333,16 @@ public class Armor : HeroUnit
 	/// </summary>
 	private bool AdjacentTilesCheck ( )
 	{
-		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( Owner.TeamDirection );
-
 		// Check each neighboring tile
-		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
+		for ( int i = 0; i < CurrentHex.Neighbors.Length; i++ )
 		{
-			// Ignore tiles that would allow for backward movement
-			if ( i == back.FirstInt || i == back.SecondInt )
-				continue;
-
 			// Check if the tile is unoccupied
-			if ( OccupyTileCheck ( currentTile.neighbors [ i ], null ) )
+			if ( OccupyTileCheck ( CurrentHex.Neighbors [ i ], null ) )
 				return true;
 		}
 
 		// Return that all neighboring tiles are occupied
 		return false;
-	}
-
-	/// <summary>
-	/// Marks every adjacent unoccupied tile for selection for Self-Destruct/Recall.
-	/// </summary>
-	private void GetAdjacentTiles ( )
-	{
-		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( Owner.TeamDirection );
-
-		// Check each neighboring tile
-		for ( int i = 0; i < currentTile.neighbors.Length; i++ )
-		{
-			// Ignore tiles that would allow for backward movement
-			if ( i == back.FirstInt || i == back.SecondInt )
-				continue;
-
-			// Check if the tile is unoccupied
-			if ( OccupyTileCheck ( currentTile.neighbors [ i ], null ) )
-				currentTile.neighbors [ i ].SetTileState ( TileState.AvailableCommand );
-		}
 	}
 
 	/// <summary>
@@ -388,9 +364,48 @@ public class Armor : HeroUnit
 		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
 
 		// Attack any adjacent enemy units
-		foreach ( Tile t in currentSelfDestruct.CurrentHex.neighbors )
-			if ( t != null && t.CurrentUnit != null && t.CurrentUnit.UnitAttackCheck ( this ) )
-				t.CurrentUnit.GetAttacked ( );
+		foreach ( Hex hex in currentSelfDestruct.CurrentHex.Neighbors )
+		{
+			// Check for tile
+			if ( hex == null )
+				continue;
+
+			// Check if the tile is occupied
+			if ( !hex.Tile.IsOccupied )
+				continue;
+
+			// Check for unit
+			if ( hex.Tile.CurrentUnit != null )
+			{
+				// Check if the unit can be attacked
+				if ( !hex.Tile.CurrentUnit.UnitAttackCheck ( this, !InstanceData.Ability2.IsPerkEnabled ) )
+					continue;
+
+				// Check if the unit can be affected by abilities
+				if ( !hex.Tile.CurrentUnit.Status.CanBeAffectedByAbility )
+					continue;
+
+				// Check if the unit can be affected physically
+				if ( !hex.Tile.CurrentUnit.Status.CanBeAffectedPhysically )
+					continue;
+
+				// Attack unit
+				hex.Tile.CurrentUnit.GetAttacked ( );
+			}
+			else if ( hex.Tile.CurrentObject != null )
+			{
+				// Check if the tile object can be attacked
+				if ( !hex.Tile.CurrentObject.CanBeAttacked )
+					continue;
+
+				// Check if the tile object is on the same team
+				if ( InstanceData.Ability2.IsPerkEnabled && hex.Tile.CurrentObject.Caster.Owner == Owner )
+					continue;
+
+				// Attack tile object
+				hex.Tile.CurrentObject.GetAttacked ( );
+			}
+		}
 	}
 
 	/// <summary>
@@ -421,9 +436,12 @@ public class Armor : HeroUnit
 	/// </summary>
 	private void LoseMinion ( bool isFromAttack )
 	{
+		// Update unit data for single
+		UpdateUnitData ( singleData );
+
 		// Change sprite
-		displaySprite = withoutMechSprite;
-		sprite.sprite = displaySprite;
+		displaySprite = InstanceData.Portrait;
+		sprite.sprite = InstanceData.Portrait;
 
 		// Update player HUD
 		if ( !isFromAttack )
@@ -442,9 +460,12 @@ public class Armor : HeroUnit
 	/// </summary>
 	private void GainMinion ( )
 	{
+		// Update unit data for duo
+		UpdateUnitData ( duoData );
+
 		// Change sprite
-		displaySprite = withMechSprite;
-		sprite.sprite = displaySprite;
+		displaySprite = InstanceData.Portrait;
+		sprite.sprite = InstanceData.Portrait;
 		GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( InstanceID, displaySprite );
 
 		// Replenish Armor's duration

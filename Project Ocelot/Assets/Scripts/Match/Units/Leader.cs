@@ -4,40 +4,14 @@ using System.Linq;
 using UnityEngine;
 using DG.Tweening;
 
-public class Leader : Unit 
+public class Leader : HeroUnit 
 {
-	/// <summary>
-	/// 
-	/// Hero Ability Information 
-	/// 
-	/// Ability 1: Smite
-	/// Type: Passive Ability
-	/// 
-	/// </summary>
-
-	// Hero information
-	public Ability ability;
-	public AbilitySettings currentAbility;
-	public Sprite abilitySprite;
-
-	private void Start ( )
-	{
-		// Set name
-		//characterName = NameGenerator.CreateName ( );
-
-		// Set ability information
-		ability.Name = "Smite";
-		ability.Description = "???";
-		ability.Type = 0;
-		ability.Duration = 1;
-		ability.Cooldown = 0;
-		currentAbility = new AbilitySettings ( true, (Ability.AbilityType)ability.Type, ability.Duration, ability.Cooldown );
-	}
+	#region Public Unit Override Functions
 
 	/// <summary>
 	/// Calculates all base moves available to a unit.
 	/// </summary>
-	public override void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
+	public override void FindMoves ( Hex hex, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Cleare previous move list
 		if ( prerequisite == null )
@@ -46,100 +20,68 @@ public class Leader : Unit
 		// Check status effects
 		if ( Status.CanMove )
 		{
-			// Store which tiles are to be ignored
-			IntPair back = GetBackDirection ( Owner.TeamDirection );
-
 			// Check each neighboring tile
-			for ( int i = 0; i < t.neighbors.Length; i++ )
+			for ( int i = 0; i < hex.Neighbors.Length; i++ )
 			{
-				// Ignore tiles that would allow for backward movement
-				if ( i == back.FirstInt || i == back.SecondInt )
-					continue;
-
 				// Check if this unit can move to the neighboring tile
-				if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
+				if ( !returnOnlyJumps && OccupyTileCheck ( hex.Neighbors [ i ], prerequisite ) )
 				{
+					// Track move data
+					MoveData move;
+
 					// Check for goal tile
-					if ( Owner.startArea.IsGoalTile ( t.neighbors [ i ] ) )
+					if ( Owner.Objective.Contains ( hex.Neighbors [ i ] ) )
 					{
 						// Add as an available move to win
-						MoveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE_TO_WIN, i ) );
+						move = new MoveData ( hex.Neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i );
+						move.IsVictoryMove = true;
 					}
 					else
 					{
 						// Add as an available move
-						MoveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
-					}
-				}
-				// Check if this unit can jump the neighboring tile
-				else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
-				{
-					// Track move data
-					MoveData m;
-
-					// Check if the neighboring unit can be attacked
-					if ( t.neighbors [ i ].CurrentUnit != null && t.neighbors [ i ].CurrentUnit.UnitAttackCheck ( this ) )
-					{
-						// Check for goal tile
-						if ( Owner.startArea.IsGoalTile ( t.neighbors [ i ].neighbors [ i ] ) )
-						{
-							// Add as an available attack to win
-							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.ATTACK_TO_WIN, i, t.neighbors [ i ] );
-						}
-						else
-						{
-							// Add as an available attack
-							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.ATTACK, i, t.neighbors [ i ] );
-						}
-					}
-					else
-					{
-						// Check for goal tile
-						if ( Owner.startArea.IsGoalTile ( t.neighbors [ i ].neighbors [ i ] ) )
-						{
-							// Add as an available jump to win
-							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.JUMP_TO_WIN, i );
-						}
-						else
-						{
-							// Add as an available jump
-							m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.JUMP, i );
-						}
+						move = new MoveData ( hex.Neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i );
 					}
 
 					// Add move to the move list
-					MoveList.Add ( m );
+					MoveList.Add ( move );
+				}
+				// Check if this unit can jump the neighboring tile
+				else if ( JumpTileCheck ( hex.Neighbors [ i ] ) && OccupyTileCheck ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite ) )
+				{
+					// Track move data
+					MoveData move;
+
+					// Check if the neighboring unit can be attacked
+					if ( hex.Neighbors [ i ].Tile.CurrentUnit != null && hex.Neighbors [ i ].Tile.CurrentUnit.UnitAttackCheck ( this ) )
+					{
+						// Add as an available jump
+						move = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite, MoveData.MoveType.JUMP, i, null, hex.Neighbors [ i ] );
+
+						// Check for goal
+						move.IsVictoryMove = Owner.Objective.Contains ( hex.Neighbors [ i ].Neighbors [ i ] );
+					}
+					else
+					{
+						// Add as an available jump
+						move = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite, MoveData.MoveType.JUMP, i, hex.Neighbors [ i ], null );
+
+						// Check for goal
+						move.IsVictoryMove = Owner.Objective.Contains ( hex.Neighbors [ i ].Neighbors [ i ] );
+					}
+
+					// Add move to the move list
+					MoveList.Add ( move );
 
 					// Find additional jumps
-					FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
+					FindMoves ( hex.Neighbors [ i ].Neighbors [ i ], move, true );
 				}
 			}
 		}
 	}
 
-	/// <summary>
-	/// Determines how the unit should move based on the Move Data given.
-	/// </summary>
-	public override void MoveUnit ( MoveData data )
-	{
-		// Check move data
-		switch ( data.Type )
-		{
-		case MoveData.MoveType.MOVE:
-		case MoveData.MoveType.MOVE_TO_WIN:
-			Move ( data );
-			break;
-		case MoveData.MoveType.JUMP:
-		case MoveData.MoveType.JUMP_TO_WIN:
-			Jump ( data );
-			break;
-		case MoveData.MoveType.ATTACK:
-		case MoveData.MoveType.ATTACK_TO_WIN:
-			Jump ( data );
-			AttackUnit ( data );
-			break;
-		}
-	}
+	#endregion // Public Unit Override Functions
+
+	#region Protected Unit Override Functions
 
 	/// <summary>
 	/// Moves the unit to an adjecent tile.
@@ -151,7 +93,7 @@ public class Leader : Unit
 		base.Move ( data );
 
 		// Check if tile is a goal tile and if tile is the final destination
-		if ( Owner.startArea.IsGoalTile ( data.Destination ) && data == GM.SelectedMove )
+		if ( Owner.Objective.Contains ( data.Destination ) && data == GM.SelectedMove )
 		{
 			// Have the player win the match
 			GM.WinMatch ( Owner );
@@ -167,7 +109,7 @@ public class Leader : Unit
 		base.Jump ( data );
 
 		// Check if tile is a goal tile and if tile is the final destination
-		if ( Owner.startArea.IsGoalTile ( data.Destination ) && data == GM.SelectedMove )
+		if ( Owner.Objective.Contains ( data.Destination ) && data == GM.SelectedMove )
 		{
 			// Have the player win the match
 			GM.WinMatch ( Owner );
@@ -187,4 +129,6 @@ public class Leader : Unit
 		if ( !usePostAnimationQueue )
 			GM.LoseMatch ( Owner );
 	}
+
+	#endregion // Protected Unit Override Functions
 }

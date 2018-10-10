@@ -9,10 +9,20 @@ public class UIManager : MonoBehaviour
 {
 	#region UI Elements
 	
-	public GameObject midTurnControls;
-	public GameObject endOfMatchControls;
-	public GameObject conflictPrompt;
-	public GameObject skipControls;
+	[SerializeField]
+	private GameObject moveControls;
+
+	[SerializeField]
+	private GameObject endOfMatchControls;
+
+	[SerializeField]
+	private GameObject conflictPrompt;
+
+	[SerializeField]
+	private GameObject skipControls;
+
+	[SerializeField]
+	private GameObject commandControls;
 
 	#endregion // UI Elements
 
@@ -93,25 +103,40 @@ public class UIManager : MonoBehaviour
 		// Hide unit HUD
 		unitHUD.HideHUD ( );
 
-		// Hide mid-turn controls
-		ToggleMidTurnControls ( false, false );
-
-		// Hide prompts
-		conflictPrompt.SetActive ( false );
+		// Hide controls
+		SetControls ( GameManager.TurnState.NO_SELECTION );
 	}
 
 	/// <summary>
-	/// Toggles the mid-turn controls on and off.
+	/// Display the appropiate turn controls.
 	/// </summary>
-	/// <param name="moveControls"> Whether or not the move controls should be displayed. </param>
-	/// <param name="skipUnitControls"> Whether or not the skip controls should be displayed. </param>
-	public void ToggleMidTurnControls ( bool moveControls, bool skipUnitControls )
+	/// <param name="state"> The current state of the turn. </param>
+	/// <param name="isSkippable"> Whether or not a unit's turn is skippable. </param>
+	/// <param name="isConflicted"> Whether or not there is a conflicted move available. </param>
+	public void SetControls ( GameManager.TurnState state, bool isSkippable = false, bool isConflicted = false )
 	{
-		// Toggle movement controls
-		midTurnControls.SetActive ( moveControls );
+		// Set move controls
+		moveControls.SetActive ( state == GameManager.TurnState.MOVE_SELECTED );
 
-		// Toggle skip controls
-		skipControls.SetActive ( skipUnitControls );
+		// Set command controls
+		commandControls.SetActive ( state == GameManager.TurnState.COMMAND_SELECTED );
+
+		// Set skip controls
+		skipControls.SetActive ( isSkippable && ( state == GameManager.TurnState.UNIT_SELECTED || state == GameManager.TurnState.MOVE_SELECTED ) );
+
+		// Set conflict prompt
+		SetControlPrompt ( state, isConflicted );
+	}
+
+	/// <summary>
+	/// Display the appropriate control prompt.
+	/// </summary>
+	/// <param name="state"> The current state of the turn. </param>
+	/// <param name="isConflicted"> Whether or not there is a conflicted move available. </param>
+	public void SetControlPrompt ( GameManager.TurnState state, bool isConflicted = false )
+	{
+		// Set conflict prompt
+		conflictPrompt.SetActive ( isConflicted && ( state == GameManager.TurnState.UNIT_SELECTED || state == GameManager.TurnState.MOVE_SELECTED ) );
 	}
 
 	/// <summary>

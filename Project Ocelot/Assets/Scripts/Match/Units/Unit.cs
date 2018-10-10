@@ -202,25 +202,25 @@ public class Unit : MonoBehaviour
 				else if ( JumpTileCheck ( hex.Neighbors [ i ] ) && OccupyTileCheck ( hex.Neighbors [ i ].Neighbors [ i ], prior ) )
 				{
 					// Track move data
-					MoveData m;
+					MoveData move;
 
 					// Check if the neighboring unit can be attacked
 					if ( hex.Neighbors [ i ].Tile.CurrentUnit != null && hex.Neighbors [ i ].Tile.CurrentUnit.UnitAttackCheck ( this ) )
 					{
 						// Add as an available attack
-						m = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prior, MoveData.MoveType.ATTACK, i, hex.Neighbors [ i ] );
+						move = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prior, MoveData.MoveType.JUMP, i, null, hex.Neighbors [ i ] );
 					}
 					else
 					{
-						// Add as an available jump
-						m = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prior, MoveData.MoveType.JUMP, i );
+						// Add as an available assist
+						move = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prior, MoveData.MoveType.JUMP, i, hex.Neighbors [ i ], null );
 					}
 
 					// Add move to the move list
-					MoveList.Add ( m );
+					MoveList.Add ( move );
 
 					// Find additional jumps
-					FindMoves ( hex.Neighbors [ i ].Neighbors [ i ], m, true );
+					FindMoves ( hex.Neighbors [ i ].Neighbors [ i ], move, true );
 				}
 			}
 		}
@@ -232,11 +232,12 @@ public class Unit : MonoBehaviour
 	/// Returns true if this unit can be attacked.
 	/// </summary>
 	/// <param name="attacker"> The unit doing the attacking. </param>
+	/// <param name="friendlyFire"> Whether or not the attack can affect ally units. </param>
 	/// <returns> Whether or not this unit can be attacked by another unit. </returns>
-	public virtual bool UnitAttackCheck ( Unit attacker )
+	public virtual bool UnitAttackCheck ( Unit attacker, bool friendlyFire = false )
 	{
 		// Check if the units are on the same team
-		if ( attacker.Owner == Owner )
+		if ( !friendlyFire && attacker.Owner == Owner )
 			return false;
 
 		// Check if the attacking unit can attack
@@ -265,12 +266,17 @@ public class Unit : MonoBehaviour
 			break;
 		case MoveData.MoveType.JUMP:
 			Jump ( data );
-			break;
-		case MoveData.MoveType.ATTACK:
-			Jump ( data );
-			AttackUnit ( data );
+			if ( data.IsAssist )
+				GetAssisted ( data );
+			else if ( data.IsAttack )
+				AttackUnit ( data );
 			break;
 		}
+	}
+
+	public virtual void Assist ( )
+	{
+
 	}
 
 	/// <summary>
@@ -340,14 +346,14 @@ public class Unit : MonoBehaviour
 		foreach ( MoveData move in MoveList )
 		{
 			// Check for conflicted tiles
-			if ( MoveList.Exists ( x => x.Destination == move.Destination && x.PriorMove == move.PriorMove && !x.isConflicted && x != move ) )
+			if ( MoveList.Exists ( x => x.Destination == move.Destination && x.PriorMove == move.PriorMove && !x.IsConflicted && x != move ) )
 			{
 				// Create list of conflicted moves 
-				List<MoveData> conflicts = MoveList.FindAll ( x => x.Destination == move.Destination && x.PriorMove == move.PriorMove && !x.isConflicted );
+				List<MoveData> conflicts = MoveList.FindAll ( x => x.Destination == move.Destination && x.PriorMove == move.PriorMove && !x.IsConflicted );
 
 				// Mark moves as conflicted
 				foreach ( MoveData m in conflicts )
-					m.isConflicted = true;
+					m.IsConflicted = true;
 			}
 		}
 	}
@@ -411,11 +417,11 @@ public class Unit : MonoBehaviour
 			return false;
 
 		// Check if the unit on the tile can assist
-		if ( hex.Tile.CurrentUnit != null && !hex.Tile.CurrentUnit.Status.CanAssist )
+		if ( hex.Tile.CurrentUnit != null && !hex.Tile.CurrentUnit.Status.CanAssist && !hex.Tile.CurrentUnit.Status.CanBeAttacked )
 			return false;
 
 		// Check if the tile has a tile object blocking it
-		if ( hex.Tile.CurrentObject != null && !hex.Tile.CurrentObject.CanBeJumped )
+		if ( hex.Tile.CurrentObject != null && !hex.Tile.CurrentObject.CanAssist && !hex.Tile.CurrentObject.CanBeAttacked )
 			return false;
 
 		// Return that the tile can be jumped by this unit
@@ -461,6 +467,41 @@ public class Unit : MonoBehaviour
 	}
 
 	/// <summary>
+	/// Gets assisted by the unit being jumped.
+	/// Call this funciton on the moving unit.
+	/// This function is used for stat tracking.
+	/// </summary>
+	/// <param name="data"></param>
+	protected virtual void GetAssisted ( MoveData data )
+	{
+		// Add assists for each target
+		foreach ( Hex hex in data.AssistTargets )
+		{
+			// Check for tile
+			if ( hex == null )
+				continue;
+
+			// Check if tile is occupied
+			if ( !hex.Tile.IsOccupied )
+				continue;
+
+			// Check for unit
+			if ( hex.Tile.CurrentUnit != null )
+			{
+				// Track assist
+				hex.Tile.CurrentUnit.Assist ( );
+			}
+
+			// Check for object
+			if ( hex.Tile.CurrentObject != null && hex.Tile.CurrentObject.CanAssist )
+			{
+				// Track assist
+				hex.Tile.CurrentObject.Assist ( );
+			}
+		}
+	}
+
+	/// <summary>
 	/// Attacks the adjacent unit.
 	/// Call this function on the attacking unit.
 	/// This function builds the animation queue from the Move Data.
@@ -469,19 +510,63 @@ public class Unit : MonoBehaviour
 	protected virtual void AttackUnit ( MoveData data )
 	{
 		// KO unit(s) being attacked
-		foreach ( Hex hex in data.Attacks )
+		foreach ( Hex hex in data.AttackTargets )
 		{
-			// Interupt unit
-			hex.Tile.CurrentUnit.InteruptUnit ( );
+			// Check for tile
+			if ( hex == null )
+				continue;
 
-			// Attack unit
-			hex.Tile.CurrentUnit.GetAttacked ( );
+			// Check if tile is occupied
+			if ( !hex.Tile.IsOccupied )
+				continue;
+
+			// Check for unit
+			if ( hex.Tile.CurrentUnit != null )
+			{
+				// Interupt unit
+				hex.Tile.CurrentUnit.InteruptUnit ( );
+
+				// Attack unit
+				hex.Tile.CurrentUnit.GetAttacked ( );
+			}
+
+			// Check for object
+			if ( hex.Tile.CurrentObject != null && hex.Tile.CurrentObject.CanBeAttacked )
+			{
+				// Attack the object
+				hex.Tile.CurrentObject.GetAttacked ( );
+			}
 		}
 	}
 
 	#endregion // Protected Virtual Functions
 
 	#region Protected Functions
+
+	/// <summary>
+	/// Updates the unit's data to a new set of unit data.
+	/// Ability data is not affected.
+	/// </summary>
+	/// <param name="data"> The new unit data. </param>
+	protected void UpdateUnitData ( IReadOnlyUnitData data )
+	{
+		// Update unit data
+		InstanceData.ID = data.ID;
+		InstanceData.UnitName = data.UnitName;
+		InstanceData.UnitNickname = data.UnitNickname;
+		InstanceData.UnitBio = data.UnitBio;
+		InstanceData.FinishingMove = data.FinishingMove;
+		InstanceData.Role = data.Role;
+		InstanceData.Slots = data.Slots;
+		InstanceData.Portrait = data.Portrait;
+		InstanceData.IsEnabled = data.IsEnabled;
+
+		// Update Portrait
+		sprite.sprite = data.Portrait;
+		displaySprite = data.Portrait;
+		GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( InstanceID, data.Portrait );
+	}
+
 
 	/// <summary>
 	/// Returns the two directions that are considered backwards movement for the unit.

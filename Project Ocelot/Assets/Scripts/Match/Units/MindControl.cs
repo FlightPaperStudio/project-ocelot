@@ -5,7 +5,7 @@ using DG.Tweening;
 
 public class MindControl : HeroUnit
 {
-	/// <summary>
+	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
 	///
 	/// Hero 3 Unit Data
 	/// 
@@ -34,42 +34,34 @@ public class MindControl : HeroUnit
 	/// Cooldown: 4 Rounds
 	/// Continue Movement: Active
 	/// 
-	/// </summary>
+	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
 
-	// Ability information
-	//private class MindControlledUnit
-	//{
-	//	public Unit unit;
-	//	public Player originalOwner;
-	//	public int duration;
+	#region Ability Data
+	
+	[SerializeField]
+	private SpriteRenderer cloneDisplayPrefab;
 
-	//	public MindControlledUnit ( Unit _unit, Player _originalOwner, int _duration )
-	//	{
-	//		unit = _unit;
-	//		originalOwner = _originalOwner;
-	//		duration = _duration;
-	//	}
-	//}
-	//private List<MindControlledUnit> mindControlledUnits = new List<MindControlledUnit> ( );
 	private List<Unit> mindControlledUnits = new List<Unit> ( );
-	public SpriteRenderer cloneDisplayPrefab;
 	private SpriteRenderer currentCloneDisplay;
+
 	private const float MIND_CONTROL_ANIMATION_TIME = 0.75f;
 	private const string MIND_CONTROL_STATUS_PROMPT = "Mind Control";
+
+	#endregion // Ability Data
 
 	#region Public Unit Override Functions
 
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves available.
 	/// </summary>
-	public override void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
+	public override void FindMoves ( Hex hex, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Get base moves
-		base.FindMoves ( t, prerequisite, returnOnlyJumps );
+		base.FindMoves ( hex, prerequisite, returnOnlyJumps );
 
 		// Get Clone Assist moves
 		if ( SpecialAvailabilityCheck ( InstanceData.Ability2, prerequisite ) )
-			GetCloneAssist ( t, prerequisite );
+			GetCloneAssist ( hex, prerequisite );
 	}
 
 	/// <summary>
@@ -105,19 +97,36 @@ public class MindControl : HeroUnit
 		if ( PassiveAvailabilityCheck ( InstanceData.Ability1, data ) )
 		{
 			// Mind Control the opponent
-			foreach ( Tile t in data.Attacks )
+			foreach ( Hex hex in data.AttackTargets )
 			{
 				// Interupt unit
-				t.CurrentUnit.InteruptUnit ( );
+				hex.Tile.CurrentUnit.InteruptUnit ( );
 
 				// Activate Mind Control
-				ActivateMindControl ( t.CurrentUnit );
+				ActivateMindControl ( hex.Tile.CurrentUnit );
 			}
 		}
 		else
 		{
 			// Attack the unit as normal
 			base.AttackUnit ( data );
+		}
+	}
+
+	protected override void GetAssisted ( MoveData data )
+	{
+		// Get assisted by unit
+		base.GetAssisted ( data );
+
+		// Check each target
+		foreach ( Hex hex in data.AttackTargets )
+		{
+			// Check for perk and mind controlled unit
+			if ( InstanceData.Ability1.IsPerkEnabled && mindControlledUnits.Contains ( hex.Tile.CurrentUnit ) )
+			{
+				// Refresh status effect
+				hex.Tile.CurrentUnit.Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.MIND_CONTROLLED, InstanceData.Ability1.Duration, this );
+			}
 		}
 	}
 
@@ -140,19 +149,19 @@ public class MindControl : HeroUnit
 			return false;
 
 		// Check the opponent
-		foreach ( Tile t in prerequisite.Attacks )
+		foreach ( Hex hex in prerequisite.AttackTargets )
 		{
-			// Check for Leader
-			if ( t.CurrentUnit is Leader )
+			// Check for unit
+			if ( hex.Tile.CurrentUnit == null )
 				return false;
 
-			// Check for Hero 6's Ghost ability
-			//if ( t.currentUnit is Pacifist )
-			//{
-			//	HeroUnit h = t.currentUnit as HeroUnit;
-			//	if ( h.InstanceData.Ability1.IsEnabled )
-			//		return false;
-			//}
+			// Check for Leader
+			if ( hex.Tile.CurrentUnit is Leader )
+				return false;
+
+			// Check status
+			if ( !hex.Tile.CurrentUnit.Status.CanBeAffectedPhysically )
+				return false;
 		}
 
 		// Return that the ability is available
@@ -185,14 +194,14 @@ public class MindControl : HeroUnit
 	{
 		// Create clone
 		currentCloneDisplay = Instantiate ( cloneDisplayPrefab, Owner.transform );
-		currentCloneDisplay.transform.position = data.Destination.neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].transform.position;
+		currentCloneDisplay.transform.position = data.Destination.Neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].Neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].transform.position;
 		Color32 c = Util.TeamColor ( Owner.Team );
 		currentCloneDisplay.color = new Color32 ( c.r, c.g, c.b, 150 );
 		Util.OrientSpriteToDirection ( currentCloneDisplay, Owner.TeamDirection );
 		currentCloneDisplay.gameObject.SetActive ( false );
 
 		// Create animations
-		Tween t1 = currentCloneDisplay.transform.DOMove ( data.Destination.neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].transform.position, MOVE_ANIMATION_TIME )
+		Tween t1 = currentCloneDisplay.transform.DOMove ( data.Destination.Neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].transform.position, MOVE_ANIMATION_TIME )
 			.OnStart ( ( ) =>
 			{
 				// Display clone
@@ -230,29 +239,25 @@ public class MindControl : HeroUnit
 	/// <summary>
 	/// Marks every tile available to the Clone Assist ability.
 	/// </summary>
-	private void GetCloneAssist ( Tile t, MoveData prerequisite )
+	/// <param name="hex"> The hex being moved from. </param>
+	/// <param name="prerequisite"> The moves required to make this move. </param>
+	private void GetCloneAssist ( Hex hex, MoveData prerequisite )
 	{
-		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( Owner.TeamDirection );
-
 		// Check each neighboring tile
-		for ( int i = 0; i < t.neighbors.Length; i++ )
+		for ( int i = 0; i < hex.Neighbors.Length; i++ )
 		{
-			// Ignore tiles that would allow for backward movement
-			if ( i == back.FirstInt || i == back.SecondInt )
-				continue;
-
 			// Check if this unit can jump the unoccupied neighboring tile
-			if ( OccupyTileCheck ( t.neighbors [ i ], prerequisite ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
+			if ( OccupyTileCheck ( hex.Neighbors [ i ], prerequisite ) && OccupyTileCheck ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite ) )
 			{
 				// Add as an available jump
-				MoveData m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i );
+				MoveData move = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i, hex.Neighbors [ i ], null );
 
 				// Add move to the move list
-				MoveList.Add ( m );
+				MoveList.Add ( move );
 
 				// Find additional jumps
-				FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
+				if ( InstanceData.Ability2.IsPerkEnabled )
+					FindMoves ( hex.Neighbors [ i ].Neighbors [ i ], move, true );
 			}
 		}
 	}
@@ -261,25 +266,26 @@ public class MindControl : HeroUnit
 	/// Activates the Mind Control ability. This adds an enemy unit to the player's team.
 	/// This function builds the animation queue.
 	/// </summary>
-	private void ActivateMindControl ( Unit u )
+	/// <param name="unit"> The unit being targeted. </param>
+	private void ActivateMindControl ( Unit unit )
 	{
 		// Create animation
-		Tween t = u.sprite.DOColor ( Util.TeamColor ( Owner.Team ), MIND_CONTROL_ANIMATION_TIME )
+		Tween t = unit.sprite.DOColor ( Util.TeamColor ( Owner.Team ), MIND_CONTROL_ANIMATION_TIME )
 			.OnStart ( ( ) =>
 			{
 				// Check for pre-existing Mind Control
-				if ( u.Status.Effects.Exists ( x => x.ID == (int)StatusEffectDatabase.StatusEffectType.MIND_CONTROLLED ) ) //match => match.info.icon == InstanceData.Ability1.Icon && match.info.text == MIND_CONTROL_STATUS_PROMPT ) )
+				if ( unit.Status.Effects.Exists ( x => x.ID == (int)StatusEffectDatabase.StatusEffectType.MIND_CONTROLLED ) )
 				{
 					// Remove pre-existing Mind Control
-					MindControl original = u.Status.Effects.Find ( x => x.ID == (int)StatusEffectDatabase.StatusEffectType.MIND_CONTROLLED ).Caster as MindControl; //u.Status.effects.Find ( match => match.info.icon == InstanceData.Ability1.Icon && match.info.text == MIND_CONTROL_STATUS_PROMPT ).info.caster as MindControl;
-					original.RemoveMindControlledUnit ( u );
+					MindControl original = unit.Status.Effects.Find ( x => x.ID == (int)StatusEffectDatabase.StatusEffectType.MIND_CONTROLLED ).Caster as MindControl; 
+					original.RemoveMindControlledUnit ( unit );
 				}
 
 				// Check for unit being Mind Controlled is Hero 3
-				if ( u is MindControl )
+				if ( unit is MindControl )
 				{
 					// Remove all Mind Controlled units by this hero
-					MindControl hero3 = u as MindControl;
+					MindControl hero3 = unit as MindControl;
 					hero3.DeactivateMindControl ( );
 				}
 
@@ -293,33 +299,26 @@ public class MindControl : HeroUnit
 				InstanceData.Ability1.IsActive = false;
 				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
 
-				// Store unit
-				//mindControlledUnits.Add ( new MindControlledUnit ( u, u.owner, currentAbility1.duration ) );
-
 				// Remove unit from unit's player's team
-				u.Owner.UnitInstances.Remove ( u );
-				if ( u.Owner.standardKOdelegate != null )
-					u.koDelegate -= u.Owner.standardKOdelegate;
+				unit.Owner.UnitInstances.Remove ( unit );
+				if ( unit.Owner.standardKOdelegate != null )
+					unit.koDelegate -= unit.Owner.standardKOdelegate;
 
 				// Add unit to player's team
-				Owner.UnitInstances.Add ( u );
-				u.Owner = Owner;
+				Owner.UnitInstances.Add ( unit );
+				unit.Owner = Owner;
 				if ( Owner.standardKOdelegate != null )
-					u.koDelegate += Owner.standardKOdelegate;
+					unit.koDelegate += Owner.standardKOdelegate;
 
 				// Apply status effect
-				u.Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.MIND_CONTROLLED, InstanceData.Ability1.Duration, this );
-				//u.Status.AddStatusEffect ( InstanceData.Ability1.Icon, MIND_CONTROL_STATUS_PROMPT, this, InstanceData.Ability1.Duration );
-
-				// Add KO delegate
-				//u.koDelegate += MindControlKO;
+				unit.Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.MIND_CONTROLLED, InstanceData.Ability1.Duration, this );
 
 				// Face unit in correct direction
-				Util.OrientSpriteToDirection ( u.sprite, u.Owner.TeamDirection );
+				Util.OrientSpriteToDirection ( unit.sprite, unit.Owner.TeamDirection );
 
 				// Update HUD
-				GM.UI.matchInfoMenu.GetPlayerHUD ( u ).UpdateStatusEffects ( u.InstanceID, u.Status );
-				GM.UI.matchInfoMenu.GetPlayerHUD ( u ).UpdatePortrait ( u.InstanceID, Util.TeamColor ( Owner.Team ) );
+				GM.UI.matchInfoMenu.GetPlayerHUD ( unit ).UpdateStatusEffects ( unit.InstanceID, unit.Status );
+				GM.UI.matchInfoMenu.GetPlayerHUD ( unit ).UpdatePortrait ( unit.InstanceID, Util.TeamColor ( Owner.Team ) );
 			} );
 
 		// Add animation to queue
@@ -330,22 +329,24 @@ public class MindControl : HeroUnit
 	/// Returns the Mind Controlled unit back to its original owner.
 	/// This function builds the animation queue.
 	/// </summary>
-	private void MindControlKO ( Unit u )
+	/// <param name="unit"> The unit being KO'd. </param>
+	private void MindControlKO ( Unit unit )
 	{
 		// Remove unit from the list of Mind Controlled units
-		RemoveMindControlledUnit ( u );
+		RemoveMindControlledUnit ( unit );
 	}
 
 	/// <summary>
 	/// Removes a unit from the list of currently Mind Controlled units by this hero.
 	/// </summary>
-	private void RemoveMindControlledUnit ( Unit u )
+	/// <param name="unit"> The unit being removed. </param>
+	private void RemoveMindControlledUnit ( Unit unit )
 	{
 		// Remove unit from list of Mind Controlled units
-		mindControlledUnits.RemoveAll ( match => match == u );
+		mindControlledUnits.RemoveAll ( match => match == unit );
 
 		// Remove KO delegate
-		u.koDelegate -= MindControlKO;
+		unit.koDelegate -= MindControlKO;
 	}
 
 	/// <summary>
@@ -353,13 +354,11 @@ public class MindControl : HeroUnit
 	/// </summary>
 	private void DeactivateMindControl ( )
 	{
-		foreach ( Unit u in mindControlledUnits )
+		// Get each unit
+		foreach ( Unit unit in mindControlledUnits )
 		{
-			// Remove KO delegate to prevent list removal errors during a loop
-			//u.unit.koDelegate -= MindControlKO;
-
 			// KO unit
-			u.GetAttacked ( true );
+			unit.GetAttacked ( true );
 		}
 
 		// Clear list of Mind Controlled units

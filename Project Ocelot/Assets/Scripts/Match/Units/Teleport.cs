@@ -5,7 +5,7 @@ using DG.Tweening;
 
 public class Teleport : HeroUnit
 {
-	/// <summary>
+	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
 	///
 	/// Hero 8 Unit Data
 	/// 
@@ -23,38 +23,37 @@ public class Teleport : HeroUnit
 	/// Description: Instantly teleports a short distance
 	/// Type: Special
 	/// Cooldown: 2 Rounds
-	/// Range: 3 Tiles
+	/// Range: 3 Tile Radius
 	/// 
 	/// Ability 2
 	/// ID: 33
-	/// Name: Translocator
-	/// Description: Swaps the position of two allies
+	/// Name: Dimensional Shift
+	/// Description: Enters a parallel dimension where two allies have swapped positions
 	/// Type: Command
 	/// Cooldown: 4 Rounds
-	/// Affect Leader: Active
+	/// Range: 3 Tile Radius
 	/// 
-	/// </summary>
+	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
 
-	// Ability information
-	private Tile tile1 = null;
-	private Tile tile2 = null;
-	private Unit unit1 = null;
-	private Unit unit2 = null;
+	#region Ability Data
+
 	private const float BLINK_ANIMATION_TIME = 0.75f;
+
+	#endregion // Ability Data
 
 	#region Public Unit Override Functions
 
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves.
 	/// </summary>
-	public override void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
+	public override void FindMoves ( Hex hex, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Get base moves
-		base.FindMoves ( t, prerequisite, returnOnlyJumps );
+		base.FindMoves ( hex, prerequisite, returnOnlyJumps );
 
 		// Get Blink moves
 		if ( SpecialAvailabilityCheck ( InstanceData.Ability1, prerequisite ) )
-			GetBlink ( t, GetBackDirection ( Owner.TeamDirection ), InstanceData.Ability1.PerkValue - 1 );
+			GetBlink ( );
 
 		// Get Translocator availability
 		InstanceData.Ability2.IsAvailable = CommandAvailabilityCheck ( InstanceData.Ability2, prerequisite );
@@ -64,65 +63,13 @@ public class Teleport : HeroUnit
 
 	#region Public HeroUnit Override Functions
 
-	/// <summary>
-	/// Sets up the hero's command use.
-	/// </summary>
-	public override void StartCommand ( AbilityInstanceData ability )
+	public override void ExecuteCommand ( )
 	{
-		// Clear board
-		base.StartCommand ( ability );
+		// Execute base command
+		base.ExecuteCommand ( );
 
-		// Highlight team members
-		foreach ( Unit u in Owner.UnitInstances )
-		{
-			// Check status effects
-			if ( u != this && u.Status.CanBeMoved && u.Status.CanBeAffectedByAbility && ( InstanceData.Ability2.IsPerkEnabled || !( u is Leader ) ) )
-				u.currentTile.SetTileState ( TileState.AvailableCommand );
-		}
-	}
-
-	/// <summary>
-	/// Selects the unit's to swap places.
-	/// </summary>
-	public override void SelectCommandTile ( Tile t )
-	{
-		// Check if any selections have been made
-		if ( tile1 == null )
-		{
-			// Set command data
-			tile1 = t;
-			unit1 = t.CurrentUnit;
-
-			// Set tile as selected
-			t.SetTileState ( TileState.SelectedCommand );
-		}
-		else
-		{
-			// Set command data
-			tile2 = t;
-			unit2 = t.CurrentUnit;
-
-			// Set tile as selected
-			t.SetTileState ( TileState.SelectedCommand );
-
-			// Activate Mad Hatter
-			UseTranslocator ( );
-		}
-	}
-
-	/// <summary>
-	/// Cancel's the hero's command use.
-	/// </summary>
-	public override void EndCommand ( )
-	{
-		// Clear command data
-		tile1 = null;
-		tile2 = null;
-		unit1 = null;
-		unit2 = null;
-
-		// Cancel the command
-		base.EndCommand ( );
+		// Use ability
+		UseDimensionalShift ( );
 	}
 
 	#endregion // Public HeroUnit Override Functions
@@ -158,11 +105,47 @@ public class Teleport : HeroUnit
 			return false;
 
 		// Check for enough targets
-		if ( !TranslocatorCheck ( ) )
+		if ( !DimensionalShiftCheck ( ) )
 			return false;
 
 		// Return that the ability is available
 		return true;
+	}
+
+	protected override CommandData SetCommandData ( )
+	{
+		// Set default command data
+		return new CommandData ( this, 2 );
+	}
+
+	protected override void GetCommandTargets ( )
+	{
+		// Check each team member
+		foreach ( Unit unit in Owner.UnitInstances )
+		{
+			// Check for self
+			if ( unit == this )
+				continue;
+
+			// Check if the unit can be moved
+			if ( !unit.Status.CanBeMoved )
+				continue;
+
+			// Check if the unit can be affected by abilities
+			if ( !unit.Status.CanBeAffectedByAbility )
+				continue;
+
+			// Check distance from unit
+			if ( CurrentHex.Distance ( unit.CurrentHex ) > InstanceData.Ability2.PerkValue )
+				continue;
+
+			// Check if unit is already selected
+			if ( unit.CurrentHex.Tile.State == TileState.SelectedCommand )
+				continue;
+
+			// Add unit as potential target
+			unit.CurrentHex.Tile.SetTileState ( TileState.AvailableCommand );
+		}
 	}
 
 	/// <summary>
@@ -209,57 +192,57 @@ public class Teleport : HeroUnit
 	/// <summary>
 	/// Marks every tile within range of the Blink ability.
 	/// </summary>
-	private void GetBlink ( Tile t, IntPair back, int count )
+	private void GetBlink ( )
 	{
-		// Check each neighbor tile
-		for ( int i = 0; i < t.neighbors.Length; i++ )
+		// Get tiles within range
+		List<Hex> targets = CurrentHex.Range ( InstanceData.Ability1.PerkValue );
+
+		// Check each tile
+		for ( int i = 0; i < targets.Count; i++ )
 		{
-			// Ignore tiles that would allow for backward movement
-			if ( i == back.FirstInt || i == back.SecondInt )
+			// Check for tile exists
+			if ( targets [ i ] == null )
 				continue;
 
-			// Check if tile is available
-			if ( t.neighbors [ i ] != null )
-			{
-				// Check if tile already has a move associated with it
-				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && !MoveList.Exists ( match => match.Destination == t.neighbors [ i ] && match.PriorMove == null ) )
-				{
-					// Add as an available special move
-					MoveList.Add ( new MoveData ( t.neighbors [ i ], null, MoveData.MoveType.SPECIAL, i ) );
-				}
+			// Check if the tile is occupied
+			if ( !OccupyTileCheck ( targets [ i ], null ) )
+				continue;
 
-				// Check if the maximum range for teleport has been reached
-				if ( count > 0 )
-				{
-					// Continue search
-					GetBlink ( t.neighbors [ i ], back, count - 1 );
-				}
-			}
+			// Check for existing move
+			if ( MoveList.Exists ( match => match.Destination == targets [ i ] && match.PriorMove == null ) )
+				continue;
+
+			// Add tile as an available special move
+			MoveList.Add ( new MoveData ( targets [ i ], null, MoveData.MoveType.SPECIAL, MoveData.MoveDirection.DIRECT ) );
 		}
 	}
 
 	/// <summary>
-	/// Checks if there are a minimum number of allies to use Translocator.
+	/// Checks if there are a minimum number of allies to use Dimensional Shift.
 	/// </summary>
 	/// <returns> Whether or not there are enough targets. </returns>
-	private bool TranslocatorCheck ( )
+	private bool DimensionalShiftCheck ( )
 	{
 		// Start counter
 		int targetCounter = 0;
 
 		// Check each ally
-		foreach ( Unit u in Owner.UnitInstances )
+		foreach ( Unit unit in Owner.UnitInstances )
 		{
 			// Check if the unit is this hero
-			if ( u == this )
+			if ( unit == this )
 				continue;
 
 			// Check if the unit can be moved
-			if ( !u.Status.CanBeMoved )
+			if ( !unit.Status.CanBeMoved )
 				continue;
 
 			// Check if the unit can be affected by abilities
-			if ( !u.Status.CanBeAffectedByAbility )
+			if ( !unit.Status.CanBeAffectedByAbility )
+				continue;
+
+			// Check if the unit is within range
+			if ( CurrentHex.Distance ( unit.CurrentHex ) > InstanceData.Ability2.PerkValue )
 				continue;
 
 			// Increment counter
@@ -277,8 +260,16 @@ public class Teleport : HeroUnit
 	/// <summary>
 	/// Swaps the positions of two teammates.
 	/// </summary>
-	private void UseTranslocator ( )
+	private void UseDimensionalShift ( )
 	{
+		// Get tiles
+		Hex hex1 = GM.SelectedCommand.Targets [ 0 ];
+		Hex hex2 = GM.SelectedCommand.Targets [ 1 ];
+
+		// Get units
+		Unit unit1 = hex1.Tile.CurrentUnit;
+		Unit unit2 = hex2.Tile.CurrentUnit;
+
 		// Interupt both units
 		unit1.InteruptUnit ( );
 		unit2.InteruptUnit ( );
@@ -291,13 +282,13 @@ public class Teleport : HeroUnit
 			GM.UI.timer.PauseTimer ( );
 
 		// Set units to their new tiles
-		tile1.CurrentUnit = unit2;
-		tile2.CurrentUnit = unit1;
-		unit1.currentTile = tile2;
-		unit2.currentTile = tile1;
+		hex1.Tile.CurrentUnit = unit2;
+		hex2.Tile.CurrentUnit = unit1;
+		unit1.CurrentHex = hex2;
+		unit2.CurrentHex = hex1;
 
 		// Clear the board
-		GM.Board.ResetTiles ( );
+		GM.Grid.ResetTiles ( );
 
 		// Begin animation
 		Sequence s = DOTween.Sequence ( )
@@ -306,16 +297,16 @@ public class Teleport : HeroUnit
 			.AppendCallback ( ( ) =>
 			{
 				// Reposition units
-				unit1.transform.position = unit1.currentTile.transform.position;
-				unit2.transform.position = unit2.currentTile.transform.position;
+				unit1.transform.position = unit1.CurrentHex.transform.position;
+				unit2.transform.position = unit2.CurrentHex.transform.position;
 			} )
 			.Append ( unit1.sprite.DOFade ( 1f, BLINK_ANIMATION_TIME ) )
 			.Join ( unit2.sprite.DOFade ( 1f, BLINK_ANIMATION_TIME ) )
 			.OnComplete ( ( ) =>
 			{
 				// Clear command data
-				tile1 = null;
-				tile2 = null;
+				hex1 = null;
+				hex2 = null;
 				unit1 = null;
 				unit2 = null;
 

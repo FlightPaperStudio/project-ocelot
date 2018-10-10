@@ -21,7 +21,7 @@ public class UnitPortrait : MonoBehaviour
 	#region Portrait Data
 
 	private UnitData unitData;
-	private Player.TeamColor _teamColor;
+	private Player.TeamColor teamColor;
 	private bool isEnabled;
 	private bool isAvailable;
 	private bool isBorderHighlighted;
@@ -64,8 +64,8 @@ public class UnitPortrait : MonoBehaviour
 			isAvailable = value;
 
 			// Set portrait color
-			border.color = isAvailable ? Util.TeamColor ( _teamColor ) : UNAVAILABLE_COLOR;
-			unitPortrait.color = isAvailable ? Util.TeamColor ( _teamColor ) : UNAVAILABLE_COLOR;
+			border.color = isAvailable ? Util.TeamColor ( teamColor ) : UNAVAILABLE_COLOR;
+			unitPortrait.color = isAvailable ? Util.TeamColor ( teamColor ) : UNAVAILABLE_COLOR;
 		}
 	}
 
@@ -88,12 +88,12 @@ public class UnitPortrait : MonoBehaviour
 			if ( isBorderHighlighted )
 			{
 				// Set border color to highlighted
-				border.color = Util.AccentColor ( _teamColor );
+				border.color = Util.AccentColor ( teamColor );
 			}
 			else
 			{
 				// Set border color to its normal color
-				border.color = isAvailable ? Util.TeamColor ( _teamColor ) : UNAVAILABLE_COLOR;
+				border.color = isAvailable ? Util.TeamColor ( teamColor ) : UNAVAILABLE_COLOR;
 			}
 		}
 	}
@@ -103,13 +103,6 @@ public class UnitPortrait : MonoBehaviour
 		get;
 		private set;
 	}
-	private int unitID;
-	public Color32 teamColor
-	{
-		get;
-		private set;
-	}
-
 
 	#endregion // Portrait Data
 
@@ -126,7 +119,7 @@ public class UnitPortrait : MonoBehaviour
 		unitData = unit;
 
 		// Store team
-		_teamColor = team;
+		teamColor = team;
 
 		// Display portrait
 		IsEnabled = true;

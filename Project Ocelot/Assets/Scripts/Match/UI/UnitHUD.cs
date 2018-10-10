@@ -242,7 +242,7 @@ public class UnitHUD : MonoBehaviour
 		}
 
 		// End the command
-		( currentUnit as HeroUnit ).EndCommand ( );
+		( currentUnit as HeroUnit ).CancelCommand ( );
 
 		// Update ability
 		DisplayAbilityHUD ( ability, hud );

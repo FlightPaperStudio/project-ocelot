@@ -17,6 +17,8 @@ public class Tile : MonoBehaviour
 	[SerializeField]
 	private SpriteRenderer borderRender;
 
+	public Hex Hex;
+
 	[HideInInspector]
 	public Unit CurrentUnit;
 
@@ -69,7 +71,7 @@ public class Tile : MonoBehaviour
 		// Hover over an available move with a potential attack
 		case TileState.AvailableMoveAttack:
 			HighlightTile ( TileState.AvailableMoveAttackHover );
-			HighlightAttacks ( this, TileState.AvailableAttackHover );
+			SetTargetState ( TileState.AvailableAttackHover, true );
 			break;
 
 		// Hover over an available special ability move
@@ -80,7 +82,7 @@ public class Tile : MonoBehaviour
 		// Hover over an available special ability move with a potential attack
 		case TileState.AvailableSpecialAttack:
 			HighlightTile ( TileState.AvailableSpecialAttackHover );
-			HighlightAttacks ( this, TileState.AvailableAttackHover );
+			SetTargetState ( TileState.AvailableAttackHover, true );
 			break;
 
 		// Hover over an available tile usable for a command
@@ -91,8 +93,8 @@ public class Tile : MonoBehaviour
 		// Hover over a conflict tile
 		case TileState.ConflictedTile:
 			HighlightTile ( TileState.ConflictedTileHover );
-			HighlightAttacks ( this, TileState.AvailableAttackHover );
-			GM.UI.conflictPrompt.SetActive ( true );
+			SetTargetState ( TileState.AvailableAttackHover, true );
+			GM.UI.SetControlPrompt ( GameManager.TurnState.UNIT_SELECTED, true );
 			break;
 		}
 	}
@@ -107,12 +109,12 @@ public class Tile : MonoBehaviour
 
 		// Check if other tiles needs to return their tile color to their current state (in case of potential attacks)
 		if ( State == TileState.AvailableMoveAttack || State == TileState.AvailableSpecialAttack )
-			HighlightAttacks ( this, TileState.AvailableAttack );
+			SetTargetState ( TileState.AvailableAttack, true );
 
 		if ( State == TileState.ConflictedTile )
 		{
-			GM.UI.conflictPrompt.SetActive ( false );
-			HighlightAttacks ( this, TileState.AvailableAttack );
+			GM.UI.SetControlPrompt ( GameManager.TurnState.UNIT_SELECTED, false );
+			SetTargetState ( TileState.AvailableAttack, true );
 		}
 	}
 
@@ -132,72 +134,68 @@ public class Tile : MonoBehaviour
 		// Select move
 		case TileState.AvailableMove:
 			SetTileState ( TileState.SelectedMove );
-			GM.SelectMove ( this );
+			GM.SelectMove ( Hex );
 			break;
 
 		// Select attack move
 		case TileState.AvailableMoveAttack:
 			SetTileState ( TileState.SelectedMoveAttack );
-			HighlightAttacks ( this, TileState.SelectedAttack, true );
-			GM.SelectMove ( this );
+			SetTargetState ( TileState.SelectedAttack );
+			GM.SelectMove ( Hex );
 			break;
 
 		// Select special move
 		case TileState.AvailableSpecial:
 			SetTileState ( TileState.SelectedSpecial );
-			GM.SelectMove ( this );
+			GM.SelectMove ( Hex );
 			break;
 
 		// Select special attack move
 		case TileState.AvailableSpecialAttack:
 			SetTileState ( TileState.SelectedSpecialAttack );
-			HighlightAttacks ( this, TileState.SelectedAttack, true );
-			GM.SelectMove ( this );
+			SetTargetState ( TileState.SelectedAttack );
+			GM.SelectMove ( Hex );
 			break;
 
 		// Select a tile for a command
 		case TileState.AvailableCommand:
 			SetTileState ( TileState.SelectedCommand );
-			HeroUnit h = GM.SelectedUnit as HeroUnit;
-			h.SelectCommandTile ( this );
+			GM.SelectCommandTarget ( Hex );
 			break;
 
 		// Select conflicted move
 		case TileState.ConflictedTile:
-			GM.UI.conflictPrompt.SetActive ( false );
+			GM.UI.SetControlPrompt ( GameManager.TurnState.UNIT_SELECTED, false );
 			PointerEventData pointerEventData = data as PointerEventData;
 			if ( pointerEventData.button == PointerEventData.InputButton.Left )
 			{
-				MoveData md = GM.SelectedUnit.MoveList.Find ( x => x.Destination == this && x.PriorMove == GM.SelectedMove && ( x.Type != MoveData.MoveType.SPECIAL && x.Type != MoveData.MoveType.SPECIAL_ATTACK ) );
-				switch ( md.Type )
-				{
-				case MoveData.MoveType.MOVE:
-				case MoveData.MoveType.MOVE_TO_WIN:
-				case MoveData.MoveType.JUMP:
-				case MoveData.MoveType.JUMP_TO_WIN:
-					SetTileState ( TileState.SelectedMove );
-					break;
-				case MoveData.MoveType.ATTACK:
-				case MoveData.MoveType.ATTACK_TO_WIN:
-					SetTileState ( TileState.SelectedMoveAttack );
-					HighlightAttacks ( this, TileState.SelectedAttack, true );
-					break;
-				}
-				GM.SelectMove ( this, true, true );
+				// Get move data
+				MoveData md = GM.SelectedUnit.MoveList.Find ( x => x.Destination.Tile == this && x.PriorMove == GM.SelectedMove && x.Type != MoveData.MoveType.SPECIAL );
+
+				// Set highlight
+				SetTileState ( TileState.SelectedMove );
+
+				// Set target highlights
+				if ( md.IsAttack )
+					SetTargetState ( TileState.SelectedAttack );
+
+				// Select move
+				GM.SelectMove ( Hex, true, true );
 			}
 			else if ( pointerEventData.button == PointerEventData.InputButton.Right )
 			{
-				MoveData md = GM.SelectedUnit.MoveList.Find ( x => x.Destination == this && x.PriorMove == GM.SelectedMove && ( x.Type == MoveData.MoveType.SPECIAL || x.Type == MoveData.MoveType.SPECIAL_ATTACK ) );
-				if ( md.Type == MoveData.MoveType.SPECIAL )
-				{
-					SetTileState ( TileState.SelectedSpecial );
-				}
-				else
-				{
-					SetTileState ( TileState.SelectedSpecialAttack );
-					HighlightAttacks ( this, TileState.SelectedAttack, true );
-				}
-				GM.SelectMove ( this, true, false );
+				// Get move data
+				MoveData md = GM.SelectedUnit.MoveList.Find ( x => x.Destination.Tile == this && x.PriorMove == GM.SelectedMove && x.Type == MoveData.MoveType.SPECIAL );
+
+				// Set highlight
+				SetTileState ( TileState.SelectedSpecialAttack );
+
+				// Set target highlights
+				if ( md.IsAttack )
+					SetTargetState ( TileState.SelectedAttack );
+
+				// Select move
+				GM.SelectMove ( Hex, true, false );
 			}
 			break;
 		}
@@ -210,55 +208,117 @@ public class Tile : MonoBehaviour
 	/// <summary>
 	/// Sets the state of the tile.
 	/// </summary>
-	public void SetTileState ( TileState s )
+	public void SetTileState ( TileState state )
 	{
 		// Set tile state
-		State = s;
+		State = state;
 
 		// Highlight tile
-		HighlightTile ( s );
+		HighlightTile ( state );
 	}
 
 	/// <summary>
 	/// Highlights the tile according to its current state.
 	/// </summary>
-	public void HighlightTile ( TileState s )
+	public void HighlightTile ( TileState state )
 	{
 		// Set the tile's color to its corrisponding state
-		tileRender.color = board.tileColorDic [ s ];
+		tileRender.color = GetColor ( state );
+	}
+
+	/// <summary>
+	/// Toggles whether to border is displayed.
+	/// </summary>
+	/// <param name="isActive"> Whether or not the border should be displayed. </param>
+	public void SetBorderActive ( bool isActive )
+	{
+		// Hide or display border
+		borderRender.gameObject.SetActive ( isActive );
+	}
+
+	/// <summary>
+	/// Sets the color of the border.
+	/// </summary>
+	/// <param name="color"> The color of the border. </param>
+	public void SetBorderColor ( Color32 color )
+	{
+		// Set the color of the border
+		borderRender.color = color;
 	}
 
 	#endregion // Public Functions
 
-	// Tile information
-	public int ID;
-
-	// Instance information
-
-	
+	#region Private Functions
 
 	/// <summary>
-	/// Highlights the tiles of each attack for a particular move. 
+	/// Sets the state of each target tile for a move.
 	/// </summary>
-	private void HighlightAttacks ( Tile t, TileState state, bool setTile = false )
+	/// <param name="state"> The state the tile is being set to. </param>
+	/// <param name="highlightOnly"> Whethor or not the tile should ignore setting the state and only display the color of the state. </param>
+	private void SetTargetState ( TileState state, bool highlightOnly = false )
 	{
 		// Get a list of moves for this tile
-		List<MoveData> moves = GM.SelectedUnit.MoveList.FindAll ( x => x.Destination == t && x.PriorMove == GM.SelectedMove );
+		List<MoveData> moves = GM.SelectedUnit.MoveList.FindAll ( x => x.Destination.Tile == this && x.PriorMove == GM.SelectedMove );
 
 		// Highlight each attack tile
-		foreach ( MoveData m in moves )
+		foreach ( MoveData move in moves )
 		{
-			foreach ( Tile a in m.Attacks )
+			// Check for attacks
+			if ( !move.IsAttack )
+				continue;
+
+			foreach ( Hex hex in move.AttackTargets )
 			{
-				if ( setTile )
-					a.SetTileState ( state );
+				// Check for hex
+				if ( hex == null )
+					continue;
+
+				if ( highlightOnly )
+					hex.Tile.HighlightTile ( state );
 				else
-					a.HighlightTile ( state );
+					hex.Tile.SetTileState ( state );
 			}
 		}
 	}
 
-	
+	/// <summary>
+	/// Gets the appropriate color of the tile state.
+	/// </summary>
+	/// <param name="state"> The current tile state. </param>
+	/// <returns> The corrisponding tile state color. </returns>
+	private Color32 GetColor ( TileState state )
+	{
+		switch ( state )
+		{
+		case TileState.Default:                     return new Color32 ( 200, 200, 200, 255 ); // Light grey
+		case TileState.AvailableUnit:               return new Color32 ( 255, 255, 200, 255 ); // Light yellow
+		case TileState.AvailableUnitHover:          return new Color32 ( 255, 210,  75, 255 ); // Gold
+		case TileState.SelectedUnit:                return new Color32 ( 255, 210,  75, 255 ); // Gold
+		case TileState.AvailableMove:               return new Color32 ( 150, 255, 255, 255 ); // Light cyan
+		case TileState.AvailableMoveHover:          return new Color32 (   0, 165, 255, 255 ); // Dark cyan
+		case TileState.SelectedMove:                return new Color32 (   0, 165, 255, 255 ); // Dark cyan
+		case TileState.AvailableMoveAttack:         return new Color32 ( 150, 255, 255, 255 ); // Light cyan
+		case TileState.AvailableMoveAttackHover:    return new Color32 (   0, 165, 255, 255 ); // Dark cyan
+		case TileState.SelectedMoveAttack:          return new Color32 (   0, 165, 255, 255 ); // Dark cyan
+		case TileState.AvailableAttack:             return new Color32 ( 255, 150, 150, 255 ); // Light red
+		case TileState.AvailableAttackHover:        return new Color32 ( 200,  50,  50, 255 ); // Dark red
+		case TileState.SelectedAttack:              return new Color32 ( 200,  50,  50, 255 ); // Dark red
+		case TileState.AvailableSpecial:            return new Color32 ( 255, 125, 255, 255 ); // Light purple
+		case TileState.AvailableSpecialHover:       return new Color32 ( 125,   0, 125, 255 ); // Purple
+		case TileState.SelectedSpecial:             return new Color32 ( 125,   0, 125, 255 ); // Purple
+		case TileState.AvailableSpecialAttack:      return new Color32 ( 255, 125, 255, 255 ); // Light purple
+		case TileState.AvailableSpecialAttackHover: return new Color32 ( 125,   0, 125, 255 ); // Purple
+		case TileState.SelectedSpecialAttack:       return new Color32 ( 125,   0, 125, 255 ); // Purple
+		case TileState.AvailableCommand:            return new Color32 ( 255, 125, 255, 255 ); // Light purple
+		case TileState.AvailableCommandHover:       return new Color32 ( 125,   0, 125, 255 ); // Purple
+		case TileState.SelectedCommand:             return new Color32 ( 125,   0, 125, 255 ); // Purple
+		case TileState.ConflictedTile:              return new Color32 ( 202, 190, 255, 255 ); // Light lavender
+		case TileState.ConflictedTileHover:         return new Color32 ( 130, 130, 255, 255 ); // Dark lavender
+		default:                                    return new Color32 ( 200, 200, 200, 255 ); // Light grey
+		}
+	}
+
+	#endregion // Private Functions
 }
 
 public enum TileState

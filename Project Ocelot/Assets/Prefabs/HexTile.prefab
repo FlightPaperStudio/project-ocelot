@@ -252,23 +252,10 @@ MonoBehaviour:
   GM: {fileID: 0}
   tileRender: {fileID: 212208494596832474}
   borderRender: {fileID: 212534501802148096}
+  Hex: {fileID: 114474013663892388}
   CurrentUnit: {fileID: 0}
   CurrentObject: {fileID: 0}
   ID: 24
-  board: {fileID: 0}
-  above: {fileID: 0}
-  below: {fileID: 0}
-  rightAbove: {fileID: 0}
-  rightBelow: {fileID: 0}
-  leftAbove: {fileID: 0}
-  leftBelow: {fileID: 0}
-  neighbors:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!212 &212208494596832474
 SpriteRenderer:
   m_ObjectHideFlags: 1

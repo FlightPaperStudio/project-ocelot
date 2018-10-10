@@ -5,7 +5,7 @@ using DG.Tweening;
 
 public class Pacifist : HeroUnit
 {
-	/// <summary>
+	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
 	///
 	/// Hero 6 Unit Data
 	/// 
@@ -22,6 +22,7 @@ public class Pacifist : HeroUnit
 	/// Name: Ghost
 	/// Description: Unable to attack or be attacked by opponents
 	/// Type: Passive
+	/// Haunted House: Active
 	/// 
 	/// Ability 2
 	/// ID: 22
@@ -30,21 +31,38 @@ public class Pacifist : HeroUnit
 	/// Type: Command
 	/// Duration: 2 Turns
 	/// Cooldown: 5 Turns
-	/// Area: 2 Tiles
+	/// Range: 3 Tile Radius
 	/// 
-	/// </summary>
+	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
 
-	// Ability information
-	public TileObject obstructionPrefab;
-	public TileObject currentObstruction;
+	#region Ability Data
+
+	[SerializeField]
+	private TileObject obstructionPrefab;
+
+	private int hauntedHouseStack = 0;
+	private List<TileObject> currentDebris = new List<TileObject> ( );
+
 	private const float OBSTRUCTION_ANIMATION_TIME = 0.75f;
 
+	#endregion // Ability Data
+
 	#region Public Unit Override Functions
+
+	public override void InitializeInstance ( GameManager gm, int instanceID, UnitSettingData settingData )
+	{
+		// Initialize ability data
+		base.InitializeInstance ( gm, instanceID, settingData );
+
+		// Apply incorporeal status effect
+		if ( InstanceData.Ability1.IsEnabled )
+			Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.INCORPOREAL, StatusEffects.PERMANENT_EFFECT, this );
+	}
 
 	/// <summary>
 	/// Calculates all base moves available to a unit without marking any potential captures.
 	/// </summary>
-	public override void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
+	public override void FindMoves ( Hex hex, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Cleare previous move list
 		if ( prerequisite == null )
@@ -54,30 +72,30 @@ public class Pacifist : HeroUnit
 		if ( Status.CanMove )
 		{
 			// Store which tiles are to be ignored
-			IntPair back = GetBackDirection ( Owner.TeamDirection );
+			//IntPair back = GetBackDirection ( Owner.TeamDirection );
 
 			// Check each neighboring tile
-			for ( int i = 0; i < t.neighbors.Length; i++ )
+			for ( int i = 0; i < hex.Neighbors.Length; i++ )
 			{
 				// Ignore tiles that would allow for backward movement
-				if ( i == back.FirstInt || i == back.SecondInt )
-					continue;
+				//if ( i == back.FirstInt || i == back.SecondInt )
+				//	continue;
 
 				// Check if this unit can move to the neighboring tile
-				if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
+				if ( !returnOnlyJumps && OccupyTileCheck ( hex.Neighbors [ i ], prerequisite ) )
 				{
 					// Add as an available move
-					MoveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
+					MoveList.Add ( new MoveData ( hex.Neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
 				}
 				// Check if this unit can jump the neighboring tile
-				else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
+				else if ( JumpTileCheck ( hex.Neighbors [ i ] ) && OccupyTileCheck ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite ) )
 				{
 					// Add as an available jump
-					MoveData m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.JUMP, i );
-					MoveList.Add ( m );
+					MoveData move = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite, MoveData.MoveType.JUMP, i, hex.Neighbors [ i ], null );
+					MoveList.Add ( move );
 
 					// Find additional jumps
-					FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
+					FindMoves ( hex.Neighbors [ i ].Neighbors [ i ], move, true );
 				}
 			}
 		}
@@ -90,7 +108,7 @@ public class Pacifist : HeroUnit
 	/// Determines if this unit can be attaced by another unit.
 	/// Always returns false since this unit's Pacifist Ability prevents it from being attacked.
 	/// </summary>
-	public override bool UnitAttackCheck ( Unit attacker )
+	public override bool UnitAttackCheck ( Unit attacker, bool friendlyFire = false )
 	{
 		// Prevent any attacks with the Ghost ability
 		if ( PassiveAvailabilityCheck ( InstanceData.Ability1, null ) )
@@ -100,116 +118,168 @@ public class Pacifist : HeroUnit
 		return base.UnitAttackCheck ( attacker );
 	}
 
+	public override void Assist ( )
+	{
+		// Track stats
+		base.Assist ( );
+
+		// Add to haunted house perk
+		if ( InstanceData.Ability1.IsEnabled && InstanceData.Ability1.IsPerkEnabled )
+			hauntedHouseStack++;
+	}
+
 	#endregion // Public Unit Override Functions
 
 	#region Public HeroUnit Override Functions
 
-	/// <summary>
-	/// Sets up the hero's command use.
-	/// </summary>
-	public override void StartCommand ( AbilityInstanceData ability )
+	public override void ExecuteCommand ( )
 	{
-		// Clear the board
-		base.StartCommand ( ability );
+		// Execute base command
+		base.ExecuteCommand ( );
 
-		// Highlight empty tiles within a 3 tile radius of the hero
-		GetObstruction ( currentTile, 2 );
-	}
-
-	/// <summary>
-	/// Selects the tile to place an obstruction.
-	/// </summary>
-	public override void SelectCommandTile ( Tile t )
-	{
-		// Check for previous obstruction
-		if ( currentObstruction != null )
+		// Check for previous possessions
+		if ( currentDebris.Count > 0 )
 		{
-			// Remove previous Obstruction
-			DestroyTileObject ( currentObstruction );
+			// Remove previous possessions
+			for ( int i = 0; i < currentDebris.Count; i++ )
+				if ( currentDebris [ i ] != null )
+					DestroyTileObject ( currentDebris [ i ] );
 		}
+
+		// Reset data
+		currentDebris.Clear ( );
 
 		// Pause turn timer
 		if ( MatchSettings.TurnTimer )
 			GM.UI.timer.PauseTimer ( );
 
-		// Create Obstruction
-		currentObstruction = CreateTileOject ( obstructionPrefab, t, InstanceData.Ability2.Duration, ObstructionDurationComplete );
-
 		// Hide cancel button
 		GM.UI.unitHUD.HideCancelButton ( InstanceData.Ability2 );
 
 		// Clear board
-		GM.Board.ResetTiles ( );
+		GM.Grid.ResetTiles ( );
 
 		// Begin animation
-		Sequence s = DOTween.Sequence ( )
-			.Append ( currentObstruction.Icon.DOFade ( 0f, OBSTRUCTION_ANIMATION_TIME ).From ( ) )
-			.OnComplete ( ( ) =>
-			{
-				// Start cooldown
-				StartCooldown ( InstanceData.Ability2 );
+		Sequence s = DOTween.Sequence ( );
 
-				// Pause turn timer
-				if ( MatchSettings.TurnTimer )
-					GM.UI.timer.ResumeTimer ( );
+		// Add each target to the animation
+		for ( int i = 0; i < GM.SelectedCommand.Targets.Count; i++ )
+		{
+			// Create the debris
+			TileObject debris = CreateTileOject ( obstructionPrefab, GM.SelectedCommand.Targets [ i ], InstanceData.Ability2.Duration, PoltergeistDurationComplete );
 
-				// Get moves
-				GM.GetTeamMoves ( );
+			// Add debris to the list of targets
+			currentDebris.Add ( debris );
 
-				// Display team
-				GM.DisplayAvailableUnits ( );
-				GM.SelectUnit ( this );
-			} );
+			// Create spawning animation
+			s.Append ( debris.Icon.DOFade ( 0f, OBSTRUCTION_ANIMATION_TIME ).From ( ) );
+		}
+			
+		// Complete the animation
+		s.OnComplete ( ( ) =>
+		{
+			// Reset haunted house
+			if ( InstanceData.Ability1.IsEnabled && InstanceData.Ability1.IsPerkEnabled )
+				hauntedHouseStack = 0;
+
+			// Start cooldown
+			StartCooldown ( InstanceData.Ability2 );
+
+			// Pause turn timer
+			if ( MatchSettings.TurnTimer )
+				GM.UI.timer.ResumeTimer ( );
+
+			// Get moves
+			GM.GetTeamMoves ( );
+
+			// Display team
+			GM.DisplayAvailableUnits ( );
+			GM.SelectUnit ( this );
+		} );
 	}
 
 	#endregion // Public HeroUnit Override Functions
 
+	#region Protected HeroUnit Override Functions
+
+	protected override CommandData SetCommandData ( )
+	{
+		// Check for Haunted House perk
+		if ( InstanceData.Ability1.IsEnabled && InstanceData.Ability1.IsPerkEnabled )
+		{
+			// Set how many objects can be possessed
+			return new CommandData ( this, 1 + ( hauntedHouseStack / 2 ) );
+		}
+		else
+		{
+			// Set that only one object can be possessed
+			return new CommandData ( this, 1 );
+		}
+	}
+
+	protected override void GetCommandTargets ( )
+	{
+		// Get targets
+		GetPoltergeist ( );
+	}
+
+	#endregion // Protected HeroUnit Override Functions
+
 	#region Private Functions
 
 	/// <summary>
-	/// Marks every unoccupied tile in a 3 tile radius as available for selection for Obstruction.
+	/// Marks every unoccupied tile within range as available for selection for Poltergeist.
 	/// </summary>
-	private void GetObstruction ( Tile t, int count )
+	private void GetPoltergeist ( )
 	{
-		// Check each adjacent tile
-		for ( int i = 0; i < t.neighbors.Length; i++ )
-		{
-			// Check for tile
-			if ( t.neighbors [ i ] != null )
-			{
-				// Mark as available if unoccupied and not previously marked
-				if ( OccupyTileCheck ( t.neighbors [ i ], null ) && t.neighbors [ i ].State == TileState.Default )
-					t.neighbors [ i ].SetTileState ( TileState.AvailableCommand );
+		// Get targets within range
+		List<Hex> targets = CurrentHex.Range ( InstanceData.Ability2.PerkValue );
 
-				// Continue navigation
-				if ( count > 0 )
-					GetObstruction ( t.neighbors [ i ], count - 1 );
-			}
+		// Check each potential target
+		for ( int i = 0; i < targets.Count; i++ )
+		{
+			// Check that tile exists
+			if ( targets [ i ] == null )
+				continue;
+
+			// Check that the tile is unoccupied
+			if ( targets [ i ].Tile.IsOccupied )
+				continue;
+
+			// Check for existing selections
+			if ( targets [ i ].Tile.State == TileState.SelectedCommand )
+				continue;
+
+			// Add tile as potential target
+			targets [ i ].Tile.SetTileState ( TileState.AvailableCommand );
 		}
 	}
 
 	/// <summary>
 	/// Delegate for when the duration of the tile object for Obstruction expires.
 	/// </summary>
-	private void ObstructionDurationComplete ( )
+	private void PoltergeistDurationComplete ( )
 	{
-		// Create animation
-		Tween t = currentObstruction.Icon.DOFade ( 0f, OBSTRUCTION_ANIMATION_TIME )
-			.OnComplete ( ( ) =>
-			{
-				// Remove obstruction from player data
-				Owner.tileObjects.Remove ( currentObstruction );
+		// Get each possessed object
+		for ( int i = 0; i < currentDebris.Count; i++ )
+		{
+			// Create animation
+			Tween t = currentDebris [ i ].Icon.DOFade ( 0f, OBSTRUCTION_ANIMATION_TIME )
+				.OnComplete ( ( ) =>
+				{
+					// Remove obstruction from player data
+					Owner.tileObjects.Remove ( currentDebris [ i ] );
 
-				// Remove obstruction from the board
-				currentObstruction.CurrentHex.CurrentObject = null;
+					// Remove obstruction from the board
+					currentDebris [ i ].CurrentHex.Tile.CurrentObject = null;
 
-				// Remove obstruction
-				Destroy ( currentObstruction.gameObject );
-				currentObstruction = null;
-			} );
+					// Remove obstruction
+					Destroy ( currentDebris [ i ].gameObject );
+				} );
 
-		// Add animation to queue
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+			// Add animation to queue
+			GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, i == 0 ) );
+		}
 	}
 
 	#endregion // Private Functions

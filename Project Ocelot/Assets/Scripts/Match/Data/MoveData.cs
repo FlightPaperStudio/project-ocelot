@@ -9,13 +9,8 @@ public class MoveData
 	public enum MoveType
 	{
 		MOVE,
-		MOVE_TO_WIN,
 		JUMP,
-		JUMP_TO_WIN,
-		ATTACK,
-		ATTACK_TO_WIN,
-		SPECIAL,
-		SPECIAL_ATTACK
+		SPECIAL
 	}
 
 	public enum MoveDirection
@@ -70,34 +65,138 @@ public class MoveData
 		private set;
 	}
 
-	/// <summary>
-	/// The tiles of units that would be attacked from this move.
-	/// </summary>
-	public Hex [ ] Attacks
+	public Hex [ ] AssistTargets
 	{
 		get;
 		private set;
 	}
 
-	public MoveData ( Hex hex, MoveData prior, MoveType type, MoveDirection direction, params Hex [ ] attacks )
+	/// <summary>
+	/// The tiles of units that would be attacked from this move.
+	/// </summary>
+	public Hex [ ] AttackTargets
+	{
+		get;
+		private set;
+	}
+
+	/// <summary>
+	/// Whether or not multiple moves are associated with the same destination.
+	/// </summary>
+	public bool IsConflicted
+	{
+		get;
+		set;
+	}
+
+	/// <summary>
+	/// Whether or not this move has an assist.
+	/// </summary>
+	public bool IsAssist
+	{
+		get
+		{
+			// Check for assist targets
+			return AssistTargets != null && AssistTargets.Length > 0;
+		}
+	}
+
+	/// <summary>
+	/// Whether or not this move has an attack.
+	/// </summary>
+	public bool IsAttack
+	{
+		get
+		{
+			// Check for attack targets
+			return AttackTargets != null && AttackTargets.Length > 0;
+		}
+	}
+
+	/// <summary>
+	/// Whether or not the move will result in a victory.
+	/// </summary>
+	public bool IsVictoryMove
+	{
+		get;
+		set;
+	}
+
+	public MoveData ( Hex hex, MoveData prior, MoveType type, MoveDirection direction, Hex assistTarget, Hex attackTarget )
 	{
 		Destination = hex;
 		PriorMove = prior;
 		Type = type;
 		Direction = direction;
-		Attacks = attacks;
-		isConflicted = false;
+		AssistTargets = assistTarget != null ? new Hex [ ] { assistTarget } : null;
+		AttackTargets = attackTarget != null ? new Hex [ ] { attackTarget } : null;
+		IsConflicted = false;
+		IsVictoryMove = false;
 		Value = 0;
 	}
 
-	public MoveData ( Hex hex, MoveData prior, MoveType type, int direction, params Hex [ ] attacks )
+	public MoveData ( Hex hex, MoveData prior, MoveType type, int direction, Hex assistTarget, Hex attackTarget )
 	{
 		Destination = hex;
 		PriorMove = prior;
 		Type = type;
 		Direction = (MoveDirection)direction;
-		Attacks = attacks;
-		isConflicted = false;
+		AssistTargets = assistTarget != null ? new Hex [ ] { assistTarget } : null;
+		AttackTargets = attackTarget != null ? new Hex [ ] { attackTarget } : null;
+		IsConflicted = false;
+		IsVictoryMove = false;
+		Value = 0;
+	}
+
+	public MoveData ( Hex hex, MoveData prior, MoveType type, MoveDirection direction, Hex [ ] assistTargets, Hex [ ] attackTargets )
+	{
+		Destination = hex;
+		PriorMove = prior;
+		Type = type;
+		Direction = direction;
+		AssistTargets = assistTargets;
+		AttackTargets = attackTargets;
+		IsConflicted = false;
+		IsVictoryMove = false;
+		Value = 0;
+	}
+
+	public MoveData ( Hex hex, MoveData prior, MoveType type, int direction, Hex [ ] assistTargets, Hex [ ] attackTargets )
+	{
+		Destination = hex;
+		PriorMove = prior;
+		Type = type;
+		Direction = (MoveDirection)direction;
+		AssistTargets = assistTargets;
+		AttackTargets = attackTargets;
+		IsConflicted = false;
+		IsVictoryMove = false;
+		Value = 0;
+	}
+
+	public MoveData ( Hex hex, MoveData prior, MoveType type, MoveDirection direction )
+	{
+		Destination = hex;
+		PriorMove = prior;
+		Type = type;
+		Direction = direction;
+		AssistTargets = null;
+		AttackTargets = null;
+		IsConflicted = false;
+		IsVictoryMove = false;
+		Value = 0;
+	}
+
+	public MoveData ( Hex hex, MoveData prior, MoveType type, int direction )
+	{
+		Destination = hex;
+		PriorMove = prior;
+		Type = type;
+		Direction = (MoveDirection)direction;
+		AssistTargets = null;
+		AttackTargets = null;
+		IsConflicted = false;
+		IsVictoryMove = false;
 		Value = 0;
 	}
 
@@ -109,7 +208,7 @@ public class MoveData
 
 
 
-	public bool isConflicted;
+
 
 	// Tracks the value of the move
 	// This is used only for the AI's move determination

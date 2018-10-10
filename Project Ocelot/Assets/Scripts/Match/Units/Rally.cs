@@ -5,7 +5,7 @@ using DG.Tweening;
 
 public class Rally : HeroUnit
 {
-	/// <summary>
+	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
 	///
 	/// Hero 5 Unit Data
 	/// 
@@ -27,17 +27,21 @@ public class Rally : HeroUnit
 	/// 
 	/// Ability 2
 	/// ID: 20
-	/// Name: Backflip
-	/// Description: Jumps backwards for increased mobility
+	/// Name: Dual Assist
+	/// Description: Moves diagonally by two assisting allies.
 	/// Type: Special
-	/// Cooldown: 3 Rounds
-	/// KO Opponents: Active
+	/// Cooldown: 5 Rounds
+	/// Opponent Assist: Active
 	/// 
-	/// </summary>
+	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
 
-	// Ability information
-	private int rallyRegen;
+	#region Ability Data
+
+	private int rallyRegen = 0;
+
 	private const float RALLY_ANIMATION_TIME = 0.75f;
+
+	#endregion // Ability Data
 
 	#region Public Unit Override Functions
 
@@ -56,42 +60,67 @@ public class Rally : HeroUnit
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves available.
 	/// </summary>
-	public override void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
+	public override void FindMoves ( Hex hex, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Get base moves
-		base.FindMoves ( t, prerequisite, returnOnlyJumps );
+		base.FindMoves ( hex, prerequisite, returnOnlyJumps );
 
 		// Get Backflip moves
 		if ( SpecialAvailabilityCheck ( InstanceData.Ability2, prerequisite ) )
-			GetBackflip ( t, prerequisite, returnOnlyJumps );
+			GetDualAssist ( hex, prerequisite );
 	}
 
 	#endregion // Public Unit Override Functions
 
 	#region Protected Unit Override Functions
 
-	/// <summary>
-	/// Have the unit jump an adjacent unit.
-	/// This function builds the animation queue from the move data.
-	/// </summary>
-	protected override void Jump ( MoveData data )
+	protected override void GetAssisted ( MoveData data )
 	{
-		// Move as normal
-		base.Jump ( data );
-
 		// Check for Rally
 		if ( PassiveAvailabilityCheck ( InstanceData.Ability1, data ) )
 		{
-			// Get unit
-			Unit u;
-			if ( data.PriorMove == null )
-				u = currentTile.neighbors [ (int)data.Direction ].CurrentUnit;
-			else
-				u = data.PriorMove.Destination.neighbors [ (int)data.Direction ].CurrentUnit;
+			// Check for Dual Assist
+			if ( data.Type == MoveData.MoveType.SPECIAL )
+			{
+				// Track if Rally has been used
+				bool usedRally = false;
 
-			// Check unit status
-			if ( u.Status.CanMove )
-				ActivateRally ( u );
+				// Check each target
+				for ( int i = 0; i < data.AttackTargets.Length; i++ )
+				{
+					// Check for unit
+					if ( data.AttackTargets [ i ].Tile.CurrentUnit == null )
+						continue;
+
+					// Get assisted unit
+					Unit unit = data.AttackTargets [ i ].Tile.CurrentUnit;
+
+					// Assist unit
+					unit.Assist ( );
+
+					// Check status
+					if ( unit.Owner == Owner && unit.Status.CanMove && unit.Status.CanBeAffectedByAbility )
+					{
+						// Rally unit
+						ActivateRally ( unit, !usedRally );
+
+						// Mark that rally has been used
+						usedRally = true;
+					}
+				}
+			}
+			else
+			{
+				// Get assisted unit
+				Unit unit = data.AttackTargets [ 0 ].Tile.CurrentUnit;
+
+				// Assist unit
+				unit.Assist ( );
+
+				// Check status
+				if ( unit.Status.CanMove && unit.Status.CanBeAffectedByAbility )
+					ActivateRally ( unit );
+			}
 		}
 	}
 
@@ -152,7 +181,7 @@ public class Rally : HeroUnit
 			return false;
 
 		// Check for attack
-		if ( prerequisite.Type == MoveData.MoveType.ATTACK || prerequisite.Type == MoveData.MoveType.SPECIAL_ATTACK )
+		if ( prerequisite.IsAttack )
 			return false;
 
 		// Return that the ability is available
@@ -173,6 +202,10 @@ public class Rally : HeroUnit
 		if ( PriorMoveTypeCheck ( prerequisite ) )
 			return false;
 
+		// Check for destination
+		if ( !DualAssistCheck ( prerequisite == null ? CurrentHex : prerequisite.Destination, prerequisite ) )
+			return false;
+
 		// Return that the ability is available
 		return true;
 	}
@@ -183,104 +216,28 @@ public class Rally : HeroUnit
 	/// </summary>
 	protected override void UseSpecial ( MoveData data )
 	{
-		// Check for attack
-		if ( data.Type == MoveData.MoveType.SPECIAL_ATTACK )
-		{
-			// Create animation
-			Tween t = transform.DOMove ( data.Destination.transform.position, MOVE_ANIMATION_TIME * 2 )
-				.OnStart ( ( ) =>
-				{
-					// Mark that the ability is active
-					InstanceData.Ability2.IsActive = true;
-					GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability2 );
-				} )
-				.OnComplete ( ( ) =>
-				{
-					// Mark that the ability is no longer active
-					InstanceData.Ability2.IsActive = false;
-
-					// Start teleport cooldown
-					StartCooldown ( InstanceData.Ability2 );
-
-					// Set unit and tile data
-					SetUnitToTile ( data.Destination );
-				} );
-
-			// Add animation to queue
-			GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
-
-			// Attack the unit
-			AttackUnit ( data );
-		}
-		else
-		{
-			// Check for normal move
-			if ( data.PriorMove == null && currentTile.neighbors [ (int)data.Direction ] == data.Destination )
+		// Create animation
+		Tween t = transform.DOMove ( data.Destination.transform.position, MOVE_ANIMATION_TIME * 2 )
+			.OnStart ( ( ) =>
 			{
-				// Create animation
-				Tween t = transform.DOMove ( data.Destination.transform.position, MOVE_ANIMATION_TIME )
-					.OnStart ( ( ) =>
-					{
-						// Mark that the ability is active
-						InstanceData.Ability2.IsActive = true;
-						GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability2 );
-					} )
-					.OnComplete ( ( ) =>
-					{
-						// Mark that the ability is no longer active
-						InstanceData.Ability2.IsActive = false;
-
-						// Start teleport cooldown
-						StartCooldown ( InstanceData.Ability2 );
-
-						// Set unit and tile data
-						SetUnitToTile ( data.Destination );
-					} );
-
-				// Add animation to queue
-				GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
-			}
-			else
+				// Mark that the ability is active
+				InstanceData.Ability2.IsActive = true;
+				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability2 );
+			} )
+			.OnComplete ( ( ) =>
 			{
-				// Create animation
-				Tween t = transform.DOMove ( data.Destination.transform.position, MOVE_ANIMATION_TIME * 2 )
-					.OnStart ( ( ) =>
-					{
-						// Mark that the ability is active
-						InstanceData.Ability2.IsActive = true;
-						GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability2 );
-					} )
-					.OnComplete ( ( ) =>
-					{
-						// Mark that the ability is no longer active
-						InstanceData.Ability2.IsActive = false;
+				// Mark that the ability is no longer active
+				InstanceData.Ability2.IsActive = false;
 
-						// Start teleport cooldown
-						StartCooldown ( InstanceData.Ability2 );
+				// Start teleport cooldown
+				StartCooldown ( InstanceData.Ability2 );
 
-						// Set unit and tile data
-						SetUnitToTile ( data.Destination );
-					} );
+				// Set unit and tile data
+				SetUnitToTile ( data.Destination );
+			} );
 
-				// Add animation to queue
-				GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
-
-				// Check for Rally
-				if ( InstanceData.Ability1.IsEnabled && InstanceData.Ability1.CurrentDuration > 0 )
-				{
-					// Get unit
-					Unit u;
-					if ( data.PriorMove == null )
-						u = currentTile.neighbors [ (int)data.Direction ].CurrentUnit;
-					else
-						u = data.PriorMove.Destination.neighbors [ (int)data.Direction ].CurrentUnit;
-
-					// Check unit status
-					if ( u.Status.CanMove && u.Owner == Owner )
-						ActivateRally ( u );
-				}
-			}
-		}
+		// Add animation to queue
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
 	}
 
 	#endregion // Protected HeroUnit Override Functions
@@ -291,10 +248,11 @@ public class Rally : HeroUnit
 	/// Activates the Rally ability. This adds a unit to the unit queue.
 	/// This function builds the animation queue.
 	/// </summary>
-	private void ActivateRally ( Unit u )
+	/// <param name="unit"> The assisting ally. </param>
+	private void ActivateRally ( Unit unit, bool consumeDuration = true )
 	{
 		// Create animation
-		Tween t = u.sprite.DOColor ( Color.white, RALLY_ANIMATION_TIME )
+		Tween t = unit.sprite.DOColor ( Color.white, RALLY_ANIMATION_TIME )
 			.SetLoops ( 2, LoopType.Yoyo )
 			.OnStart ( ( ) =>
 			{
@@ -308,17 +266,17 @@ public class Rally : HeroUnit
 				InstanceData.Ability1.IsActive = false;
 
 				// Decrease Rally duration
-				InstanceData.Ability1.CurrentDuration--;
+				if ( consumeDuration )
+					InstanceData.Ability1.CurrentDuration--;
 
 				// Add unit to unit queue
-				GM.UnitQueue.Add ( u );
+				GM.UnitQueue.Add ( unit );
 
 				// Apply the unit's status effect
-				u.Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.RALLIED, 1, this );
-				//u.Status.AddStatusEffect ( InstanceData.Ability1.Icon, RALLY_STATUS_PROMPT, this, 1 );
+				unit.Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.RALLIED, 1, this );
 
 				// Update HUD
-				GM.UI.matchInfoMenu.GetPlayerHUD ( u ).UpdateStatusEffects ( u.InstanceID, u.Status );
+				GM.UI.matchInfoMenu.GetPlayerHUD ( unit ).UpdateStatusEffects ( unit.InstanceID, unit.Status );
 				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
 			} );
 
@@ -327,51 +285,128 @@ public class Rally : HeroUnit
 	}
 
 	/// <summary>
-	/// Marks every tile available to the Backflip ability.
+	/// Checks if a destination for the Dual Assist ability is available.
 	/// </summary>
-	private void GetBackflip ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
+	/// <param name="hex"> The tile being moved from. </param>
+	/// <param name="prerequisite"> The Move Data for any moves required for the unit to reach this tile. </param>
+	/// <returns> Whether or not a destination for the Dual Assist ability is available. </returns>
+	private bool DualAssistCheck ( Hex hex, MoveData prerequisite )
 	{
-		// Store which tiles are to be ignored
-		IntPair back = GetBackDirection ( Owner.TeamDirection );
-
 		// Check each neighboring tile
-		for ( int i = 0; i < t.neighbors.Length; i++ )
+		for ( int i = 0; i < hex.Neighbors.Length; i++ )
 		{
-			// Ignore tiles that would allow for backward movement
-			if ( i != back.FirstInt && i != back.SecondInt )
-				continue;
+			// Check each direction
+			if ( DualAssistDirectionCheck ( hex, prerequisite, i ) )
+				return true;
+		}
 
-			// Check if this unit can move to the neighboring tile
-			if ( !returnOnlyJumps && OccupyTileCheck ( t.neighbors [ i ], prerequisite ) )
-			{
-				// Add as an available move
-				MoveList.Add ( new MoveData ( t.neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i ) );
-			}
-			// Check if this unit can jump the neighboring tile
-			else if ( JumpTileCheck ( t.neighbors [ i ] ) && OccupyTileCheck ( t.neighbors [ i ].neighbors [ i ], prerequisite ) )
+		// Return that are no units in position
+		return false;
+	}
+
+	/// <summary>
+	/// Marks every tile available for the Dual Assist ability.
+	/// </summary>
+	/// <param name="hex"> The tile being moved from. </param>
+	/// <param name="prerequisite"> The Move Data for any moves required for the unit to reach this tile. </param>
+	private void GetDualAssist ( Hex hex, MoveData prerequisite )
+	{
+		// Check each neighboring tile
+		for ( int i = 0; i < hex.Neighbors.Length; i++ )
+		{
+			// Check for destination
+			if ( DualAssistDirectionCheck ( hex, prerequisite, i ) )
 			{
 				// Track move data
-				MoveData m;
+				MoveData move = new MoveData ( hex.Diagonals [ i ], prerequisite, MoveData.MoveType.SPECIAL, i, new Hex [ ] { hex.Neighbors [ i ], hex.Neighbors [ ( i + 1 ) % hex.Neighbors.Length ] }, null );
 
-				// Check if the neighboring unit can be attacked
-				if ( InstanceData.Ability2.IsPerkEnabled && t.neighbors [ i ].CurrentUnit != null && t.neighbors [ i ].CurrentUnit.UnitAttackCheck ( this ) )
-				{
-					// Add as an available attack
-					m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL_ATTACK, i, t.neighbors [ i ] );
-				}
-				else
-				{
-					// Add as an available jump
-					m = new MoveData ( t.neighbors [ i ].neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i );
-				}
+				// Add move to move list
+				MoveList.Add ( move );
 
-				// Add move to the move list
-				MoveList.Add ( m );
-
-				// Find additional jumps
-				FindMoves ( t.neighbors [ i ].neighbors [ i ], m, true );
+				// Find additional moves
+				FindMoves ( hex.Diagonals [ i ], move, true );
 			}
 		}
+	}
+
+	/// <summary>
+	/// Check if a destination for the Dual Assist ability is available in particular direction.
+	/// </summary>
+	/// <param name="hex"> The tile being moved from. </param>
+	/// <param name="prerequisite"> The Move Data for any moves required for the unit to reach this tile. </param>
+	/// <param name="direction"> The direction toward the diagnol hex. The diagnol is a 1/6th clockwise turn from the direciton. </param>
+	/// <returns></returns>
+	private bool DualAssistDirectionCheck ( Hex hex, MoveData prerequisite, int direction )
+	{
+		// Calculate secondary direction for dual assist
+		int secondaryDirection = ( direction + 1 ) % hex.Neighbors.Length;
+
+		// Check for tile
+		if ( hex.Neighbors [ direction ] == null || hex.Neighbors [ secondaryDirection ] == null )
+			return false;
+
+		// Check if tile is occupied
+		if ( !hex.Neighbors [ direction ].Tile.IsOccupied || !hex.Neighbors [ secondaryDirection ].Tile.IsOccupied )
+			return false;
+
+		// Check for first unit
+		if ( hex.Neighbors [ direction ].Tile.CurrentUnit != null )
+		{
+			// Check perk
+			if ( !InstanceData.Ability2.IsPerkEnabled && hex.Neighbors [ direction ].Tile.CurrentUnit.Owner != Owner )
+				return false;
+
+			// Check if unit can assist
+			if ( !hex.Neighbors [ direction ].Tile.CurrentUnit.Status.CanAssist )
+				return false;
+		}
+
+		// Check for first object
+		if ( hex.Neighbors [ direction ].Tile.CurrentObject != null )
+		{
+			// Check perk
+			if ( !InstanceData.Ability2.IsPerkEnabled && hex.Neighbors [ direction ].Tile.CurrentObject.Caster.Owner != Owner )
+				return false;
+
+			// Check if object can be jumped
+			if ( !hex.Neighbors [ direction ].Tile.CurrentObject.CanAssist )
+				return false;
+		}
+
+		// Check for second unit
+		if ( hex.Neighbors [ secondaryDirection ].Tile.CurrentUnit != null )
+		{
+			// Check perk
+			if ( !InstanceData.Ability2.IsPerkEnabled && hex.Neighbors [ secondaryDirection ].Tile.CurrentUnit.Owner != Owner )
+				return false;
+
+			// Check if unit can assist
+			if ( !hex.Neighbors [ secondaryDirection ].Tile.CurrentUnit.Status.CanAssist )
+				return false;
+		}
+
+		// Check for second object
+		if ( hex.Neighbors [ secondaryDirection ].Tile.CurrentObject != null )
+		{
+			// Check perk
+			if ( !InstanceData.Ability2.IsPerkEnabled && hex.Neighbors [ secondaryDirection ].Tile.CurrentObject.Caster.Owner != Owner )
+				return false;
+
+			// Check if object can be jumped
+			if ( !hex.Neighbors [ secondaryDirection ].Tile.CurrentObject.CanAssist )
+				return false;
+		}
+
+		// Check for destination
+		if ( hex.Diagonals [ direction ] == null )
+			return false;
+
+		// Check if destination can be occupied
+		if ( !OccupyTileCheck ( hex.Diagonals [ direction ], prerequisite ) )
+			return false;
+
+		// Return that dual assit is available in this direction
+		return true;
 	}
 
 	#endregion // Private Functions

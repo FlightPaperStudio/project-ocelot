@@ -5,13 +5,13 @@ using DG.Tweening;
 
 public class GrimReaper : HeroUnit
 {
-	/// <summary>
+	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
 	///
 	/// Hero 4 Unit Data
 	/// 
 	/// ID: 12
 	/// Name: Hero 4
-	/// Nickname: Grim
+	/// Nickname: Grimm
 	/// Bio: ???
 	/// Finishing Move: ???
 	/// Role: Defense
@@ -23,7 +23,7 @@ public class GrimReaper : HeroUnit
 	/// Description: Attacking an opponent provides renewed energy and additional protection for a brief period
 	/// Type: Passive
 	/// Duration: 1 Turn
-	/// Refresh Cooldowns: Active
+	/// Refresh Abilities: Active
 	/// 
 	/// Ability 2
 	/// ID: 18
@@ -31,15 +31,19 @@ public class GrimReaper : HeroUnit
 	/// Description: Instantly appear at the location of any KO'd ally
 	/// Type: Special
 	/// Cooldown: 5 Turns
-	/// Continue Movement: Active
+	/// Target Opponents: Active
 	/// 
-	/// </summary>
+	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
 
-	// Ability information
+	#region Ability Data
+
 	public SpriteRenderer barrier;
-	public List<Tile> grimReaperTiles = new List<Tile> ( );
+	public List<Hex> grimReaperTiles = new List<Hex> ( );
+
 	private const float LIFE_DRAIN_FADE = 200f / 255f;
 	private const float LIFE_DRAIN_ANIMATION_TIME = 0.75f;
+
+	#endregion // Ability Data
 
 	#region MonoBehaviour Functions
 
@@ -50,7 +54,8 @@ public class GrimReaper : HeroUnit
 	{
 		// Set Grim Reaper
 		if ( InstanceData.Ability2.IsEnabled )
-			Owner.standardKOdelegate += AddGrimReaperTile;
+			foreach ( Player player in GM.Players )
+				player.standardKOdelegate += AddGrimReaperTile;
 	}
 
 	#endregion // MonoBehaviour Functions
@@ -60,10 +65,10 @@ public class GrimReaper : HeroUnit
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves available.
 	/// </summary>
-	public override void FindMoves ( Tile t, MoveData prerequisite, bool returnOnlyJumps )
+	public override void FindMoves ( Hex hex, MoveData prerequisite, bool returnOnlyJumps )
 	{
 		// Get base moves
-		base.FindMoves ( t, prerequisite, returnOnlyJumps );
+		base.FindMoves ( hex, prerequisite, returnOnlyJumps );
 
 		// Get Grim Reaper moves
 		if ( SpecialAvailabilityCheck ( InstanceData.Ability2, prerequisite ) )
@@ -84,7 +89,6 @@ public class GrimReaper : HeroUnit
 
 			// Remove status effect
 			Status.RemoveStatusEffect ( StatusEffectDatabase.StatusEffectType.OVERPOWERED, this );
-			//Status.RemoveStatusEffect ( InstanceData.Ability1.Icon, LIFE_DRAIN_STATUS_PROMPT, this );
 			GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
 		}
 		else
@@ -99,9 +103,10 @@ public class GrimReaper : HeroUnit
 				{
 					// Remove delegates
 					if ( InstanceData.Ability2.IsEnabled )
-						foreach ( Unit u in Owner.UnitInstances )
-							if ( u != null )
-								u.koDelegate -= AddGrimReaperTile;
+						foreach ( Player player in GM.Players)
+							foreach ( Unit unit in player.UnitInstances )
+								if ( unit != null )
+									unit.koDelegate -= AddGrimReaperTile;
 
 					// Hide barrier
 					barrier.gameObject.SetActive ( false );
@@ -115,7 +120,7 @@ public class GrimReaper : HeroUnit
 					Owner.UnitInstances.Remove ( this );
 
 					// Remove unit reference from the tile
-					currentTile.CurrentUnit = null;
+					CurrentHex.Tile.CurrentUnit = null;
 
 					// Delete the unit
 					Destroy ( this.gameObject );
@@ -263,11 +268,12 @@ public class GrimReaper : HeroUnit
 	/// <summary>
 	/// Adds the location of a unit to the list of Grim Reaper tiles when the unit gets KO'd.
 	/// </summary>
-	private void AddGrimReaperTile ( Unit u )
+	/// <param name="unit"> The KO'd unit. </param>
+	private void AddGrimReaperTile ( Unit unit )
 	{
 		// Add tile
-		if ( u.Owner == Owner )
-			grimReaperTiles.Add ( u.currentTile );
+		if ( InstanceData.Ability2.IsPerkEnabled || unit.Owner == Owner )
+			grimReaperTiles.Add ( unit.CurrentHex );
 	}
 
 	/// <summary>
@@ -276,20 +282,19 @@ public class GrimReaper : HeroUnit
 	private void GetGrimReaper ( )
 	{
 		// Check each KO location
-		foreach ( Tile t in grimReaperTiles )
+		foreach ( Hex hex in grimReaperTiles )
 		{
 			// Check if tile is unoccupied
-			if ( OccupyTileCheck ( t, null ) )
+			if ( OccupyTileCheck ( hex, null ) )
 			{
 				// Create move
-				MoveData m = new MoveData ( t, null, MoveData.MoveType.SPECIAL, 0 );
+				MoveData move = new MoveData ( hex, null, MoveData.MoveType.SPECIAL, MoveData.MoveDirection.DIRECT );
 
 				// Add as an available special move
-				MoveList.Add ( m );
+				MoveList.Add ( move );
 
 				// Continue movement
-				if ( InstanceData.Ability2.IsPerkEnabled )
-					FindMoves ( t, m, false );
+				FindMoves ( hex, move, false );
 			}
 		}
 	}
@@ -326,7 +331,6 @@ public class GrimReaper : HeroUnit
 
 				// Apply status effect
 				Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.OVERPOWERED, InstanceData.Ability1.Duration, this );
-				//Status.AddStatusEffect ( InstanceData.Ability1.Icon, LIFE_DRAIN_STATUS_PROMPT, this, InstanceData.Ability1.Duration );
 				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
 				GM.UI.unitHUD.UpdateStatusEffects ( );
 			} );

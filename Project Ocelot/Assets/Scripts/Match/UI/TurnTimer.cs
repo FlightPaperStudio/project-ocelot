@@ -179,7 +179,7 @@ public class TurnTimer : MonoBehaviour
 			MoveData move = unit.MoveList [ moveIndex ];
 
 			// Clear board
-			GM.Board.ResetTiles ( );
+			GM.Grid.ResetTiles ( );
 
 			// Force a panic move and end the player's turn
 			StartCoroutine ( PanicMove ( unit, move.Destination ) );
@@ -198,18 +198,18 @@ public class TurnTimer : MonoBehaviour
 	/// <summary>
 	/// Ends the current player's turn early by forcing a random unit to make a random move.
 	/// </summary>
-	/// <param name="u"> The random unit selected for a panic move. </param>
-	/// <param name="t"> The tile the unit will move to. </param>
-	private IEnumerator PanicMove ( Unit u, Tile t )
+	/// <param name="unit"> The random unit selected for a panic move. </param>
+	/// <param name="hex"> The tile the unit will move to. </param>
+	private IEnumerator PanicMove ( Unit unit, Hex hex )
 	{
 		// Wait for slide animation
 		yield return GM.UI.splash.Slide ( "Time's Up!\n<size=75%><color=white>Panic!", new Color32 ( 200, 50, 50, 255 ), true ).WaitForCompletion ( );
 
 		// Select the unit
-		GM.SelectUnit ( u );
+		GM.SelectUnit ( unit );
 
 		// Select move
-		GM.SelectMove ( t );
+		GM.SelectMove ( hex );
 
 		// Execute move
 		GM.ExecuteMove ( true );

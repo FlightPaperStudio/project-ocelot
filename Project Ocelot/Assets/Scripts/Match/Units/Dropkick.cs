@@ -5,7 +5,7 @@ using DG.Tweening;
 
 public class Dropkick : HeroUnit
 {
-	/// <summary>
+	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
 	///
 	/// Hero 10 Unit Data
 	/// 
@@ -37,11 +37,11 @@ public class Dropkick : HeroUnit
 	/// Target Allies: Active
 	/// Status Effects (Self): Exhaustion
 	/// 
-	/// </summary>
+	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
 
 	#region Ability Data
 
-	private Dictionary<Tile, int> dropkickTargetDirection = new Dictionary<Tile, int> ( );
+	private Dictionary<Hex, int> dropkickTargetDirection = new Dictionary<Hex, int> ( );
 
 	private const float DIVE_ANIMATION_TIME = 1.0f;
 	private const float DIVE_ANIMATION_SCALE = 2.0f;
@@ -63,7 +63,7 @@ public class Dropkick : HeroUnit
 
 		// Get Divebomb moves
 		if ( SpecialAvailabilityCheck ( InstanceData.Ability1, prerequisite ) )
-			GetDivebomb ( hex, InstanceData.Ability1.PerkValue - 1 );
+			GetDivebomb ( );
 
 		// Get Dropkick availability
 		InstanceData.Ability2.IsAvailable = CommandAvailabilityCheck ( InstanceData.Ability2, prerequisite );
@@ -73,91 +73,11 @@ public class Dropkick : HeroUnit
 
 	#region Public HeroUnit Override Functions
 
-	/// <summary>
-	/// Sets up the hero's command use.
-	/// </summary>
-	public override void StartCommand ( AbilityInstanceData ability )
+	public override void ExecuteCommand ( )
 	{
-		// Clear the board
-		base.StartCommand ( ability );
+		// Execute base command
+		base.ExecuteCommand ( );
 
-		// Clear previous targets
-		dropkickTargetDirection.Clear ( );
-
-		// Get back direction
-		//IntPair back = GetBackDirection ( Owner.TeamDirection );
-
-		// Check each neighbor tile
-		for ( int i = 0; i < CurrentHex.Neighbors.Length; i++ )
-		{
-			// Check for back direction
-			//if ( i == back.FirstInt || i == back.SecondInt )
-			//	continue;
-
-			// Check for tile
-			if ( CurrentHex.Neighbors [ i ] == null )
-				continue;
-
-			// Check if occupied
-			if ( !CurrentHex.Neighbors [ i ].Tile.IsOccupied )
-				continue;
-
-			// Check for object
-			if ( CurrentHex.Neighbors [ i ].Tile.CurrentObject != null )
-			{
-				// Check if the object can be moved
-				if ( !CurrentHex.Neighbors [ i ].Tile.CurrentObject.CanBeMoved )
-					continue;
-
-				// Check if the object is an ally
-				if ( !InstanceData.Ability2.IsPerkEnabled && CurrentHex.Neighbors [ i ].Tile.CurrentObject.Caster.Owner == Owner )
-					continue;
-
-				// Check for knockback tile
-				if ( !KnockbackTileCheck ( currentTile.neighbors [ i ].neighbors [ i ], i, true ) )
-					continue;
-
-				// Mark target
-				CurrentHex.Neighbors [ i ].Tile.SetTileState ( TileState.AvailableCommand );
-
-				// Store direction
-				dropkickTargetDirection.Add ( CurrentHex.Neighbors [ i ], i );
-			}
-
-			// Check for unit
-			if ( CurrentHex.Neighbors [ i ].Tile.CurrentUnit != null )
-			{
-				// Check if the unit can be moved
-				if ( !CurrentHex.Neighbors [ i ].Tile.CurrentUnit.Status.CanBeMoved )
-					continue;
-
-				// Check if the unit is incorporeal
-				if ( CurrentHex.Neighbors [ i ].Tile.CurrentUnit.Status.CanBeAffectedPhysically )
-					continue;
-
-				// Check if the unit is an ally
-				if ( !InstanceData.Ability2.IsPerkEnabled && CurrentHex.Neighbors [ i ].Tile.CurrentUnit.Owner == Owner )
-					continue;
-
-				// Check for knockback tile
-				if ( !KnockbackTileCheck ( CurrentHex.Neighbors [ i ].Neighbors [ i ], i, InstanceData.Ability2.IsPerkEnabled ) )
-					continue;
-
-				// Mark target
-				CurrentHex.Neighbors [ i ].Tile.SetTileState ( TileState.AvailableCommand );
-
-				// Store direction
-				dropkickTargetDirection.Add ( CurrentHex.Neighbors [ i ], i );
-			}
-		}
-	}
-
-	/// <summary>
-	/// Selects the unit to dropkick.
-	/// </summary>
-	/// <param name="t"> The selected tile for the command. </param>
-	public override void SelectCommandTile ( Tile t )
-	{
 		// Pause turn timer
 		if ( MatchSettings.TurnTimer )
 			GM.UI.timer.PauseTimer ( );
@@ -166,17 +86,17 @@ public class Dropkick : HeroUnit
 		GM.UI.unitHUD.HideCancelButton ( InstanceData.Ability2 );
 
 		// Clear board
-		GM.Board.ResetTiles ( );
+		GM.Grid.ResetTiles ( );
 
 		// Create animation
 		Sequence s = DOTween.Sequence ( );
 
 		// Animate dropkick
-		s.Append ( transform.DOMove ( CurrentHex.transform.position + ( ( t.transform.position - CurrentHex.transform.position ) * 0.5f ), MOVE_ANIMATION_TIME / 2 ) );
+		s.Append ( transform.DOMove ( CurrentHex.transform.position + ( ( GM.SelectedCommand.PrimaryTarget.transform.position - CurrentHex.transform.position ) * 0.5f ), MOVE_ANIMATION_TIME / 2 ) );
 		s.Append ( transform.DOMove ( CurrentHex.transform.position, MOVE_ANIMATION_TIME / 2 ) );
 
 		// Knockback targets
-		DropkickKnockback ( t, dropkickTargetDirection [ t ], s );
+		DropkickKnockback ( GM.SelectedCommand.PrimaryTarget, dropkickTargetDirection [ GM.SelectedCommand.PrimaryTarget ], s );
 
 		// End animation
 		s.OnComplete ( ( ) =>
@@ -208,6 +128,79 @@ public class Dropkick : HeroUnit
 
 	#region Protected HeroUnit Override Functions
 
+	protected override void GetCommandTargets ( )
+	{
+		// Clear previous targets
+		dropkickTargetDirection.Clear ( );
+
+		// Get back direction
+		//IntPair back = GetBackDirection ( Owner.TeamDirection );
+
+		// Check each neighbor tile
+		for ( int i = 0; i < CurrentHex.Neighbors.Length; i++ )
+		{
+			// Check for back direction
+			//if ( i == back.FirstInt || i == back.SecondInt )
+			//	continue;
+			
+			// Check for tile
+			if ( CurrentHex.Neighbors [ i ] == null )
+				continue;
+			
+			// Check if occupied
+			if ( !CurrentHex.Neighbors [ i ].Tile.IsOccupied )
+				continue;
+			
+			// Check for object
+			if ( CurrentHex.Neighbors [ i ].Tile.CurrentObject != null )
+			{
+				// Check if the object can be moved
+				if ( !CurrentHex.Neighbors [ i ].Tile.CurrentObject.CanBeMoved )
+					continue;
+				
+				// Check if the object is an ally
+				if ( !InstanceData.Ability2.IsPerkEnabled && CurrentHex.Neighbors [ i ].Tile.CurrentObject.Caster.Owner == Owner )
+					continue;
+
+				// Check for knockback tile
+				if ( !KnockbackTileCheck ( CurrentHex.Neighbors [ i ].Neighbors [ i ], i, true ) )
+					continue;
+
+				// Mark target
+				CurrentHex.Neighbors [ i ].Tile.SetTileState ( TileState.AvailableCommand );
+
+				// Store direction
+				dropkickTargetDirection.Add ( CurrentHex.Neighbors [ i ], i );
+			}
+
+			// Check for unit
+			if ( CurrentHex.Neighbors [ i ].Tile.CurrentUnit != null )
+			{
+				// Check if the unit can be moved
+				if ( !CurrentHex.Neighbors [ i ].Tile.CurrentUnit.Status.CanBeMoved )
+					continue;
+
+				// Check if the unit is incorporeal
+				if ( !CurrentHex.Neighbors [ i ].Tile.CurrentUnit.Status.CanBeAffectedPhysically )
+					continue;
+
+				// Check if the unit is an ally
+				if ( !InstanceData.Ability2.IsPerkEnabled && CurrentHex.Neighbors [ i ].Tile.CurrentUnit.Owner == Owner )
+					continue;
+
+				// Check for knockback tile
+				if ( !KnockbackTileCheck ( CurrentHex.Neighbors [ i ].Neighbors [ i ], i, true ) )
+					continue;
+
+				// Mark target
+				CurrentHex.Neighbors [ i ].Tile.SetTileState ( TileState.AvailableCommand );
+
+				// Store direction
+				dropkickTargetDirection.Add ( CurrentHex.Neighbors [ i ], i );
+			}
+		}
+	}
+
 	/// <summary>
 	/// Checks if the hero is capable of using a special ability.
 	/// Returns true if the special ability is available.
@@ -226,7 +219,7 @@ public class Dropkick : HeroUnit
 			return false;
 
 		// Check for edge
-		if ( !EdgeTileCheck ( CurrentHex ) )
+		if ( !CurrentHex.IsEdge )
 			return false;
 
 		// Return that the ability is available
@@ -296,12 +289,56 @@ public class Dropkick : HeroUnit
 		// Get knockback targets
 		for ( int i = 0; i < data.Destination.Neighbors.Length; i++ )
 		{
-			// Check for target
-			if ( data.Destination.Neighbors [ i ] != null && data.Destination.Neighbors [ i ].Tile.CurrentUnit != null && data.Destination.Neighbors [ i ].Tile.CurrentUnit.UnitAttackCheck ( this ) && data.Destination.Neighbors [ i ].Tile.CurrentUnit.Status.CanBeMoved && KnockbackTileCheck ( data.Destination.Neighbors [ i ].Neighbors [ i ], i, false ) )
+			// Check for tile
+			if ( data.Destination.Neighbors [ i ] == null )
+				continue;
+
+			// Check if tile is occupied
+			if ( !data.Destination.Neighbors [ i ].Tile.IsOccupied )
+				continue;
+
+			// Check for unit
+			if ( data.Destination.Neighbors [ i ].Tile.CurrentUnit != null )
 			{
+				// Check if the unit can be attacked
+				if ( !data.Destination.Neighbors [ i ].Tile.CurrentUnit.UnitAttackCheck ( this ) )
+					continue;
+
+				// Check if the unit can be moved
+				if ( !data.Destination.Neighbors [ i ].Tile.CurrentUnit.Status.CanBeMoved )
+					continue;
+
+				// Check if the unit can be affected by abilities
+				if ( !data.Destination.Neighbors [ i ].Tile.CurrentUnit.Status.CanBeAffectedByAbility )
+					continue;
+
+				// Check if the unit can be affected physically
+				if ( !data.Destination.Neighbors [ i ].Tile.CurrentUnit.Status.CanBeAffectedPhysically )
+					continue;
+
+				// Check for knockback destination
+				if ( !KnockbackTileCheck ( data.Destination.Neighbors [ i ].Neighbors [ i ], i, false ) )
+					continue;
+
 				// Create animation for knockback
 				targetCount++;
 				DivebombKnockback ( data.Destination.Neighbors [ i ].Tile.CurrentUnit, data.Destination.Neighbors [ i ].Neighbors [ i ], targetCount <= 1 );
+			}
+
+			// Check for object
+			if ( data.Destination.Neighbors [ i ].Tile.CurrentObject != null )
+			{
+				// Check if the object can be moved
+				if ( !data.Destination.Neighbors [ i ].Tile.CurrentObject.CanBeMoved )
+					continue;
+
+				// Check for knockback destination
+				if ( !KnockbackTileCheck ( data.Destination.Neighbors [ i ].Neighbors [ i ], i, false ) )
+					continue;
+
+				// Create animation for knockback
+				targetCount++;
+				DivebombKnockback ( data.Destination.Neighbors [ i ].Tile.CurrentObject, data.Destination.Neighbors [ i ].Neighbors [ i ], targetCount <= 1 );
 			}
 		}
 	}
@@ -315,19 +352,19 @@ public class Dropkick : HeroUnit
 	/// </summary>
 	/// <param name="hex"> The tile being check as an edge tile. </param>
 	/// <returns> Whether or not the given tile is an edge tile. </returns>
-	private bool EdgeCheck ( Hex hex )
-	{
-		// Check each neighbor tile
-		for ( int i = 0; i < hex.Neighbors.Length; i++ )
-		{
-			// Check for edge
-			if ( hex.Neighbors [ i ] == null )
-				return true;
-		}
+	//private bool EdgeCheck ( Hex hex )
+	//{
+	//	// Check each neighbor tile
+	//	for ( int i = 0; i < hex.Neighbors.Length; i++ )
+	//	{
+	//		// Check for edge
+	//		if ( hex.Neighbors [ i ] == null )
+	//			return true;
+	//	}
 
-		// Return that no edge was found
-		return false;
-	}
+	//	// Return that no edge was found
+	//	return false;
+	//}
 
 	/// <summary>
 	/// Gets all tiles within range of the Divebomb ability.
@@ -369,6 +406,10 @@ public class Dropkick : HeroUnit
 		// Check for unit
 		if ( hex.Tile.CurrentUnit != null )
 		{
+			// Check if recusive
+			if ( !isRecursive )
+				return false;
+
 			// Check if the unit can not be moved
 			if ( !hex.Tile.CurrentUnit.Status.CanBeMoved )
 				return false;
@@ -381,27 +422,23 @@ public class Dropkick : HeroUnit
 			if ( !hex.Tile.CurrentUnit.Status.CanBeAffectedPhysically )
 				return false;
 
-			// Check if tiles should continue to be checked
-			if ( isRecursive )
-			{
-				// Check next tile in the direction
-				return KnockbackTileCheck ( hex.Neighbors [ direction ], direction, isRecursive );
-			}
+			// Check next tile in the direction
+			return KnockbackTileCheck ( hex.Neighbors [ direction ], direction, isRecursive );
 		}
 
 		// Check for object
 		if ( hex.Tile.CurrentObject != null )
 		{
+			// Check if recusive
+			if ( !isRecursive )
+				return false;
+
 			// Check if the unit can not be moved
 			if ( !hex.Tile.CurrentObject.CanBeMoved )
 				return false;
 
-			// Check if tiles should continue to be checked
-			if ( isRecursive )
-			{
-				// Check next tile in the direction
-				return KnockbackTileCheck ( hex.Neighbors [ direction ], direction, isRecursive );
-			}
+			// Check next tile in the direction
+			return KnockbackTileCheck ( hex.Neighbors [ direction ], direction, isRecursive );
 		}
 
 		// Return that there is room for knockback
@@ -430,6 +467,29 @@ public class Dropkick : HeroUnit
 				// Set the target's new current tile
 				target.CurrentHex = destination;
 				destination.Tile.CurrentUnit = target;
+			} );
+
+		// Add animations to queue
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, isAppend ) );
+	}
+
+	/// <summary>
+	/// Knocks a unit back from the Divebomb ability
+	/// </summary>
+	/// <param name="target"> The object affected by the Divebomb ability. </param>
+	/// <param name="destination"> The tile the unit is being knocked back to. </param>
+	private void DivebombKnockback ( TileObject target, Hex destination, bool isAppend )
+	{
+		// Create animation
+		Tween t = target.transform.DOMove ( destination.transform.position, MOVE_ANIMATION_TIME )
+			.OnComplete ( ( ) =>
+			{
+				// Remove target from previous tile
+				target.CurrentHex.Tile.CurrentObject = null;
+
+				// Set the target's new current tile
+				target.CurrentHex = destination;
+				destination.Tile.CurrentObject = target;
 			} );
 
 		// Add animations to queue
@@ -495,7 +555,7 @@ public class Dropkick : HeroUnit
 					continue;
 
 				// Check for knockback tile
-				if ( !KnockbackTileCheck ( CurrentHex.Neighbors [ i ].Neighbors [ i ], i, InstanceData.Ability2.IsPerkEnabled ) )
+				if ( !KnockbackTileCheck ( CurrentHex.Neighbors [ i ].Neighbors [ i ], i, true ) )
 					continue;
 
 				// Return that a unit target has been found
@@ -510,37 +570,37 @@ public class Dropkick : HeroUnit
 	/// <summary>
 	/// Knocks back a target from the Dropkick ability.
 	/// </summary>
-	/// <param name="t"> The current tile of the target. </param>
+	/// <param name="hex"> The current tile of the target. </param>
 	/// <param name="direction"> The direction of the dropkick. </param>
 	/// <param name="s"> The animation sequence for the dropkick. </param>
-	private void DropkickKnockback ( Tile t, int direction, Sequence s )
+	private void DropkickKnockback ( Hex hex, int direction, Sequence s )
 	{
 		// Check for additional targets
-		if ( t.neighbors [ direction ] != null && ( t.neighbors [ direction ].CurrentUnit != null || t.neighbors [ direction ].CurrentObject != null ) )
-			DropkickKnockback ( GetNextDropkickTarget ( t.neighbors [ direction ], direction ), direction, s );
+		if ( hex.Neighbors [ direction ] != null && ( hex.Neighbors [ direction ].Tile.CurrentUnit != null || hex.Neighbors [ direction ].Tile.CurrentObject != null ) )
+			DropkickKnockback ( GetNextDropkickTarget ( hex.Neighbors [ direction ], direction ), direction, s );
 
 		// Check for unit
-		if ( t.CurrentUnit != null )
+		if ( hex.Tile.CurrentUnit != null )
 		{
 			// Store target
-			Unit target = t.CurrentUnit;
+			Unit target = hex.Tile.CurrentUnit;
 
 			// Clear target's current tile
-			t.CurrentUnit = null;
+			hex.Tile.CurrentUnit = null;
 
 			// Interupt target
 			target.InteruptUnit ( );
 
 			// Get destination
-			Tile destination = GetNextDropkickTarget ( t.neighbors [ direction ], direction );
+			Hex destination = GetNextDropkickTarget ( hex.Neighbors [ direction ], direction );
 
 			// Move target
 			Tween animation = target.transform.DOMove ( destination.transform.position, MOVE_ANIMATION_TIME )
 				.OnComplete ( ( ) =>
 				{
 				// Set target to tile
-				target.currentTile = destination;
-					destination.CurrentUnit = target;
+				target.CurrentHex = destination;
+					destination.Tile.CurrentUnit = target;
 				} );
 
 			// Add animation
@@ -548,16 +608,16 @@ public class Dropkick : HeroUnit
 		}
 
 		// Check for object
-		if ( t.CurrentObject != null )
+		if ( hex.Tile.CurrentObject != null )
 		{
 			// Store target
-			TileObject target = t.CurrentObject;
+			TileObject target = hex.Tile.CurrentObject;
 
 			// Clear target's current tile
-			t.CurrentObject = null;
+			hex.Tile.CurrentObject = null;
 
 			// Get destination
-			Tile destination = GetNextDropkickTarget ( t.neighbors [ direction ], direction );
+			Hex destination = GetNextDropkickTarget ( hex.Neighbors [ direction ], direction );
 
 			// Move target
 			Tween animation = target.transform.DOMove ( destination.transform.position, MOVE_ANIMATION_TIME )
@@ -565,7 +625,7 @@ public class Dropkick : HeroUnit
 				{
 					// Set target to tile
 					target.CurrentHex = destination;
-					destination.CurrentObject = target;
+					destination.Tile.CurrentObject = target;
 				} );
 
 			// Add animation
@@ -576,28 +636,28 @@ public class Dropkick : HeroUnit
 	/// <summary>
 	/// Gets the next tile in line for a Dropkick chain knock back.
 	/// </summary>
-	/// <param name="t"> The tile being checked as a potential destination. </param>
+	/// <param name="hex"> The tile being checked as a potential destination. </param>
 	/// <param name="direction"> The direction of the dropkick </param>
 	/// <returns> The available tile for knockback. </returns>
-	private Tile GetNextDropkickTarget ( Tile t, int direction )
+	private Hex GetNextDropkickTarget ( Hex hex, int direction )
 	{
 		// Check for object
-		if ( t.CurrentObject != null )
-			return t;
+		if ( hex.Tile.CurrentObject != null )
+			return hex;
 
 		// Check for unit
-		if ( t.CurrentUnit != null )
+		if ( hex.Tile.CurrentUnit != null )
 		{
 			// Check if the unit is incorporeal
-			if ( t.CurrentUnit.Status.Effects.Exists ( x => x.ID == (int)StatusEffectDatabase.StatusEffectType.INCORPOREAL ) )
-				return GetNextDropkickTarget ( t.neighbors [ direction ], direction );
+			if ( hex.Tile.CurrentUnit.Status.Effects.Exists ( x => x.ID == (int)StatusEffectDatabase.StatusEffectType.INCORPOREAL ) )
+				return GetNextDropkickTarget ( hex.Neighbors [ direction ], direction );
 			else
-				return t;
+				return hex;
 		}
 		
 
 		// Return this empty tile
-		return t;
+		return hex;
 	}
 
 	#endregion // Private Functions

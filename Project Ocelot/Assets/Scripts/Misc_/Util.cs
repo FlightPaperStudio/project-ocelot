@@ -103,43 +103,43 @@ public class Util
 	/// Gets the tile distance of a neighbor tile's position.
 	/// Returns a Vector3 that should be added to current tile's position to give you the neighbor's tile position.
 	/// </summary>
-	public static Vector3 GetTileDistance ( int direction )
+	public static Vector3 GetTileTransformDistance ( int direction )
 	{
 		// Return distance
-		return GetTileDistance ( (MoveData.MoveDirection)direction );
+		return GetTileTransformDistance ( (MoveData.MoveDirection)direction );
 	}
 
 	/// <summary>
 	/// Gets the tile distance of a neighbor tile's position.
 	/// Returns a Vector3 that should be added to current tile's position to give you the neighbor's tile position.
 	/// </summary>
-	public static Vector3 GetTileDistance ( MoveData.MoveDirection direction )
+	public static Vector3 GetTileTransformDistance ( MoveData.MoveDirection direction )
 	{
 		// Check direction
 		switch ( direction )
 		{
 		// Above
-		case MoveData.Direction.NORTH:
+		case MoveData.MoveDirection.NORTH:
 			return new Vector3 (  0.0f,  1.5f, 0f );
 
 		// Right above
-		case MoveData.Direction.NORTHEAST:
+		case MoveData.MoveDirection.NORTHEAST:
 			return new Vector3 (  1.3f,  0.75f, 0f );
 
 		// Right below
-		case MoveData.Direction.SOUTHEAST:
+		case MoveData.MoveDirection.SOUTHEAST:
 			return new Vector3 (  1.3f, -0.75f, 0f );
 
 		// Below
-		case MoveData.Direction.SOUTH:
+		case MoveData.MoveDirection.SOUTH:
 			return new Vector3 (  0.0f, -1.5f, 0f );
 
 		// Left Below
-		case MoveData.Direction.SOUTHWEST:
+		case MoveData.MoveDirection.SOUTHWEST:
 			return new Vector3 ( -1.3f, -0.75f, 0f );
 
 		// Left above
-		case MoveData.Direction.NORTHWEST:
+		case MoveData.MoveDirection.NORTHWEST:
 			return new Vector3 ( -1.3f,  0.75f, 0f );
 		}
 
@@ -157,6 +157,50 @@ public class Util
 			sprite.flipX = true;
 		else
 			sprite.flipX = false;
+	}
+
+	/// <summary>
+	/// Converts the direction from MoveData to Hex.
+	/// </summary>
+	/// <param name="direction"> The MoveData direction. </param>
+	/// <returns> The Hex Direction. </returns>
+	public static Hex.Direction MoveDirectionToHexDirection ( MoveData.MoveDirection direction )
+	{
+		// Check direction
+		switch ( direction )
+		{
+		case MoveData.MoveDirection.NORTH:     return Hex.Direction.NORTH;
+		case MoveData.MoveDirection.NORTHEAST: return Hex.Direction.NORTHEAST;
+		case MoveData.MoveDirection.SOUTHEAST: return Hex.Direction.SOUTHEAST;
+		case MoveData.MoveDirection.SOUTH:     return Hex.Direction.SOUTH;
+		case MoveData.MoveDirection.SOUTHWEST: return Hex.Direction.SOUTHWEST;
+		case MoveData.MoveDirection.NORTHWEST: return Hex.Direction.NORTHWEST;
+		}
+
+		// Return north by default
+		return Hex.Direction.NORTH;
+	}
+
+	/// <summary>
+	/// Converts the direction from Hex to MoveData.
+	/// </summary>
+	/// <param name="direction"> The Hex direction. </param>
+	/// <returns> The MoveData direction. </returns>
+	public static MoveData.MoveDirection HexDirectionToMoveDirection ( Hex.Direction direction )
+	{
+		// Check direction
+		switch ( direction )
+		{
+		case Hex.Direction.NORTH:     return MoveData.MoveDirection.NORTH;
+		case Hex.Direction.NORTHEAST: return MoveData.MoveDirection.NORTHEAST;
+		case Hex.Direction.SOUTHEAST: return MoveData.MoveDirection.SOUTHEAST;
+		case Hex.Direction.SOUTH:     return MoveData.MoveDirection.SOUTH;
+		case Hex.Direction.SOUTHWEST: return MoveData.MoveDirection.SOUTHWEST;
+		case Hex.Direction.NORTHWEST: return MoveData.MoveDirection.NORTHWEST;
+		}
+
+		// Return none by default
+		return MoveData.MoveDirection.NONE;
 	}
 }
 

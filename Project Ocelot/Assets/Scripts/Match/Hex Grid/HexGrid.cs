@@ -1,10 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class HexGrid : MonoBehaviour
 {
 	#region Grid Data
+
+	[SerializeField]
+	private GameManager GM;
 
 	public Hex [ ] Grid;
 
@@ -18,7 +22,14 @@ public class HexGrid : MonoBehaviour
 	{
 		// Store each hex in the grid for easy access
 		for ( int i = 0; i < Grid.Length; i++ )
+		{
+			// Hide border
+			Grid [ i ].Tile.SetBorderActive ( false );
+			
+			// Add hex to grid
 			gridDictionary.Add ( Grid [ i ].Axial, Grid [ i ] );
+		}
+			
 	}
 
 	#endregion // MonoBehaviour Functions
@@ -33,7 +44,7 @@ public class HexGrid : MonoBehaviour
 	public Hex GetHex ( Hex.AxialCoord hex )
 	{
 		// Return the hex by its axial coordinate.
-		return gridDictionary [ hex ];
+		return gridDictionary.ContainsKey ( hex ) ? gridDictionary [ hex ] : null;
 	}
 
 	/// <summary>
@@ -44,7 +55,7 @@ public class HexGrid : MonoBehaviour
 	public Hex GetHex ( Hex.CubeCoord hex )
 	{
 		// Return the hex by its axial coordinate.
-		return gridDictionary [ hex.ToAxial ( ) ];
+		return gridDictionary.ContainsKey ( hex.ToAxial ( ) ) ? gridDictionary [ hex.ToAxial ( ) ] : null;
 	}
 
 	/// <summary>
@@ -71,23 +82,30 @@ public class HexGrid : MonoBehaviour
 		// Store the hexes within range
 		List<Hex> range = new List<Hex> ( );
 
-		// Check each hex
-		for ( int col = center.Axial.Col - radius; col <= center.Axial.Col + radius; col++ )
+		// Check each cube axis
+		for ( int x = center.Cube.X - radius; x <= center.Cube.X + radius; x++ )
 		{
-			for ( int row = center.Axial.Row - radius; row <= center.Axial.Row + radius; row++ )
+			for ( int y = center.Cube.Y - radius; y <= center.Cube.Y + radius; y++ )
 			{
-				// Get coordinates
-				Hex.AxialCoord coord = new Hex.AxialCoord ( col, row );
-
-				// Check for center
-				if ( center.Axial.Equals ( coord ) )
-					continue;
-
-				// Check if the hex exists
-				if ( gridDictionary.ContainsKey ( coord ) )
+				for ( int z = center.Cube.Z - radius; z <= center.Cube.Z + radius; z++ )
 				{
-					// Add hex to range
-					range.Add ( gridDictionary [ coord ] );
+					// Check for valid coordinateds
+					if ( !Hex.CubeCoord.Validate ( x, y, z ) )
+						continue;
+
+					// Get axial coordinate
+					Hex.AxialCoord coord = new Hex.CubeCoord ( x, y, z ).ToAxial ( );
+
+					// Check for center
+					if ( center.Axial.Equals ( coord ) )
+						continue;
+
+					// Check if the hex exists
+					if ( gridDictionary.ContainsKey ( coord ) )
+					{
+						// Add hex to range
+						range.Add ( gridDictionary [ coord ] );
+					}
 				}
 			}
 		}
@@ -108,27 +126,34 @@ public class HexGrid : MonoBehaviour
 		// Store the hexes within range
 		List<Hex> range = new List<Hex> ( );
 
-		// Check each hex
-		for ( int col = center.Axial.Col - radius; col <= center.Axial.Col + radius; col++ )
+		// Check each cube axis
+		for ( int x = center.Cube.X - radius; x <= center.Cube.X + radius; x++ )
 		{
-			for ( int row = center.Axial.Row - radius; row <= center.Axial.Row + radius; row++ )
+			for ( int y = center.Cube.Y - radius; y <= center.Cube.Y + radius; y++ )
 			{
-				// Get coordinates
-				Hex.AxialCoord coord = new Hex.AxialCoord ( col, row );
-
-				// Check for north back direction
-				if ( IsBackDirection ( center.Cube, coord.ToCube ( ), direction ) )
-					continue;
-
-				// Check for center
-				if ( center.Axial.Equals ( coord ) )
-					continue;
-
-				// Check if the hex exists
-				if ( gridDictionary.ContainsKey ( coord ) )
+				for ( int z = center.Cube.Z - radius; z <= center.Cube.Z + radius; z++ )
 				{
-					// Add hex to range
-					range.Add ( gridDictionary [ coord ] );
+					// Check for valid coordinateds
+					if ( !Hex.CubeCoord.Validate ( x, y, z ) )
+						continue;
+
+					// Get axial coordinate
+					Hex.AxialCoord coord = new Hex.CubeCoord ( x, y, z ).ToAxial ( );
+
+					// Check for north back direction
+					if ( IsBackDirection ( center.Cube, coord.ToCube ( ), direction ) )
+						continue;
+
+					// Check for center
+					if ( center.Axial.Equals ( coord ) )
+						continue;
+
+					// Check if the hex exists
+					if ( gridDictionary.ContainsKey ( coord ) )
+					{
+						// Add hex to range
+						range.Add ( gridDictionary [ coord ] );
+					}
 				}
 			}
 		}
@@ -231,6 +256,70 @@ public class HexGrid : MonoBehaviour
 
 		// Return that hex is not in a back direction
 		return false;
+	}
+
+	/// <summary>
+	/// Reset all tiles to their default state.
+	/// </summary>
+	/// <param name="exceptSelectedUnit"> Whether or not the tile of the selected unit should be excluded from the reset. </param>
+	public void ResetTiles ( bool exceptSelectedUnit = false )
+	{
+		// Reset all tiles to their default state
+		for ( int i = 0; i < Grid.Length; i++ )
+		{
+			// Check for selected unit
+			if ( exceptSelectedUnit && GM.SelectedUnit != null && GM.SelectedUnit.CurrentHex == Grid [ i ] )
+				continue;
+
+			// Reset tile
+			Grid [ i ].Tile.SetTileState ( TileState.Default );
+		}
+	}
+
+	/// <summary>
+	/// Reset all tiles except for a number of specified tiles to their default state.
+	/// </summary>
+	/// <param name="exceptionTiles"> The tiles being excluded from the reset. </param>
+	/// <param name="exceptSelectedUnit"> Whether or not the tile of the selected unit should be excluded from the reset. </param>
+	public void ResetTiles ( params Tile [ ] exceptionTiles )
+	{
+		// Reset all tiles to their default state except for some
+		for ( int i = 0; i < Grid.Length; i++ )
+		{
+			// Check for selected unit
+			if ( GM.SelectedUnit != null && GM.SelectedUnit.CurrentHex == Grid [ i ] )
+				continue;
+
+			// Check for exception tile
+			if ( exceptionTiles.Contains ( Grid [ i ].Tile ) )
+				continue;
+
+			// Reset tile
+			Grid [ i ].Tile.SetTileState ( TileState.Default );
+		}
+	}
+
+	/// <summary>
+	/// Reset all tiles except for those of a specified state to their default state.
+	/// </summary>
+	/// <param name="exceptionState"> The state being excluded from the reset. </param>
+	/// <param name="exceptSelectedUnit"> Whether or not the tile of the selected unit should be excluded from the reset. </param>
+	public void ResetTiles ( params TileState [ ] exceptionStates )
+	{
+		// Reset all tiles to their default state except those in a certain state
+		for ( int i = 0; i < Grid.Length; i++ )
+		{
+			// Check for selected unit
+			if ( GM.SelectedUnit != null && GM.SelectedUnit.CurrentHex == Grid [ i ] )
+				continue;
+
+			// Check for exception state
+			if ( exceptionStates.Contains ( Grid [ i ].Tile.State ) )
+				continue;
+
+			// Reset tile
+			Grid [ i ].Tile.SetTileState ( TileState.Default );
+		}
 	}
 
 	#endregion // Public Functions
