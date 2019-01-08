@@ -405,25 +405,25 @@ public class HeroUnit : Unit
 	/// <param name="durationAbility"> The instance data for the toggle command ability being used. </param>
 	/// <param name="cooldownAbility"> The instance data for the toggle command ability not being used. </param>
 	/// <param name="updateHUD"> Whether or not the Unit HUD should be updated for this unit. </param>
-	protected void StartToggleCooldown ( AbilityInstanceData durationAbility, AbilityInstanceData cooldownAbility, bool updateHUD = true )
-	{
-		// Set duration
-		if ( durationAbility.IsEnabled )
-			durationAbility.CurrentDuration = durationAbility.Duration;
+	//protected void StartToggleCooldown ( AbilityInstanceData durationAbility, AbilityInstanceData cooldownAbility, bool updateHUD = true )
+	//{
+	//	// Set duration
+	//	if ( durationAbility.IsEnabled )
+	//		durationAbility.CurrentDuration = durationAbility.Duration;
 
-		// Set cooldown
-		if ( cooldownAbility.IsEnabled )
-			cooldownAbility.CurrentCooldown = cooldownAbility.Cooldown;
+	//	// Set cooldown
+	//	if ( cooldownAbility.IsEnabled )
+	//		cooldownAbility.CurrentCooldown = cooldownAbility.Cooldown;
 
-		// Display cooldown
-		if ( updateHUD )
-		{
-			if ( durationAbility.IsEnabled )
-				GM.UI.unitHUD.UpdateAbilityHUD ( durationAbility );
-			if ( cooldownAbility.IsEnabled )
-				GM.UI.unitHUD.UpdateAbilityHUD ( cooldownAbility );
-		}	
-	}
+	//	// Display cooldown
+	//	if ( updateHUD )
+	//	{
+	//		if ( durationAbility.IsEnabled )
+	//			GM.UI.unitHUD.UpdateAbilityHUD ( durationAbility );
+	//		if ( cooldownAbility.IsEnabled )
+	//			GM.UI.unitHUD.UpdateAbilityHUD ( cooldownAbility );
+	//	}	
+	//}
 
 	/// <summary>
 	/// Creates the hero's tile object in the arena.
@@ -431,17 +431,18 @@ public class HeroUnit : Unit
 	/// <param name="prefab"> The tile object to be created. </param>
 	/// <param name="hex"> The tile where the tile object is being placed. </param>
 	/// <param name="duration"> The amount of turns the tile object will exist for. </param>
-	/// <param name="tileObjectDelegate"> The delegate for when the tile object's duration expires. </param>
-	protected TileObject CreateTileOject ( TileObject prefab, Hex hex, int duration, TileObject.TileObjectDelegate tileObjectDelegate )
+	/// <param name="durationDelegate"> The delegate for when the tile object's duration expires. </param>
+	/// <param name="attackDelegate"> The delegate for when the tile object is attack. </param>
+	protected TileObject CreateTileOject ( TileObject prefab, Hex hex, int duration, TileObject.TileObjectDelegate durationDelegate, TileObject.TileObjectDelegate attackDelegate = null )
 	{
 		// Create game object
 		TileObject obj = Instantiate ( prefab, Owner.transform );
 
 		// Set tile object information
-		obj.SetTileObject ( this, hex, duration, tileObjectDelegate );
+		obj.SetTileObject ( this, hex, duration, durationDelegate, attackDelegate );
 
 		// Add tile object to player's list
-		Owner.tileObjects.Add ( obj );
+		Owner.TileObjects.Add ( obj );
 
 		// Add tile object to tile
 		hex.Tile.CurrentObject = obj;
@@ -460,7 +461,7 @@ public class HeroUnit : Unit
 	protected void DestroyTileObject ( TileObject current )
 	{
 		// Remove tile object from player's list
-		Owner.tileObjects.Remove ( current );
+		Owner.TileObjects.Remove ( current );
 
 		// Remove tile object from tile
 		current.CurrentHex.Tile.CurrentObject = null;

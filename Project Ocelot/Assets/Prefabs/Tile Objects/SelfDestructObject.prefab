@@ -54,9 +54,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Icon: {fileID: 212902931664693560}
   Caster: {fileID: 0}
-  CurrentTile: {fileID: 0}
+  CurrentHex: {fileID: 0}
   CanBeOccupied: 0
-  CanBeJumped: 1
+  CanAssist: 1
   CanBeMoved: 1
   CanBeAttacked: 0
 --- !u!212 &212902931664693560

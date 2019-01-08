@@ -52,7 +52,7 @@ public class Leader : HeroUnit
 					MoveData move;
 
 					// Check if the neighboring unit can be attacked
-					if ( hex.Neighbors [ i ].Tile.CurrentUnit != null && hex.Neighbors [ i ].Tile.CurrentUnit.UnitAttackCheck ( this ) )
+					if ( AttackTileCheck ( hex.Neighbors [ i ] ) )
 					{
 						// Add as an available jump
 						move = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite, MoveData.MoveType.JUMP, i, null, hex.Neighbors [ i ] );

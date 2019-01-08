@@ -205,7 +205,7 @@ public class Unit : MonoBehaviour
 					MoveData move;
 
 					// Check if the neighboring unit can be attacked
-					if ( hex.Neighbors [ i ].Tile.CurrentUnit != null && hex.Neighbors [ i ].Tile.CurrentUnit.UnitAttackCheck ( this ) )
+					if ( AttackTileCheck ( hex.Neighbors [ i ] ) )
 					{
 						// Add as an available attack
 						move = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prior, MoveData.MoveType.JUMP, i, null, hex.Neighbors [ i ] );
@@ -287,40 +287,8 @@ public class Unit : MonoBehaviour
 	/// <param name="usePostAnimationQueue"> Whether or not the KO animation should play at the end of the turn animations. </param>
 	public virtual void GetAttacked ( bool usePostAnimationQueue = false )
 	{
-		// Call KO delegate
-		if ( koDelegate != null )
-			koDelegate ( this );
-
-		// Create animation
-		Tween t1 = transform.DOScale ( new Vector3 ( 5, 5, 5 ), KO_ANIMATION_TIME )
-			.OnComplete ( ( ) =>
-			{
-				// Display KO in HUD
-				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).DisplayKO ( InstanceID );
-
-				// Remove unit from the team
-				Owner.UnitInstances.Remove ( this );
-
-				// Remove unit reference from the tile
-				CurrentHex.Tile.CurrentUnit = null;
-
-				// Delete the unit
-				Destroy ( this.gameObject );
-			} )
-			.Pause ( );
-		Tween t2 = sprite.DOFade ( 0, MOVE_ANIMATION_TIME )
-			.Pause ( );
-
-		// Add animations to queue
-		if ( usePostAnimationQueue )
-		{
-			GM.PostAnimationQueue.Add ( new GameManager.PostTurnAnimation ( this, Owner, new GameManager.TurnAnimation ( t1, false ), new GameManager.TurnAnimation ( t2, false ) ) );
-		}
-		else
-		{
-			GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-			GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
-		}
+		// KO unit
+		UnitKO ( usePostAnimationQueue );
 	}
 
 	/// <summary>
@@ -365,6 +333,48 @@ public class Unit : MonoBehaviour
 	public void SetTeamColor ( Player.TeamColor color )
 	{
 		sprite.color = Util.TeamColor ( color );
+	}
+
+	/// <summary>
+	/// KO's this unit.
+	/// </summary>
+	/// <param name="usePostAnimationQueue"> Whether or not the KO animation should bein the Post Animation Queue. </param>
+	public void UnitKO ( bool usePostAnimationQueue = false )
+	{
+		// Call KO delegate
+		if ( koDelegate != null )
+			koDelegate ( this );
+
+		// Create animation
+		Tween t1 = transform.DOScale ( new Vector3 ( 5, 5, 5 ), KO_ANIMATION_TIME )
+			.OnComplete ( ( ) =>
+			{
+				// Display KO in HUD
+				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).DisplayKO ( InstanceID );
+
+				// Remove unit from the team
+				Owner.UnitInstances.Remove ( this );
+
+				// Remove unit reference from the tile
+				CurrentHex.Tile.CurrentUnit = null;
+
+				// Delete the unit
+				Destroy ( this.gameObject );
+			} )
+			.Pause ( );
+		Tween t2 = sprite.DOFade ( 0, MOVE_ANIMATION_TIME )
+			.Pause ( );
+
+		// Add animations to queue
+		if ( usePostAnimationQueue )
+		{
+			GM.PostAnimationQueue.Add ( new GameManager.PostTurnAnimation ( this, Owner, new GameManager.TurnAnimation ( t1, false ), new GameManager.TurnAnimation ( t2, false ) ) );
+		}
+		else
+		{
+			GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+			GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+		}
 	}
 
 	#endregion // Public Functions
@@ -425,6 +435,86 @@ public class Unit : MonoBehaviour
 			return false;
 
 		// Return that the tile can be jumped by this unit
+		return true;
+	}
+
+	/// <summary>
+	/// Determines if a tile can assist this unit.
+	/// Returns true if the tile can assist.
+	/// </summary>
+	/// <param name="hex"> The tile being checked. </param>
+	/// <returns> Whether or not the unit or object on the tile can assist. </returns>
+	protected virtual bool AssistTileCheck ( Hex hex )
+	{
+		// Check if the tile exists
+		if ( hex == null )
+			return false;
+
+		// For starting tile
+		if ( hex == CurrentHex )
+			return false;
+
+		// Check if the tile is occupied
+		if ( !hex.Tile.IsOccupied )
+			return false;
+
+		// Check for unit
+		if ( hex.Tile.CurrentUnit != null )
+		{
+			// Check if the unit can assist
+			if ( !hex.Tile.CurrentUnit.Status.CanAssist )
+				return false;
+		}
+
+		// Check for object
+		if ( hex.Tile.CurrentObject != null )
+		{
+			// Check if the object can be attack
+			if ( !hex.Tile.CurrentObject.CanAssist )
+				return false;
+		}
+
+		// Return that the tile can be attacked by this unit
+		return true;
+	}
+
+	/// <summary>
+	/// Determines if a tile can be attacked by this unit.
+	/// Returns true if the tile can be attacked.
+	/// </summary>
+	/// <param name="hex"> The tile being checked. </param>
+	/// <returns> Whether or not the unit or object on the tile can be attacked. </returns>
+	protected virtual bool AttackTileCheck ( Hex hex )
+	{
+		// Check if the tile exists
+		if ( hex == null )
+			return false;
+
+		// For starting tile
+		if ( hex == CurrentHex )
+			return false;
+
+		// Check if the tile is occupied
+		if ( !hex.Tile.IsOccupied )
+			return false;
+
+		// Check for unit
+		if ( hex.Tile.CurrentUnit != null )
+		{
+			// Check if this unit can attack the unit
+			if ( !hex.Tile.CurrentUnit.UnitAttackCheck ( this ) )
+				return false;
+		}
+
+		// Check for object
+		if ( hex.Tile.CurrentObject != null )
+		{
+			// Check if the object can be attack
+			if ( !hex.Tile.CurrentObject.UnitAttackCheck ( this ) )
+				return false;
+		}
+
+		// Return that the tile can be attacked by this unit
 		return true;
 	}
 
@@ -564,7 +654,7 @@ public class Unit : MonoBehaviour
 		// Update Portrait
 		sprite.sprite = data.Portrait;
 		displaySprite = data.Portrait;
-		GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( InstanceID, data.Portrait );
+		//GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( InstanceID, data.Portrait );
 	}
 
 

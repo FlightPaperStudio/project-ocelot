@@ -112,7 +112,7 @@ public class Catapult : HeroUnit
 				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
 
 				// Apply target's status effect
-				grappleTarget.Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.GRAPPLED, InstanceData.Ability2.Duration, this );
+				grappleTarget.Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.GRAPPLED, InstanceData.Ability2.Duration + 1, this );
 				GM.UI.matchInfoMenu.GetPlayerHUD ( grappleTarget ).UpdateStatusEffects ( grappleTarget.InstanceID, grappleTarget.Status );
 
 				// Set target's KO delegate for interupts
@@ -183,7 +183,7 @@ public class Catapult : HeroUnit
 			return false;
 
 		// Check the use during exhaustion setting
-		if ( !InstanceData.Ability2.IsPerkEnabled && Status.Effects.Exists ( x => x.ID == (int)StatusEffectDatabase.StatusEffectType.EXHAUSTION ) )
+		if ( !InstanceData.Ability2.IsPerkEnabled && Status.HasStatusEffect ( StatusEffectDatabase.StatusEffectType.EXHAUSTION ) )
 			return false;
 
 		// Check if target is available
@@ -198,26 +198,8 @@ public class Catapult : HeroUnit
 	{
 		// Check each neighboring tile
 		for ( int i = 0; i < CurrentHex.Neighbors.Length; i++ )
-		{
-			// Check for tile
-			if ( CurrentHex.Neighbors [ i ] == null )
-				continue;
-
-			// Check for unit
-			if ( CurrentHex.Neighbors [ i ].Tile.CurrentUnit == null )
-				continue;
-
-			// Check if unit can be attacked
-			if ( !CurrentHex.Neighbors [ i ].Tile.CurrentUnit.UnitAttackCheck ( this ) )
-				continue;
-
-			// Check if unit can be affected by abilities
-			if ( !CurrentHex.Neighbors [ i ].Tile.CurrentUnit.Status.CanBeAffectedByAbility )
-				continue;
-
-			// Mark target
-			CurrentHex.Neighbors [ i ].Tile.SetTileState ( TileState.AvailableCommand );
-		}
+			if ( GrappleTargetCheck ( CurrentHex.Neighbors [ i ] ) )
+				CurrentHex.Neighbors [ i ].Tile.SetTileState ( TileState.AvailableCommand );
 	}
 
 	/// <summary>
@@ -282,6 +264,10 @@ public class Catapult : HeroUnit
 		// Check each neighboring tile
 		for ( int i = 0; i < hex.Neighbors.Length; i++ )
 		{
+			// Check for tiles
+			if ( !CatapultCheck ( hex, i ) )
+				continue;
+
 			// Store first target
 			Hex target1 = hex.Neighbors [ i ];
 
@@ -334,6 +320,34 @@ public class Catapult : HeroUnit
 	}
 
 	/// <summary>
+	/// Checks if all tiles for Catapult exist.
+	/// </summary>
+	/// <param name="hex"> The hex being moved from. </param>
+	/// <param name="direction"> The direction being moved in. </param>
+	/// <returns> Whether or not all tiles involved exist. </returns>
+	private bool CatapultCheck ( Hex hex, int direction )
+	{
+		// Check for starting tile
+		if ( hex == null )
+			return false;
+
+		// Check for first target
+		if ( hex.Neighbor ( (Hex.Direction)direction, 1 ) == null )
+			return false;
+
+		// Check for second target
+		if ( hex.Neighbor ( (Hex.Direction)direction, 2 ) == null )
+			return false;
+
+		// Check for destination
+		if ( hex.Neighbor ( (Hex.Direction)direction, 3 ) == null )
+			return false;
+
+		// Return that all tiles are available
+		return true;
+	}
+
+	/// <summary>
 	/// Checks if a potential tile can be targeted by the Catapult ability.
 	/// </summary>
 	/// <param name="hex"> The target tile </param>
@@ -360,29 +374,42 @@ public class Catapult : HeroUnit
 	{
 		// Check each neighboring tile
 		for ( int i = 0; i < CurrentHex.Neighbors.Length; i++ )
-		{
-			// Check for tile
-			if ( CurrentHex.Neighbors [ i ] == null )
-				continue;
-
-			// Check for unit
-			if ( CurrentHex.Neighbors [ i ].Tile.CurrentUnit == null )
-				continue;
-
-			// Check if unit can be attacked
-			if ( !CurrentHex.Neighbors [ i ].Tile.CurrentUnit.UnitAttackCheck ( this ) )
-				continue;
-
-			// Check if unit can be affected by abilities
-			if ( !CurrentHex.Neighbors [ i ].Tile.CurrentUnit.Status.CanBeAffectedByAbility )
-				continue;
-
-			// Return that a target is available
-			return true;
-		}
+			if ( GrappleTargetCheck ( CurrentHex.Neighbors [ i ] ) )
+				return true;
 
 		// Return that no targets were found
 		return false;
+	}
+
+	/// <summary>
+	/// Checks an individual tile if an enemy unit can be targeted by the Grapple ability.
+	/// </summary>
+	/// <param name="hex"> The tile being checked. </param>
+	/// <returns> Whether or not the tile has a target. </returns>
+	private bool GrappleTargetCheck ( Hex hex )
+	{
+		// Check for tile
+		if ( hex == null )
+			return false;
+
+		// Check for unit
+		if ( hex.Tile.CurrentUnit == null )
+			return false;
+
+		// Check if unit is on the same team
+		if ( hex.Tile.CurrentUnit.Owner == Owner )
+			return false;
+
+		// Check if unit can be affected by abilities
+		if ( !hex.Tile.CurrentUnit.Status.CanBeAffectedByAbility )
+			return false;
+
+		// Check if unit can be affected physically
+		if ( !hex.Tile.CurrentUnit.Status.CanBeAffectedPhysically )
+			return false;
+
+		// Return that a target is available
+		return true;
 	}
 
 	/// <summary>

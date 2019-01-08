@@ -52,17 +52,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a421a65f8dab554bbdcb93bdf807670, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GM: {fileID: 0}
-  unitID: 8
-  instanceID: 0
-  characterName: 
   displaySprite: {fileID: 21300000, guid: dacae39aa96395448b33c702d6c5db5d, type: 3}
-  currentTile: {fileID: 0}
-  owner: {fileID: 0}
+  CurrentHex: {fileID: 0}
+  Owner: {fileID: 0}
   sprite: {fileID: 212452312666196624}
-  abilitySprite1: {fileID: 21300000, guid: cd108ac1e6a3b8a49929c82009040ada, type: 3}
-  abilitySprite2: {fileID: 21300000, guid: a49649fae78c7c1439222ab4a190acc0, type: 3}
-  cloneDisplayPrefab: {fileID: 212565650602130830, guid: 4be8fc334c21e9b4aa4f7a494bb6476b,
+  clonePrefab: {fileID: 114978758530600198, guid: 4be8fc334c21e9b4aa4f7a494bb6476b,
     type: 2}
 --- !u!212 &212452312666196624
 SpriteRenderer:

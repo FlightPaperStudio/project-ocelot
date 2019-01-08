@@ -39,10 +39,10 @@ public class MindControl : HeroUnit
 	#region Ability Data
 	
 	[SerializeField]
-	private SpriteRenderer cloneDisplayPrefab;
+	private TileObject clonePrefab;
 
 	private List<Unit> mindControlledUnits = new List<Unit> ( );
-	private SpriteRenderer currentCloneDisplay;
+	private TileObject currentClone;
 
 	private const float MIND_CONTROL_ANIMATION_TIME = 0.75f;
 	private const string MIND_CONTROL_STATUS_PROMPT = "Mind Control";
@@ -75,7 +75,7 @@ public class MindControl : HeroUnit
 		if ( !usePostAnimationQueue && InstanceData.Ability1.IsEnabled )
 		{
 			// Remove all Mind Controlled units
-			DeactivateMindControl ( );
+			DeactivateAllMindControls ( );
 		}
 
 		// Get KO'd
@@ -119,7 +119,7 @@ public class MindControl : HeroUnit
 		base.GetAssisted ( data );
 
 		// Check each target
-		foreach ( Hex hex in data.AttackTargets )
+		foreach ( Hex hex in data.AssistTargets )
 		{
 			// Check for perk and mind controlled unit
 			if ( InstanceData.Ability1.IsPerkEnabled && mindControlledUnits.Contains ( hex.Tile.CurrentUnit ) )
@@ -131,6 +131,42 @@ public class MindControl : HeroUnit
 	}
 
 	#endregion // Protected Unit Override Functions
+
+	#region Public HeroUnit Override Functions
+
+	public override void Cooldown ( )
+	{
+		// Set cooldowns
+		base.Cooldown ( );
+
+		// Check if mind control is enabled
+		if ( InstanceData.Ability1.IsEnabled )
+		{
+			// Get expired mind controls
+			List<Unit> expiredUnits = mindControlledUnits.FindAll ( x => !x.Status.HasStatusEffect ( StatusEffectDatabase.StatusEffectType.MIND_CONTROLLED ) );
+
+			// KO expired mind controls
+			for ( int i = 0; i < expiredUnits.Count; i++ )
+			{
+				// Remove mind control
+				DeactivateMindControl ( expiredUnits [ i ] );
+
+				// Remove unit from the list of Mind Controlled units
+				RemoveMindControlledUnit ( expiredUnits [ i ] );
+
+				// Get original owner
+				Player player = GetOriginalOwner ( expiredUnits [ i ] );
+
+				// Check owner
+				if ( player.IsEliminated )
+					expiredUnits [ i ].UnitKO ( );
+				else if ( player != Owner )
+					expiredUnits [ i ].GetAttacked ( );
+			}
+		}
+	}
+
+	#endregion // Public HeroUnit Override Functions
 
 	#region Protected HeroUnit Override Functions
 
@@ -192,20 +228,29 @@ public class MindControl : HeroUnit
 	/// </summary>
 	protected override void UseSpecial ( MoveData data )
 	{
+		// Check for existing clone
+		if ( currentClone != null )
+			RemoveClone ( );
+
+		// Get clone destination
+		Hex priorDestination = data.PriorMove != null ? data.PriorMove.Destination : CurrentHex;
+		Hex destination = priorDestination.Neighbors [ (int)data.Direction ];
+
 		// Create clone
-		currentCloneDisplay = Instantiate ( cloneDisplayPrefab, Owner.transform );
-		currentCloneDisplay.transform.position = data.Destination.Neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].Neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].transform.position;
+		currentClone = CreateTileOject ( clonePrefab, destination, InstanceData.Ability2.Duration, RemoveClone );
+
+		// Set clone appearance
 		Color32 c = Util.TeamColor ( Owner.Team );
-		currentCloneDisplay.color = new Color32 ( c.r, c.g, c.b, 150 );
-		Util.OrientSpriteToDirection ( currentCloneDisplay, Owner.TeamDirection );
-		currentCloneDisplay.gameObject.SetActive ( false );
+		currentClone.Icon.color = new Color32 ( c.r, c.g, c.b, 150 );
+		currentClone.gameObject.SetActive ( false );
 
 		// Create animations
-		Tween t1 = currentCloneDisplay.transform.DOMove ( data.Destination.Neighbors [ Util.GetOppositeDirection ( (int)data.Direction ) ].transform.position, MOVE_ANIMATION_TIME )
+		Tween t1 = currentClone.transform.DOMove ( priorDestination.transform.position, MOVE_ANIMATION_TIME )
+			.From ( )
 			.OnStart ( ( ) =>
 			{
 				// Display clone
-				currentCloneDisplay.gameObject.SetActive ( true );
+				currentClone.gameObject.SetActive ( true );
 			} );
 		Tween t2 = transform.DOMove ( data.Destination.transform.position, MOVE_ANIMATION_TIME * 2 )
 			.OnComplete ( ( ) =>
@@ -216,20 +261,11 @@ public class MindControl : HeroUnit
 				// Set unit and tile data
 				SetUnitToTile ( data.Destination );
 			} );
-		Tween t3 = currentCloneDisplay.transform.DOScale ( new Vector3 ( 5, 5, 5 ), KO_ANIMATION_TIME )
-			.OnComplete ( ( ) =>
-			{
-				// Delete the clone
-				Destroy ( currentCloneDisplay.gameObject );
-				currentCloneDisplay = null;
-			} );
-		Tween t4 = currentCloneDisplay.DOFade ( 0, MOVE_ANIMATION_TIME );
+		
 
 		// Add animations to queue
 		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
 		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, true ) );
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t3, true ) );
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t4, false ) );
 	}
 
 	#endregion // Protected HeroUnit Override Functions
@@ -286,7 +322,7 @@ public class MindControl : HeroUnit
 				{
 					// Remove all Mind Controlled units by this hero
 					MindControl hero3 = unit as MindControl;
-					hero3.DeactivateMindControl ( );
+					hero3.DeactivateAllMindControls ( );
 				}
 
 				// Mark that the ability is active
@@ -299,30 +335,83 @@ public class MindControl : HeroUnit
 				InstanceData.Ability1.IsActive = false;
 				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
 
-				// Remove unit from unit's player's team
-				unit.Owner.UnitInstances.Remove ( unit );
-				if ( unit.Owner.standardKOdelegate != null )
-					unit.koDelegate -= unit.Owner.standardKOdelegate;
-
-				// Add unit to player's team
-				Owner.UnitInstances.Add ( unit );
-				unit.Owner = Owner;
-				if ( Owner.standardKOdelegate != null )
-					unit.koDelegate += Owner.standardKOdelegate;
-
 				// Apply status effect
 				unit.Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.MIND_CONTROLLED, InstanceData.Ability1.Duration, this );
 
-				// Face unit in correct direction
-				Util.OrientSpriteToDirection ( unit.sprite, unit.Owner.TeamDirection );
+				// Store unit
+				mindControlledUnits.Add ( unit );
 
 				// Update HUD
 				GM.UI.matchInfoMenu.GetPlayerHUD ( unit ).UpdateStatusEffects ( unit.InstanceID, unit.Status );
-				GM.UI.matchInfoMenu.GetPlayerHUD ( unit ).UpdatePortrait ( unit.InstanceID, Util.TeamColor ( Owner.Team ) );
+
+				// Switch teams
+				UnitTeamSwitch ( unit, Owner );
 			} );
 
 		// Add animation to queue
 		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+	}
+
+	/// <summary>
+	/// Deactivates the Mind Control ability. This removes the targeted unit from the player's team.
+	/// This function builds the animation queue.
+	/// </summary>
+	/// <param name="unit"> The unit being targeted. </param>
+	private void DeactivateMindControl ( Unit unit, bool usePostAnimationQueue = false )
+	{
+		// Get the original owner
+		Player player = GetOriginalOwner ( unit );
+
+		// Create animation
+		Tween t = unit.sprite.DOColor ( Util.TeamColor ( player.Team ), MIND_CONTROL_ANIMATION_TIME )
+			.OnComplete ( ( ) =>
+			{
+				// Apply status effect
+				unit.Status.RemoveStatusEffect ( StatusEffectDatabase.StatusEffectType.MIND_CONTROLLED, this );
+
+				// Update HUD
+				GM.UI.matchInfoMenu.GetPlayerHUD ( unit ).UpdateStatusEffects ( unit.InstanceID, unit.Status );
+
+				// Switch teams
+				UnitTeamSwitch ( unit, player );
+			} );
+
+		// Add animation to queue
+		if ( usePostAnimationQueue )
+			GM.PostAnimationQueue.Add ( new GameManager.PostTurnAnimation ( unit, player, new GameManager.TurnAnimation ( t, true ) ) );
+		else
+			GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+	}
+
+	/// <summary>
+	/// Removes and KO's all currently Mind Controlled units.
+	/// </summary>
+	private void DeactivateAllMindControls ( )
+	{
+		// Get each unit
+		foreach ( Unit unit in mindControlledUnits )
+		{
+			// Remove mind control
+			DeactivateMindControl ( unit );
+
+			// Remove KO delegate
+			unit.koDelegate -= MindControlKO;
+
+			// Get original owner
+			Player player = GetOriginalOwner ( unit );
+
+			// Check owner
+			if ( player.IsEliminated )
+				unit.UnitKO ( );
+			else if ( player != Owner )
+				unit.GetAttacked ( );
+
+			// KO unit
+			unit.GetAttacked ( true );
+		}
+
+		// Clear list of Mind Controlled units
+		mindControlledUnits.Clear ( );
 	}
 
 	/// <summary>
@@ -332,6 +421,9 @@ public class MindControl : HeroUnit
 	/// <param name="unit"> The unit being KO'd. </param>
 	private void MindControlKO ( Unit unit )
 	{
+		// Deactivate mind control
+		DeactivateMindControl ( unit );
+
 		// Remove unit from the list of Mind Controlled units
 		RemoveMindControlledUnit ( unit );
 	}
@@ -350,19 +442,71 @@ public class MindControl : HeroUnit
 	}
 
 	/// <summary>
-	/// Removes and KO's all currently Mind Controlled units.
+	/// Returns the original owner of the unit before any mind control.
 	/// </summary>
-	private void DeactivateMindControl ( )
+	/// <param name="unit"> The unit being searched for. </param>
+	/// <returns> The original owner of the unit. </returns>
+	private Player GetOriginalOwner ( Unit unit )
 	{
-		// Get each unit
-		foreach ( Unit unit in mindControlledUnits )
-		{
-			// KO unit
-			unit.GetAttacked ( true );
-		}
+		// Check each player
+		foreach ( Player player in GM.Players )
+			foreach ( int id in player.StarterInstanceIDs )
+				if ( id == unit.InstanceID )
+					return player;
 
-		// Clear list of Mind Controlled units
-		mindControlledUnits.Clear ( );
+		// Return that a player could not be found
+		return null;
+	}
+
+	/// <summary>
+	/// Switches a unit from one team to another.
+	/// </summary>
+	/// <param name="unit"> The unit switching teams. </param>
+	/// <param name="player"> The new team the unit is switching to. </param>
+	private void UnitTeamSwitch ( Unit unit, Player player )
+	{
+		// Remove unit from unit's current team
+		unit.Owner.UnitInstances.Remove ( unit );
+		if ( unit.Owner.StandardKOdelegate != null )
+			unit.koDelegate -= unit.Owner.StandardKOdelegate;
+
+		// Add unit to the new player's team
+		player.UnitInstances.Add ( unit );
+		unit.Owner = player;
+		if ( player.StandardKOdelegate != null )
+			unit.koDelegate += Owner.StandardKOdelegate;
+
+		// Face unit in correct direction
+		Util.OrientSpriteToDirection ( unit.sprite, player.TeamDirection );
+
+		// Update HUD
+		GM.UI.matchInfoMenu.GetPlayerHUD ( unit ).UpdatePortrait ( unit );
+	}
+
+	/// <summary>
+	/// Removes the clone from the arena.
+	/// </summary>
+	private void RemoveClone ( )
+	{
+		// Create animation
+		Tween t1 = currentClone.transform.DOScale ( new Vector3 ( 5, 5, 5 ), KO_ANIMATION_TIME )
+			.OnComplete ( ( ) =>
+			{
+				// Remove clone from tile
+				currentClone.CurrentHex.Tile.CurrentObject = null;
+
+				// Remove clone from the team
+				Owner.TileObjects.Remove ( currentClone );
+
+				// Delete the clone
+				Destroy ( currentClone.gameObject );
+				currentClone = null;
+			} );
+		Tween t2 = currentClone.Icon.DOFade ( 0, MOVE_ANIMATION_TIME );
+
+		// Add animation to 
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
 	}
 
 	#endregion // Private Functions

@@ -50,14 +50,13 @@ public class Player : MonoBehaviour
 
 	public TeamColor Team;
 	public Direction TeamDirection;
-	//public int [ ] specialIDs;
 	public EntranceArea Entrance;
 	public ObjectiveArea Objective;
-	//public StartArea startArea;
 	public List<UnitSettingData> Units = new List<UnitSettingData> ( );
 	public List<Unit> UnitInstances = new List<Unit> ( );
-	public Unit.KOdelegate standardKOdelegate;
-	public List<TileObject> tileObjects = new List<TileObject> ( );
+	public List<int> StarterInstanceIDs = new List<int> ( );
+	public Unit.KOdelegate StandardKOdelegate;
+	public List<TileObject> TileObjects = new List<TileObject> ( );
 
 	/// <summary>
 	/// Whether or not the player is eliminated from the match.

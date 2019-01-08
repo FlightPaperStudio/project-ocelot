@@ -45,22 +45,17 @@ public class GrimReaper : HeroUnit
 
 	#endregion // Ability Data
 
-	#region MonoBehaviour Functions
-
-	/// <summary>
-	/// Sets up both abilities at the start of a match.
-	/// </summary>
-	private void Start ( )
-	{
-		// Set Grim Reaper
-		if ( InstanceData.Ability2.IsEnabled )
-			foreach ( Player player in GM.Players )
-				player.standardKOdelegate += AddGrimReaperTile;
-	}
-
-	#endregion // MonoBehaviour Functions
-
 	#region Public Unit Override Functions
+
+	public override void InitializeInstance ( GameManager gm, int instanceID, UnitSettingData settingData )
+	{
+		// Initialize instance
+		base.InitializeInstance ( gm, instanceID, settingData );
+
+		// Add Reaper as a global KO delegate
+		if ( InstanceData.Ability2.IsEnabled )
+			GM.GlobalKOdelegate += AddGrimReaperTile;
+	}
 
 	/// <summary>
 	/// Calculates all base moves available to a unit as well as any special ability moves available.

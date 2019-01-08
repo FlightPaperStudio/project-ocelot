@@ -52,11 +52,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43fcc82e3e8409642a6ee9430bbcc687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Icon: {fileID: 0}
+  Icon: {fileID: 212226588668657442}
   Caster: {fileID: 0}
-  CurrentTile: {fileID: 0}
+  CurrentHex: {fileID: 0}
   CanBeOccupied: 0
-  CanBeJumped: 0
+  CanAssist: 0
   CanBeMoved: 0
   CanBeAttacked: 1
 --- !u!212 &212226588668657442

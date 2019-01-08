@@ -129,6 +129,25 @@ public class UnitPortrait : MonoBehaviour
 	}
 
 	/// <summary>
+	/// Copies the settings from another portrait.
+	/// </summary>
+	/// <param name="from"> The portrait being copied from. </param>
+	public void CopyPortrait ( UnitPortrait from )
+	{
+		// Store unit
+		unitData = from.unitData;
+
+		// Store team
+		teamColor = from.teamColor;
+
+		// Display portrait
+		IsEnabled = from.IsEnabled;
+		IsAvailable = from.IsAvailable;
+		IsBorderHighlighted = from.IsBorderHighlighted;
+		unitPortrait.sprite = unitData.Portrait;
+	}
+
+	/// <summary>
 	/// Reset the portrait to its default size.
 	/// </summary>
 	public void ResetSize ( )

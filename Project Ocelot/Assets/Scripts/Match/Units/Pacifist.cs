@@ -64,40 +64,49 @@ public class Pacifist : HeroUnit
 	/// </summary>
 	public override void FindMoves ( Hex hex, MoveData prerequisite, bool returnOnlyJumps )
 	{
-		// Cleare previous move list
-		if ( prerequisite == null )
-			MoveList.Clear ( );
-
-		// Check status effects
-		if ( Status.CanMove )
+		// Check for ghost ability
+		if ( InstanceData.Ability1.IsEnabled )
 		{
-			// Store which tiles are to be ignored
-			//IntPair back = GetBackDirection ( Owner.TeamDirection );
+			// Cleare previous move list
+			if ( prerequisite == null )
+				MoveList.Clear ( );
 
-			// Check each neighboring tile
-			for ( int i = 0; i < hex.Neighbors.Length; i++ )
+			// Check status effects
+			if ( Status.CanMove )
 			{
-				// Ignore tiles that would allow for backward movement
-				//if ( i == back.FirstInt || i == back.SecondInt )
-				//	continue;
+				// Store which tiles are to be ignored
+				//IntPair back = GetBackDirection ( Owner.TeamDirection );
 
-				// Check if this unit can move to the neighboring tile
-				if ( !returnOnlyJumps && OccupyTileCheck ( hex.Neighbors [ i ], prerequisite ) )
+				// Check each neighboring tile
+				for ( int i = 0; i < hex.Neighbors.Length; i++ )
 				{
-					// Add as an available move
-					MoveList.Add ( new MoveData ( hex.Neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
-				}
-				// Check if this unit can jump the neighboring tile
-				else if ( JumpTileCheck ( hex.Neighbors [ i ] ) && OccupyTileCheck ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite ) )
-				{
-					// Add as an available jump
-					MoveData move = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite, MoveData.MoveType.JUMP, i, hex.Neighbors [ i ], null );
-					MoveList.Add ( move );
+					// Ignore tiles that would allow for backward movement
+					//if ( i == back.FirstInt || i == back.SecondInt )
+					//	continue;
 
-					// Find additional jumps
-					FindMoves ( hex.Neighbors [ i ].Neighbors [ i ], move, true );
+					// Check if this unit can move to the neighboring tile
+					if ( !returnOnlyJumps && OccupyTileCheck ( hex.Neighbors [ i ], prerequisite ) )
+					{
+						// Add as an available move
+						MoveList.Add ( new MoveData ( hex.Neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
+					}
+					// Check if this unit can jump the neighboring tile
+					else if ( JumpTileCheck ( hex.Neighbors [ i ] ) && OccupyTileCheck ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite ) )
+					{
+						// Add as an available jump
+						MoveData move = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite, MoveData.MoveType.JUMP, i, hex.Neighbors [ i ], null );
+						MoveList.Add ( move );
+
+						// Find additional jumps
+						FindMoves ( hex.Neighbors [ i ].Neighbors [ i ], move, true );
+					}
 				}
 			}
+		}
+		else
+		{
+			// Return base moves
+			base.FindMoves ( hex, prerequisite, returnOnlyJumps );
 		}
 
 		// Get obstruction availability
@@ -108,21 +117,21 @@ public class Pacifist : HeroUnit
 	/// Determines if this unit can be attaced by another unit.
 	/// Always returns false since this unit's Pacifist Ability prevents it from being attacked.
 	/// </summary>
-	public override bool UnitAttackCheck ( Unit attacker, bool friendlyFire = false )
-	{
-		// Prevent any attacks with the Ghost ability
-		if ( PassiveAvailabilityCheck ( InstanceData.Ability1, null ) )
-			return false;
+	//public override bool UnitAttackCheck ( Unit attacker, bool friendlyFire = false )
+	//{
+	//	// Prevent any attacks with the Ghost ability
+	//	if ( PassiveAvailabilityCheck ( InstanceData.Ability1, null ) )
+	//		return false;
 
-		// Return normal values if the Ghost ability is disabled
-		return base.UnitAttackCheck ( attacker );
-	}
+	//	// Return normal values if the Ghost ability is disabled
+	//	return base.UnitAttackCheck ( attacker );
+	//}
 
 	public override void Assist ( )
 	{
 		// Track stats
 		base.Assist ( );
-
+		
 		// Add to haunted house perk
 		if ( InstanceData.Ability1.IsEnabled && InstanceData.Ability1.IsPerkEnabled )
 			hauntedHouseStack++;
@@ -208,7 +217,7 @@ public class Pacifist : HeroUnit
 		if ( InstanceData.Ability1.IsEnabled && InstanceData.Ability1.IsPerkEnabled )
 		{
 			// Set how many objects can be possessed
-			return new CommandData ( this, 1 + ( hauntedHouseStack / 2 ) );
+			return new CommandData ( this, 1, 1 + ( hauntedHouseStack / 2 ) );
 		}
 		else
 		{
@@ -260,26 +269,38 @@ public class Pacifist : HeroUnit
 	/// </summary>
 	private void PoltergeistDurationComplete ( )
 	{
-		// Get each possessed object
-		for ( int i = 0; i < currentDebris.Count; i++ )
+		// Check for debris
+		if ( currentDebris.Count > 0 )
 		{
-			// Create animation
-			Tween t = currentDebris [ i ].Icon.DOFade ( 0f, OBSTRUCTION_ANIMATION_TIME )
-				.OnComplete ( ( ) =>
-				{
-					// Remove obstruction from player data
-					Owner.tileObjects.Remove ( currentDebris [ i ] );
+			// Track debris
+			bool isFirst = true;
 
-					// Remove obstruction from the board
-					currentDebris [ i ].CurrentHex.Tile.CurrentObject = null;
+			// Get each possessed object
+			foreach ( TileObject debris in currentDebris )
+			{
+				// Create animation
+				Tween t = debris.Icon.DOFade ( 0f, OBSTRUCTION_ANIMATION_TIME )
+					.OnComplete ( ( ) =>
+					{
+						// Remove obstruction from player data
+						Owner.TileObjects.Remove ( debris );
 
-					// Remove obstruction
-					Destroy ( currentDebris [ i ].gameObject );
-				} );
+						// Remove obstruction from the board
+						debris.CurrentHex.Tile.CurrentObject = null;
 
-			// Add animation to queue
-			GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, i == 0 ) );
+						// Remove obstruction
+						Destroy ( debris.gameObject );
+					} );
+
+				// Add animation to queue
+				GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, isFirst ) );
+				isFirst = false;
+			}
+
+			// Clear debris
+			currentDebris.Clear ( );
 		}
+		
 	}
 
 	#endregion // Private Functions

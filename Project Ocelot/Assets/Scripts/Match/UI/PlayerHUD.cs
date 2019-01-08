@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class PlayerHUD : MonoBehaviour 
 {
@@ -11,6 +12,9 @@ public class PlayerHUD : MonoBehaviour
 	[System.Serializable]
 	private class PlayerUnitHUD
 	{
+		[HideInInspector]
+		public Unit Unit = null;
+
 		public GameObject Container;
 		public UnitPortrait Portrait;
 		public Image [ ] StatusIcons;
@@ -50,11 +54,11 @@ public class PlayerHUD : MonoBehaviour
 	/// <summary>
 	/// Initializes the HUD for a specified player.
 	/// </summary>
-	/// <param name="p"> The player that this HUD will represent. </param>
-	public void Initialize ( Player p )
+	/// <param name="player"> The player that this HUD will represent. </param>
+	public void Initialize ( Player player )
 	{
 		// Store player
-		Player = p;
+		Player = player;
 		
 		// Set team name
 		playerName.text = Player.PlayerName;
@@ -68,6 +72,9 @@ public class PlayerHUD : MonoBehaviour
 			{
 				// Add unit to dictionary
 				instanceHUDs.Add ( Player.UnitInstances [ i ].InstanceID, units [ i ] );
+
+				// Set unit
+				units [ i ].Unit = Player.UnitInstances [ i ];
 
 				// Set unit portrait
 				units [ i ].Portrait.SetPortrait ( Player.Units [ i ], Player.Team );
@@ -112,29 +119,18 @@ public class PlayerHUD : MonoBehaviour
 	/// <summary>
 	/// Updates a unit's portrait to a new sprite. 
 	/// </summary>
-	/// <param name="id"> The instance ID of the unit. </param>
-	/// <param name="newSprite"> The new sprite to display in the portrait. </param>
-	public void UpdatePortrait ( int id, Sprite newSprite )
+	/// <param name="unit"> The unit being updated. </param>
+	public void UpdatePortrait ( Unit unit )
 	{
-		// Change portrait icon
-		//instanceHUDs [ id ].Portrait.SetPortrait ( unitIDs [ unitIndexDic [ id ] ], newSprite, unitPortraits [ unitIndexDic [ id ] ].teamColor );
-	}
-
-	/// <summary>
-	/// Updates a unit's portrait to a new team color.
-	/// </summary>
-	/// <param name="id"> The instance ID of the unit. </param>
-	/// <param name="newColor"> The new team color to display in the portrait. </param>
-	public void UpdatePortrait ( int id, Color32 newColor )
-	{
-		// Change portrait color
-		//unitPortraits [ unitIndexDic [ id ] ].SetUnit ( unitIDs [ unitIndexDic [ id ] ], unitPortraits [ unitIndexDic [ id ] ].icon.sprite, newColor );
+		// Update the portrait's icon or color
+		instanceHUDs [ unit.InstanceID ].Portrait.SetPortrait ( unit.InstanceData, unit.Owner.Team );
 	}
 
 	/// <summary>
 	/// Checks if this Player HUD displays a unit by its instance ID.
 	/// Returns true if this HUD contains the unit.
 	/// </summary>
+	/// <param name="id"> The Instance ID being checked. </param>
 	/// <returns> Whether or not this HUD contains the unit. </returns>
 	public bool CheckForUnit ( int id )
 	{
@@ -149,39 +145,36 @@ public class PlayerHUD : MonoBehaviour
 	/// <param name="adjacentID"> The instance ID the new portrait should appear next to. </param>
 	public void AddPortrait ( Unit newUnit, int adjacentID )
 	{
-		//// Get the first empty slot as the start index
-		//int startIndex = System.Array.IndexOf ( instanceIDs, MatchSettings.NO_UNIT );
+		// Store the first empty slot as the start index
+		int startIndex = System.Array.IndexOf ( units, units.First ( x => !x.Container.activeSelf ) );
 
-		//// Get the index of the adjacent unit as the end index
-		//int endIndex = unitIndexDic [ adjacentID ] + 1;
+		// Store the index of the adjacent unit as the end index
+		int endIndex = System.Array.IndexOf ( units, instanceHUDs [ adjacentID ] ) + 1;
 
-		//// Shift each portrait and unit back one space to make room for the new portrait
-		//for ( int i = startIndex; i > endIndex; i-- )
-		//{
-		//	// Update the stored id
-		//	unitIDs [ i ] = unitIDs [ i - 1 ];
-		//	instanceIDs [ i ] = instanceIDs [ i - 1 ];
-		//	unitIndexDic [ instanceIDs [ i - 1 ] ]++;
+		// Shift each portrait and unit back one space to make room for the new portrait
+		for ( int i = startIndex; i < endIndex; i-- )
+		{
+			// Set portrait
+			units [ i ].Container.SetActive ( true );
+			units [ i ].Portrait.CopyPortrait ( units [ i - 1 ].Portrait );
 
-		//	// Set portrait
-		//	unitPortraits [ i ].gameObject.SetActive ( true );
-		//	//unitPortraits [ i ].SetUnit ( unitIDs [ i - 1 ], unitPortraits [ i - 1 ].icon.sprite, unitPortraits [ i - 1 ].teamColor );
-		//	unitPortraits [ i ].EnableToggle ( unitPortraits [ i - 1 ].IsEnabled );
+			// Set status effect icons
+			CopyStatusEffects ( units [ i - 1 ], units [ i ] );
 
-		//	// Set status effect icons
-		//	CopyStatusEffects ( statusEffects [ i - 1 ], statusEffects [ i ] );
-		//}
+			// Set unit to new portrait
+			units [ i ].Unit = units [ i - 1 ].Unit;
+			instanceHUDs [ units [ i ].Unit.InstanceID ] = units [ i ];
+		}
 
-		//// Store the ids of the new unit
-		//unitIDs [ endIndex ] = newUnit.InstanceData.ID;
-		//instanceIDs [ endIndex ] = newUnit.InstanceID;
-		//unitIndexDic.Add ( newUnit.InstanceID, endIndex );
+		// Store the new unit's ID
+		units [ endIndex ].Unit = newUnit;
+		instanceHUDs.Add ( newUnit.InstanceID, units [ endIndex ] );
 
-		//// Display portrait of the new unit
-		//unitPortraits [ endIndex ].SetUnit ( newUnit.InstanceData.ID, newUnit.displaySprite, Util.TeamColor ( newUnit.owner.Team ) );
+		// Display the new unit's portrait
+		units [ endIndex ].Portrait.SetPortrait ( newUnit.InstanceData, Player.Team );
 
-		//// Display status effects of the new unit
-		//UpdateStatusEffects ( newUnit.InstanceID, newUnit.Status );
+		// Display the status effects of the new unit
+		UpdateStatusEffects ( newUnit.InstanceID, newUnit.Status );
 	}
 
 	/// <summary>
@@ -190,43 +183,37 @@ public class PlayerHUD : MonoBehaviour
 	/// <param name="id"> The instance ID of the unit whose portrait is being removed. </param>
 	public void RemovePortrait ( int id )
 	{
-		//// Shift each portrait and unit forward one space to adjust for the removed portrait
-		//for ( int i = unitIndexDic [ id ]; i < unitPortraits.Length; i++ )
-		//{
-		//	// Check for an exist unit
-		//	if ( i + 1 < unitPortraits.Length && unitIDs [ i + 1 ] != MatchSettings.NO_UNIT )
-		//	{
-		//		// Update the stored id
-		//		unitIDs [ i ] = unitIDs [ i + 1 ];
-		//		instanceIDs [ i ] = instanceIDs [ i + 1 ];
-		//		unitIndexDic [ instanceIDs [ i + 1 ] ]--;
+		// Shift each portrait and unit forward one space to adjust for the removed portrait
+		for ( int i = System.Array.IndexOf ( units, instanceHUDs [ id ] ); i < units.Length; i++ )
+		{
+			// Check for an existing unit
+			if ( i + 1 < units.Length && units [ i + 1 ].Unit != null )
+			{
+				// Set portrait
+				units [ i ].Portrait.CopyPortrait ( units [ i + 1 ].Portrait );
 
-		//		// Set portrait
-		//		//unitPortraits [ i ].SetUnit ( unitIDs [ i + 1 ], unitPortraits [ i + 1 ].icon.sprite, unitPortraits [ i + 1 ].teamColor );
-		//		unitPortraits [ i ].EnableToggle ( unitPortraits [ i + 1 ].IsEnabled );
+				// Set status effect icons
+				CopyStatusEffects ( units [ i + 1 ], units [ i ] );
 
-		//		// Set status effect icons
-		//		CopyStatusEffects ( statusEffects [ i + 1 ], statusEffects [ i ] );
-		//	}
-		//	else
-		//	{
-		//		// Update the stored id to be nothing
-		//		unitIDs [ i ] = MatchSettings.NO_UNIT;
-		//		instanceIDs [ i ] = MatchSettings.NO_UNIT;
+				// Set unit to new portrait
+				units [ i ].Unit = units [ i + 1 ].Unit;
+				instanceHUDs [ units [ i ].Unit.InstanceID ] = units [ i ];
+			}
+			else
+			{
+				// Set portrait has empty
+				units [ i ].Unit = null;
 
-		//		// Hide the empty portrait
-		//		unitPortraits [ i ].gameObject.SetActive ( false );
+				// Hide portrait
+				units [ i ].Container.SetActive ( false );
 
-		//		// Hide the status effects
-		//		ClearStatusEffects ( statusEffects [ i ] );
+				// Portrait removal is now complete
+				break;
+			}
+		}
 
-		//		// The portrait removal is now complete
-		//		break;
-		//	}
-		//}
-
-		//// Remove the instance id from the dictionary
-		//unitIndexDic.Remove ( id );
+		// Remove unit from the dictionary
+		instanceHUDs.Remove ( id );
 	}
 
 	/// <summary>

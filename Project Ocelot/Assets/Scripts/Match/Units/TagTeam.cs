@@ -75,7 +75,10 @@ public class TagTeam : HeroUnit
 
 		// Set Divide And Conquer
 		if ( InstanceData.Ability3.IsEnabled && isSplit )
-			StartToggleCooldown ( InstanceData.Ability2, InstanceData.Ability3 );
+		{
+			StartCooldown ( InstanceData.Ability2 );
+			StartCooldown ( InstanceData.Ability3 );
+		}
 
 		// Store unit data for transitions
 		duoData = UnitDatabase.GetUnit ( InstanceData.ID );
@@ -136,7 +139,7 @@ public class TagTeam : HeroUnit
 					MoveData move;
 
 					// Check if the neighboring unit can be attacked
-					if ( hex.Neighbors [ i ].Tile.CurrentUnit != null && hex.Neighbors [ i ].Tile.CurrentUnit.UnitAttackCheck ( this ) )
+					if ( AttackTileCheck ( hex.Neighbors [ i ] ) )
 					{
 						// Check for Tag Team move
 						if ( PassiveAvailabilityCheck ( InstanceData.Ability1, prerequisite ) && prerequisite != null && prerequisite.Type == MoveData.MoveType.MOVE )
@@ -579,36 +582,37 @@ public class TagTeam : HeroUnit
 			{
 				// Mark that the ability is no longer active
 				InstanceData.Ability2.IsActive = false;
-
+				
 				// Set unit and tile data
 				tagTeamPartner.CurrentHex = hex;
 				hex.Tile.CurrentUnit = tagTeamPartner;
-
+				
 				// Start cooldown
-				StartToggleCooldown ( InstanceData.Ability2, InstanceData.Ability3 );
+				StartCooldown ( InstanceData.Ability2 );
+				StartCooldown ( InstanceData.Ability3 );
 				if ( InstanceData.Ability1.IsEnabled )
 					InstanceData.Ability1.IsAvailable = false;
-
+				
 				// Remove status effect
 				Status.RemoveStatusEffect ( StatusEffectDatabase.StatusEffectType.HASTE, this );
 				tagTeamPartner.Status.RemoveStatusEffect ( StatusEffectDatabase.StatusEffectType.HASTE, tagTeamPartner );
-
+				
 				// Apply status effect
 				Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.IN_UNISON, InstanceData.Ability2.Duration, this );
 				tagTeamPartner.Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.IN_UNISON, InstanceData.Ability2.Duration, this );
-
+				
 				// Update HUDs
 				GM.UI.unitHUD.UpdateStatusEffects ( );
 				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
-				GM.UI.matchInfoMenu.GetPlayerHUD ( tagTeamPartner ).UpdateStatusEffects ( tagTeamPartner.InstanceID, tagTeamPartner.Status );
-
+				//GM.UI.matchInfoMenu.GetPlayerHUD ( tagTeamPartner ).UpdateStatusEffects ( tagTeamPartner.InstanceID, tagTeamPartner.Status );
+				
 				// Pause turn timer
 				if ( MatchSettings.TurnTimer )
 					GM.UI.timer.ResumeTimer ( );
-
+				
 				// Get moves
 				GM.GetTeamMoves ( );
-
+				
 				// Display team
 				GM.DisplayAvailableUnits ( );
 				GM.SelectUnit ( this );
@@ -669,7 +673,10 @@ public class TagTeam : HeroUnit
 
 					// Start cooldown
 					if ( InstanceData.Ability2.IsEnabled )
-						StartToggleCooldown ( InstanceData.Ability3, InstanceData.Ability2 );
+					{
+						StartCooldown ( InstanceData.Ability2 );
+						StartCooldown ( InstanceData.Ability3 );
+					}
 					if ( InstanceData.Ability1.IsEnabled )
 						InstanceData.Ability1.IsAvailable = true;
 
@@ -698,7 +705,10 @@ public class TagTeam : HeroUnit
 
 					// Start cooldown
 					if ( tagTeamPartner.InstanceData.Ability2.IsEnabled )
-					tagTeamPartner.StartToggleCooldown ( tagTeamPartner.InstanceData.Ability3, tagTeamPartner.InstanceData.Ability2, false );
+					{
+						tagTeamPartner.StartCooldown ( InstanceData.Ability2 );
+						tagTeamPartner.StartCooldown ( InstanceData.Ability3 );
+					}
 					if ( tagTeamPartner.InstanceData.Ability1.IsEnabled )
 						tagTeamPartner.InstanceData.Ability1.IsAvailable = true;
 

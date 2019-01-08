@@ -111,6 +111,9 @@ public class GameManager : MonoBehaviour
 	}
 
 	[HideInInspector]
+	public Unit.KOdelegate GlobalKOdelegate = null;
+
+	[HideInInspector]
 	public List<Unit> UnitQueue = new List<Unit> ( );
 
 	[HideInInspector]
@@ -211,6 +214,7 @@ public class GameManager : MonoBehaviour
 
 				// Set the instance data
 				unit.InitializeInstance ( this, ( i * 10 ) + j, players [ i ].Units [ j ] );
+				players [ i ].StarterInstanceIDs.Add ( unit.InstanceID );
 
 				// Set unit's owner
 				unit.Owner = players [ i ];
@@ -231,10 +235,16 @@ public class GameManager : MonoBehaviour
 			}
 
 			// Add standard KO delegate to each unit
-			if ( players [ i ].standardKOdelegate != null )
-				foreach ( Unit u in players [ i ].UnitInstances )
-					u.koDelegate += players [ i ].standardKOdelegate;
+			if ( players [ i ].StandardKOdelegate != null )
+				foreach ( Unit unit in players [ i ].UnitInstances )
+					unit.koDelegate += players [ i ].StandardKOdelegate;
 		}
+
+		// Add global KO delegate to each unit
+		if ( GlobalKOdelegate != null )
+			foreach ( Player player in players )
+				foreach ( Unit unit in player.UnitInstances )
+					unit.koDelegate += GlobalKOdelegate;
 
 		// Sort players by turn order
 		players = players.OrderBy ( x => x.TurnOrder ).ToArray ( );
@@ -350,22 +360,25 @@ public class GameManager : MonoBehaviour
 	/// </summary>
 	private void UpdateUnitCountdowns ( )
 	{
-		// Access each of the player's units
-		foreach ( Unit u in CurrentPlayer.UnitInstances )
+		// Update status effects
+		foreach ( Unit unit in CurrentPlayer.UnitInstances )
 		{
 			// Set status effects
-			u.Status.UpdateDurations ( ); // Old
-			u.Status.UpdateStatus ( );
-
-			// Set cooldowns
-			if ( u is HeroUnit )
-			{
-				HeroUnit h = u as HeroUnit;
-				h.Cooldown ( );
-			}
+			unit.Status.UpdateStatus ( );
 
 			// Update HUD
-			UI.matchInfoMenu.GetPlayerHUD ( u ).UpdateStatusEffects ( u.InstanceID, u.Status );
+			UI.matchInfoMenu.GetPlayerHUD ( unit ).UpdateStatusEffects ( unit.InstanceID, unit.Status );
+		}
+
+		// Update abilities
+		foreach ( Unit unit in CurrentPlayer.UnitInstances )
+		{
+			// Set cooldowns
+			if ( unit is HeroUnit )
+			{
+				HeroUnit hero = unit as HeroUnit;
+				hero.Cooldown ( );
+			}
 		}
 	}
 
@@ -375,7 +388,7 @@ public class GameManager : MonoBehaviour
 	private void UpdateTileObjectDurations ( )
 	{
 		// Access each of the player's tile objects
-		foreach ( TileObject o in CurrentPlayer.tileObjects )
+		foreach ( TileObject o in CurrentPlayer.TileObjects )
 			o.Duration ( );
 	}
 
@@ -470,11 +483,12 @@ public class GameManager : MonoBehaviour
 	public void SelectUnit ( Unit unit )
 	{
 		// Check for previously selected unit
-		if ( SelectedUnit != null && IsStartOfTurn && !UI.timer.IsOutOfTime )
+		if ( SelectedUnit != null && !UI.timer.IsOutOfTime )
 		{
 			// Reset any previous selected units
 			Grid.ResetTiles ( );
-			DisplayAvailableUnits ( );
+			if ( IsStartOfTurn )
+				DisplayAvailableUnits ( );
 		}
 
 		// Set unit as the currently selected unit
@@ -867,16 +881,16 @@ public class GameManager : MonoBehaviour
 	/// <summary>
 	/// Eliminates a player from the match.
 	/// </summary>
-	public void LoseMatch ( Player p )
+	public void LoseMatch ( Player player )
 	{
 		// Display the player being eliminated
-		UI.matchInfoMenu.GetPlayerHUD ( p ).DisplayElimination ( );
+		UI.matchInfoMenu.GetPlayerHUD ( player ).DisplayElimination ( );
 
 		// Remove player from match
-		foreach ( Unit u in p.UnitInstances )
+		foreach ( Unit unit in player.UnitInstances )
 		{
 			// Capture all other units
-			u.GetAttacked ( true );
+			unit.UnitKO ( true );
 		}
 	}
 

@@ -76,51 +76,47 @@ public class Rally : HeroUnit
 
 	protected override void GetAssisted ( MoveData data )
 	{
-		// Check for Rally
-		if ( PassiveAvailabilityCheck ( InstanceData.Ability1, data ) )
+		// Check for Dual Assist
+		if ( data.Type == MoveData.MoveType.SPECIAL )
 		{
-			// Check for Dual Assist
-			if ( data.Type == MoveData.MoveType.SPECIAL )
+			// Track if Rally has been used
+			bool usedRally = false;
+
+			// Check each target
+			for ( int i = 0; i < data.AssistTargets.Length; i++ )
 			{
-				// Track if Rally has been used
-				bool usedRally = false;
+				// Check for unit
+				if ( data.AssistTargets [ i ].Tile.CurrentUnit == null )
+					continue;
 
-				// Check each target
-				for ( int i = 0; i < data.AttackTargets.Length; i++ )
-				{
-					// Check for unit
-					if ( data.AttackTargets [ i ].Tile.CurrentUnit == null )
-						continue;
-
-					// Get assisted unit
-					Unit unit = data.AttackTargets [ i ].Tile.CurrentUnit;
-
-					// Assist unit
-					unit.Assist ( );
-
-					// Check status
-					if ( unit.Owner == Owner && unit.Status.CanMove && unit.Status.CanBeAffectedByAbility )
-					{
-						// Rally unit
-						ActivateRally ( unit, !usedRally );
-
-						// Mark that rally has been used
-						usedRally = true;
-					}
-				}
-			}
-			else
-			{
 				// Get assisted unit
-				Unit unit = data.AttackTargets [ 0 ].Tile.CurrentUnit;
+				Unit unit = data.AssistTargets [ i ].Tile.CurrentUnit;
 
 				// Assist unit
 				unit.Assist ( );
 
 				// Check status
-				if ( unit.Status.CanMove && unit.Status.CanBeAffectedByAbility )
-					ActivateRally ( unit );
+				if ( PassiveAvailabilityCheck ( InstanceData.Ability1, data ) && RallyUnitCheck ( unit ) && RallyCountCheck ( data.PriorMove ) < InstanceData.Ability1.CurrentDuration )
+				{
+					// Rally unit
+					ActivateRally ( unit, !usedRally );
+
+					// Mark that rally has been used
+					usedRally = true;
+				}
 			}
+		}
+		else
+		{
+			// Get assisted unit
+			Unit unit = data.AssistTargets [ 0 ].Tile.CurrentUnit;
+
+			// Assist unit
+			unit.Assist ( );
+
+			// Check status
+			if ( PassiveAvailabilityCheck ( InstanceData.Ability1, data ) && RallyUnitCheck ( unit ) && RallyCountCheck ( data.PriorMove ) < InstanceData.Ability1.CurrentDuration )
+				ActivateRally ( unit );
 		}
 	}
 
@@ -238,11 +234,63 @@ public class Rally : HeroUnit
 
 		// Add animation to queue
 		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+
+		// Mark as being assisted
+		GetAssisted ( data );
 	}
 
 	#endregion // Protected HeroUnit Override Functions
 
 	#region Private Functions
+
+	/// <summary>
+	/// Checks if an assisting unit can be rallied.
+	/// </summary>
+	/// <param name="unit"> The assisting unit. </param>
+	/// <returns> Whether or not the unit can be rallied. </returns>
+	private bool RallyUnitCheck ( Unit unit )
+	{
+		// Check the unit's team
+		if ( unit.Owner != Owner )
+			return false;
+
+		// Check if the unit can move
+		if ( !unit.Status.CanMove )
+			return false;
+
+		// Check if the unit can be affected by abilities
+		if ( !unit.Status.CanBeAffectedByAbility )
+			return false;
+
+		// Return that the unit can be rallied
+		return true;
+	}
+
+
+	/// <summary>
+	/// Checks how many times Rally has been used for this move.
+	/// </summary>
+	/// <param name="prerequisite"> The previous move. </param>
+	/// <param name="count"> The current number of times Rally has been used. </param>
+	/// <returns> The total number of times Rally has been used. </returns>
+	private int RallyCountCheck ( MoveData prerequisite, int count = 0 )
+	{
+		// Check for prior move
+		if ( prerequisite == null )
+			return count;
+
+		// Check for assists
+		if ( !prerequisite.IsAssist )
+			return RallyCountCheck ( prerequisite.PriorMove, count );
+
+		// Check each assisting unit
+		for ( int i = 0; i < prerequisite.AssistTargets.Length; i++ )
+			if ( RallyUnitCheck ( prerequisite.AssistTargets [ i ].Tile.CurrentUnit ) )
+				return RallyCountCheck ( prerequisite.PriorMove, count + 1 );
+
+		// Check the next move in the list of prerequisites
+		return RallyCountCheck ( prerequisite.PriorMove, count );
+	}
 
 	/// <summary>
 	/// Activates the Rally ability. This adds a unit to the unit queue.
@@ -281,7 +329,7 @@ public class Rally : HeroUnit
 			} );
 
 		// Add animation to queue
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, consumeDuration ) );
 	}
 
 	/// <summary>

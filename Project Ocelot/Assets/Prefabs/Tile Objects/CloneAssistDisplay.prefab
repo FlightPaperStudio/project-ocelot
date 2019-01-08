@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 212565650602130830}
   - component: {fileID: 114978758530600198}
   m_Layer: 2
-  m_Name: CloneAssistDisplay
+  m_Name: Clone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54,9 +54,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Icon: {fileID: 212565650602130830}
   Caster: {fileID: 0}
-  CurrentTile: {fileID: 0}
+  CurrentHex: {fileID: 0}
   CanBeOccupied: 0
-  CanBeJumped: 1
+  CanAssist: 1
   CanBeMoved: 1
   CanBeAttacked: 1
 --- !u!212 &212565650602130830

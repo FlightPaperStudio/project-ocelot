@@ -76,7 +76,7 @@ public class Armor : HeroUnit
 		InstanceData.Ability1.CurrentDuration = InstanceData.Ability1.Duration;
 
 		// Store unit data for transitions
-		duoData = InstanceData;
+		duoData = UnitDatabase.GetUnit ( InstanceData.ID );
 		singleData = UnitDatabase.GetUnit ( InstanceData.ID + 1 );
 	}
 
@@ -123,7 +123,7 @@ public class Armor : HeroUnit
 					.OnComplete ( ( ) =>
 					{
 						// Update player HUD
-						GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( InstanceID, displaySprite );
+						GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( this );
 
 						// Hide animation sprite
 						mechAnimation.gameObject.SetActive ( false );
@@ -170,7 +170,7 @@ public class Armor : HeroUnit
 		if ( activeAbility == InstanceData.Ability3 )
 		{
 			// Create Recall
-			currentRecall = CreateTileOject ( recallPrefab, GM.SelectedCommand.PrimaryTarget, InstanceData.Ability3.Duration, RecallDurationComplete );
+			currentRecall = CreateTileOject ( recallPrefab, GM.SelectedCommand.PrimaryTarget, InstanceData.Ability3.Duration, RecallDurationComplete, EndReconstruct );
 
 			// Set team color
 			Color32 c = Util.TeamColor ( Owner.Team );
@@ -189,9 +189,11 @@ public class Armor : HeroUnit
 					MoveList.Clear ( );
 
 					// Start cooldown
+					StartCooldown ( InstanceData.Ability2 );
 					StartCooldown ( InstanceData.Ability3 );
 
 					// Apply status effect
+					Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.CRAFTING, InstanceData.Ability3.Duration, this );
 					GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
 
 					// Pause turn timer
@@ -354,6 +356,9 @@ public class Armor : HeroUnit
 		Tween t1 = currentSelfDestruct.transform.DOScale ( new Vector3 ( 5, 5, 5 ), MOVE_ANIMATION_TIME )
 			.OnComplete ( ( ) =>
 			{
+				// Mark that the ability is no longer active
+				InstanceData.Ability2.IsActive = false;
+
 				// Remove Self-Destruct
 				DestroyTileObject ( currentSelfDestruct );
 			} );
@@ -445,13 +450,14 @@ public class Armor : HeroUnit
 
 		// Update player HUD
 		if ( !isFromAttack )
-			GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( InstanceID, displaySprite );
+			GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( this );
 
 		// Expire Armor's duration
 		if ( !isFromAttack )
 			InstanceData.Ability1.CurrentDuration = 0;
 
 		// Set Recall cooldown
+		StartCooldown ( InstanceData.Ability2, !isFromAttack );
 		StartCooldown ( InstanceData.Ability3, !isFromAttack );
 	}
 
@@ -466,7 +472,7 @@ public class Armor : HeroUnit
 		// Change sprite
 		displaySprite = InstanceData.Portrait;
 		sprite.sprite = InstanceData.Portrait;
-		GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( InstanceID, displaySprite );
+		GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( this );
 
 		// Replenish Armor's duration
 		if ( InstanceData.Ability1.IsEnabled )
@@ -478,11 +484,25 @@ public class Armor : HeroUnit
 	/// </summary>
 	private void EndReconstruct ( )
 	{
-		// Remove Recall
-		DestroyTileObject ( currentRecall );
+		// Create animation
+		Tween t1 = currentRecall.transform.DOScale ( new Vector3 ( 5, 5, 5 ), MOVE_ANIMATION_TIME )
+			.OnComplete ( ( ) =>
+			{
+				// Mark that the ability is no longer active
+				InstanceData.Ability3.IsActive = false;
 
-		// Cancel Recall
-		isRecalling = false;
+				// Remove Recall
+				DestroyTileObject ( currentRecall );
+
+				// Cancel Recall
+				isRecalling = false;
+				currentRecall = null;
+			} );
+		Tween t2 = currentRecall.Icon.DOFade ( 0, MOVE_ANIMATION_TIME );
+
+		// Add animations to queue
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
+		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
 	}
 
 	#endregion // Private Functions

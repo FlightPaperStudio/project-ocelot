@@ -19,6 +19,7 @@ public class TileObject : MonoBehaviour
 
 	public delegate void TileObjectDelegate ( );
 	private TileObjectDelegate durationDelegate;
+	private TileObjectDelegate attackDelegate;
 
 	#endregion // Tile Object Data
 
@@ -27,7 +28,7 @@ public class TileObject : MonoBehaviour
 	/// <summary>
 	/// Sets the tile object instance information.
 	/// </summary>
-	public void SetTileObject ( HeroUnit caster, Hex hex, int _duration, TileObjectDelegate _delegate )
+	public void SetTileObject ( HeroUnit caster, Hex hex, int objDuration, TileObjectDelegate durationDel, TileObjectDelegate attackDel = null )
 	{
 		// Set owner
 		Caster = caster;
@@ -39,10 +40,11 @@ public class TileObject : MonoBehaviour
 		transform.position = hex.transform.position;
 
 		// Set duration
-		duration = _duration;
+		duration = objDuration;
 
-		// Set delegate
-		durationDelegate = _delegate;
+		// Set delegates
+		durationDelegate = durationDel;
+		attackDelegate = attackDel;
 	}
 
 	/// <summary>
@@ -54,7 +56,7 @@ public class TileObject : MonoBehaviour
 		duration--;
 
 		// Check if duration has expired
-		if ( duration == 0 )
+		if ( duration <= 0 )
 			OnDurationExpire ( );
 	}
 
@@ -72,8 +74,37 @@ public class TileObject : MonoBehaviour
 	/// </summary>
 	public void GetAttacked ( )
 	{
-		// End duration
-		OnDurationExpire ( );
+		// Check delegates
+		if ( attackDelegate != null )
+			attackDelegate ( );
+		else
+			OnDurationExpire ( );
+	}
+
+	/// <summary>
+	/// Determines if this tile object can be attacked by another unit.
+	/// Call this function on the object being attacked with the unit that is attacking as the parameter.
+	/// Returns true if this unit can be attacked.
+	/// </summary>
+	/// <param name="attacker"> The unit doing the attacking. </param>
+	/// <param name="friendlyFire"> Whether or not the attack can affect ally units. </param>
+	/// <returns> Whether or not this unit can be attacked by another unit. </returns>
+	public bool UnitAttackCheck ( Unit attacker, bool friendlyFire = false )
+	{
+		// Check if this object can be attacked
+		if ( !CanBeAttacked )
+			return false;
+
+		// Check if the object and attacker are on the same team
+		if ( !friendlyFire && attacker.Owner == Caster.Owner )
+			return false;
+
+		// Check if the attacking unit can attack
+		if ( !attacker.Status.CanAttack )
+			return false;
+
+		// Return that this object can be attacked by the attacking unit
+		return true;
 	}
 
 	#endregion // Public Functions
