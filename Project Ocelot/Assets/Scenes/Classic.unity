@@ -9967,11 +9967,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -10769,11 +10769,11 @@ MonoBehaviour:
     lineCount: 2
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -17056,11 +17056,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -18271,7 +18271,7 @@ MonoBehaviour:
   - ID: 1
     Unit: {fileID: 114942466955975558, guid: 430a69d7dfb1e974ab9bb01ee6084075, type: 2}
   - ID: 2
-    Unit: {fileID: 114438598948444332, guid: 5b234d194f8f60044a76a900c073fe20, type: 2}
+    Unit: {fileID: 114531287351408870, guid: cb727e83c7a286b4fad5daba37bcf7d0, type: 2}
   - ID: 3
     Unit: {fileID: 114438598948444332, guid: 5b234d194f8f60044a76a900c073fe20, type: 2}
   - ID: 4

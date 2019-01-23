@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 212565650602130830}
   - component: {fileID: 114978758530600198}
   m_Layer: 2
-  m_Name: Clone
+  m_Name: CloneAssistDisplay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

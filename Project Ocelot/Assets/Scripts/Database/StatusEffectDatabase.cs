@@ -11,7 +11,7 @@ public class StatusEffectDatabase
 	public enum StatusEffectType
 	{
 		NONE = 0,
-		BINARY_COMPANION = 1,
+		CHAINED = 1,
 		BLIND = 2,
 		SOLAR_SHIELDING = 3,
 		NEGATIVE_MASS = 4,
