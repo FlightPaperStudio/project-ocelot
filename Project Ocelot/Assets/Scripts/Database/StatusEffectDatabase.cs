@@ -13,7 +13,7 @@ public class StatusEffectDatabase
 		NONE = 0,
 		CHAINED = 1,
 		BLIND = 2,
-		SOLAR_SHIELDING = 3,
+		PLASMA_SHIELD = 3,
 		NEGATIVE_MASS = 4,
 		RADIATION_POISONING = 5,
 		CRAFTING = 6,
