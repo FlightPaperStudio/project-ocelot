@@ -1,6 +1,6 @@
-WindowsStandalone
+OSXStandalone
 PlayerPath?
-C:/Users/Ethan Caraway/Desktop/Flight Paper Studio/Game Projects/Project Ocelot/Builds/PC/v.0.0.23/Project Ocelot v.0.0.23.exe
+C:/Users/Ethan Caraway/Desktop/Flight Paper Studio/Game Projects/Project Ocelot/Builds/Mac/v.0.0.23/v.0.0.23.app
 SceneListBegin?
 Assets/Scenes/Splash Screen.unity
 Assets/Scenes/Menus.unity
@@ -23,6 +23,7 @@ ff05dcdf90651c3d98a9cad3df5e471e UnityEngine.Timeline.dll:UnityEngine.Timeline.C
 92d7a83ea3c7404e484f3b2eed421855 UnityEngine.Timeline.dll:UnityEngine.Timeline.GroupTrack
 92d7a83ea3c7404e484f3b2eed421855 UnityEngine.Timeline.dll:UnityEngine.Timeline.PlayableTrack
 df374c01140c2d578bf70cbd60073d1d UnityEngine.Timeline.dll:UnityEngine.Timeline.TimelineAsset
+c25d09c9a4faff5492ebcfc856a91b4f Assembly-CSharp.dll:.MaroUra
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.RulesMenu
 dd0603c5a8af2b12fb721da349a073b6 Assembly-CSharp.dll:.TeamFormationMenu
 f56e8f92e182f0742a451c3b9ec3c806 Assembly-CSharp.dll:.Pacifist
@@ -244,7 +245,9 @@ d2a2bd333db22f480a8589e167314ecc Vuforia.UnityExtensions.dll:Vuforia.UserDefined
 05524b8f659e7bfe5756d1335fec24ba Vuforia.UnityExtensions.dll:Vuforia.WireframeTrackableEventHandler
 15bea26698002c6c4a3087131232ce5c Vuforia.UnityExtensions.dll:Vuforia.WordBehaviour
 020550babdb991365f61c5bffe1f4f52 Assembly-CSharp.dll:TMPro.Examples.Benchmark03
+688bea5735796184cb8933d4446c2557 Assembly-CSharp.dll:.Neaera
 17a49379ea5f1336e3b19b96d9da0c63 Assembly-CSharp.dll:.Unit
+064e8799e6064d544e2757d69e937bd4 Assembly-CSharp.dll:.Baetylus
 b9332c0eee630779376843b5343eb250 Assembly-CSharp.dll:TMPro.Examples.TMP_TextInfoDebugTool
 f0ecdd0500625e344a855f23f79647f3 Assembly-CSharp.dll:.HeroesSlideMenu
 f0bdc1041dee6504f25216b38b2bb3cb TextMeshPro.dll:TMPro.InlineGraphic
@@ -337,6 +340,7 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 954bb7af1358d995ac8c160680d43a01 Assembly-CSharp.dll:.OptionsMenu
 48a9dee325686d1924a2646b71c83f08 Assembly-CSharp.dll:TMPro.Examples.Benchmark01
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
+618cdb174406adbea063edc0a411e325 Assembly-CSharp.dll:.Zorya
 530b95ed502d2d62ddbba5204aab6edd Assembly-CSharp.dll:.DebateMenu
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:TMPro.Examples.TextConsoleSimulator
 3c48c3eaa5a303edb0619c3ddd19c6ec Assembly-CSharp.dll:.TeamSettingsSlideMenu
@@ -391,6 +395,7 @@ d2a2bd333db22f480a8589e167314ecc Vuforia.UnityExtensions.dll:Vuforia.UserDefined
 42af4cad12f4e0ef64812d9f468c9eb0 Assembly-CSharp.dll:.PauseMenu
 8b14d4224438640f23246dc49b6f90d0 Assembly-CSharp.dll:.ButtonSFXPlayer
 64ced1d0250d72c1d7af6b824e3c71c3 Assembly-CSharp.dll:.HeroSettingSlideMenu
+d33b1a2e447c05387246661e2451800d Assembly-CSharp.dll:.Aerio
 17a49379ea5f1336e3b19b96d9da0c63 Assembly-CSharp.dll:.Leader
 a5bff19651cd62fe80f79b1eb781b071 Assembly-CSharp.dll:.UnitPortrait
 26215f135eeb48d8fa1189498c107f6c Vuforia.UnityExtensions.dll:Vuforia.AnchorBehaviour
@@ -430,4 +435,4 @@ d2a2bd333db22f480a8589e167314ecc Vuforia.UnityExtensions.dll:Vuforia.UserDefined
 15bea26698002c6c4a3087131232ce5c Vuforia.UnityExtensions.dll:Vuforia.WordBehaviour
 34e025057ef78b1bf238460cdf6583a3 Assembly-CSharp.dll:TMPro.Examples.ObjectSpin
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:TMPro.Examples.SimpleScript
-618cdb174406adbea063edc0a411e325 Assembly-CSharp.dll:.Zorya
+5fb46f3decd6b8034c8ed6a68808c48b Assembly-CSharp.dll:.Malogon
