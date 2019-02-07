@@ -84,10 +84,16 @@ public class Neaera : Leader
 		// Begin animation
 		Sequence s = DOTween.Sequence ( );
 
-		// Apply shield
+		// Check for unit
 		if ( GM.SelectedCommand.PrimaryTarget.Tile.CurrentUnit != null )
-			GM.SelectedCommand.PrimaryTarget.Tile.CurrentUnit.Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.PLASMA_SHIELD, InstanceData.Ability1.Duration, this );
+		{
+			// Interupt unit
+			GM.SelectedCommand.PrimaryTarget.Tile.CurrentUnit.InteruptUnit ( );
 
+			// Apply shield
+			GM.SelectedCommand.PrimaryTarget.Tile.CurrentUnit.Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.PLASMA_SHIELD, InstanceData.Ability1.Duration, this );
+		}
+			
 		// Create the solar flare
 		currentSolarFlare = CreateTileOject ( solarFlarePrefab, GM.SelectedCommand.PrimaryTarget, InstanceData.Ability1.Duration, RemoveSolarFlare );
 		currentSolarFlare.Icon.color = Util.TeamColor ( Owner.Team );
@@ -195,6 +201,9 @@ public class Neaera : Leader
 			// Check if unit is immune
 			if ( !targets [ i ].Tile.CurrentUnit.Status.CanBeAffectedByAbility )
 				continue;
+
+			// Interupt unit
+			targets [ i ].Tile.CurrentUnit.InteruptUnit ( );
 
 			// Apply blind
 			targets [ i ].Tile.CurrentUnit.Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.BLIND, InstanceData.Ability1.Duration, this );

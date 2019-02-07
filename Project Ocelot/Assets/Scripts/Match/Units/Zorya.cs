@@ -224,6 +224,9 @@ public class Zorya : Leader
 	/// <param name="s"> The animation sequence for Chains of Simargl. </param>
 	private void ApplyChains ( Hex hex, Sequence s )
 	{
+		// Interupt unit
+		hex.Tile.CurrentUnit.InteruptUnit ( );
+
 		// Apply status effect
 		hex.Tile.CurrentUnit.Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.CHAINED, InstanceData.Ability1.Duration, this );
 

@@ -230,6 +230,25 @@ public class StatusEffects
 		return Effects.Exists ( x => x.ID == (int)effect && x.Caster == caster );
 	}
 
+	/// <summary>
+	/// Removes all existing status effects for this unit.
+	/// </summary>
+	public void ClearStatusEffects ( )
+	{
+		// Remove existing effects
+		Effects.Clear ( );
+
+		// Reset effects
+		canMoveStack = 0;
+		canBeMovedStack = 0;
+		canAssistStack = 0;
+		canAttackStack = 0;
+		canBeAttackedStack = 0;
+		canUseAbilityStack = 0;
+		canBeAffectedByAbilityStack = 0;
+		canBeAffectedPhysicallyStack = 0;
+	}
+
 	#endregion // Public Functions
 
 	#region Private Functions

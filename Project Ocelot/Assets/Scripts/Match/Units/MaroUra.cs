@@ -273,6 +273,9 @@ public class MaroUra : Leader
 					// Get unit
 					Unit unit = target.Tile.CurrentUnit;
 
+					// Interupt unit
+					unit.InteruptUnit ( );
+
 					// Set unit to move to hex
 					moveTo.Peek ( ).Tile.CurrentUnit = unit;
 					unit.CurrentHex = moveTo.Peek ( );

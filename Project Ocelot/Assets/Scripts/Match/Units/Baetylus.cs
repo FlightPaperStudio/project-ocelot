@@ -181,6 +181,9 @@ public class Baetylus : Leader
 				// Get unit
 				Unit unit = hex.Neighbors [ i ].Tile.CurrentUnit;
 
+				// Interupt unit
+				unit.InteruptUnit ( );
+
 				// Set unit to hex
 				hex.Neighbors [ i ].Tile.CurrentUnit = null;
 				unit.CurrentHex = destination;
