@@ -20,6 +20,9 @@ public class GameManager : MonoBehaviour
 
 	#region UI Elements
 
+	[SerializeField]
+	private PathDrawer path;
+
 	public UIManager UI;
 
 	#endregion // UI Elements
@@ -539,6 +542,9 @@ public class GameManager : MonoBehaviour
 		// Store selected move
 		SelectedMove = data;
 
+		// Display movement path
+		path.DisplayPath ( SelectedUnit, SelectedMove );
+
 		// Display any additional moves
 		DisplayAvailableMoves ( SelectedMove );
 	}
@@ -558,6 +564,9 @@ public class GameManager : MonoBehaviour
 			IsStartOfTurn = false;
 		}
 
+		// Hide path
+		path.HidePath ( );
+
 		// End the unit's turn
 		EndTurn ( isPanicMove );
 	}
@@ -573,6 +582,9 @@ public class GameManager : MonoBehaviour
 
 		// Remove selected move
 		SelectedMove = null;
+
+		// Hide path
+		path.HidePath ( );
 
 		// Reset board
 		SelectUnit ( SelectedUnit );

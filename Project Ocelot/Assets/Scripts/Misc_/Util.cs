@@ -44,29 +44,29 @@ public class Util
 	/// </summary>
 	/// <param name="team"> The team associated with the accent color. </param>
 	/// <returns> The accent color for the team. </returns>
-	public static Color32 AccentColor ( Player.TeamColor team )
+	public static Color32 AccentColor ( Player.TeamColor team, byte alpha = 255 )
 	{
 		// Get team color
 		Color32 col = Color.white;
 		switch ( team )
 		{
 		case Player.TeamColor.BLUE:
-			col = new Color32 (   0, 101, 131, 255 );
+			col = new Color32 (   0, 101, 131, alpha );
 			break;
 		case Player.TeamColor.GREEN:
-			col = new Color32 (   0, 127,  63, 255 );
+			col = new Color32 (   0, 127,  63, alpha );
 			break;
 		case Player.TeamColor.YELLOW:
-			col = new Color32 ( 255, 244, 164, 255 );
+			col = new Color32 ( 255, 244, 164, alpha );
 			break;
 		case Player.TeamColor.ORANGE:
-			col = new Color32 ( 239,  66,  54, 255 );
+			col = new Color32 ( 239,  66,  54, alpha );
 			break;
 		case Player.TeamColor.PINK:
-			col = new Color32 ( 158,  32,  99, 255 ); 
+			col = new Color32 ( 158,  32,  99, alpha ); 
 			break;
 		case Player.TeamColor.PURPLE:
-			col = new Color32 ( 102,  45, 145, 255 ); 
+			col = new Color32 ( 102,  45, 145, alpha ); 
 			break;
 		}
 
