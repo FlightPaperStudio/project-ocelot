@@ -76,8 +76,8 @@ public class Armor : HeroUnit
 		InstanceData.Ability1.CurrentDuration = InstanceData.Ability1.Duration;
 
 		// Store unit data for transitions
-		duoData = UnitDatabase.GetUnit ( InstanceData.ID );
-		singleData = UnitDatabase.GetUnit ( InstanceData.ID + 1 );
+		duoData = MatchSettings.GetUnitData ( ID );
+		singleData = MatchSettings.GetUnitData ( ID + 1 );
 	}
 
 	/// <summary>

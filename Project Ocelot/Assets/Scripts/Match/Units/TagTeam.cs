@@ -81,9 +81,9 @@ public class TagTeam : HeroUnit
 		}
 
 		// Store unit data for transitions
-		duoData = UnitDatabase.GetUnit ( InstanceData.ID );
-		partner1Data = UnitDatabase.GetUnit ( InstanceData.ID + 1 );
-		partner2Data = UnitDatabase.GetUnit ( InstanceData.ID + 2 );
+		duoData = MatchSettings.GetUnitData ( ID );
+		partner1Data = MatchSettings.GetUnitData ( ID + 1 );
+		partner2Data = MatchSettings.GetUnitData ( ID + 2 );
 
 		// Update unit data
 		if ( isSplit )
