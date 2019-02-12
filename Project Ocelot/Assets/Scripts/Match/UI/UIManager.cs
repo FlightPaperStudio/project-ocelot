@@ -24,6 +24,9 @@ public class UIManager : MonoBehaviour
 	[SerializeField]
 	private GameObject commandControls;
 
+	public PathDrawer Path;
+	public HexCursor Cursor;
+
 	#endregion // UI Elements
 
 	#region UI Data

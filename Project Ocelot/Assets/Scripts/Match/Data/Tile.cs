@@ -55,6 +55,9 @@ public class Tile : MonoBehaviour
 	/// </summary>
 	public void MouseEnter ( )
 	{
+		// Display cursor
+		GM.UI.Cursor.OnHexEnter ( Hex );
+
 		// Check state
 		switch ( State )
 		{
@@ -104,6 +107,9 @@ public class Tile : MonoBehaviour
 	/// </summary>
 	public void MouseExit ( )
 	{
+		// Remove cursor
+		GM.UI.Cursor.OnHexExit ( Hex );
+
 		// Return tile color to current state
 		HighlightTile ( State );
 
