@@ -163,7 +163,7 @@ public class Pacifist : HeroUnit
 			GM.UI.timer.PauseTimer ( );
 
 		// Hide cancel button
-		GM.UI.unitHUD.HideCancelButton ( InstanceData.Ability2 );
+		GM.UI.UnitHUD.HideCancelButton ( InstanceData.Ability2 );
 
 		// Clear board
 		GM.Grid.ResetTiles ( );

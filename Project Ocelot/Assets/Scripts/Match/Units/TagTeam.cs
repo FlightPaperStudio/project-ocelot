@@ -339,13 +339,13 @@ public class TagTeam : HeroUnit
 				{
 					// Mark that the ability is active
 					InstanceData.Ability1.IsActive = true;
-					GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+					GM.UI.UnitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
 				} )
 				.OnComplete ( ( ) =>
 				{
 					// Mark that the ability is no longer active
 					InstanceData.Ability1.IsActive = false;
-					GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+					GM.UI.UnitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
 
 					// Set unit and tile data
 					SetUnitToTile ( data.Destination );
@@ -368,13 +368,13 @@ public class TagTeam : HeroUnit
 					{
 						// Mark that the ability is active
 						InstanceData.Ability1.IsActive = true;
-						GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+						GM.UI.UnitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
 					} )
 					.OnComplete ( ( ) =>
 					{
 						// Mark that the ability is no longer active
 						InstanceData.Ability1.IsActive = false;
-						GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+						GM.UI.UnitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
 
 						// Set unit and tile data
 						SetUnitToTile ( data.Destination );
@@ -391,13 +391,13 @@ public class TagTeam : HeroUnit
 					{
 						// Mark that the ability is active
 						InstanceData.Ability1.IsActive = true;
-						GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+						GM.UI.UnitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
 					} )
 					.OnComplete ( ( ) =>
 					{
 						// Mark that the ability is no longer active
 						InstanceData.Ability1.IsActive = false;
-						GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+						GM.UI.UnitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
 
 						// Set unit and tile data
 						SetUnitToTile ( data.Destination );
@@ -548,7 +548,7 @@ public class TagTeam : HeroUnit
 			GM.UI.timer.PauseTimer ( );
 
 		// Hide cancel button
-		GM.UI.unitHUD.HideCancelButton ( InstanceData.Ability2 );
+		GM.UI.UnitHUD.HideCancelButton ( InstanceData.Ability2 );
 
 		// Clear board
 		GM.Grid.ResetTiles ( );
@@ -602,7 +602,7 @@ public class TagTeam : HeroUnit
 				tagTeamPartner.Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.IN_UNISON, InstanceData.Ability2.Duration, this );
 				
 				// Update HUDs
-				GM.UI.unitHUD.UpdateStatusEffects ( );
+				GM.UI.UnitHUD.UpdateStatusEffects ( );
 				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
 				//GM.UI.matchInfoMenu.GetPlayerHUD ( tagTeamPartner ).UpdateStatusEffects ( tagTeamPartner.InstanceID, tagTeamPartner.Status );
 				
@@ -630,7 +630,7 @@ public class TagTeam : HeroUnit
 			GM.UI.timer.PauseTimer ( );
 
 		// Hide cancel button
-		GM.UI.unitHUD.HideCancelButton ( InstanceData.Ability2 );
+		GM.UI.UnitHUD.HideCancelButton ( InstanceData.Ability2 );
 
 		// Clear board
 		GM.Grid.ResetTiles ( );

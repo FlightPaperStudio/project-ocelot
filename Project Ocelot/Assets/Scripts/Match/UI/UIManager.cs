@@ -32,7 +32,7 @@ public class UIManager : MonoBehaviour
 	#region UI Data
 
 	public MatchInfoMenu matchInfoMenu;
-	public UnitHUD unitHUD;
+	public UnitHUD UnitHUD;
 	public TurnTimer timer;
 	public SplashPrompt splash;
 	public PopUpMenu popUp;
@@ -104,7 +104,7 @@ public class UIManager : MonoBehaviour
 		matchInfoMenu.Initialize ( players );
 
 		// Hide unit HUD
-		unitHUD.HideHUD ( );
+		UnitHUD.HideHUD ( );
 
 		// Hide controls
 		SetControls ( GameManager.TurnState.NO_SELECTION );

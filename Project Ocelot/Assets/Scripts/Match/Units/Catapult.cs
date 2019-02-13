@@ -80,7 +80,7 @@ public class Catapult : HeroUnit
 			GM.UI.timer.PauseTimer ( );
 
 		// Hide cancel button
-		GM.UI.unitHUD.HideCancelButton ( InstanceData.Ability2 );
+		GM.UI.UnitHUD.HideCancelButton ( InstanceData.Ability2 );
 
 		// Clear board
 		GM.Grid.ResetTiles ( );
@@ -215,7 +215,7 @@ public class Catapult : HeroUnit
 			{
 				// Mark that the ability is active
 				InstanceData.Ability1.IsActive = true;
-				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+				GM.UI.UnitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
 			} )
 			.OnComplete ( ( ) =>
 			{
@@ -228,7 +228,7 @@ public class Catapult : HeroUnit
 				// Add status effect
 				Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.EXHAUSTION, InstanceData.Ability1.Duration, this );
 				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
-				GM.UI.unitHUD.UpdateStatusEffects ( );
+				GM.UI.UnitHUD.UpdateStatusEffects ( );
 
 				// Set unit and tile data
 				SetUnitToTile ( data.Destination );

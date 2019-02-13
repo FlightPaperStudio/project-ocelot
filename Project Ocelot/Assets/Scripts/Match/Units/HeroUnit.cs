@@ -396,7 +396,7 @@ public class HeroUnit : Unit
 
 		// Display cooldown
 		if ( updateHUD )
-			GM.UI.unitHUD.UpdateAbilityHUD ( ability );
+			GM.UI.UnitHUD.UpdateAbilityHUD ( ability );
 	}
 
 	/// <summary>

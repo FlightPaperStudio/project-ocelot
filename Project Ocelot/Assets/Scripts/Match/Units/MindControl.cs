@@ -327,13 +327,13 @@ public class MindControl : HeroUnit
 
 				// Mark that the ability is active
 				InstanceData.Ability1.IsActive = true;
-				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+				GM.UI.UnitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
 			} )
 			.OnComplete ( ( ) =>
 			{
 				// Mark that the ability is no longer active
 				InstanceData.Ability1.IsActive = false;
-				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+				GM.UI.UnitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
 
 				// Apply status effect
 				unit.Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.MIND_CONTROLLED, InstanceData.Ability1.Duration, this );

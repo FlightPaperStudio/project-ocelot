@@ -136,12 +136,34 @@ public class GameManager : MonoBehaviour
 	}
 
 	/// <summary>
+	/// Whether or not a unit is currently selected.
+	/// </summary>
+	public bool IsUnitSelected
+	{
+		get
+		{
+			return SelectedUnit != null;
+		}
+	}
+
+	/// <summary>
 	/// The currently selected unit for the current player.
 	/// </summary>
 	public Unit SelectedUnit
 	{
 		get;
 		private set;
+	}
+
+	/// <summary>
+	/// Whether or not a move is selected.
+	/// </summary>
+	public bool IsMoveSelected
+	{
+		get
+		{
+			return SelectedMove != null;
+		}
 	}
 
 	/// <summary>
@@ -498,7 +520,7 @@ public class GameManager : MonoBehaviour
 		SelectedMove = null;
 
 		// Display unit HUD
-		UI.unitHUD.DisplayUnit ( SelectedUnit );
+		UI.UnitHUD.DisplayUnit ( SelectedUnit );
 
 		// Highlight the tile of the selected unit
 		SelectedUnit.CurrentHex.Tile.SetTileState ( TileState.SelectedUnit );
@@ -517,7 +539,7 @@ public class GameManager : MonoBehaviour
 		UI.SetControls ( TurnState.MOVE_SELECTED, isSkippableTurn, isConflict );
 
 		// Prevent any command usage
-		UI.unitHUD.DisableCommandButtons ( );
+		UI.UnitHUD.DisableCommandButtons ( );
 
 		// Clear previous moves and units
 		Grid.ResetTiles ( TileState.SelectedAttack, TileState.SelectedMove, TileState.SelectedMoveAttack, TileState.SelectedSpecial, TileState.SelectedSpecialAttack );
@@ -637,7 +659,7 @@ public class GameManager : MonoBehaviour
 		PostAnimationQueue.Clear ( );
 
 		// Hide unit HUD
-		UI.unitHUD.HideHUD ( );
+		UI.UnitHUD.HideHUD ( );
 
 		// Reset tiles from previous turn
 		Grid.ResetTiles ( );
@@ -794,7 +816,7 @@ public class GameManager : MonoBehaviour
 		PostAnimationQueue.Clear ( );
 
 		// Hide unit HUD
-		UI.unitHUD.HideHUD ( );
+		UI.UnitHUD.HideHUD ( );
 
 		// Reset tiles from previous turn
 		Grid.ResetTiles ( );

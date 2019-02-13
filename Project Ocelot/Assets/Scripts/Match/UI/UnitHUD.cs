@@ -76,7 +76,8 @@ public class UnitHUD : MonoBehaviour
 	/// Displays the HUD information for the selected unit.
 	/// </summary>
 	/// <param name="u"> The unit being displayed in the HUD. </param>
-	public void DisplayUnit ( Unit u )
+	/// <param name="displayControls"> Whether or not the controls should be displayed. </param>
+	public void DisplayUnit ( Unit u, bool displayControls = true )
 	{
 		// Store current unit
 		currentUnit = u;
@@ -110,19 +111,19 @@ public class UnitHUD : MonoBehaviour
 
 			// Display ability 1
 			if ( currentUnit.InstanceData.Ability1 != null )
-				UpdateAbilityHUD ( currentUnit.InstanceData.Ability1 );
+				UpdateAbilityHUD ( currentUnit.InstanceData.Ability1, displayControls );
 			else
 				abilities [ 0 ].Container.SetActive ( false );
 
 			// Display ability 2
 			if ( currentUnit.InstanceData.Ability2 != null )
-				UpdateAbilityHUD ( currentUnit.InstanceData.Ability2 );
+				UpdateAbilityHUD ( currentUnit.InstanceData.Ability2, displayControls );
 			else
 				abilities [ 1 ].Container.SetActive ( false );
 
 			// Display ability 3
 			if ( currentUnit.InstanceData.Ability3 != null )
-				UpdateAbilityHUD ( currentUnit.InstanceData.Ability3 );
+				UpdateAbilityHUD ( currentUnit.InstanceData.Ability3, displayControls );
 			else
 				abilities [ 2 ].Container.SetActive ( false );
 		}
@@ -135,19 +136,20 @@ public class UnitHUD : MonoBehaviour
 	/// Update the unit HUD for a specific ability.
 	/// </summary>
 	/// <param name="ability"> The ability being updated. </param>
-	public void UpdateAbilityHUD ( AbilityInstanceData ability )
+	/// <param name="displayControls"> Whether or not the controls should be displayed. </param>
+	public void UpdateAbilityHUD ( AbilityInstanceData ability, bool displayControls = true )
 	{
 		// Check for ability 1
 		if ( ability == currentUnit.InstanceData.Ability1 )
-			DisplayAbilityHUD ( ability, abilities [ 0 ] );
+			DisplayAbilityHUD ( ability, abilities [ 0 ], displayControls );
 
 		// Check for ability 2
 		if ( ability == currentUnit.InstanceData.Ability2 )
-			DisplayAbilityHUD ( ability, abilities [ 1 ] );
+			DisplayAbilityHUD ( ability, abilities [ 1 ], displayControls );
 
 		// Check for ability 3
 		if ( ability == currentUnit.InstanceData.Ability3 )
-			DisplayAbilityHUD ( ability, abilities [ 2 ] );
+			DisplayAbilityHUD ( ability, abilities [ 2 ], displayControls );
 	}
 
 	/// <summary>
@@ -212,7 +214,7 @@ public class UnitHUD : MonoBehaviour
 		hud.CancelButton.gameObject.SetActive ( true );
 
 		// Update ability
-		DisplayAbilityHUD ( ability, hud );
+		DisplayAbilityHUD ( ability, hud, true );
 	}
 
 	/// <summary>
@@ -245,7 +247,7 @@ public class UnitHUD : MonoBehaviour
 		( currentUnit as HeroUnit ).CancelCommand ( );
 
 		// Update ability
-		DisplayAbilityHUD ( ability, hud );
+		DisplayAbilityHUD ( ability, hud, true );
 	}
 
 	/// <summary>
@@ -306,7 +308,8 @@ public class UnitHUD : MonoBehaviour
 	/// </summary>
 	/// <param name="ability"> The ability the HUD is representing. </param>
 	/// <param name="hud"> The HUD for the ability. </param>
-	private void DisplayAbilityHUD ( AbilityInstanceData ability, AbilityHUD hud )
+	/// <param name="displayControls"> Whether or not the controls should be displayed. </param>
+	private void DisplayAbilityHUD ( AbilityInstanceData ability, AbilityHUD hud, bool displayControls )
 	{
 		// Display hud
 		hud.Container.SetActive ( true );
@@ -345,10 +348,10 @@ public class UnitHUD : MonoBehaviour
 			DisplaySpecial ( ability, hud );
 			break;
 		case AbilityData.AbilityType.COMMAND:
-			DisplayCommand ( ability, hud );
+			DisplayCommand ( ability, hud, displayControls );
 			break;
 		case AbilityData.AbilityType.TOGGLE_COMMAND:
-			DisplayToggleCommand ( ability, hud );
+			DisplayToggleCommand ( ability, hud, displayControls );
 			break;
 		}
 	}
@@ -423,7 +426,8 @@ public class UnitHUD : MonoBehaviour
 	/// </summary>
 	/// <param name="ability"> The ability the HUD is representing. </param>
 	/// <param name="hud"> The HUD for the ability. </param>
-	private void DisplayCommand ( AbilityInstanceData ability, AbilityHUD hud )
+	/// <param name="displayControls"> Whether or not the controls should be displayed. </param>
+	private void DisplayCommand ( AbilityInstanceData ability, AbilityHUD hud, bool displayControls )
 	{
 		// Set background color
 		hud.Background.color = !ability.IsAvailable || !ability.IsEnabled ? UNAVAILABLE : AVAILABLE;
@@ -432,7 +436,12 @@ public class UnitHUD : MonoBehaviour
 		if ( ability.IsEnabled )
 		{
 			// Set use button
-			if ( ability.IsActive && ability.IsAvailable )
+			if ( !displayControls )
+			{
+				hud.UseButton.gameObject.SetActive ( false );
+				hud.CancelButton.gameObject.SetActive ( false );
+			}
+			else if ( ability.IsActive && ability.IsAvailable )
 			{
 				hud.UseButton.gameObject.SetActive ( false );
 				hud.CancelButton.gameObject.SetActive ( true );
@@ -469,7 +478,8 @@ public class UnitHUD : MonoBehaviour
 	/// </summary>
 	/// <param name="ability"> The ability the HUD is representing. </param>
 	/// <param name="hud"> The HUD for the ability. </param>
-	private void DisplayToggleCommand ( AbilityInstanceData ability, AbilityHUD hud )
+	/// <param name="displayControls"> Whether or not the controls should be displayed. </param>
+	private void DisplayToggleCommand ( AbilityInstanceData ability, AbilityHUD hud, bool displayControls )
 	{
 		// Set background color
 		hud.Background.color = !ability.IsAvailable || !ability.IsEnabled ? UNAVAILABLE : AVAILABLE;
@@ -481,7 +491,12 @@ public class UnitHUD : MonoBehaviour
 			hud.ActiveDisplay.gameObject.SetActive ( ability.IsActive );
 
 			// Set use button
-			if ( ability.IsActive && ability.IsAvailable )
+			if ( !displayControls )
+			{
+				hud.UseButton.gameObject.SetActive ( false );
+				hud.CancelButton.gameObject.SetActive ( false );
+			}
+			else if ( ability.IsActive && ability.IsAvailable )
 			{
 				hud.UseButton.gameObject.SetActive ( false );
 				hud.CancelButton.gameObject.SetActive ( true );

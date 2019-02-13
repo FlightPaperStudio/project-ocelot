@@ -160,7 +160,7 @@ public class Teleport : HeroUnit
 			{
 				// Mark that the ability is active
 				InstanceData.Ability1.IsActive = true;
-				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+				GM.UI.UnitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
 			} )
 			.OnComplete ( ( ) =>
 			{
@@ -275,7 +275,7 @@ public class Teleport : HeroUnit
 		unit2.InteruptUnit ( );
 
 		// Hide cancel button
-		GM.UI.unitHUD.HideCancelButton ( InstanceData.Ability2 );
+		GM.UI.UnitHUD.HideCancelButton ( InstanceData.Ability2 );
 
 		// Pause turn timer
 		if ( MatchSettings.TurnTimer )

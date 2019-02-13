@@ -161,7 +161,7 @@ public class Armor : HeroUnit
 			GM.UI.timer.PauseTimer ( );
 
 		// Hide cancel button
-		GM.UI.unitHUD.HideCancelButton ( activeAbility );
+		GM.UI.UnitHUD.HideCancelButton ( activeAbility );
 
 		// Clear board
 		GM.Grid.ResetTiles ( );

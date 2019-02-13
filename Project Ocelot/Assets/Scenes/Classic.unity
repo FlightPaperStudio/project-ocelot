@@ -2203,7 +2203,7 @@ MonoBehaviour:
   Path: {fileID: 993918102}
   Cursor: {fileID: 553249760}
   matchInfoMenu: {fileID: 1232041957}
-  unitHUD: {fileID: 1874621849}
+  UnitHUD: {fileID: 1874621849}
   timer: {fileID: 1142329137}
   splash: {fileID: 363916307}
   popUp: {fileID: 982683601}

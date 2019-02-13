@@ -55,8 +55,8 @@ public class Tile : MonoBehaviour
 	/// </summary>
 	public void MouseEnter ( )
 	{
-		// Display cursor
-		GM.UI.Cursor.OnHexEnter ( Hex );
+		// Display elements
+		DisplayGridElements ( );
 
 		// Check state
 		switch ( State )
@@ -107,8 +107,8 @@ public class Tile : MonoBehaviour
 	/// </summary>
 	public void MouseExit ( )
 	{
-		// Remove cursor
-		GM.UI.Cursor.OnHexExit ( Hex );
+		// Hide elements
+		HideGridElements ( );
 
 		// Return tile color to current state
 		HighlightTile ( State );
@@ -321,6 +321,54 @@ public class Tile : MonoBehaviour
 		case TileState.ConflictedTile:              return new Color32 ( 202, 190, 255, 255 ); // Light lavender
 		case TileState.ConflictedTileHover:         return new Color32 ( 130, 130, 255, 255 ); // Dark lavender
 		default:                                    return new Color32 ( 200, 200, 200, 255 ); // Light grey
+		}
+	}
+
+	/// <summary>
+	/// Displays all of the grid elements for this tile.
+	/// </summary>
+	private void DisplayGridElements ( )
+	{
+		// Display cursor
+		GM.UI.Cursor.OnHexEnter ( Hex );
+
+		// Check for selected unit
+		if ( GM.IsUnitSelected )
+		{
+
+		}
+		else
+		{
+			// Check for unit
+			if ( CurrentUnit != null )
+			{
+				// Display unit in hud
+				GM.UI.UnitHUD.DisplayUnit ( CurrentUnit, false );
+			}
+		}
+	}
+
+	/// <summary>
+	/// Hides all of the grid elements for this tile.
+	/// </summary>
+	private void HideGridElements ( )
+	{
+		// Hide cursor
+		GM.UI.Cursor.OnHexExit ( Hex );
+
+		// Check for selected unit
+		if ( GM.IsUnitSelected )
+		{
+
+		}
+		else
+		{
+			// Check for unit
+			if ( CurrentUnit != null )
+			{
+				// Hide hud
+				GM.UI.UnitHUD.HideHUD ( );
+			}
 		}
 	}
 

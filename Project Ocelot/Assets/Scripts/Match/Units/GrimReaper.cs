@@ -218,7 +218,7 @@ public class GrimReaper : HeroUnit
 			{
 				// Mark that the ability is active
 				InstanceData.Ability2.IsActive = true;
-				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability2 );
+				GM.UI.UnitHUD.UpdateAbilityHUD ( InstanceData.Ability2 );
 			} )
 			.OnComplete ( ( ) =>
 			{
@@ -306,7 +306,7 @@ public class GrimReaper : HeroUnit
 			{
 				// Mark that the ability is active
 				InstanceData.Ability1.IsActive = true;
-				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+				GM.UI.UnitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
 
 				// Display barrier
 				barrier.gameObject.SetActive ( true );
@@ -320,14 +320,14 @@ public class GrimReaper : HeroUnit
 					InstanceData.Ability2.CurrentCooldown = 0;
 
 				// Update HUD
-				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+				GM.UI.UnitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
 				if ( InstanceData.Ability1.IsPerkEnabled && InstanceData.Ability2.IsEnabled )
-					GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability2 );
+					GM.UI.UnitHUD.UpdateAbilityHUD ( InstanceData.Ability2 );
 
 				// Apply status effect
 				Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.OVERPOWERED, InstanceData.Ability1.Duration, this );
 				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
-				GM.UI.unitHUD.UpdateStatusEffects ( );
+				GM.UI.UnitHUD.UpdateStatusEffects ( );
 			} );
 
 		// Add animation to queue

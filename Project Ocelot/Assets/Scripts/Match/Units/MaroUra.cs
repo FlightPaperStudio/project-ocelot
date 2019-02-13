@@ -78,7 +78,7 @@ public class MaroUra : Leader
 			GM.UI.timer.PauseTimer ( );
 
 		// Hide cancel button
-		GM.UI.unitHUD.HideCancelButton ( InstanceData.Ability1 );
+		GM.UI.UnitHUD.HideCancelButton ( InstanceData.Ability1 );
 
 		// Clear board
 		GM.Grid.ResetTiles ( );

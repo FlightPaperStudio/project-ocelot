@@ -70,7 +70,7 @@ public class Torus : HeroUnit
 			GM.UI.timer.PauseTimer ( );
 
 		// Hide cancel button
-		GM.UI.unitHUD.HideCancelButton ( InstanceData.Ability2 );
+		GM.UI.UnitHUD.HideCancelButton ( InstanceData.Ability2 );
 
 		// Clear board
 		GM.Grid.ResetTiles ( );
@@ -236,7 +236,7 @@ public class Torus : HeroUnit
 			{
 				// Mark that the ability is active
 				InstanceData.Ability1.IsActive = true;
-				GM.UI.unitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
+				GM.UI.UnitHUD.UpdateAbilityHUD ( InstanceData.Ability1 );
 			} );
 		Tween t2 = transform.DOMove ( ropesPos2, duration2 ); // Move across the arena from the first ropes to the second ropes
 		Tween t3 = transform.DOMove ( endHex.transform.position, duration3 ) // Move from the second ropes to the end position
