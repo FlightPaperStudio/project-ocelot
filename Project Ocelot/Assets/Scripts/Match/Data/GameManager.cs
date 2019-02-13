@@ -499,6 +499,16 @@ public class GameManager : MonoBehaviour
 	#region Mid-Turn - Public Functions
 
 	/// <summary>
+	/// Displays the moves for a unit.
+	/// </summary>
+	/// <param name="unit"> The unit whose moves are being previewed. </param>
+	public void PreviewUnitMoves ( Unit unit )
+	{
+		// Display the moves for the unit
+		DisplayAvailableMoves ( unit, null );
+	}
+
+	/// <summary>
 	/// Selects the current unit and displays any and all available moves for the unit.
 	/// </summary>
 	/// <param name="unit"> The unit being selected. </param>
@@ -527,7 +537,7 @@ public class GameManager : MonoBehaviour
 		BringUnitToTheFront ( SelectedUnit );
 
 		// Display the unit's available moves
-		DisplayAvailableMoves ( null );
+		DisplayAvailableMoves ( unit, null );
 	}
 
 	/// <summary>
@@ -565,7 +575,7 @@ public class GameManager : MonoBehaviour
 		UI.Path.DisplayPath ( SelectedUnit, SelectedMove );
 
 		// Display any additional moves
-		DisplayAvailableMoves ( SelectedMove );
+		DisplayAvailableMoves ( SelectedUnit, SelectedMove );
 	}
 
 	/// <summary>
@@ -721,10 +731,12 @@ public class GameManager : MonoBehaviour
 	/// <summary>
 	/// Displays the available moves for the selected unit and any selected prerequisite moves.
 	/// </summary>
-	private void DisplayAvailableMoves ( MoveData prerequisite )
+	/// <param name="unit"> The unit whose moves are being displayed. </param>
+	/// <param name="prerequisite"> The previously selected move. </param>
+	private void DisplayAvailableMoves ( Unit unit, MoveData prerequisite )
 	{
 		// Get only the moves for the prerequisite
-		foreach ( MoveData move in SelectedUnit.MoveList.FindAll ( x => x.PriorMove == prerequisite ) )
+		foreach ( MoveData move in unit.MoveList.FindAll ( x => x.PriorMove == prerequisite ) )
 		{
 			// Check if conflicted
 			if ( move.IsConflicted )

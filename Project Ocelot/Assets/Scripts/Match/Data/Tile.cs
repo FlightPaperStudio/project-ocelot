@@ -344,6 +344,13 @@ public class Tile : MonoBehaviour
 			{
 				// Display unit in hud
 				GM.UI.UnitHUD.DisplayUnit ( CurrentUnit, false );
+
+				// Check if the unit is on the same team
+				if ( CurrentUnit.Owner == GM.CurrentPlayer )
+				{
+					// Display the unit moves
+					GM.PreviewUnitMoves ( CurrentUnit );
+				}
 			}
 		}
 	}
@@ -368,6 +375,14 @@ public class Tile : MonoBehaviour
 			{
 				// Hide hud
 				GM.UI.UnitHUD.HideHUD ( );
+
+				// Check if the unit is on the same team
+				if ( CurrentUnit.Owner == GM.CurrentPlayer )
+				{
+					// Hide unit moves
+					GM.Grid.ResetTiles ( );
+					GM.DisplayAvailableUnits ( );
+				}
 			}
 		}
 	}
