@@ -16,6 +16,6 @@ public class Pawn : Unit
 		//characterName = NameGenerator.CreateName ( );
 
 		// Generate nickname
-		characterNickname = NameGenerator.CreateNickname ( );
+		//characterNickname = NameGenerator.CreateNickname ( );
 	}
 }

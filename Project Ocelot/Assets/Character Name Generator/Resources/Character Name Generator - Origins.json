@@ -1,0 +1,507 @@
+[
+  {
+    "Name": "Akan",
+    "Category": "African",
+    "Subcategory": "Western African"
+  },
+  {
+    "Name": "Albanian",
+    "Category": "European",
+    "Subcategory": "Southern European"
+  },
+  {
+    "Name": "Algonquin",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Alien",
+    "Category": "Other",
+    "Subcategory": "Science Fiction"
+  },
+  {
+    "Name": "American",
+    "Category": "American",
+    "Subcategory": "Northern American"
+  },
+  {
+    "Name": "Amharic",
+    "Category": "African",
+    "Subcategory": "Eastern African"
+  },
+  {
+    "Name": "Apache",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Arabic",
+    "Category": "Asian",
+    "Subcategory": "Western Asian"
+  },
+  {
+    "Name": "Austrian",
+    "Category": "European",
+    "Subcategory": "Western European"
+  },
+  {
+    "Name": "Aymara",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Azerbaijani",
+    "Category": "Asian",
+    "Subcategory": "Western Asian"
+  },
+  {
+    "Name": "Basque",
+    "Category": "European",
+    "Subcategory": "Southern European"
+  },
+  {
+    "Name": "Belarusian",
+    "Category": "European",
+    "Subcategory": "Eastern European"
+  },
+  {
+    "Name": "Belgian",
+    "Category": "European",
+    "Subcategory": "Western European"
+  },
+  {
+    "Name": "Berber",
+    "Category": "African",
+    "Subcategory": "Northern African"
+  },
+  {
+    "Name": "Bosnian",
+    "Category": "European",
+    "Subcategory": "Southern European"
+  },
+  {
+    "Name": "British",
+    "Category": "European",
+    "Subcategory": "Northern European"
+  },
+  {
+    "Name": "Bulgarian",
+    "Category": "European",
+    "Subcategory": "Eastern European"
+  },
+  {
+    "Name": "Cherokee",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Chewa",
+    "Category": "African",
+    "Subcategory": "Southern African"
+  },
+  {
+    "Name": "Chinese",
+    "Category": "Asian",
+    "Subcategory": "Eastern Asian"
+  },
+  {
+    "Name": "Choctaw",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Comanche",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Cree",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Croatian",
+    "Category": "European",
+    "Subcategory": "Southern European"
+  },
+  {
+    "Name": "Czech",
+    "Category": "European",
+    "Subcategory": "Eastern European"
+  },
+  {
+    "Name": "Danish",
+    "Category": "European",
+    "Subcategory": "Northern European"
+  },
+  {
+    "Name": "Dutch",
+    "Category": "European",
+    "Subcategory": "Western European"
+  },
+  {
+    "Name": "Egyptian",
+    "Category": "African",
+    "Subcategory": "Northern African"
+  },
+  {
+    "Name": "Elvish",
+    "Category": "Other",
+    "Subcategory": "Fantasy"
+  },
+  {
+    "Name": "Estonian",
+    "Category": "European",
+    "Subcategory": "Northern European"
+  },
+  {
+    "Name": "Finnish",
+    "Category": "European",
+    "Subcategory": "Northern European"
+  },
+  {
+    "Name": "French",
+    "Category": "European",
+    "Subcategory": "Western European"
+  },
+  {
+    "Name": "Frisian",
+    "Category": "European",
+    "Subcategory": "Western European"
+  },
+  {
+    "Name": "Ganda",
+    "Category": "African",
+    "Subcategory": "Eastern African"
+  },
+  {
+    "Name": "Georgian",
+    "Category": "Asian",
+    "Subcategory": "Western Asian"
+  },
+  {
+    "Name": "German",
+    "Category": "European",
+    "Subcategory": "Western European"
+  },
+  {
+    "Name": "Greek",
+    "Category": "European",
+    "Subcategory": "Southern European"
+  },
+  {
+    "Name": "Greenlandic",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Hawaiian",
+    "Category": "Indigenous",
+    "Subcategory": "Oceanic"
+  },
+  {
+    "Name": "Hungarian",
+    "Category": "European",
+    "Subcategory": "Eastern European"
+  },
+  {
+    "Name": "Icelandic",
+    "Category": "European",
+    "Subcategory": "Northern European"
+  },
+  {
+    "Name": "Igbo",
+    "Category": "African",
+    "Subcategory": "Western African"
+  },
+  {
+    "Name": "Indian",
+    "Category": "Asian",
+    "Subcategory": "Southern Asian"
+  },
+  {
+    "Name": "Inuit",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Irish",
+    "Category": "European",
+    "Subcategory": "Northern European"
+  },
+  {
+    "Name": "Iroquois",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Israeli",
+    "Category": "Asian",
+    "Subcategory": "Western Asian"
+  },
+  {
+    "Name": "Italian",
+    "Category": "European",
+    "Subcategory": "Southern European"
+  },
+  {
+    "Name": "Japanese",
+    "Category": "Asian",
+    "Subcategory": "Eastern Asian"
+  },
+  {
+    "Name": "Kazakh",
+    "Category": "Asian",
+    "Subcategory": "Central Asian"
+  },
+  {
+    "Name": "Korean",
+    "Category": "Asian",
+    "Subcategory": "Eastern Asian"
+  },
+  {
+    "Name": "Kosovar",
+    "Category": "European",
+    "Subcategory": "Southern European"
+  },
+  {
+    "Name": "Latvian",
+    "Category": "European",
+    "Subcategory": "Northern European"
+  },
+  {
+    "Name": "Lithuanian",
+    "Category": "European",
+    "Subcategory": "Northern European"
+  },
+  {
+    "Name": "Luo",
+    "Category": "African",
+    "Subcategory": "Eastern African"
+  },
+  {
+    "Name": "Luxembourgish",
+    "Category": "European",
+    "Subcategory": "Western European"
+  },
+  {
+    "Name": "Macedonian",
+    "Category": "European",
+    "Subcategory": "Southern European"
+  },
+  {
+    "Name": "Maltese",
+    "Category": "European",
+    "Subcategory": "Southern European"
+  },
+  {
+    "Name": "Maori",
+    "Category": "Indigenous",
+    "Subcategory": "Oceanic"
+  },
+  {
+    "Name": "Mapuche",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Mayan",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Mohawk",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Moldovan",
+    "Category": "European",
+    "Subcategory": "Eastern European"
+  },
+  {
+    "Name": "Montenegrin",
+    "Category": "European",
+    "Subcategory": "Southern European"
+  },
+  {
+    "Name": "Nahuatl",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Native American",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Navajo",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Nigerian",
+    "Category": "African",
+    "Subcategory": "Western African"
+  },
+  {
+    "Name": "Norwegian",
+    "Category": "European",
+    "Subcategory": "Northern European"
+  },
+  {
+    "Name": "Ojibwe",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Oneida",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Persian",
+    "Category": "Asian",
+    "Subcategory": "Western Asian"
+  },
+  {
+    "Name": "Polish",
+    "Category": "European",
+    "Subcategory": "Eastern European"
+  },
+  {
+    "Name": "Portuguese",
+    "Category": "European",
+    "Subcategory": "Southern European"
+  },
+  {
+    "Name": "Quechua",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Romanian",
+    "Category": "European",
+    "Subcategory": "Eastern European"
+  },
+  {
+    "Name": "Russian",
+    "Category": "European",
+    "Subcategory": "Eastern European"
+  },
+  {
+    "Name": "Serbian",
+    "Category": "European",
+    "Subcategory": "Southern European"
+  },
+  {
+    "Name": "Shawnee",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Shona",
+    "Category": "African",
+    "Subcategory": "Southern African"
+  },
+  {
+    "Name": "Sioux",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Slovak",
+    "Category": "European",
+    "Subcategory": "Eastern European"
+  },
+  {
+    "Name": "Slovene",
+    "Category": "European",
+    "Subcategory": "Southern European"
+  },
+  {
+    "Name": "Spanish",
+    "Category": "European",
+    "Subcategory": "Southern European"
+  },
+  {
+    "Name": "Sri Lankan",
+    "Category": "Asian",
+    "Subcategory": "Southern Asian"
+  },
+  {
+    "Name": "Swahili",
+    "Category": "African",
+    "Subcategory": "Eastern African"
+  },
+  {
+    "Name": "Swedish",
+    "Category": "European",
+    "Subcategory": "Northern European"
+  },
+  {
+    "Name": "Swiss",
+    "Category": "European",
+    "Subcategory": "Western European"
+  },
+  {
+    "Name": "Tswana",
+    "Category": "African",
+    "Subcategory": "Southern African"
+  },
+  {
+    "Name": "Tupi",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Turkish",
+    "Category": "Asian",
+    "Subcategory": "Western Asian"
+  },
+  {
+    "Name": "Ukrainian",
+    "Category": "European",
+    "Subcategory": "Eastern European"
+  },
+  {
+    "Name": "Unknown",
+    "Category": "Other",
+    "Subcategory": "Other"
+  },
+  {
+    "Name": "Urhobo",
+    "Category": "African",
+    "Subcategory": "Western African"
+  },
+  {
+    "Name": "Uzbek",
+    "Category": "Asian",
+    "Subcategory": "Central Asian"
+  },
+  {
+    "Name": "Vietnamese",
+    "Category": "Asian",
+    "Subcategory": "Southeastern Asian"
+  },
+  {
+    "Name": "Xhosa",
+    "Category": "African",
+    "Subcategory": "Southern African"
+  },
+  {
+    "Name": "Yoruba",
+    "Category": "African",
+    "Subcategory": "Western African"
+  },
+  {
+    "Name": "Zapotec",
+    "Category": "Indigenous",
+    "Subcategory": "American"
+  },
+  {
+    "Name": "Zulu",
+    "Category": "African",
+    "Subcategory": "Southern African"
+  }
+]

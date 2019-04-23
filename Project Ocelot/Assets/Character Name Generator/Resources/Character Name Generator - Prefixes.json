@@ -1,0 +1,608 @@
+[
+  {
+    "Name": "Admiral",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Agent",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ali'i",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Hawaiian"
+  },
+  {
+    "Name": "Ambassador",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Apprentice",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Archduchess",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Archduke",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Archon",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ariki",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Maori"
+  },
+  {
+    "Name": "Baron",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Baroness",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cadet",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Captain",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Chief",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Native American"
+  },
+  {
+    "Name": "Chieftain",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Native American"
+  },
+  {
+    "Name": "Chieftess",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Native American"
+  },
+  {
+    "Name": "Commander",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Comrade",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Russian"
+  },
+  {
+    "Name": "Councillor",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Count",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Countess",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Czar",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Russian,Bulgarian,Serbian,Ukrainian,Montenegrin,Macedonian,Belarusian"
+  },
+  {
+    "Name": "Daimy<o/>",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Dame",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "British"
+  },
+  {
+    "Name": "Dictator",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dr.",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Duchess",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Duke",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Earl",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Elder",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Emperor",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Empress",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Frau",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "German"
+  },
+  {
+    "Name": "Fräulein",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "German"
+  },
+  {
+    "Name": "Fröken",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Swedish"
+  },
+  {
+    "Name": "Fru",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Swedish"
+  },
+  {
+    "Name": "Governor",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Grand Duchess",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Grand Duke",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Guru",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Indian,Sri Lankan"
+  },
+  {
+    "Name": "Herr",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "German,Swedish"
+  },
+  {
+    "Name": "Imperator",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Imperatrix",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Inquisitor",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Judge",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Juffrouw",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Dutch"
+  },
+  {
+    "Name": "Kaiser",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "German,Austrian"
+  },
+  {
+    "Name": "King",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lady",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lord",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Madam",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "French"
+  },
+  {
+    "Name": "Madame",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "French"
+  },
+  {
+    "Name": "Mademoiselle",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "French"
+  },
+  {
+    "Name": "Marquess",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Marquis",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Master",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mayor",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mejuffrouw",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Dutch"
+  },
+  {
+    "Name": "Meneer",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Dutch"
+  },
+  {
+    "Name": "Mevrouw",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Dutch"
+  },
+  {
+    "Name": "Minister",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Miss",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Monsieur",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "French"
+  },
+  {
+    "Name": "Mr.",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mrs.",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ms.",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mx.",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Officer",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pharaoh",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Egyptian"
+  },
+  {
+    "Name": "President",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Prince",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Princess",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Principal",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Professor",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Queen",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Secretary",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Senhor",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Portuguese"
+  },
+  {
+    "Name": "Senhora",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Portuguese"
+  },
+  {
+    "Name": "Senhorita",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Portuguese"
+  },
+  {
+    "Name": "Señor",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "Señora",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "Señorita",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "Sensei",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Japenese"
+  },
+  {
+    "Name": "Shah",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Persian"
+  },
+  {
+    "Name": "Sheikh",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Arabic"
+  },
+  {
+    "Name": "Sheikha",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Arabic"
+  },
+  {
+    "Name": "Sheriff",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sh<o/>gun",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Signor",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Italian"
+  },
+  {
+    "Name": "Signora",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Italian"
+  },
+  {
+    "Name": "Signorina",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Italian"
+  },
+  {
+    "Name": "Sir",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "British"
+  },
+  {
+    "Name": "<S’>r<i/>",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Indian,Sri Lankan"
+  },
+  {
+    "Name": "<S’>r<i/>m<a/>n",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Indian,Sri Lankan"
+  },
+  {
+    "Name": "<S’>r<i/>mat<i/>",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Indian,Sri Lankan"
+  },
+  {
+    "Name": "Sultan",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Arabic"
+  },
+  {
+    "Name": "Sultana",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Arabic"
+  },
+  {
+    "Name": "Su<s’>r<i/>",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Indian,Sri Lankan"
+  },
+  {
+    "Name": "Tsar",
+    "Male": "Y",
+    "Female": "Y",
+    "Origins": "Russian,Bulgarian,Serbian,Ukrainian,Montenegrin,Macedonian,Belarusian"
+  },
+  {
+    "Name": "Vicereine",
+    "Male": "N",
+    "Female": "Y",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Viceroy",
+    "Male": "Y",
+    "Female": "N",
+    "Origins": "Any"
+  }
+]

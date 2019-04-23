@@ -1,0 +1,10607 @@
+[
+  {
+    "Name": "A Mountain Of A Man",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "A Mountain Of A Woman",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "A Weapon To Surpass Metal Gear",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "A-List",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "A+",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Aardvark",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Aatxe",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Basque"
+  },
+  {
+    "Name": "Abaasy",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Azerbaijani,Turkish,Hungarian,Bulgarian,Russian"
+  },
+  {
+    "Name": "Above Average",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Absolute Unit",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Absolute Zero",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Accuser",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ace",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ace In The Hole",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ace Of Hearts",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ace Of Spades",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Acephali",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Greek"
+  },
+  {
+    "Name": "Acheri",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Indian"
+  },
+  {
+    "Name": "Acumen",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Addict",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Adlet",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Inuit,Greenlandic"
+  },
+  {
+    "Name": "Admiral",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Adorable",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Aerico",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Greek"
+  },
+  {
+    "Name": "Aero",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Agathos Daemon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Greek"
+  },
+  {
+    "Name": "Agloolik",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Inuit"
+  },
+  {
+    "Name": "Agni",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Indian"
+  },
+  {
+    "Name": "Ahkiyyini",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Inuit"
+  },
+  {
+    "Name": "Air Bud",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Air Goat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Air Jordan",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Airavata",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Indian"
+  },
+  {
+    "Name": "Airborne",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Airwave",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Aitu",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Maori"
+  },
+  {
+    "Name": "Aitvaras",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Lithuanian"
+  },
+  {
+    "Name": "Ajatar",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Finnish"
+  },
+  {
+    "Name": "Akateko",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Akhlut",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Inuit"
+  },
+  {
+    "Name": "Akita",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Akka",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Finnish,Estonian"
+  },
+  {
+    "Name": "Akki",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Akuma",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Akurojin-No-Hi",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Al",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Russian,Turkish,Azerbaijani"
+  },
+  {
+    "Name": "Al Rakim",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Arabic"
+  },
+  {
+    "Name": "Al-Mi'raj",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Arabic"
+  },
+  {
+    "Name": "Ala",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Bulgarian,Macedonian,Serbian"
+  },
+  {
+    "Name": "Albatross",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Alcatraz",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Alchemist",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Alkonost",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Russian"
+  },
+  {
+    "Name": "Allfather",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Alligator",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Alp",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "German"
+  },
+  {
+    "Name": "Alp-Luachra",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Irish"
+  },
+  {
+    "Name": "Alpha",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Alpha Dog",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Alpha Female",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Alpha Male",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Alpha Unicorn",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Alpine",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Alseid",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Greek"
+  },
+  {
+    "Name": "Altered Beast",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Altitude",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Amarok",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Inuit"
+  },
+  {
+    "Name": "Amarum",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Quechua"
+  },
+  {
+    "Name": "Amazake-Babaa",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Amazon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ambush",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ammit",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Egyptian"
+  },
+  {
+    "Name": "Amor<o/>nagu",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Amphisbaena",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Greek"
+  },
+  {
+    "Name": "Anarchy",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Android",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Angel",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Angel Of Death",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Angha",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Persian"
+  },
+  {
+    "Name": "Ani Hyuntikwalaski",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Cherokee"
+  },
+  {
+    "Name": "Ankou",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "French"
+  },
+  {
+    "Name": "Annihilator",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Antaeus",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Greek,Berber"
+  },
+  {
+    "Name": "Antero Vipunen",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Finnish"
+  },
+  {
+    "Name": "Anubis",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Egyptian"
+  },
+  {
+    "Name": "Aob<o/>zu",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Apex",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Apex Predator",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Apollo",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Arcade",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Archangel",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Archer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Architect",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ares",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Greek"
+  },
+  {
+    "Name": "Argos",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Greek"
+  },
+  {
+    "Name": "Armadillo",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Armageddon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Armageddon's Blade",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Artemis",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ashi-Magari",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Askafroa",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Swedish,Danish,German"
+  },
+  {
+    "Name": "Assassin",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Atilla",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Atlas",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Audio",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Avalanche",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Avenger",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Aviator",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Axex",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Egyptian"
+  },
+  {
+    "Name": "Axle",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Azrael",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ba",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Egyptian"
+  },
+  {
+    "Name": "B<a/> Ji<a/>o Gu<i^>",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Chinese"
+  },
+  {
+    "Name": "Baal",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Baba Yaga",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Russian"
+  },
+  {
+    "Name": "Baboon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Babycakes",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Back Breaker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bad Attitude",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bad Baby",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bad Boy",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bad Dude",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bad Girl",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bad Guy",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bad News",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bad Seed",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Badalisc",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Italian"
+  },
+  {
+    "Name": "Baddie",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Badger",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bahamut",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Arabic"
+  },
+  {
+    "Name": "Baí Zé",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Chinese"
+  },
+  {
+    "Name": "Bake-Kujira",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Baku",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Ballistic",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Balrog",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bam",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bandit",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Banshee",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bandicoot",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Barb",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Barbarian",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Barbaric Berzerker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Baron",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Barracuda",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Barrel Roll",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Barricade",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Basenji",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bashe",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Chinese"
+  },
+  {
+    "Name": "Basic",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Basilisk",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Battery",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Baykok",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Ojibwe"
+  },
+  {
+    "Name": "Beagle",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bear",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bearcat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Beast",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Beastmaster",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Beetle",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Behemoth",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Beholder",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bender",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Berzerker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Big Banter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Big Boss",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Big Boy",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Big Daddy",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Big Game",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Big Game Hunter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Big League",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Big Mama",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Big Money",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Big Over",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Big Papa",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Big Red",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Big Show",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Big Time",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Binturong",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Birb",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bird",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bird Of Paradise",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Birdman",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Birdperson",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bishop",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bison",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Black Dog",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "British"
+  },
+  {
+    "Name": "Black Hat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Black Knight",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Black Magic",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Black Mamba",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Black Panther",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Black Swallow Of Death",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Black Widow",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Blackbird",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Blackheart",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Blackjack",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Blade",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Blindfire",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Blindfold",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Blitz",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Blizzard",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bloodhound",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bloody Bones",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Irish"
+  },
+  {
+    "Name": "Bloody Mary",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Blowtorch",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Blue Whale",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Boar",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bobcat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bokkenrijder",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Belgian,Dutch"
+  },
+  {
+    "Name": "Bomber",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bone",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bone Collector",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bone Dragon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bongo",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bonobo",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bonzai",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Boogeyman",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Boom",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Boomer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Borealis",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Boxer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Boy Wonder",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Brass Knuckle",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bravo",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Breakdown",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Breaker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Brick",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bruiser",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Brute",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Buck",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Buckshot",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Buffalo",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Buffalo Bill",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bull",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bulldozer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bullet",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bullet-Proof",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bullfrog",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bully",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bumblebee",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bunker Buster",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Burnout",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bushwhacker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Buster",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Butcher",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Butterfly",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Buzzsaw",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Bysen",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Swedish"
+  },
+  {
+    "Name": "Cable",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Caipora",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Tupi"
+  },
+  {
+    "Name": "<C^>anotila",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Native American"
+  },
+  {
+    "Name": "Cannon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Captain",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Captain Charisma",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Capybara",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Caracal",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Carbon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cargo",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cash",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cash Money",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Casper",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Catfish",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Caustic",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cavalier",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Caveman",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cavewoman",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Centurion",
+    "Male": "y",
+    "Female": "Y",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cerberus",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Chairman Of The Board",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Chamrosh",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Persian"
+  },
+  {
+    "Name": "Changeling",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Chaos",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Charisma",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Charismatic Enigma",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Checkmate",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cheetah",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Chef",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cherufe",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Mapuche"
+  },
+  {
+    "Name": "<C^>hetá<ng>",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Native American"
+  },
+  {
+    "Name": "Chindi",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Navajo"
+  },
+  {
+    "Name": "Chipmunk",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Chitauli",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Zulu"
+  },
+  {
+    "Name": "Choujuu",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Chrysalis",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Classic",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Claymore",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cloak And Dagger",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Clutch",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Coach",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cobra",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cola Cola",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Mapuche"
+  },
+  {
+    "Name": "Collateral",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Collateral Damage",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Colossus",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Colt",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Condor",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Conqueror",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Conspiracy Theorist",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Conspirator",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Contagion",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Continuum",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Corsair",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cosmic",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cougar",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Countdown",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cowboy",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cowgirl",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Coyote",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Crane",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Crank",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Crash",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Crater",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Creep",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Crimes Boy",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Crimes Girl",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Crimes Man",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Crimes Person",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Crimes Woman",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Criminal",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Criminally Good",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Crimson Fire Drake",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Critical Hit",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Crocodile",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Crossfire",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Crow",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Crusher",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cryptid",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cutthroat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cyclone",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Cyclops",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Daemon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Daemon Hunter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Damned",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dangan",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Danger Man",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Danger Person",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Danger Woman",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dangerous",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dank Meme",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Daredevil",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dark Energy",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dark Horse",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dark Nebula",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dark Shadow",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dark Side",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dark Star",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Das Wunderkind",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "German"
+  },
+  {
+    "Name": "Dat Boi",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Daybreaker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Daybringer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Daydreamer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Deacon",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Deadbolt",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Deal With It",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dealer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Death Adder",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Death Dealer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Death Ray",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Death's Scepter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Deathstalker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "DEFCON 1",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Defiant",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Delinquent",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Delta",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Demigod",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Demolisher",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Demon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Demon Hunter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Demon Of The Deep",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dendroid",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Der Helden Vater",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "German"
+  },
+  {
+    "Name": "Deranged",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Derp",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Desert Eagle",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Desperado",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Destroyer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Destroyer Of Worlds",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Devil",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dhole",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Diablo",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Diamond",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Diamond Dog",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Diamondback",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dice",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Diesel",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Digit",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Digital",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Digital Threat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dingo",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dissenter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Doc",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dog",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Doge",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dolphin",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Doom",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Double Rainbow",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dozer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dr. Death",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dr. No",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dracula",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dragon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dragon's Breath",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dragonfly",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Drake",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Draugr",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Icelandic,Danish,Swedish,Norwegian"
+  },
+  {
+    "Name": "Dread Knife",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dreamer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Drifter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Drude",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "German"
+  },
+  {
+    "Name": "Druid",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dryad",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Duke",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dust",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dwarf",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Dynamite",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Eagle",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Easy",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Eater Of Worlds",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Echo",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Eel",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Einherjar",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Icelandic,Danish,Swedish,Norwegian"
+  },
+  {
+    "Name": "El Abogado Del Diablo",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "El Capo De Capos",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "El Duende Que Camina",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "El Guapo",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "El Guerrero Del Averno",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "El Hombre Electrico",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "El Luchador Mas Rapido",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "El Matador",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "El Mejor Luchador Del Mundo",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "El Numero Uno",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "El Presidente",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "El Ranchero",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "El Rey",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "Eliminator",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Elite",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Emperor",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Empress",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Enforcer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Engine Of Destruction",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Enigma",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Epsilon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Escapist",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Everybody's Favorite",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Evil Eye",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Exile",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Exterminator",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Facepalm",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Falcon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Familiar",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Fang",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Fender",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Fenrir",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Icelandic,Danish,Swedish,Norwegian"
+  },
+  {
+    "Name": "Fenway",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Feral",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ferret",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Fiend",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Fighter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Filthy Casual",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Finisher",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Fire Drake",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Fire Starter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Firebird",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Firebreather",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "First Strike",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Five Feet Of Fury",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Flack",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Flak",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Flash",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Flamingo",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Flintlock",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Flounder",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Fluid Mechanics",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Fly",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Forerunner",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Forever Alone",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Fortune",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Fortune Teller",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Fossa",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Fox",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Foxtrot",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Freak",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Freefall",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Freestyle",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Freight",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Freight Train",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Frost",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Frostbite",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Frozen",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Fuchinkan",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Full Metal",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Full Throttle",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Funkasaurus",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Funky",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Fuun Noboriryu",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Gadget",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Galvanizer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gangster",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gar",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gargoyle",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gator",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gear",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gecko",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Geek",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Geek God",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gen",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Genesis",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Genie",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gentlelady",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gentleman",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gentlesir",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Geranimo",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ghost",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ghost Dragon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ghost Hunter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ghoul",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Giant",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Giant Killer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Girl Wonder",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Glacier",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gladiator",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Glass Cannon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Glitch",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gnoll",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gog",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gold Dragon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Golden Boy",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Golden Child",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Golden Girl",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Golem",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Goliath",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Goose",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gopher",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gorgon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gorilla",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Grasshopper",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Grave",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Grave Digger",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Grave Robber",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Graviton",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gray Fox",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Green Mamba",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gremlin",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Greyhound",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Grinder",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Grizzly",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Grunt",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gryphon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Guardian",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Guerilla",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Gunner",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Guru",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hacker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hacksaw",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hadrian",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hammer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hammerhead",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Handsome",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Harambe",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Harbinger",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hard Knox",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hard Rock",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hardcore",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hardcore Icon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hardcore Monster",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Harpy",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hashtag",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Haunted",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Haunter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Havoc",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hawk",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hawkeye",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hazard",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hazard Pay",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hazmat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Head Games",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Head Honcho",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Head Wind",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Headstrong",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Heat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Heavy Metal",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hedgehog",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Helios",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hell Hound",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hellcat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hellstorm",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hellraiser",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Her Majesty",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Heretic",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hermit",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hero",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Heron",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hex",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "High Flying Optical Illusion",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Highlight Of The Night",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Highlight Reel",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Highrise",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hi No Tama Koz<o/>",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "His Majesty",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hitman",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hollow",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Honey Badger",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Honor Guard",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Horned Serpent",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Native American"
+  },
+  {
+    "Name": "Hornet",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hot Rod",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hot Stuff",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Houdini",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hound",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hurricane",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hustler",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hydra",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Hyena",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ibis",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ice",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ice Pick",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Iceberg",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Idol",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ifrit",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Arabic,Persian"
+  },
+  {
+    "Name": "Iguana",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Immortal",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Imp",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Impala",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Imperial Warrior",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Impulse Fire",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Inazuma Senshi",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Indestructible",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Indominus",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Inferno",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Insane",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Insect",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Insurgent",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Invader",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ion",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Iron Heart",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ironclad",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ironhide",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ironsides",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Inside Man",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Inside Woman",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Insider",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Jackal",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Jackpot",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Jaded",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Jagged",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Jaguar",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Jammin'",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Javelin",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Jazz",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Jellyfish",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Jester",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Jiangshi",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Chinese"
+  },
+  {
+    "Name": "Jinn",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Arabic,Persian"
+  },
+  {
+    "Name": "Jinx",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Jiuweihu",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Chinese"
+  },
+  {
+    "Name": "Joker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Jötunn",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Icelandic,Danish,Swedish,Norwegian"
+  },
+  {
+    "Name": "Judge",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Juice",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Junkyard",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "K.O.",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "K.O. King",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "K.O. Queen",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Kaibutsu",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Kaku Mei Senshi",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Kamen Kizoku",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Kami",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Kana Ami No O Ni",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Kangaroo",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Kappa",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Katana",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ker",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Greek"
+  },
+  {
+    "Name": "Khan",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Kid Gorgeous",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Kid Muscle",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Kigatilik",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Inuit"
+  },
+  {
+    "Name": "Kijo",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Kill Switch",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Killer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Killer Whale",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Kilo",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "King",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "King Cobra",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "King Kong",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "King Muscle",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "King Of Chaos",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "King Of Cuteville",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "King Of Old School",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "King Of Swing",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Kingfisher",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Kingpin",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Kitsune",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Kiwi",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Knight",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Knuckles",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Kraken",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Kryptonite",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Kumiho",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Korean"
+  },
+  {
+    "Name": "Kun",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Chinese"
+  },
+  {
+    "Name": "La Abogada Del Diablo",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "La Bestia Del Apocalipsis",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "La Esencia De La Exelencia",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "Lady Justice",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Landslide",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Laser",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Laser Beam",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lead Belly",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Leech",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Legend",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Legend Killer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Legionnaire",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lemming",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lemur",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Leopard",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lethal Weapon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Leviathan",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Liberator",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lich",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Life Ender",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Life Steeler",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lifeline",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lifesaver",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lightning",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lightning Bolt",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lima",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lion",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lionheart",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Liquid",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Little Demon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Little Fang",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Living Legend",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lizard",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lockdown",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Loco",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Loki",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lone Wolf",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lonestar",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Loose Cannon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lord Of Darkness",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lord Of Lightning",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lord Of The Dance",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Los Sustos",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Spanish"
+  },
+  {
+    "Name": "Lost Queen",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Loudmouth",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lowrider",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lucky",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lucky Rabbit",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Luna",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lunatic",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Lynx",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Machete",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Machine",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Machine Gun",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Macho Man",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mack",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mad Dog",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mad Scientist",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Madman",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mage",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Magic",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Magma",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Magnificent",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Magnum",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Magog",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Majestic",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mako",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Malfeasance",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Man On Fire",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Man On The Inside",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mandrill",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Maniac",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Manta Ray",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Manticore",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mantis",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Marauder",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Markhor",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Martyr",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Marvelous",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Master",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Master Of Offensive Innovation",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Master Of The Five Count",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Master Of The World",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mastermind",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Masterpiece",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mastiff",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mastodon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mayham",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Me Gusta",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Medusa",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Meerkat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Meltdown",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Menace",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Merciless",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mercury",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Militant",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mindbender",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Minotaur",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Miracle",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mirage",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mole",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Monarch",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Money",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Money Maker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mongoose",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Monster",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Moon Moon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Moose",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mothman",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mountain Lion",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mouse",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mr. #1",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mr. 200%",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mr. Action Replay",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mr. Charisma",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mr. Danger",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mr. Electricity",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mr. Fantastic",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mr. Fantasy",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mr. Insanity",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mr. Irrelevent",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mr. No Days Off",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mr. Perfect",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mr. Smackdown!",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mr. Steal Your Girl",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mr. Universe",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mr. Wonderful",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ms. #1",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ms. 200%",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ms. Charisma",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ms. Danger",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ms. Electricity",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ms. Fantastic",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ms. Fantasy",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ms. Insanity",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ms. Irrelevent",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ms. Perfect",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ms. Steal Your Man",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ms. Universe",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ms. Wonderful",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mummy",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mustang",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Mutant",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Naga",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Naga Queen",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Nano",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Nature Boy",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Nature Girl",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Nature Person",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Nemesis",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Newt",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Nighthawk",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Nightingale",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Nightmare",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Nightshade",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Nitro",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Nix",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "No Class",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "No Fear",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "No Money",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Noble",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Nocturnal Predator",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Nomad",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Notorious",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Nova",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Nox",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Nuke",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Null",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Nullifier",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Oathbreaker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Oathkeeper",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Obliterator",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Obsidian",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ocelot",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Octane",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Octopus",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Odin",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ogre",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "<O/>kami",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Okapi",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Omega",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Omen",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Oni",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Onyx",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Operator",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Orc",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Orion",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Orthros",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Otter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ouroboros",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Outback",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Outbreak",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Outcast",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Outlaw",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Over 9000",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Overdrive",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Overload",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Owl",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ozone",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pacer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Paladin",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pancho",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pandora",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Panther",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Paradox",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Paragon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Paragon Of Virtue",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pariah",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Patch",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pathfinder",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Payload",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Peacekeeper",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Peacemaker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Peacock",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Peak Performer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pegasus",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Peng",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Chinese"
+  },
+  {
+    "Name": "Penguin",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Penumbra",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Perfect Ten",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Peri",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Persian"
+  },
+  {
+    "Name": "Persuader",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pest Control",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Phantom",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pharaoh",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pheonix",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Philanthropist",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Philosopher",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Picayune",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pilgrim",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pinball",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pinpoint",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Piranha",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pit Fiend",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pitbull",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Plague",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Plague Doctor",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Please Stop Calling Me That.",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pointer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Polar Bear",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Poltergeist",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Potato Salad",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pox",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Praetor",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Preacher",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Predator",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pressure Point",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pretty Boy",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pretty Girl",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Primer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Primetime",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Prince",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Princess",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Problem Solver",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Prodigy",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Prometheus",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Prophet",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Prospector",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Prototype",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Prowler",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Psycho",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Public Menace",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Puma",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Punisher",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Punk",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Pure Dynamite",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Python",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Quake",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Quarantine",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Queen",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Queen Muscle",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Queen Of Chaos",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Queen Of Cuteville",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Queen Of Old School",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Queen Of Swing",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Quickfang",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Quickfire",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Quicksilver",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rabbit",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Raccoon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Radical",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ragdoll",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Raging Bull",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Raider",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rainmaker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ram",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ranger",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Raptor",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rascal",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rat King",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ratchet",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rattlesnake",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Raven",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Raven Mocker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Cherokee"
+  },
+  {
+    "Name": "Ray Gun",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Razor",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Realest Guy In The Room",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Reaper",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rebel",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Red",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Red Alert",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Red Dragon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Red Shirt",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Renegade",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Reptile",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Resilient",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Revenant",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rex",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rhino",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Richter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ride Or Die",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rigs",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ring Leader",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Riptide",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Risk Taker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Riskrunner",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Road Block",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Roadkill",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Robin",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rock N Roll",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rocket",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rockstar",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rogue",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Role Model",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rolling Thunder",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Romeo",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ronin",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rook",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rookie",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rowdy",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Royal Guard",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Ruiner",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rumble",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Runekeeper",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Rusty",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "S Tier",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Saber",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sabertooth",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Saboteur",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sailor",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Samurai",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sand Wasp",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sandman",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sasquatch",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Saturn",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Scar",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Scarab",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Scarecrow",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Scorch",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Scorpion",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Scotch",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Scourge",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Scout",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Scrub",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Scythe",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Seducer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Senpai",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sensei",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sentinel",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Serval",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Shade",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Shadow",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Shadow Of Death",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Shah",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Shark",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Shen",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Chinese"
+  },
+  {
+    "Name": "Shenlong",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Chinese"
+  },
+  {
+    "Name": "Shepherd",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sheriff",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Shift",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Shinigami",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Shock And Awe",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Shocker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Shogun",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Shooter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Shorty",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Show-Off",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Showrunner",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Showstopper",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Shrapnel",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Shroud",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sideswipe",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sidewinder",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sierra",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Silencer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Silverback",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Siren",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sixth Sense",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Skip",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Skull Crusher",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Skyburner",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Skydiver",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Slam Dunk",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Slammer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Slasher",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Slayer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sledge",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sledgehammer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sleeper Agent",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sleeper Cell",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Slim",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Slingshot",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Slug",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Smash",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Smokey",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Snake",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Snake Eyes",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sniper",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Snow Eagle",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Snowpiercer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sol",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Solar",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sole Survivor",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Solid Snake",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Somerled",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "History",
+    "Origins": "Irish"
+  },
+  {
+    "Name": "SOS",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Soulman",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sovereign",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Space Walker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Spanky",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sparrow",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Spartan",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Spearfinger",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Cherokee"
+  },
+  {
+    "Name": "Specialist",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Specter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Spider",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Spike",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Spine Chiller",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Spirit Dragon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Spitfire",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Squid",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Stalker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Stampede",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Star",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Starfighter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Starfire",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Steel",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Stinger",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Stingray",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Stone Cold",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Storm",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Straight Fire",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Straight Shooter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Straight Up",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Street Fighter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Strike Eagle",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Striker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Strings",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Success Kid",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Sultan",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Superfly",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Superhero",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Supernova",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Superstar",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Supreme Fighting Machine",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Supreme Talent",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Surge",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Survivor",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Swag",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Swan",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Switchblade",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "T-Rex",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Tango",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Tank",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Tanuki",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Tapir",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Tarantula",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Taurus",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Tempest",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Templar",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "History",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Terminator",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Termite",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Terrier",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Tetra",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Tetsu No Tsume",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Tetsujin",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Textbook",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "That Guy",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "That Guy You Once Knew",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The 1-2-3 Kid",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The 8-Bit Luchador",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Animal",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Anomaly",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Architect",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Aristocrat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Artist Formerly Known As",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Artiste",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Axe Man",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Babe Ruth Of Beatdowns",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Baddest Wrestler In The Galaxy",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Balloon Buster",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Beast",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Beast Incarnate",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Best",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Best At What He Does",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Best At What She Does",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Best In The World",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Best There Is",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Best There Was And Will Ever Be",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Big Bambino",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Big Breakfast",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Bizarre One",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Black Sheep",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Boss",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Brain",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Champ That Runs the Camp",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Chosen One",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Claw",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Crippler",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Crown Jewel Of Lucha Libre",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Dance Expert",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Daredevil Of Extreme",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Daughter Of A Daughter Of A Wrestler",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Daughter Of A Wrestler",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Deacon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Deadman",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Devil You Don't",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Devil You Know",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Devil's Favorite",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Dirtiest Player In The Game",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Don of Parmesan",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Duchess",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Dude",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Duke",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Duke Of The Dab",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Eighth Wonder Of The World",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The End",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Essence Of Excellence",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Excellence Of Execution",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Extraordinary Gentleman",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Face Of Terror",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Face That Runs The Place",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Fear",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Flying Knight",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Fourth Horseman",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Fury",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Future",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Future Legend",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Future's Future's Future",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The G.O.A.T.",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Galaxy's Champion",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Galaxy's Greatest Export",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Galaxy's Largest Athlete",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Galaxy's Strongest Man",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Galaxy's Strongest Woman",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Gallowsman",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Game",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Glorious One",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Godfather",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Godmother",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Gold Standard",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Great And Devious One",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Greatest",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Greatest Intergalactic Champion Of All Time",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Greatest Of All Time",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Guru Of Greatness",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Hardcore Legend",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Heartbreak Kid",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Huggable One",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Iceman",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Icon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Immortal",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Inspirational",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Instrument Of Change",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Inter-Dimensional Oddity",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Intergalactic Luchador",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Internet Sensation",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Ironman",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Kid",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Last Outlaw",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Last Spartan",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Legacy",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Lethal One",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Low-Key Meta",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Mad Major",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Main Attraction",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Main Event",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Main Man",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Man",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Man Of 1,000 Truths",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Man Of 1,000,000 Holds",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Man Of 2,000 Holds",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Man That Gravity Forgot",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Man With A Plan",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Master Of Snake Style Lucha",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Mighty Titan",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Most Interesting Man In The Room",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Most Interesting Man In The World",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Most Interesting Person In The Room",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Most Interesting Person In The World",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Most Interesting Woman In The Room",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Most Interesting Woman In The World",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Mountain",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Mysterious Mythological Warrior From Afar",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Narcissist",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Natural",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The New Face Of Desolation",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The New Face Of Destruction",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The New Face Of Fear",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The New Face Of Vengeance",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The New Face That Runs The Place",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The New Sensation",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Next Best Thing",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Next Big Thing",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Night Mayor Of Suplex City",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Ninth Wonder Of The World",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The One",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The One That Got Away",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Outsider",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Pain",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Pain Train",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Party God",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The People's Choice",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Pegasus Kid",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Phenom",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Phenomenal One",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Pinnacle",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Post-Apocalyptic Scavenger",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Powerhouse",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Premier Athlete",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Prince Of Dark Matter",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Princess Of Dark Matter",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Professional",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Punch",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Radical Mongoose",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Real Deal",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Savior Of Misbehavior",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Savior Of The Unwashed Masses",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Savior Of Wrestling",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Sensation",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Sensation Of Innovation",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Showoff",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Silence Behind The Violence",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Solution",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Son Of A Son Of A Wrestler",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Son Of A Wrestler",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Sorrow",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Stamina Monster",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Sundance Kid",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Super Villain",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Surgeon",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Tenth Wonder Of The World",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Total Package",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Truth",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Ultimate Opportunist",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Ultimate Party Animal",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Ultimate Underdog",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Ultimate Warrior",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Ultra-Dangerous Superstar",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Underdog",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Virus",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Warlord Of Weird",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Whole Shebang",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Wizard Of Odd",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Wizened Rebel",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Woman",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Woman Of 1,000 Truths",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Woman Of 1,000,000 Holds",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Woman Of 2,000 Holds",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Woman That Gravity Forgot",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The Woman With A Plan",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The World Warrior",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The World's Greatest Export",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "The World's Largest Athlete",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "This Year's Model",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Thor",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Thorn",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Thrasher",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Thrillseeker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Thumper",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Thunder",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Thunderbird",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Thunderbolt",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Tidal Wave",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Tilt",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Titan",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "TNT",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Tomahawk",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Tombstone",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Too Bad",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Too Good",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Too Hot",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Top Dog",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Top Tier",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Torment",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Tormentor",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Tornado",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Torpedo",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Traitor",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Trapper",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Trauma",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Traveler",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Trend Setter",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Trickster",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Trigger",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Trip",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Tripwire",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Trooper",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Trouble",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Troubadour",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Truth Seeker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Truth Teller",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Tuatara",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Tuner",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Turkey",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Turntable",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Turtle",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Twitch",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "U Mad Bro",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Uakari",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Unbreakable",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Underdog",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Undertaker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Unholy",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Unicorn",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Unpredictable",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Unstable",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Urban Gladiator",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Urban Legend",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Usurper",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Vagabond",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Valkrie",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Vampire",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Vampire Bat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Vandal",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Vanguard",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Varsity",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Vengeance Seeker",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Venom",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Vigilante",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Viking",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Villain",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Violence-Doer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Viper",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Viral",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Voice Of The Voiceless",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Void",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Volley",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Volt",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Voodoo",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Vortex",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Vulture",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Waka Daisho",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Wallaby",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Walrus",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "War Hammer",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wardog",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Warlock",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Warlord",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Warrior",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Warthog",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wasp",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Weasel",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wendigo",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Native American"
+  },
+  {
+    "Name": "Werewolf",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "White Hat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "White Lightning",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Who Am I?",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Why Am I Here?",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wicked",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wicked Sister",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Widow",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Widower",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Widowmaker",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wight",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wild Boar",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wild One",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wild Pegasus",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wildcat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wildchild",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wildebeest",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wildfire",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wildman",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wildwoman",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wiseguy",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Witch",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wizard",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wolf",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wolverine",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wombat",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wonderboy",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wondergirl",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wonderkid",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "World Serpent",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Icelandic,Danish,Swedish,Norwegian"
+  },
+  {
+    "Name": "World Star",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Reference",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wraith",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wrestling's Worst Nightmare",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wyvern",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Wyrm",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "X-Factor",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "X-Ray",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Xiao",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Chinese"
+  },
+  {
+    "Name": "Ya Boy",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Yak",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Yeet",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Yellowjacket",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "YES! Man",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Yeti",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Y<o/>kai",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Japanese"
+  },
+  {
+    "Name": "Yo Dawg",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Your Dad",
+    "Male": "Y",
+    "Female": "N",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Your Mom",
+    "Male": "N",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Your Parent's Favorite",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Meme",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Your Soul's Tormentor",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Zahh<a/>k",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Persian"
+  },
+  {
+    "Name": "Zealot",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Zebra",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Zebu",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Animal",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Zenith",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Zero",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Zero-Gravity",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Wrestling",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Zeus",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Zombie",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "Mythology",
+    "Origins": "Any"
+  },
+  {
+    "Name": "Zulu",
+    "Male": "Y",
+    "Female": "Y",
+    "Type": "General",
+    "Origins": "Any"
+  }
+]

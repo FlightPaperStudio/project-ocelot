@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
+using CNG;
 
 public class MainMenu : Menu 
 {
@@ -92,8 +93,9 @@ public class MainMenu : Menu
 		DebateGenerator.InitializeJSONData ( debateDataJSON.text );
 
 		// Load name generator data
-		TextAsset nameDataJSON = Resources.Load ( "NameGeneratorList" ) as TextAsset;
-		NameGenerator.Init ( nameDataJSON.text );
+		NameData.LoadNameData ( );
+		//TextAsset nameDataJSON = Resources.Load ( "NameGeneratorList" ) as TextAsset;
+		//NameGenerator.Init ( nameDataJSON.text );
 
 		// Mark that start up has finished
 		hasStartUp = true;

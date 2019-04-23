@@ -371,12 +371,15 @@ public static class MatchSettings
 	/// <returns> A new instance of pawn data. </returns>
 	public static UnitSettingData GetPawn ( )
 	{
+		// Generate random character.
+		CNG.Character character = CNG.NameGenerator.GetCharacter ( );
+
 		// Create a new instance of a leader
 		UnitSettingData pawn = new UnitSettingData
 		{
 			ID = unitSettingsDictionary [ PAWN_UNIT_ID ].ID,
-			UnitName = NameGenerator.CreateName ( ),
-			UnitNickname = NameGenerator.CreateNickname ( ),
+			UnitName = character.WesternNameOrder,//NameGenerator.CreateName ( ),
+			UnitNickname = character.QuotedNickname,//NameGenerator.CreateNickname ( ),
 			UnitBio = unitSettingsDictionary [ PAWN_UNIT_ID ].UnitBio,
 			FinishingMove = unitSettingsDictionary [ PAWN_UNIT_ID ].FinishingMove,
 			Portrait = unitSettingsDictionary [ PAWN_UNIT_ID ].Portrait,
