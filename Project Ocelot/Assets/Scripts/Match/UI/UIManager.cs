@@ -33,6 +33,7 @@ public class UIManager : MonoBehaviour
 
 	public MatchInfoMenu matchInfoMenu;
 	public UnitHUD UnitHUD;
+	public TurnHUD TurnHUD;
 	public TurnTimer timer;
 	public SplashPrompt splash;
 	public PopUpMenu popUp;

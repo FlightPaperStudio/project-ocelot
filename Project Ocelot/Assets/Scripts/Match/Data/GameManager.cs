@@ -122,9 +122,19 @@ public class GameManager : MonoBehaviour
 	[HideInInspector]
 	public List<PostTurnAnimation> PostAnimationQueue = new List<PostTurnAnimation> ( );
 
+	private int roundCounter = 1;
 	private bool isSkippableTurn;
 
 	private const float ANIMATION_BUFFER = 0.1f;
+
+	/// <summary>
+	/// The current round of the match.
+	/// </summary>
+	public int Round
+	{
+		get;
+		private set;
+	}
 
 	/// <summary>
 	/// Whether or not it is still the starting phase of a turn.
@@ -207,6 +217,9 @@ public class GameManager : MonoBehaviour
 	/// </summary>
 	private void StartMatch ( )
 	{
+		// Set current round
+		Round = 0;
+
 		// Set players
 		for ( int i = 0; i < players.Length; i++ )
 		{
@@ -337,8 +350,25 @@ public class GameManager : MonoBehaviour
 	/// </summary>
 	private IEnumerator StartTurnCoroutine ( )
 	{
+		// Hide turn hud
+		UI.TurnHUD.gameObject.SetActive ( false );
+
+		// Check for new round
+		if ( roundCounter != Round )
+		{
+			// Set round
+			Round = roundCounter;
+
+			// Wait until animation is completed for new round
+			yield return UI.splash.Slide ( "Round " + Round, Color.white, false ).WaitForCompletion ( );
+		}
+
 		// Wait until animation is completed
-		yield return UI.splash.Slide ( CurrentPlayer.PlayerName + "'s Turn", Util.TeamColor ( CurrentPlayer.Team ), true ).WaitForCompletion ( );
+		yield return UI.splash.Slide ( "<size=80%>Round " + Round + "\n</size>" + CurrentPlayer.PlayerName + "'s Turn", Util.TeamColor ( CurrentPlayer.Team ), true ).WaitForCompletion ( );
+
+		// Display turn hud
+		UI.TurnHUD.gameObject.SetActive ( true );
+		UI.TurnHUD.DisplayTurn ( Round, CurrentPlayer );
 
 		// Set cooldowns
 		UpdateUnitCountdowns ( );
@@ -892,6 +922,9 @@ public class GameManager : MonoBehaviour
 				return;
 			}
 		}
+
+		// Increment round
+		roundCounter++;
 
 		// Continue search for the next player
 		for ( int i = 0; i < playerIndex; i++ )
