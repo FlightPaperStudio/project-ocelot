@@ -118,14 +118,14 @@ public class TagTeam : HeroUnit
 						if ( PassiveAvailabilityCheck ( InstanceData.Ability1, prerequisite ) )
 						{
 							// Add as an available Tag Team move
-							MoveList.Add ( new MoveData ( hex.Neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i ) );
+							AddMove ( new MoveData ( hex.Neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i ) );
 						}
 					}
 					else
 					{
 						// Add as an available move
 						MoveData move = new MoveData ( hex.Neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i );
-						MoveList.Add ( move );
+						AddMove ( move );
 
 						// Check for additional move with the Tag Team ability
 						if ( PassiveAvailabilityCheck ( InstanceData.Ability1, prerequisite ) )
@@ -169,7 +169,7 @@ public class TagTeam : HeroUnit
 					}
 
 					// Add move to the move list
-					MoveList.Add ( move );
+					AddMove ( move );
 
 					// Find additional jumps
 					if ( InstanceData.Ability1.IsPerkEnabled || ( move.Type != MoveData.MoveType.SPECIAL ) )

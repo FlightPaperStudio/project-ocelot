@@ -213,7 +213,7 @@ public class Teleport : HeroUnit
 				continue;
 
 			// Add tile as an available special move
-			MoveList.Add ( new MoveData ( targets [ i ], null, MoveData.MoveType.SPECIAL, MoveData.MoveDirection.DIRECT ) );
+			AddMove ( new MoveData ( targets [ i ], null, MoveData.MoveType.SPECIAL, MoveData.MoveDirection.DIRECT ) );
 		}
 	}
 

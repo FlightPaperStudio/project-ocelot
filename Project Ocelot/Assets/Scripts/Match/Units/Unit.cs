@@ -64,6 +64,34 @@ public class Unit : MonoBehaviour
 	protected const float MOVE_ANIMATION_TIME = 0.5f;
 	protected const float KO_ANIMATION_TIME = 0.5f;
 
+	/// <summary>
+	/// Get the best available move for this unit.
+	/// </summary>
+	public MoveData BestMove
+	{
+		get
+		{
+			// Store the best possible move
+			MoveData best = null;
+			int max = -10000;
+
+			// Search for best move
+			for ( int i = 0; i < MoveList.Count; i++ )
+			{
+				// Check for better score
+				if ( MoveList [ i ].FinalValue > max )
+				{
+					// Store best move
+					best = MoveList [ i ];
+					max = MoveList [ i ].FinalValue;
+				}
+			}
+
+			// Return best move
+			return best;
+		}
+	}
+
 	#endregion // Turn Data
 
 	#region Status Data
@@ -196,7 +224,7 @@ public class Unit : MonoBehaviour
 				if ( !returnOnlyJumps && OccupyTileCheck ( hex.Neighbors [ i ], prior ) )
 				{
 					// Add as an available move
-					MoveList.Add ( new MoveData ( hex.Neighbors [ i ], prior, MoveData.MoveType.MOVE, i ) );
+					AddMove ( new MoveData ( hex.Neighbors [ i ], prior, MoveData.MoveType.MOVE, i ) );
 				}
 				// Check if this unit can jump the neighboring tile
 				else if ( JumpTileCheck ( hex.Neighbors [ i ] ) && OccupyTileCheck ( hex.Neighbors [ i ].Neighbors [ i ], prior ) )
@@ -217,7 +245,7 @@ public class Unit : MonoBehaviour
 					}
 
 					// Add move to the move list
-					MoveList.Add ( move );
+					AddMove ( move );
 
 					// Find additional jumps
 					FindMoves ( hex.Neighbors [ i ].Neighbors [ i ], move, true );
@@ -657,6 +685,20 @@ public class Unit : MonoBehaviour
 		//GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( InstanceID, data.Portrait );
 	}
 
+	/// <summary>
+	/// Adds a potential move to the unit's list of moves.
+	/// </summary>
+	/// <param name="move"> The new available move. </param>
+	protected void AddMove ( MoveData move )
+	{
+		// Check for needed evaluation
+		if ( Owner.IsBot )
+			EvaluateMove ( move );
+
+		// Add move to list
+		MoveList.Add ( move );
+	}
+
 
 	/// <summary>
 	/// Returns the two directions that are considered backwards movement for the unit.
@@ -754,4 +796,246 @@ public class Unit : MonoBehaviour
 	}
 
 	#endregion // Protected Functions
+
+	#region Public AI Functions
+
+	/// <summary>
+	/// Gets the value of attacking this unit.
+	/// </summary>
+	/// <param name="move"> The move data for this attack. </param>
+	/// <returns> The value of the attack. </returns>
+	public virtual int GetAttackValue ( MoveData move )
+	{
+		// Get attack value
+		int value = MoveData.ATTACK_VALUE;
+
+		// Get ko value
+		if ( this is Pawn )
+			value += MoveData.KO_PAWN_VALUE;
+		else if ( this is HeroUnit )
+			value += MoveData.KO_HERO_VALUE;
+		else if ( this is Leader )
+			value += MoveData.KO_LEADER_VALUE;
+
+		// Return value
+		return value;
+	}
+
+	/// <summary>
+	/// Gets the additional value of being assisted by this unit.
+	/// </summary>
+	/// <param name="move"> The move data for the assist. </param>
+	/// <returns> The value of the assist. </returns>
+	public virtual int GetAssistValue ( MoveData move )
+	{
+		// Return no additional value
+		return 0;
+	}
+
+	public virtual int GetPositionValue ( MoveData move )
+	{
+		return 0;
+	}
+
+	#endregion // Public AI Functions
+
+	#region Protected AI Functions
+
+	/// <summary>
+	/// Evaluates the value of a move for the AI.
+	/// </summary>
+	/// <param name="move"> The move data being evaluated. </param>
+	protected void EvaluateMove ( MoveData move )
+	{
+		// Get the base value
+		move.BaseValue = move.PriorMove != null ? move.PriorMove.BaseValue : 0;
+
+		// Get attack values
+		move.BaseValue += GetAttackValues ( move );
+
+		// Get assist values
+		move.BaseValue += GetAssistValues ( move );
+
+		// Get the final value
+		move.FinalValue = move.BaseValue;
+
+		// Get the position value
+		move.FinalValue += GetPositionValues ( move );
+	}
+
+	/// <summary>
+	/// Gets the values of the attacks in this move.
+	/// </summary>
+	/// <param name="move"> The move data for the attacks. </param>
+	/// <returns> The value of the attacks. </returns>
+	protected virtual int GetAttackValues ( MoveData move )
+	{
+		// Get attack value
+		int value = 0;
+
+		// Get value of each attack
+		for ( int i = 0; i < move.AttackTargets.Length; i++ )
+		{
+			// Check for unit
+			if ( move.AttackTargets [ i ].Tile.CurrentUnit != null )
+				value += move.AttackTargets [ i ].Tile.CurrentUnit.GetAttackValue ( move );
+			else if ( move.AttackTargets [ i ].Tile.CurrentObject != null )
+				value += MoveData.ATTACK_VALUE;
+		}
+
+		// Return value
+		return value;
+	}
+
+	/// <summary>
+	/// Gets the values of the assists in this move.
+	/// </summary>
+	/// <param name="move"> The move data for the assists. </param>
+	/// <returns> The value of the assists. </returns>
+	protected virtual int GetAssistValues ( MoveData move )
+	{
+		// Get assist value
+		int value = 0;
+
+		// Get value of each assist
+		for ( int i = 0; i < move.AssistTargets.Length; i++ )
+		{
+			// Add assist value
+			value += MoveData.ASSIST_VALUE;
+
+			// Check for unit
+			if ( move.AssistTargets [ i ].Tile.CurrentUnit != null )
+				value += move.AssistTargets [ i ].Tile.CurrentUnit.GetAssistValue ( move );
+			//else if ( move.AssistTargets [ i ].Tile.CurrentObject != null )
+			//	value += MoveData.ATTACK_VALUE;
+		}
+
+		// Return value
+		return value;
+	}
+
+	/// <summary>
+	/// Gets the values of surrounding positions in this move.
+	/// </summary>
+	/// <param name="move"> The move data for this move. </param>
+	/// <returns> The value of the position. </returns>
+	protected virtual int GetPositionValues ( MoveData move )
+	{
+		// Get position value
+		int value = 0;
+
+		// Check adjacent tiles
+		for ( int i = 0; i < move.Destination.Neighbors.Length; i++ )
+		{
+			// Add position value for adjacent tiles
+			value += GetPositionValue ( move, move.Destination.Neighbors [ i ], Hex.GetOppositeDirection ( (Hex.Direction)i ) );
+
+			// Add position value for nearby tiles
+			value += GetPositionValue ( move, move.Destination.Neighbor ( (Hex.Direction)i, 2 ), move.Destination.Neighbors [ i ], Hex.GetOppositeDirection ( (Hex.Direction)i ) );
+
+			// Add position value for diagonal tiles
+			value += GetPositionValue ( move, move.Destination.Diagonals [ i ], move.Destination.Neighbors [ i ], Hex.GetOppositeDirection ( (Hex.Direction)i ) );
+			value += GetPositionValue ( move, move.Destination.Diagonals [ i ], move.Destination.Neighbors [ i + 1 < Hex.TOTAL_SIDES ? i + 1 : 0 ], Hex.GetOppositeDirection ( (Hex.Direction)( i + 1 < Hex.TOTAL_SIDES ? i + 1 : 0 ) ) );
+		}
+
+		// Return value
+		return value;
+	}
+
+	/// <summary>
+	/// Gets the value of a surrounding position in this move.
+	/// </summary>
+	/// <param name="move"> The move data for this move. </param>
+	/// <param name="hex"> The tile being evaluated. </param>
+	/// <param name="direction"> The direction from the evaluated tile to the destination tile. </param>
+	/// <returns> The value of the surrounding position. </returns>
+	protected virtual int GetPositionValue ( MoveData move, Hex hex, Hex.Direction direction )
+	{
+		// Check for tile
+		if ( hex == null )
+		{
+			// Add protection bonus
+			return MoveData.ADJACENT_VALUE;
+		}
+
+		// Check for ally
+		if ( hex.Tile.CurrentUnit != null && hex.Tile.CurrentUnit.Owner == Owner )
+		{
+			// Add protection bonus
+			return MoveData.ADJACENT_VALUE;
+		}
+
+		// Check for opponent
+		if ( hex.Tile.CurrentUnit != null && hex.Tile.CurrentUnit.Owner != Owner && !IsAttacked ( move, hex ) )
+		{
+			// Add threat penalty and check for attack potential
+			return -1 * ( MoveData.ADJACENT_VALUE + ( IsDirectionBlocked ( move.Destination, direction ) ? 0 : GetAttackValue ( move ) ) );
+		}
+
+		// Return no bonus or penalty
+		return 0;
+	}
+
+	/// <summary>
+	/// Gets the value of a surrounding position in this move.
+	/// </summary>
+	/// <param name="move"> The move data for this move. </param>
+	/// <param name="hex"> The tile being evaluated. </param>
+	/// <param name="midpoint"> The tile between the evaluated tile and the destination tile. </param>
+	/// <param name="direction"> The direction from the evaluated tile to the destination tile. </param>
+	/// <returns> The value of the surrounding position. </returns>
+	protected virtual int GetPositionValue ( MoveData move, Hex hex, Hex midpoint, Hex.Direction direction )
+	{
+		// Check for tiles or if the path is blocked
+		if ( hex == null || midpoint == null || midpoint.Tile.IsOccupied )
+		{
+			// Return no bonus or penalty
+			return 0;
+		}
+
+		// Check for opponent
+		if ( hex.Tile.CurrentUnit != null && hex.Tile.CurrentUnit.Owner != Owner && !IsAttacked ( move, hex ) )
+		{
+			// Add threat penalty and check for attack potential
+			return -1 * ( MoveData.NEARBY_VALUE + ( IsDirectionBlocked ( move.Destination, direction ) ? 0 : GetAttackValue ( move ) ) );
+		}
+
+		// Return no bonus or penalty
+		return 0;
+	}
+
+	/// <summary>
+	/// Checks whether or not this tile was attacked at any point in this move.
+	/// </summary>
+	/// <param name="move"> The move data for this move. </param>
+	/// <param name="hex"> The tile being checked. </param>
+	/// <returns> Whether or not the tile was attacked. </returns>
+	protected bool IsAttacked ( MoveData move, Hex hex )
+	{
+		// Check if this position was attacked
+		for ( int i = 0; i < move.AttackTargets.Length; i++ )
+			if ( move.AttackTargets [ i ] == hex )
+				return true;
+
+		// Check for previous moves
+		if ( move.PriorMove != null )
+			return IsAttacked ( move.PriorMove, hex );
+
+		// Return that this position was not attacked
+		return false;
+	}
+
+	/// <summary>
+	/// Checks whether or not a tile is protected from an attack from a specific direction.
+	/// </summary>
+	/// <param name="hex"> The tile being checked. </param>
+	/// <param name="direction"> The direction of a potential attack. </param>
+	/// <returns> Whether or not a potential attack would be blocked. </returns>
+	protected bool IsDirectionBlocked ( Hex hex, Hex.Direction direction )
+	{
+		// Return whether or not the direction is blocked
+		return hex.Neighbor ( direction ) == null || hex.Neighbor ( direction ).Tile.IsOccupied;
+	}
+
+	#endregion // Protected AI Functions
 }

@@ -386,7 +386,7 @@ public class Dropkick : HeroUnit
 				continue;
 
 			// Add as an available special move
-			MoveList.Add ( new MoveData ( hexes [ i ], null, MoveData.MoveType.SPECIAL, i ) );
+			AddMove ( new MoveData ( hexes [ i ], null, MoveData.MoveType.SPECIAL, i ) );
 		}
 	}
 

@@ -163,17 +163,6 @@ public class HexGrid : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Get the opposite direction of a specified direction.
-	/// </summary>
-	/// <param name="direction"> The direction to get the opposite from. </param>
-	/// <returns> The opposite direction. </returns>
-	public Hex.Direction GetOppositeDirection ( Hex.Direction direction )
-	{
-		// Return the opposite direction
-		return (Hex.Direction)( ( (int)direction + 3 ) % 6 );
-	}
-
-	/// <summary>
 	/// Returns the two directions that are considered backwards movement for a player's direction.
 	/// </summary>
 	/// <param name="direction"> The movement direction of a player. </param>

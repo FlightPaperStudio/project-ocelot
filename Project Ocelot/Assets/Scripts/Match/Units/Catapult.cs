@@ -296,25 +296,25 @@ public class Catapult : HeroUnit
 				if ( ( target1.Tile.CurrentUnit != null && target1.Tile.CurrentUnit.UnitAttackCheck ( this ) ) && ( target2.Tile.CurrentUnit == null || !target2.Tile.CurrentUnit.UnitAttackCheck ( this ) ) )
 				{
 					// Add as an available special attack move
-					MoveList.Add ( new MoveData ( destination, null, MoveData.MoveType.SPECIAL, i, null, target1 ) );
+					AddMove ( new MoveData ( destination, null, MoveData.MoveType.SPECIAL, i, null, target1 ) );
 				}
 				// Check if the second neighbor unit can be attacked but the first neighbor unit cannot
 				else if ( ( target1.Tile.CurrentUnit == null || !target1.Tile.CurrentUnit.UnitAttackCheck ( this ) ) && target2.Tile.CurrentUnit != null && target2.Tile.CurrentUnit.UnitAttackCheck ( this ) )
 				{
 					// Add as an available special attack move
-					MoveList.Add ( new MoveData ( destination, null, MoveData.MoveType.SPECIAL, i, null, target2 ) );
+					AddMove ( new MoveData ( destination, null, MoveData.MoveType.SPECIAL, i, null, target2 ) );
 				}
 				// Check if both neighbor units can be attacked
 				else if ( target1.Tile.CurrentUnit != null && target1.Tile.CurrentUnit.UnitAttackCheck ( this ) && target2.Tile.CurrentUnit != null && target2.Tile.CurrentUnit.UnitAttackCheck ( this ) ) 
 				{
 					// Add as an available special attack move
-					MoveList.Add ( new MoveData ( destination, null, MoveData.MoveType.SPECIAL, i, null, new Hex [ ] { target1, target2 } ) );
+					AddMove ( new MoveData ( destination, null, MoveData.MoveType.SPECIAL, i, null, new Hex [ ] { target1, target2 } ) );
 				}
 			}
 			else
 			{
 				// Add as an available special move
-				MoveList.Add ( new MoveData ( destination, null, MoveData.MoveType.SPECIAL, i ) );
+				AddMove ( new MoveData ( destination, null, MoveData.MoveType.SPECIAL, i ) );
 			}
 		}
 	}

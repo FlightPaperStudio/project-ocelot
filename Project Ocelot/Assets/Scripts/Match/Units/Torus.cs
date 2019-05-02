@@ -282,7 +282,7 @@ public class Torus : HeroUnit
 			{
 				// Get opposite direction
 				//int direction = Util.GetOppositeDirection ( i );
-				Hex.Direction direction = hex.Grid.GetOppositeDirection ( (Hex.Direction)i );
+				Hex.Direction direction = Hex.GetOppositeDirection ( (Hex.Direction)i );
 
 				// Get opposite edge tile
 				Hex targetHex = GetEdgeTile ( direction );
@@ -291,7 +291,7 @@ public class Torus : HeroUnit
 				if ( !returnOnlyJumps && OccupyTileCheck ( targetHex, prerequisite ) )
 				{
 					// Add as an available move
-					MoveList.Add ( new MoveData ( targetHex, prerequisite, MoveData.MoveType.SPECIAL, i ) );
+					AddMove ( new MoveData ( targetHex, prerequisite, MoveData.MoveType.SPECIAL, i ) );
 				}
 				// Check if this unit can jump the edge tile
 				else if ( JumpTileCheck ( targetHex ) && OccupyTileCheck ( targetHex.Neighbors [ i ], prerequisite ) )
@@ -312,7 +312,7 @@ public class Torus : HeroUnit
 					}
 
 					// Add move to the move list
-					MoveList.Add ( move );
+					AddMove ( move );
 
 					// Find additional jumps
 					FindMoves ( targetHex.Neighbors [ i ], move, true );
@@ -322,7 +322,7 @@ public class Torus : HeroUnit
 			else if ( JumpTileCheck ( hex.Neighbors [ i ] ) && hex.Neighbors [ i ].Neighbors [ i ] == null )
 			{
 				// Get opposite direction
-				Hex.Direction direction = hex.Grid.GetOppositeDirection ( (Hex.Direction)i );
+				Hex.Direction direction = Hex.GetOppositeDirection ( (Hex.Direction)i );
 
 				// Get opposite edge tile
 				Hex targetHex = GetEdgeTile ( direction );
@@ -346,7 +346,7 @@ public class Torus : HeroUnit
 					}
 
 					// Add move to the move list
-					MoveList.Add ( move );
+					AddMove ( move );
 
 					// Find additional jumps
 					FindMoves ( targetHex, move, true );

@@ -195,6 +195,8 @@ public class Hex : MonoBehaviour
 	public HexGrid Grid;
 	public Tile Tile;
 
+	public const int TOTAL_SIDES = 6;
+
 	private CubeCoord [ ] directions = new CubeCoord [ ]
 	{
 		new CubeCoord (  0,  1, -1 ), // North
@@ -326,6 +328,17 @@ public class Hex : MonoBehaviour
 	#endregion // MonoBehaviour Functions
 
 	#region Public Functions
+
+	/// <summary>
+	/// Get the opposite direction of a specified direction.
+	/// </summary>
+	/// <param name="direction"> The direction to get the opposite from. </param>
+	/// <returns> The opposite direction. </returns>
+	public static Direction GetOppositeDirection ( Direction direction )
+	{
+		// Return the opposite direction
+		return (Direction)( ( (int)direction + 3 ) % 6 );
+	}
 
 	/// <summary>
 	/// Gets the neighboring hex in a specified direction.

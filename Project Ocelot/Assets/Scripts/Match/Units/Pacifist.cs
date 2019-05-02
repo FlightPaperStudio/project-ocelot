@@ -88,14 +88,14 @@ public class Pacifist : HeroUnit
 					if ( !returnOnlyJumps && OccupyTileCheck ( hex.Neighbors [ i ], prerequisite ) )
 					{
 						// Add as an available move
-						MoveList.Add ( new MoveData ( hex.Neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
+						AddMove ( new MoveData ( hex.Neighbors [ i ], prerequisite, MoveData.MoveType.MOVE, i ) );
 					}
 					// Check if this unit can jump the neighboring tile
 					else if ( JumpTileCheck ( hex.Neighbors [ i ] ) && OccupyTileCheck ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite ) )
 					{
 						// Add as an available jump
 						MoveData move = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite, MoveData.MoveType.JUMP, i, hex.Neighbors [ i ], null );
-						MoveList.Add ( move );
+						AddMove ( move );
 
 						// Find additional jumps
 						FindMoves ( hex.Neighbors [ i ].Neighbors [ i ], move, true );

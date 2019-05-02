@@ -43,7 +43,7 @@ public class Leader : HeroUnit
 					}
 
 					// Add move to the move list
-					MoveList.Add ( move );
+					AddMove ( move );
 				}
 				// Check if this unit can jump the neighboring tile
 				else if ( JumpTileCheck ( hex.Neighbors [ i ] ) && OccupyTileCheck ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite ) )
@@ -70,7 +70,7 @@ public class Leader : HeroUnit
 					}
 
 					// Add move to the move list
-					MoveList.Add ( move );
+					AddMove ( move );
 
 					// Find additional jumps
 					FindMoves ( hex.Neighbors [ i ].Neighbors [ i ], move, true );

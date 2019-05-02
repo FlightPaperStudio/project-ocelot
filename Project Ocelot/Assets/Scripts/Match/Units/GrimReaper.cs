@@ -286,7 +286,7 @@ public class GrimReaper : HeroUnit
 				MoveData move = new MoveData ( hex, null, MoveData.MoveType.SPECIAL, MoveData.MoveDirection.DIRECT );
 
 				// Add as an available special move
-				MoveList.Add ( move );
+				AddMove ( move );
 
 				// Continue movement
 				FindMoves ( hex, move, false );

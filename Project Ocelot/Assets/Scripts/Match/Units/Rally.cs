@@ -369,7 +369,7 @@ public class Rally : HeroUnit
 				MoveData move = new MoveData ( hex.Diagonals [ i ], prerequisite, MoveData.MoveType.SPECIAL, i, new Hex [ ] { hex.Neighbors [ i ], hex.Neighbors [ ( i + 1 ) % hex.Neighbors.Length ] }, null );
 
 				// Add move to move list
-				MoveList.Add ( move );
+				AddMove ( move );
 
 				// Find additional moves
 				FindMoves ( hex.Diagonals [ i ], move, true );

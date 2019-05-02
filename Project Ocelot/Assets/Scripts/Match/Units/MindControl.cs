@@ -289,7 +289,7 @@ public class MindControl : HeroUnit
 				MoveData move = new MoveData ( hex.Neighbors [ i ].Neighbors [ i ], prerequisite, MoveData.MoveType.SPECIAL, i, hex.Neighbors [ i ], null );
 
 				// Add move to the move list
-				MoveList.Add ( move );
+				AddMove ( move );
 
 				// Find additional jumps
 				if ( InstanceData.Ability2.IsPerkEnabled )

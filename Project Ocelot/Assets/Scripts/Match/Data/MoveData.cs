@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MoveData
 {
-	#region Public Classes
+	#region Public Classes and Enums
 
 	public enum MoveType
 	{
@@ -25,7 +25,7 @@ public class MoveData
 		DIRECT = 7
 	}
 
-	#endregion // Public Classes
+	#endregion // Public Classes and Enums
 
 	#region Move Data
 
@@ -122,6 +122,35 @@ public class MoveData
 		set;
 	}
 
+	#endregion // Move Data
+
+	#region AI Data
+
+	/// <summary>
+	/// The base value of the move data.
+	/// </summary>
+	public int BaseValue;
+
+
+	/// <summary>
+	/// The value of the move data as the final position.
+	/// </summary>
+	public int FinalValue;
+
+	public const int ATTACK_VALUE = 50;
+	public const int KO_PAWN_VALUE = 50;
+	public const int KO_HERO_VALUE = 100;
+	public const int KO_LEADER_VALUE = 500;
+
+	public const int ASSIST_VALUE = 10;
+
+	public const int ADJACENT_VALUE = 25;
+	public const int NEARBY_VALUE = 15;
+
+	#endregion // AI Data
+
+	#region Class Constructors
+
 	public MoveData ( Hex hex, MoveData prior, MoveType type, MoveDirection direction, Hex assistTarget, Hex attackTarget )
 	{
 		Destination = hex;
@@ -132,7 +161,7 @@ public class MoveData
 		AttackTargets = attackTarget != null ? new Hex [ ] { attackTarget } : null;
 		IsConflicted = false;
 		IsVictoryMove = false;
-		Value = 0;
+		BaseValue = 0;
 	}
 
 	public MoveData ( Hex hex, MoveData prior, MoveType type, int direction, Hex assistTarget, Hex attackTarget )
@@ -145,7 +174,7 @@ public class MoveData
 		AttackTargets = attackTarget != null ? new Hex [ ] { attackTarget } : null;
 		IsConflicted = false;
 		IsVictoryMove = false;
-		Value = 0;
+		BaseValue = 0;
 	}
 
 	public MoveData ( Hex hex, MoveData prior, MoveType type, MoveDirection direction, Hex [ ] assistTargets, Hex [ ] attackTargets )
@@ -158,7 +187,7 @@ public class MoveData
 		AttackTargets = attackTargets;
 		IsConflicted = false;
 		IsVictoryMove = false;
-		Value = 0;
+		BaseValue = 0;
 	}
 
 	public MoveData ( Hex hex, MoveData prior, MoveType type, int direction, Hex [ ] assistTargets, Hex [ ] attackTargets )
@@ -171,7 +200,7 @@ public class MoveData
 		AttackTargets = attackTargets;
 		IsConflicted = false;
 		IsVictoryMove = false;
-		Value = 0;
+		BaseValue = 0;
 	}
 
 	public MoveData ( Hex hex, MoveData prior, MoveType type, MoveDirection direction )
@@ -184,7 +213,7 @@ public class MoveData
 		AttackTargets = null;
 		IsConflicted = false;
 		IsVictoryMove = false;
-		Value = 0;
+		BaseValue = 0;
 	}
 
 	public MoveData ( Hex hex, MoveData prior, MoveType type, int direction )
@@ -197,34 +226,8 @@ public class MoveData
 		AttackTargets = null;
 		IsConflicted = false;
 		IsVictoryMove = false;
-		Value = 0;
+		BaseValue = 0;
 	}
 
-	#endregion // Move Data
-
-
-
-
-
-
-
-
-
-	// Tracks the value of the move
-	// This is used only for the AI's move determination
-	public int Value
-	{
-		get;
-		private set;
-	}
-
-	
-
-	/// <summary>
-	/// Determines the value of a move for the AI.
-	/// </summary>
-	public void DetermineValue ( )
-	{
-		Value = 0;
-	}
+	#endregion // Class Constructors
 }

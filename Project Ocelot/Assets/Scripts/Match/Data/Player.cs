@@ -70,5 +70,17 @@ public class Player : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Whether or not the player is controlled by bot.
+	/// </summary>
+	public bool IsBot
+	{
+		get
+		{
+			// Check for local or online bot
+			return Control == PlayerControl.LOCAL_BOT || Control == PlayerControl.ONLINE_BOT;
+		}
+	}
+
 	#endregion // Team Data
 }
