@@ -99,6 +99,16 @@
         <para>Is the current keypress on the numeric keyboard? (Read Only)</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.Event.pointerType">
+      <summary>
+        <para>The type of pointer that created this event (for example, mouse, touch screen, pen).</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Event.pressure">
+      <summary>
+        <para>How hard stylus pressure is applied.</para>
+      </summary>
+    </member>
     <member name="P:UnityEngine.Event.shift">
       <summary>
         <para>Is Shift held down? (Read Only)</para>
@@ -298,6 +308,11 @@
     <member name="F:UnityEngine.EventType.ValidateCommand">
       <summary>
         <para>Validates a special command (e.g. copy &amp; paste).</para>
+      </summary>
+    </member>
+    <member name="T:UnityEngine.ExitGUIException">
+      <summary>
+        <para>An exception that will prevent all subsequent immediate mode GUI functions from evaluating for the remainder of the GUI loop.</para>
       </summary>
     </member>
     <member name="T:UnityEngine.FocusType">
@@ -1921,6 +1936,37 @@
         <para>Build a GUIContent as a copy of another GUIContent.</para>
       </summary>
       <param name="src"></param>
+    </member>
+    <member name="T:UnityEngine.GUIElement">
+      <summary>
+        <para>Base class for images &amp; text strings displayed in a GUI.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.GUIElement.GetScreenRect">
+      <summary>
+        <para>Returns bounding rectangle of GUIElement in screen coordinates.</para>
+      </summary>
+      <param name="camera"></param>
+    </member>
+    <member name="M:UnityEngine.GUIElement.GetScreenRect(UnityEngine.Camera)">
+      <summary>
+        <para>Returns bounding rectangle of GUIElement in screen coordinates.</para>
+      </summary>
+      <param name="camera"></param>
+    </member>
+    <member name="M:UnityEngine.GUIElement.HitTest(UnityEngine.Vector3)">
+      <summary>
+        <para>Is a point on screen inside the element?</para>
+      </summary>
+      <param name="screenPosition"></param>
+      <param name="camera"></param>
+    </member>
+    <member name="M:UnityEngine.GUIElement.HitTest(UnityEngine.Vector3,UnityEngine.Camera)">
+      <summary>
+        <para>Is a point on screen inside the element?</para>
+      </summary>
+      <param name="screenPosition"></param>
+      <param name="camera"></param>
     </member>
     <member name="T:UnityEngine.GUILayout">
       <summary>
@@ -4063,7 +4109,7 @@ GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
     </member>
     <member name="P:UnityEngine.GUISkin.window">
       <summary>
-        <para>Style used by default for Window controls (SA GUI.Window).</para>
+        <para>Style used by default for Window controls (See Also: GUI.Window).</para>
       </summary>
     </member>
     <member name="M:UnityEngine.GUISkin.FindStyle(System.String)">
@@ -4336,7 +4382,7 @@ GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
       <param name="position"></param>
       <param name="content"></param>
       <param name="controlID"></param>
-      <param name="Character"></param>
+      <param name="character"></param>
     </member>
     <member name="M:UnityEngine.GUIStyle.DrawWithTextSelection(UnityEngine.Rect,UnityEngine.GUIContent,System.Int32,System.Int32,System.Int32)">
       <summary>
@@ -4449,7 +4495,36 @@ GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
     </member>
     <member name="P:UnityEngine.GUIUtility.systemCopyBuffer">
       <summary>
-        <para>Get access to the system-wide pasteboard.</para>
+        <para>Get access to the system-wide clipboard.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.GUIUtility.AlignRectToDevice(UnityEngine.Rect)">
+      <summary>
+        <para>Align a local space rectangle to the pixel grid.</para>
+      </summary>
+      <param name="local">The local space rectangle that needs to be processed.</param>
+      <param name="widthInPixels">Width, in pixel units, of the axis-aligned bounding box that encompasses the aligned points.</param>
+      <param name="heightInPixels">Height, in pixel units, of the axis-aligned bounding box that encompasses the aligned points.</param>
+      <param name="rect"></param>
+      <returns>
+        <para>The aligned rectangle in local space.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.GUIUtility.AlignRectToDevice(UnityEngine.Rect,System.Int32&amp;,System.Int32&amp;)">
+      <summary>
+        <para>Align a local space rectangle to the pixel grid.</para>
+      </summary>
+      <param name="local">The local space rectangle that needs to be processed.</param>
+      <param name="widthInPixels">Width, in pixel units, of the axis-aligned bounding box that encompasses the aligned points.</param>
+      <param name="heightInPixels">Height, in pixel units, of the axis-aligned bounding box that encompasses the aligned points.</param>
+      <param name="rect"></param>
+      <returns>
+        <para>The aligned rectangle in local space.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.GUIUtility.ExitGUI">
+      <summary>
+        <para>Puts the GUI in a state that will prevent all subsequent immediate mode GUI functions from evaluating for the remainder of the GUI loop by throwing an ExitGUIException.</para>
       </summary>
     </member>
     <member name="M:UnityEngine.GUIUtility.GetControlID(UnityEngine.FocusType)">
@@ -4472,7 +4547,8 @@ GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
       </summary>
       <param name="hint"></param>
       <param name="focus"></param>
-      <param name="position"></param>
+      <param name="focusType"></param>
+      <param name="rect"></param>
     </member>
     <member name="M:UnityEngine.GUIUtility.GetControlID(System.Int32,UnityEngine.FocusType,UnityEngine.Rect)">
       <summary>
@@ -4480,7 +4556,8 @@ GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
       </summary>
       <param name="hint"></param>
       <param name="focus"></param>
-      <param name="position"></param>
+      <param name="focusType"></param>
+      <param name="rect"></param>
     </member>
     <member name="M:UnityEngine.GUIUtility.GetControlID(UnityEngine.GUIContent,UnityEngine.FocusType)">
       <summary>
@@ -4511,6 +4588,12 @@ GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
       </summary>
       <param name="guiPoint"></param>
     </member>
+    <member name="M:UnityEngine.GUIUtility.GUIToScreenRect(UnityEngine.Rect)">
+      <summary>
+        <para>Convert a rect from GUI position to screen space.</para>
+      </summary>
+      <param name="guiRect"></param>
+    </member>
     <member name="M:UnityEngine.GUIUtility.QueryStateObject(System.Type,System.Int32)">
       <summary>
         <para>Get an existing state object from a controlID.</para>
@@ -4538,6 +4621,12 @@ GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
       </summary>
       <param name="screenPoint"></param>
     </member>
+    <member name="M:UnityEngine.GUIUtility.ScreenToGUIRect(UnityEngine.Rect)">
+      <summary>
+        <para>Convert a rect from screen space to GUI position.</para>
+      </summary>
+      <param name="screenRect"></param>
+    </member>
     <member name="T:UnityEngine.ImagePosition">
       <summary>
         <para>How image and text is placed inside GUIStyle.</para>
@@ -4561,6 +4650,26 @@ GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
     <member name="F:UnityEngine.ImagePosition.TextOnly">
       <summary>
         <para>Only the text is displayed.</para>
+      </summary>
+    </member>
+    <member name="T:UnityEngine.PointerType">
+      <summary>
+        <para>Pointer types.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.PointerType.Mouse">
+      <summary>
+        <para>The pointer type for mouse events.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.PointerType.Pen">
+      <summary>
+        <para>The pointer type for pen events.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.PointerType.Touch">
+      <summary>
+        <para>The pointer type for touch events.</para>
       </summary>
     </member>
     <member name="T:UnityEngine.ScaleMode">
@@ -4596,6 +4705,11 @@ GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
     <member name="F:UnityEngine.TextClipping.Overflow">
       <summary>
         <para>Text flows freely outside the element.</para>
+      </summary>
+    </member>
+    <member name="A:UnityEngine.IMGUIModule">
+      <summary>
+        <para>The IMGUI module provides Unity's immediate mode GUI solution for creating in-game and editor user interfaces.</para>
       </summary>
     </member>
   </members>

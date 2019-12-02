@@ -108,7 +108,7 @@ public class TeamSetup : MonoBehaviour
 	private void Update ( )
 	{
 		// Check for the escape button being pressed
-		if ( Input.GetKeyDown ( KeyCode.Escape ) && !PopUp.menuContainer.activeSelf )
+		if ( Input.GetKeyDown ( KeyCode.Escape ) && !PopUp.IsOpen )
 		{
 			// Check if the game is paused
 			if ( IsPaused )
@@ -116,7 +116,7 @@ public class TeamSetup : MonoBehaviour
 				// Find the current open menu and close it
 				foreach ( Menu m in menus )
 				{
-					if ( m.menuContainer.activeSelf )
+					if ( m.IsOpen )
 					{
 						// Check if the current menu is the base pause menu
 						if ( m is PauseMenu )

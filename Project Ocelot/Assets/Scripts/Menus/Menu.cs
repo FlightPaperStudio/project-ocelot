@@ -6,13 +6,14 @@ public class Menu : MonoBehaviour
 {
 	#region UI Elements
 
-	public GameObject menuContainer;
+	[SerializeField]
+	protected GameObject menuContainer;
 
 	#endregion // UI Elements
 
 	#region Menu Data
 
-	public Menu parentMenu;
+	public Menu ParentMenu;
 	
 	/// <summary>
 	/// Tracks whether or not this menu is currently open.
@@ -63,8 +64,8 @@ public class Menu : MonoBehaviour
 	public virtual void OpenMenu ( bool closeParent = true )
 	{
 		// Close parent menu
-		if ( parentMenu != null && closeParent )
-			parentMenu.CloseMenu ( false );
+		if ( ParentMenu != null && closeParent )
+			ParentMenu.CloseMenu ( false );
 
 		// Display menu
 		menuContainer.SetActive ( true );
@@ -82,8 +83,8 @@ public class Menu : MonoBehaviour
 		menuContainer.SetActive ( false );
 
 		// Open parent menu
-		if ( parentMenu != null && openParent )
-			parentMenu.OpenMenu ( false );
+		if ( ParentMenu != null && openParent )
+			ParentMenu.OpenMenu ( false );
 	}
 
 	#endregion // Public Virtual Functions

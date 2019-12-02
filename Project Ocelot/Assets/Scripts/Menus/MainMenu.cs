@@ -51,7 +51,7 @@ public class MainMenu : Menu
 			// Find the current open menu and close it
 			foreach ( Menu m in menus )
 			{
-				if ( m.menuContainer.activeSelf )
+				if ( m.IsOpen )
 				{
 					// Close the menu
 					m.CloseMenu ( );

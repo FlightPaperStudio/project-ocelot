@@ -14,6 +14,16 @@
         <para>Returns the downloaded AudioClip, or null. (Read Only)</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.Networking.DownloadHandlerAudioClip.compressed">
+      <summary>
+        <para>Create AudioClip that is compressed in memory.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Networking.DownloadHandlerAudioClip.streamAudio">
+      <summary>
+        <para>Create streaming AudioClip.</para>
+      </summary>
+    </member>
     <member name="M:UnityEngine.Networking.DownloadHandlerAudioClip.#ctor(System.String,UnityEngine.AudioType)">
       <summary>
         <para>Constructor, specifies what kind of audio data is going to be downloaded.</para>
@@ -40,31 +50,28 @@
     </member>
     <member name="T:UnityEngine.Networking.DownloadHandlerMovieTexture">
       <summary>
-        <para>A specialized DownloadHandler for creating MovieTexture out of downloaded bytes.</para>
+        <para>MovieTexture has been removed. Use VideoPlayer instead.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.Networking.DownloadHandlerMovieTexture.movieTexture">
       <summary>
-        <para>A MovieTexture created out of downloaded bytes.</para>
+        <para>MovieTexture has been removed. Use VideoPlayer instead.</para>
       </summary>
     </member>
     <member name="M:UnityEngine.Networking.DownloadHandlerMovieTexture.#ctor">
       <summary>
-        <para>Create new DownloadHandlerMovieTexture.</para>
+        <para>MovieTexture has been removed. Use VideoPlayer instead.</para>
       </summary>
     </member>
     <member name="M:UnityEngine.Networking.DownloadHandlerMovieTexture.GetContent(UnityEngine.Networking.UnityWebRequest)">
       <summary>
-        <para>A convenience (helper) method for casting DownloadHandler to DownloadHandlerMovieTexture and accessing its movieTexture property.</para>
+        <para>MovieTexture has been removed. Use VideoPlayer instead.</para>
       </summary>
-      <param name="uwr">A UnityWebRequest with attached DownloadHandlerMovieTexture.</param>
-      <returns>
-        <para>A MovieTexture created out of downloaded bytes.</para>
-      </returns>
+      <param name="uwr"></param>
     </member>
     <member name="M:UnityEngine.Networking.DownloadHandlerMovieTexture.GetData">
       <summary>
-        <para>Raw downloaded data.</para>
+        <para>MovieTexture has been removed. Use VideoPlayer instead.</para>
       </summary>
       <returns>
         <para>Raw downloaded bytes.</para>
@@ -87,12 +94,14 @@
     </member>
     <member name="M:UnityEngine.Networking.UnityWebRequestMultimedia.GetMovieTexture(System.String)">
       <summary>
-        <para>Create a UnityWebRequest intended to download a movie clip via HTTP GET and create an MovieTexture based on the retrieved data.</para>
+        <para>MovieTexture has been removed. Use VideoPlayer instead.</para>
       </summary>
-      <param name="uri">The URI of the movie clip to download.</param>
-      <returns>
-        <para>A UnityWebRequest properly configured to download a movie clip and convert it to a MovieTexture.</para>
-      </returns>
+      <param name="uri"></param>
+    </member>
+    <member name="A:UnityEngine.UnityWebRequestAudioModule">
+      <summary>
+        <para>The UnityWebRequestAudio module provides the DownloadHandlerAudioClip class to use UnityWebRequest to download AudioClips.</para>
+      </summary>
     </member>
   </members>
 </doc>
