@@ -20,6 +20,9 @@ public class HexGrid : MonoBehaviour
 
 	private void Start ( )
 	{
+		// Get all hexes
+		Grid = GetComponentsInChildren<Hex> ( );
+
 		// Store each hex in the grid for easy access
 		for ( int i = 0; i < Grid.Length; i++ )
 		{
