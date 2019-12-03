@@ -4,226 +4,229 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class AudioSettingsMenu : Menu
+namespace ProjectOcelot.Menues
 {
-	#region Private Classes
-
-	[System.Serializable]
-	private class SettingSlider
+	public class AudioSettingsMenu : Menu
 	{
-		public Slider Slider;
-		public TextMeshProUGUI Text;
-	}
+		#region Private Classes
 
-	#endregion // Private Classes
-
-	#region UI Elements
-
-	[SerializeField]
-	private CarouselButton muteSetting;
-
-	[SerializeField]
-	private SettingSlider musicSetting;
-
-	[SerializeField]
-	private SettingSlider sfxSetting;
-
-	[SerializeField]
-	private SettingSlider uiSetting;
-
-	#endregion // UI Elements
-
-	#region Menu Data
-
-	private bool mute;
-	private float music;
-	private float sfx;
-	private float ui;
-
-	/// <summary>
-	/// Whether or not the audio settings have changed since opening the Audio Setting Menu.
-	/// </summary>
-	private bool HasSettingsChanged
-	{
-		get
+		[System.Serializable]
+		private class SettingSlider
 		{
-			// Check if mute setting has changed
-			if ( mute != Settings.MuteVolume )
-				return true;
-
-			// Check if music setting has changed
-			if ( music != Settings.MusicVolume )
-				return true;
-
-			// Check if sfx setting has changed
-			if ( sfx != Settings.SoundVolume )
-				return true;
-
-			// Check if ui setting has changed
-			if ( ui != Settings.UIVolume )
-				return true;
-
-			// Return that no settings have changed
-			return false;
+			public Slider Slider;
+			public TextMeshProUGUI Text;
 		}
+
+		#endregion // Private Classes
+
+		#region UI Elements
+
+		[SerializeField]
+		private UI.CarouselButton muteSetting;
+
+		[SerializeField]
+		private SettingSlider musicSetting;
+
+		[SerializeField]
+		private SettingSlider sfxSetting;
+
+		[SerializeField]
+		private SettingSlider uiSetting;
+
+		#endregion // UI Elements
+
+		#region Menu Data
+
+		private bool mute;
+		private float music;
+		private float sfx;
+		private float ui;
+
+		/// <summary>
+		/// Whether or not the audio settings have changed since opening the Audio Setting Menu.
+		/// </summary>
+		private bool HasSettingsChanged
+		{
+			get
+			{
+				// Check if mute setting has changed
+				if ( mute != Settings.MuteVolume )
+					return true;
+
+				// Check if music setting has changed
+				if ( music != Settings.MusicVolume )
+					return true;
+
+				// Check if sfx setting has changed
+				if ( sfx != Settings.SoundVolume )
+					return true;
+
+				// Check if ui setting has changed
+				if ( ui != Settings.UIVolume )
+					return true;
+
+				// Return that no settings have changed
+				return false;
+			}
+		}
+
+		#endregion // Menu Data
+
+		#region Menu Override Functions
+
+		/// <summary>
+		/// Opens the menu.
+		/// Use this for going down a layer (e.g. from a parent menu to a sub menu).
+		/// </summary>
+		public override void OpenMenu ( bool closeParent = true )
+		{
+			// Open the menu
+			base.OpenMenu ( closeParent );
+
+			// Set mute volume carousel
+			SetMuteVolume ( Settings.MuteVolume, false );
+
+			// Set music volume slider
+			SetMusicVolume ( Settings.MusicVolume );
+
+			// Set sfx volume slider
+			SetSFXVolume ( Settings.SoundVolume );
+
+			// Set ui volume slider
+			SetUIVolume ( Settings.UIVolume );
+
+			// Set the starting settings
+			mute = Settings.MuteVolume;
+			music = Settings.MusicVolume;
+			sfx = Settings.SoundVolume;
+			ui = Settings.UIVolume;
+		}
+
+		/// <summary>
+		/// Closes the menu.
+		/// Use this for going up a layer (e.g. from a sub menu to a parent menu).
+		/// </summary>
+		public override void CloseMenu ( bool openParent = true )
+		{
+			// Close menu
+			base.CloseMenu ( openParent );
+
+			// Save audio settings
+			if ( HasSettingsChanged )
+				Settings.SaveAudioSettings ( );
+		}
+
+		#endregion // Menu Override Functions
+
+		#region Public Functions
+
+		/// <summary>
+		/// Sets the Mute Volume Setting.
+		/// Use this function as a carousel button click event wrapper.
+		/// </summary>
+		public void UpdateMuteVolume ( )
+		{
+			// Store value
+			Settings.MuteVolume = muteSetting.IsOptionTrue;
+
+			// Update volume
+			MusicManager.Instance.AdjustVolume ( );
+			SFXManager.Instance.UpdateSound ( );
+		}
+
+		/// <summary>
+		/// Sets the music volume.
+		/// </summary>
+		/// <param name="value"> The value of the music setting. </param>
+		public void SetMusicVolume ( float value )
+		{
+			// Store value
+			Settings.MusicVolume = value;
+
+			// Set the slider
+			musicSetting.Slider.value = value;
+
+			// Display value
+			musicSetting.Text.text = ( (int)( value * 100 ) ).ToString ( );
+
+			// Update volume
+			MusicManager.Instance.AdjustVolume ( );
+		}
+
+		/// <summary>
+		/// Sets the SFX volume.
+		/// </summary>
+		/// <param name="value"> The value of the SFX setting. </param>
+		public void SetSFXVolume ( float value )
+		{
+			// Store value
+			Settings.SoundVolume = value;
+
+			// Set the slider
+			sfxSetting.Slider.value = value;
+
+			// Display value
+			sfxSetting.Text.text = ( (int)( value * 100 ) ).ToString ( );
+
+			// Update volume
+			SFXManager.Instance.UpdateSound ( );
+		}
+
+		/// <summary>
+		/// Sets the UI volume setting.
+		/// </summary>
+		/// <param name="value"> The value of the UI setting. </param>
+		public void SetUIVolume ( float value )
+		{
+			// Store value
+			Settings.UIVolume = value;
+
+			// Set the slider
+			uiSetting.Slider.value = value;
+
+			// Display value
+			uiSetting.Text.text = ( (int)( value * 100 ) ).ToString ( );
+		}
+
+		/// <summary>
+		/// Resets the audio settings to their default values.
+		/// </summary>
+		public void ResetAudio ( )
+		{
+			// Set default values
+			Settings.RestoreDefaultAudioSettings ( );
+
+			// Set mute volume carousel
+			SetMuteVolume ( Settings.MuteVolume, true );
+
+			// Set music volume slider
+			SetMusicVolume ( Settings.MusicVolume );
+
+			// Set sfx volume slider
+			SetSFXVolume ( Settings.SoundVolume );
+
+			// Set ui volume slider
+			SetUIVolume ( Settings.UIVolume );
+		}
+
+		#endregion // Public Functions
+
+		#region Private Functions
+
+		/// <summary>
+		/// Sets the mute volume setting.
+		/// </summary>
+		/// <param name="value"> The value of the mute setting. </param>
+		/// <param name="playAnimation"> Whether or not animations should play for the carousel button. </param>
+		private void SetMuteVolume ( bool value, bool playAnimation )
+		{
+			// Store value
+			Settings.MuteVolume = value;
+
+			// Set carousel
+			muteSetting.SetOption ( value, playAnimation );
+		}
+
+		#endregion // Private Functions
 	}
-
-	#endregion // Menu Data
-
-	#region Menu Override Functions
-
-	/// <summary>
-	/// Opens the menu.
-	/// Use this for going down a layer (e.g. from a parent menu to a sub menu).
-	/// </summary>
-	public override void OpenMenu ( bool closeParent = true )
-	{
-		// Open the menu
-		base.OpenMenu ( closeParent );
-
-		// Set mute volume carousel
-		SetMuteVolume ( Settings.MuteVolume, false );
-
-		// Set music volume slider
-		SetMusicVolume ( Settings.MusicVolume );
-
-		// Set sfx volume slider
-		SetSFXVolume ( Settings.SoundVolume );
-
-		// Set ui volume slider
-		SetUIVolume ( Settings.UIVolume );
-
-		// Set the starting settings
-		mute = Settings.MuteVolume;
-		music = Settings.MusicVolume;
-		sfx = Settings.SoundVolume;
-		ui = Settings.UIVolume;
-	}
-
-	/// <summary>
-	/// Closes the menu.
-	/// Use this for going up a layer (e.g. from a sub menu to a parent menu).
-	/// </summary>
-	public override void CloseMenu ( bool openParent = true )
-	{
-		// Close menu
-		base.CloseMenu ( openParent );
-
-		// Save audio settings
-		if ( HasSettingsChanged )
-			Settings.SaveAudioSettings ( );
-	}
-
-	#endregion // Menu Override Functions
-
-	#region Public Functions
-
-	/// <summary>
-	/// Sets the Mute Volume Setting.
-	/// Use this function as a carousel button click event wrapper.
-	/// </summary>
-	public void UpdateMuteVolume ( )
-	{
-		// Store value
-		Settings.MuteVolume = muteSetting.IsOptionTrue;
-
-		// Update volume
-		MusicManager.Instance.AdjustVolume ( );
-		SFXManager.Instance.UpdateSound ( );
-	}
-
-	/// <summary>
-	/// Sets the music volume.
-	/// </summary>
-	/// <param name="value"> The value of the music setting. </param>
-	public void SetMusicVolume ( float value )
-	{
-		// Store value
-		Settings.MusicVolume = value;
-
-		// Set the slider
-		musicSetting.Slider.value = value;
-
-		// Display value
-		musicSetting.Text.text = ( (int)( value * 100 ) ).ToString ( );
-
-		// Update volume
-		MusicManager.Instance.AdjustVolume ( );
-	}
-
-	/// <summary>
-	/// Sets the SFX volume.
-	/// </summary>
-	/// <param name="value"> The value of the SFX setting. </param>
-	public void SetSFXVolume ( float value )
-	{
-		// Store value
-		Settings.SoundVolume = value;
-
-		// Set the slider
-		sfxSetting.Slider.value = value;
-
-		// Display value
-		sfxSetting.Text.text = ( (int)( value * 100 ) ).ToString ( );
-
-		// Update volume
-		SFXManager.Instance.UpdateSound ( );
-	}
-
-	/// <summary>
-	/// Sets the UI volume setting.
-	/// </summary>
-	/// <param name="value"> The value of the UI setting. </param>
-	public void SetUIVolume ( float value )
-	{
-		// Store value
-		Settings.UIVolume = value;
-
-		// Set the slider
-		uiSetting.Slider.value = value;
-
-		// Display value
-		uiSetting.Text.text = ( (int)( value * 100 ) ).ToString ( );
-	}
-
-	/// <summary>
-	/// Resets the audio settings to their default values.
-	/// </summary>
-	public void ResetAudio ( )
-	{
-		// Set default values
-		Settings.RestoreDefaultAudioSettings ( );
-
-		// Set mute volume carousel
-		SetMuteVolume ( Settings.MuteVolume, true );
-
-		// Set music volume slider
-		SetMusicVolume ( Settings.MusicVolume );
-
-		// Set sfx volume slider
-		SetSFXVolume ( Settings.SoundVolume );
-
-		// Set ui volume slider
-		SetUIVolume ( Settings.UIVolume );
-	}
-
-	#endregion // Public Functions
-
-	#region Private Functions
-
-	/// <summary>
-	/// Sets the mute volume setting.
-	/// </summary>
-	/// <param name="value"> The value of the mute setting. </param>
-	/// <param name="playAnimation"> Whether or not animations should play for the carousel button. </param>
-	private void SetMuteVolume ( bool value, bool playAnimation )
-	{
-		// Store value
-		Settings.MuteVolume = value;
-
-		// Set carousel
-		muteSetting.SetOption ( value, playAnimation );
-	}
-
-	#endregion // Private Functions
 }

@@ -2,20 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pawn : Unit
+namespace ProjectOcelot.Units
 {
-	// Hero information
-	public string characterNickname;
-
-	/// <summary>
-	/// Initializes this Pawn unit instance.
-	/// </summary>
-	private void Start ( )
+	public class Pawn : Unit
 	{
-		// Generate random name
-		//characterName = NameGenerator.CreateName ( );
+		// Hero information
+		public string characterNickname;
 
-		// Generate nickname
-		//characterNickname = NameGenerator.CreateNickname ( );
+		/// <summary>
+		/// Initializes this Pawn unit instance.
+		/// </summary>
+		private void Start ( )
+		{
+			// Generate random name
+			//characterName = NameGenerator.CreateName ( );
+
+			// Generate nickname
+			//characterNickname = NameGenerator.CreateNickname ( );
+		}
 	}
 }

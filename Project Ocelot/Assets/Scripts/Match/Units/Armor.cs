@@ -2,426 +2,429 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using ProjectOcelot.Match.Arena;
 
-public class Armor : HeroUnit
+namespace ProjectOcelot.Units
 {
-	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
-	///
-	/// Hero 1 Unit Data
-	/// 
-	/// ID: 8
-	/// Name: Hero 1
-	/// Nickname: Armor
-	/// Bio: ???
-	/// Finishing Move: ???
-	/// Role: Defense
-	/// Slots: 2
-	/// 
-	/// Ability 1 
-	/// ID: 7
-	/// Name: Bodyguard
-	/// Description: Robotic minion sacrifices itself to block a single attack.
-	/// Type: Passive
-	/// Duration: 1 Attack
-	/// 
-	/// Ability 2
-	/// ID: 8
-	/// Name: Self-Destruct
-	/// Description: Detonate robotic minion after a brief period to KO any nearby opponents
-	/// Type: Toggle Command
-	/// Duration: 1 Round
-	/// Cooldown: 3 Rounds
-	/// Allies Immune: Active
-	/// 
-	/// Ability 3
-	/// ID: 9
-	/// Name: Reconstruct
-	/// Description: Construct a new robotic minion after a brief period.
-	/// Type: Toggle Command
-	/// Duration: 1 Round
-	/// Cooldown: 6 Rounds
-	/// 
-	/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
-
-	#region Ability Data
-
-	[SerializeField]
-	private SpriteRenderer mechAnimation;
-
-	[SerializeField]
-	private TileObject selfDestructPrefab;
-
-	[SerializeField]
-	private TileObject recallPrefab;
-
-	private IReadOnlyUnitData duoData;
-	private IReadOnlyUnitData singleData;
-	private TileObject currentSelfDestruct;
-	private TileObject currentRecall;
-	private bool isRecalling;
-
-	private const float ARMOR_ATTACK_ANIMATION_TIME = 0.75f;
-	private const float RECALL_ANIMATION_TIME = 0.75f;
-
-	#endregion // Ability Data
-
-	#region Public Unit Override Functions
-
-	public override void InitializeInstance ( GameManager gm, int instanceID, UnitSettingData settingData )
+	public class Armor : HeroUnit
 	{
-		// Initialize base data
-		base.InitializeInstance ( gm, instanceID, settingData );
+		/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
+		///
+		/// Hero 1 Unit Data
+		/// 
+		/// ID: 8
+		/// Name: Hero 1
+		/// Nickname: Armor
+		/// Bio: ???
+		/// Finishing Move: ???
+		/// Role: Defense
+		/// Slots: 2
+		/// 
+		/// Ability 1 
+		/// ID: 7
+		/// Name: Bodyguard
+		/// Description: Robotic minion sacrifices itself to block a single attack.
+		/// Type: Passive
+		/// Duration: 1 Attack
+		/// 
+		/// Ability 2
+		/// ID: 8
+		/// Name: Self-Destruct
+		/// Description: Detonate robotic minion after a brief period to KO any nearby opponents
+		/// Type: Toggle Command
+		/// Duration: 1 Round
+		/// Cooldown: 3 Rounds
+		/// Allies Immune: Active
+		/// 
+		/// Ability 3
+		/// ID: 9
+		/// Name: Reconstruct
+		/// Description: Construct a new robotic minion after a brief period.
+		/// Type: Toggle Command
+		/// Duration: 1 Round
+		/// Cooldown: 6 Rounds
+		/// 
+		/// ----------------------------------------------------------------------------------------------------------------------------------------------------------------- ///
 
-		// Set current bodyguard duration
-		InstanceData.Ability1.CurrentDuration = InstanceData.Ability1.Duration;
+		#region Ability Data
 
-		// Store unit data for transitions
-		duoData = MatchSettings.GetUnitData ( ID );
-		singleData = MatchSettings.GetUnitData ( ID + 1 );
-	}
+		[SerializeField]
+		private SpriteRenderer mechAnimation;
 
-	/// <summary>
-	/// Calculates all base moves available to a unit.
-	/// </summary>
-	public override void FindMoves ( Hex hex, MoveData prerequisite, bool returnOnlyJumps )
-	{
-		// Find base moves
-		base.FindMoves ( hex, prerequisite, returnOnlyJumps );
+		[SerializeField]
+		private TileObject selfDestructPrefab;
 
-		// Get Self-Destruct availability
-		InstanceData.Ability2.IsAvailable = ToggleCommand1AvailabilityCheck ( InstanceData.Ability2, prerequisite );
+		[SerializeField]
+		private TileObject recallPrefab;
 
-		// Get Reconstruct availability
-		InstanceData.Ability3.IsAvailable = ToggleCommand2AvailabilityCheck ( InstanceData.Ability3, prerequisite );
-	}
+		private IReadOnlyUnitData duoData;
+		private IReadOnlyUnitData singleData;
+		private TileObject currentSelfDestruct;
+		private TileObject currentRecall;
+		private bool isRecalling;
 
-	/// <summary>
-	/// Attack this unit and remove this unit's armor if it's available or KO this unit if it's not.
-	/// Call this function on the unit being attack.
-	/// </summary>
-	public override void GetAttacked ( bool usePostAnimationQueue = false )
-	{
-		// Check armor duration
-		if ( PassiveAvailabilityCheck ( InstanceData.Ability1, null ) && !usePostAnimationQueue )
+		private const float ARMOR_ATTACK_ANIMATION_TIME = 0.75f;
+		private const float RECALL_ANIMATION_TIME = 0.75f;
+
+		#endregion // Ability Data
+
+		#region Public Unit Override Functions
+
+		public override void InitializeInstance ( Match.GameManager gm, int instanceID, UnitSettingData settingData )
 		{
-			// Decrement armor duration
-			InstanceData.Ability1.CurrentDuration--;
+			// Initialize base data
+			base.InitializeInstance ( gm, instanceID, settingData );
 
-			// Check if Armor is destroyed
-			if ( InstanceData.Ability1.CurrentDuration == 0 )
+			// Set current bodyguard duration
+			InstanceData.Ability1.CurrentDuration = InstanceData.Ability1.Duration;
+
+			// Store unit data for transitions
+			duoData = Match.MatchSettings.GetUnitData ( ID );
+			singleData = Match.MatchSettings.GetUnitData ( ID + 1 );
+		}
+
+		/// <summary>
+		/// Calculates all base moves available to a unit.
+		/// </summary>
+		public override void FindMoves ( Hex hex, MoveData prerequisite, bool returnOnlyJumps )
+		{
+			// Find base moves
+			base.FindMoves ( hex, prerequisite, returnOnlyJumps );
+
+			// Get Self-Destruct availability
+			InstanceData.Ability2.IsAvailable = ToggleCommand1AvailabilityCheck ( InstanceData.Ability2, prerequisite );
+
+			// Get Reconstruct availability
+			InstanceData.Ability3.IsAvailable = ToggleCommand2AvailabilityCheck ( InstanceData.Ability3, prerequisite );
+		}
+
+		/// <summary>
+		/// Attack this unit and remove this unit's armor if it's available or KO this unit if it's not.
+		/// Call this function on the unit being attack.
+		/// </summary>
+		public override void GetAttacked ( bool usePostAnimationQueue = false )
+		{
+			// Check armor duration
+			if ( PassiveAvailabilityCheck ( InstanceData.Ability1, null ) && !usePostAnimationQueue )
 			{
-				// Create animation
-				Tween t1 = mechAnimation.transform.DOScale ( new Vector3 ( 3.33f, 3.33f, 3.33f ), MOVE_ANIMATION_TIME )
-					.OnStart ( ( ) =>
-					{
+				// Decrement armor duration
+				InstanceData.Ability1.CurrentDuration--;
+
+				// Check if Armor is destroyed
+				if ( InstanceData.Ability1.CurrentDuration == 0 )
+				{
+					// Create animation
+					Tween t1 = mechAnimation.transform.DOScale ( new Vector3 ( 3.33f, 3.33f, 3.33f ), MOVE_ANIMATION_TIME )
+						.OnStart ( ( ) =>
+						{
 						// Update sprites
 						LoseMinion ( true );
-						mechAnimation.gameObject.SetActive ( true );
-						mechAnimation.transform.localScale = Vector3.one;
-						mechAnimation.color = Util.TeamColor ( Owner.Team );
-					} )
-					.OnComplete ( ( ) =>
-					{
+							mechAnimation.gameObject.SetActive ( true );
+							mechAnimation.transform.localScale = Vector3.one;
+							mechAnimation.color = Tools.Util.TeamColor ( Owner.Team );
+						} )
+						.OnComplete ( ( ) =>
+						{
 						// Update player HUD
 						GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( this );
 
 						// Hide animation sprite
 						mechAnimation.gameObject.SetActive ( false );
-					} );
-				Tween t2 = mechAnimation.DOFade ( 0, MOVE_ANIMATION_TIME );
+						} );
+					Tween t2 = mechAnimation.DOFade ( 0, MOVE_ANIMATION_TIME );
 
-				// Add animations to queue
-				GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-				GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+					// Add animations to queue
+					GM.AnimationQueue.Add ( new Match.GameManager.TurnAnimation ( t1, true ) );
+					GM.AnimationQueue.Add ( new Match.GameManager.TurnAnimation ( t2, false ) );
+				}
+				else
+				{
+					// Create animation
+					Tween t = transform.DOShakePosition ( ARMOR_ATTACK_ANIMATION_TIME, 0.5f );
+
+					// Add animation to queue
+					GM.AnimationQueue.Add ( new Match.GameManager.TurnAnimation ( t, true ) );
+				}
 			}
 			else
 			{
-				// Create animation
-				Tween t = transform.DOShakePosition ( ARMOR_ATTACK_ANIMATION_TIME, 0.5f );
-
-				// Add animation to queue
-				GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
+				// KO this unit
+				base.GetAttacked ( usePostAnimationQueue );
 			}
 		}
-		else
+
+		#endregion // Public Unit Override Functions
+
+		#region Public HeroUnit Override Functions
+
+		public override void ExecuteCommand ( )
 		{
-			// KO this unit
-			base.GetAttacked ( usePostAnimationQueue );
-		}
-	}
+			// Pause turn timer
+			if ( Match.MatchSettings.TurnTimer )
+				GM.UI.timer.PauseTimer ( );
 
-	#endregion // Public Unit Override Functions
+			// Hide cancel button
+			GM.UI.UnitHUD.HideCancelButton ( activeAbility );
 
-	#region Public HeroUnit Override Functions
+			// Clear board
+			GM.Grid.ResetTiles ( );
 
-	public override void ExecuteCommand ( )
-	{
-		// Pause turn timer
-		if ( MatchSettings.TurnTimer )
-			GM.UI.timer.PauseTimer ( );
+			// Check for Reconstruct or Self-Destruct
+			if ( activeAbility == InstanceData.Ability3 )
+			{
+				// Create Recall
+				currentRecall = CreateTileOject ( recallPrefab, GM.SelectedCommand.PrimaryTarget, InstanceData.Ability3.Duration, RecallDurationComplete, EndReconstruct );
 
-		// Hide cancel button
-		GM.UI.UnitHUD.HideCancelButton ( activeAbility );
+				// Set team color
+				Color32 c = Tools.Util.TeamColor ( Owner.Team );
+				currentRecall.Icon.color = new Color32 ( c.r, c.g, c.b, 150 );
 
-		// Clear board
-		GM.Grid.ResetTiles ( );
+				// Set position
+				currentRecall.transform.position = GM.SelectedCommand.PrimaryTarget.transform.position;
 
-		// Check for Reconstruct or Self-Destruct
-		if ( activeAbility == InstanceData.Ability3 )
-		{
-			// Create Recall
-			currentRecall = CreateTileOject ( recallPrefab, GM.SelectedCommand.PrimaryTarget, InstanceData.Ability3.Duration, RecallDurationComplete, EndReconstruct );
-
-			// Set team color
-			Color32 c = Util.TeamColor ( Owner.Team );
-			currentRecall.Icon.color = new Color32 ( c.r, c.g, c.b, 150 );
-
-			// Set position
-			currentRecall.transform.position = GM.SelectedCommand.PrimaryTarget.transform.position;
-
-			// Begin animation
-			Sequence s = DOTween.Sequence ( )
-				.Append ( currentRecall.Icon.DOFade ( 0, RECALL_ANIMATION_TIME ).From ( ) )
-				.OnComplete ( ( ) =>
-				{
+				// Begin animation
+				Sequence s = DOTween.Sequence ( )
+					.Append ( currentRecall.Icon.DOFade ( 0, RECALL_ANIMATION_TIME ).From ( ) )
+					.OnComplete ( ( ) =>
+					{
 					// Set that Recall is active
 					isRecalling = true;
-					MoveList.Clear ( );
+						MoveList.Clear ( );
 
 					// Start cooldown
 					StartCooldown ( InstanceData.Ability2 );
-					StartCooldown ( InstanceData.Ability3 );
+						StartCooldown ( InstanceData.Ability3 );
 
 					// Apply status effect
-					Status.AddStatusEffect ( StatusEffectDatabase.StatusEffectType.CRAFTING, InstanceData.Ability3.Duration, this );
-					GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
+					Status.AddStatusEffect ( Database.StatusEffectDatabase.StatusEffectType.CRAFTING, InstanceData.Ability3.Duration, this );
+						GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
 
 					// Pause turn timer
-					if ( MatchSettings.TurnTimer )
-						GM.UI.timer.ResumeTimer ( );
+					if ( Match.MatchSettings.TurnTimer )
+							GM.UI.timer.ResumeTimer ( );
 
 					// Get moves
 					GM.GetTeamMoves ( );
 
 					// Display team
 					GM.DisplayAvailableUnits ( );
-					GM.SelectUnit ( this );
-				} );
+						GM.SelectUnit ( this );
+					} );
+			}
+			else
+			{
+				// Create Self-Destruct
+				currentSelfDestruct = CreateTileOject ( selfDestructPrefab, GM.SelectedCommand.PrimaryTarget, InstanceData.Ability2.Duration, SelfDestructDurationComplete );
+
+				// Set team color
+				currentSelfDestruct.Icon.color = Tools.Util.TeamColor ( Owner.Team );
+
+				// Remove Armor
+				LoseMinion ( false );
+
+				// Begin animation
+				Sequence s = DOTween.Sequence ( )
+					.Append ( currentSelfDestruct.transform.DOMove ( CurrentHex.transform.position, MOVE_ANIMATION_TIME ).From ( ) )
+					.OnComplete ( ( ) =>
+					{
+					// Pause turn timer
+					if ( Match.MatchSettings.TurnTimer )
+							GM.UI.timer.ResumeTimer ( );
+
+					// Get moves
+					GM.GetTeamMoves ( );
+
+					// Display team
+					GM.DisplayAvailableUnits ( );
+						GM.SelectUnit ( this );
+					} );
+			}
 		}
-		else
+
+		/// <summary>
+		/// Interupts any actions that take more than one turn to complete that this unit is in the process of doing.
+		/// Call this function when this unit is being attacked or being affected by some interupting ability.
+		/// IMPORTANT: Be sure to call this function first before the interupting action since Interupts change the status effects of the action being interupted and the interupting action may apply new status effects.
+		/// </summary>
+		public override void InteruptUnit ( )
 		{
-			// Create Self-Destruct
-			currentSelfDestruct = CreateTileOject ( selfDestructPrefab, GM.SelectedCommand.PrimaryTarget, InstanceData.Ability2.Duration, SelfDestructDurationComplete );
+			// Check if hero can be interupted
+			if ( isRecalling )
+			{
+				// End recall
+				EndReconstruct ( );
 
-			// Set team color
-			currentSelfDestruct.Icon.color = Util.TeamColor ( Owner.Team );
+				// Interupt status effect
+				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
+			}
+		}
 
-			// Remove Armor
-			LoseMinion ( false );
+		#endregion // Public HeroUnit Override Functions
 
-			// Begin animation
-			Sequence s = DOTween.Sequence ( )
-				.Append ( currentSelfDestruct.transform.DOMove ( CurrentHex.transform.position, MOVE_ANIMATION_TIME ).From ( ) )
+		#region Protected HeroUnit Override Functions
+
+		/// <summary>
+		/// Checks if the hero is capable of using a passive ability.
+		/// Returns true if the passive ability is available.
+		/// </summary>
+		protected override bool PassiveAvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
+		{
+			// Check base conditions
+			if ( !base.PassiveAvailabilityCheck ( ability, prerequisite ) )
+				return false;
+
+			// Check if duration has expired
+			if ( ability.CurrentDuration == 0 )
+				return false;
+
+			// Return that the ability is available
+			return true;
+		}
+
+		protected override bool ToggleCommand1AvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
+		{
+			// Check base conditions
+			if ( !base.ToggleCommand1AvailabilityCheck ( ability, prerequisite ) )
+				return false;
+
+			// Check for bodyguard
+			if ( InstanceData.Ability1.IsEnabled && InstanceData.Ability1.CurrentDuration == 0 )
+				return false;
+
+			// Check for available tiles
+			if ( !AdjacentTilesCheck ( ) )
+				return false;
+
+			// Return that the ability is available
+			return true;
+		}
+
+		protected override bool ToggleCommand2AvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
+		{
+			// Check base conditions
+			if ( !base.ToggleCommand1AvailabilityCheck ( ability, prerequisite ) )
+				return false;
+
+			// Check for bodyguard
+			if ( InstanceData.Ability1.IsEnabled && InstanceData.Ability1.CurrentDuration > 0 )
+				return false;
+
+			// Check for available tiles
+			if ( !AdjacentTilesCheck ( ) )
+				return false;
+
+			// Return that the ability is available
+			return true;
+		}
+
+		protected override void GetCommandTargets ( )
+		{
+			// Check each neighboring tile
+			for ( int i = 0; i < CurrentHex.Neighbors.Length; i++ )
+			{
+				// Check if the tile is unoccupied
+				if ( OccupyTileCheck ( CurrentHex.Neighbors [ i ], null ) )
+					CurrentHex.Neighbors [ i ].Tile.SetTileState ( TileState.AvailableCommand );
+			}
+		}
+
+		#endregion // Protected HeroUnit Override Functions
+
+		#region Private Functions
+
+		/// <summary>
+		/// Checks if there adjacent unoccupied tiles available for the Self-Destruct and Reconstruct Abilities.
+		/// Returns true if at least one adjacent tile is unoccupied.
+		/// </summary>
+		private bool AdjacentTilesCheck ( )
+		{
+			// Check each neighboring tile
+			for ( int i = 0; i < CurrentHex.Neighbors.Length; i++ )
+			{
+				// Check if the tile is unoccupied
+				if ( OccupyTileCheck ( CurrentHex.Neighbors [ i ], null ) )
+					return true;
+			}
+
+			// Return that all neighboring tiles are occupied
+			return false;
+		}
+
+		/// <summary>
+		/// Delegate for when the duration of the tile object for Self-Destruct expires.
+		/// </summary>
+		private void SelfDestructDurationComplete ( )
+		{
+			// Create animation
+			Tween t1 = currentSelfDestruct.transform.DOScale ( new Vector3 ( 5, 5, 5 ), MOVE_ANIMATION_TIME )
 				.OnComplete ( ( ) =>
 				{
-					// Pause turn timer
-					if ( MatchSettings.TurnTimer )
-						GM.UI.timer.ResumeTimer ( );
-
-					// Get moves
-					GM.GetTeamMoves ( );
-
-					// Display team
-					GM.DisplayAvailableUnits ( );
-					GM.SelectUnit ( this );
-				} );
-		}
-	}
-
-	/// <summary>
-	/// Interupts any actions that take more than one turn to complete that this unit is in the process of doing.
-	/// Call this function when this unit is being attacked or being affected by some interupting ability.
-	/// IMPORTANT: Be sure to call this function first before the interupting action since Interupts change the status effects of the action being interupted and the interupting action may apply new status effects.
-	/// </summary>
-	public override void InteruptUnit ( )
-	{
-		// Check if hero can be interupted
-		if ( isRecalling )
-		{
-			// End recall
-			EndReconstruct ( );
-
-			// Interupt status effect
-			GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdateStatusEffects ( InstanceID, Status );
-		}
-	}
-
-	#endregion // Public HeroUnit Override Functions
-
-	#region Protected HeroUnit Override Functions
-
-	/// <summary>
-	/// Checks if the hero is capable of using a passive ability.
-	/// Returns true if the passive ability is available.
-	/// </summary>
-	protected override bool PassiveAvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
-	{
-		// Check base conditions
-		if ( !base.PassiveAvailabilityCheck ( ability, prerequisite ) )
-			return false;
-
-		// Check if duration has expired
-		if ( ability.CurrentDuration == 0 )
-			return false;
-
-		// Return that the ability is available
-		return true;
-	}
-
-	protected override bool ToggleCommand1AvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
-	{
-		// Check base conditions
-		if ( !base.ToggleCommand1AvailabilityCheck ( ability, prerequisite ) )
-			return false;
-
-		// Check for bodyguard
-		if ( InstanceData.Ability1.IsEnabled && InstanceData.Ability1.CurrentDuration == 0 )
-			return false;
-
-		// Check for available tiles
-		if ( !AdjacentTilesCheck ( ) )
-			return false;
-
-		// Return that the ability is available
-		return true;
-	}
-
-	protected override bool ToggleCommand2AvailabilityCheck ( AbilityInstanceData ability, MoveData prerequisite )
-	{
-		// Check base conditions
-		if ( !base.ToggleCommand1AvailabilityCheck ( ability, prerequisite ) )
-			return false;
-
-		// Check for bodyguard
-		if ( InstanceData.Ability1.IsEnabled && InstanceData.Ability1.CurrentDuration > 0 )
-			return false;
-
-		// Check for available tiles
-		if ( !AdjacentTilesCheck ( ) )
-			return false;
-
-		// Return that the ability is available
-		return true;
-	}
-
-	protected override void GetCommandTargets ( )
-	{
-		// Check each neighboring tile
-		for ( int i = 0; i < CurrentHex.Neighbors.Length; i++ )
-		{
-			// Check if the tile is unoccupied
-			if ( OccupyTileCheck ( CurrentHex.Neighbors [ i ], null ) )
-				CurrentHex.Neighbors [ i ].Tile.SetTileState ( TileState.AvailableCommand );
-		}
-	}
-
-	#endregion // Protected HeroUnit Override Functions
-
-	#region Private Functions
-
-	/// <summary>
-	/// Checks if there adjacent unoccupied tiles available for the Self-Destruct and Reconstruct Abilities.
-	/// Returns true if at least one adjacent tile is unoccupied.
-	/// </summary>
-	private bool AdjacentTilesCheck ( )
-	{
-		// Check each neighboring tile
-		for ( int i = 0; i < CurrentHex.Neighbors.Length; i++ )
-		{
-			// Check if the tile is unoccupied
-			if ( OccupyTileCheck ( CurrentHex.Neighbors [ i ], null ) )
-				return true;
-		}
-
-		// Return that all neighboring tiles are occupied
-		return false;
-	}
-
-	/// <summary>
-	/// Delegate for when the duration of the tile object for Self-Destruct expires.
-	/// </summary>
-	private void SelfDestructDurationComplete ( )
-	{
-		// Create animation
-		Tween t1 = currentSelfDestruct.transform.DOScale ( new Vector3 ( 5, 5, 5 ), MOVE_ANIMATION_TIME )
-			.OnComplete ( ( ) =>
-			{
 				// Mark that the ability is no longer active
 				InstanceData.Ability2.IsActive = false;
 
 				// Remove Self-Destruct
 				DestroyTileObject ( currentSelfDestruct );
-			} );
-		Tween t2 = currentSelfDestruct.Icon.DOFade ( 0, MOVE_ANIMATION_TIME );
+				} );
+			Tween t2 = currentSelfDestruct.Icon.DOFade ( 0, MOVE_ANIMATION_TIME );
 
-		// Add animations to queue
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+			// Add animations to queue
+			GM.AnimationQueue.Add ( new Match.GameManager.TurnAnimation ( t1, true ) );
+			GM.AnimationQueue.Add ( new Match.GameManager.TurnAnimation ( t2, false ) );
 
-		// Attack any adjacent enemy units
-		foreach ( Hex hex in currentSelfDestruct.CurrentHex.Neighbors )
-		{
-			// Check for tile
-			if ( hex == null )
-				continue;
-
-			// Check if the tile is occupied
-			if ( !hex.Tile.IsOccupied )
-				continue;
-
-			// Check for unit
-			if ( hex.Tile.CurrentUnit != null )
+			// Attack any adjacent enemy units
+			foreach ( Hex hex in currentSelfDestruct.CurrentHex.Neighbors )
 			{
-				// Check if the unit can be attacked
-				if ( !hex.Tile.CurrentUnit.UnitAttackCheck ( this, !InstanceData.Ability2.IsPerkEnabled ) )
+				// Check for tile
+				if ( hex == null )
 					continue;
 
-				// Check if the unit can be affected by abilities
-				if ( !hex.Tile.CurrentUnit.Status.CanBeAffectedByAbility )
+				// Check if the tile is occupied
+				if ( !hex.Tile.IsOccupied )
 					continue;
 
-				// Check if the unit can be affected physically
-				if ( !hex.Tile.CurrentUnit.Status.CanBeAffectedPhysically )
-					continue;
+				// Check for unit
+				if ( hex.Tile.CurrentUnit != null )
+				{
+					// Check if the unit can be attacked
+					if ( !hex.Tile.CurrentUnit.UnitAttackCheck ( this, !InstanceData.Ability2.IsPerkEnabled ) )
+						continue;
 
-				// Attack unit
-				hex.Tile.CurrentUnit.GetAttacked ( );
-			}
-			else if ( hex.Tile.CurrentObject != null )
-			{
-				// Check if the tile object can be attacked
-				if ( !hex.Tile.CurrentObject.CanBeAttacked )
-					continue;
+					// Check if the unit can be affected by abilities
+					if ( !hex.Tile.CurrentUnit.Status.CanBeAffectedByAbility )
+						continue;
 
-				// Check if the tile object is on the same team
-				if ( InstanceData.Ability2.IsPerkEnabled && hex.Tile.CurrentObject.Caster.Owner == Owner )
-					continue;
+					// Check if the unit can be affected physically
+					if ( !hex.Tile.CurrentUnit.Status.CanBeAffectedPhysically )
+						continue;
 
-				// Attack tile object
-				hex.Tile.CurrentObject.GetAttacked ( );
+					// Attack unit
+					hex.Tile.CurrentUnit.GetAttacked ( );
+				}
+				else if ( hex.Tile.CurrentObject != null )
+				{
+					// Check if the tile object can be attacked
+					if ( !hex.Tile.CurrentObject.CanBeAttacked )
+						continue;
+
+					// Check if the tile object is on the same team
+					if ( InstanceData.Ability2.IsPerkEnabled && hex.Tile.CurrentObject.Caster.Owner == Owner )
+						continue;
+
+					// Attack tile object
+					hex.Tile.CurrentObject.GetAttacked ( );
+				}
 			}
 		}
-	}
 
-	/// <summary>
-	/// Delegate for when the duration of the tile object for Recall expires.
-	/// </summary>
-	private void RecallDurationComplete ( )
-	{
-		// Create animation
-		Tween t = transform.DOMove ( currentRecall.CurrentHex.transform.position, MOVE_ANIMATION_TIME )
-			.OnComplete ( ( ) =>
-			{
+		/// <summary>
+		/// Delegate for when the duration of the tile object for Recall expires.
+		/// </summary>
+		private void RecallDurationComplete ( )
+		{
+			// Create animation
+			Tween t = transform.DOMove ( currentRecall.CurrentHex.transform.position, MOVE_ANIMATION_TIME )
+				.OnComplete ( ( ) =>
+				{
 				// Set unit and tile data
 				SetUnitToTile ( currentRecall.CurrentHex );
 
@@ -430,64 +433,64 @@ public class Armor : HeroUnit
 
 				// Set that Recall is complete
 				EndReconstruct ( );
-			} );
+				} );
 
-		// Add animation to queue
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t, true ) );
-	}
+			// Add animation to queue
+			GM.AnimationQueue.Add ( new Match.GameManager.TurnAnimation ( t, true ) );
+		}
 
-	/// <summary>
-	/// Makes all of the necessary changes to the hero when Armor's duration expires or Self-Destruct is used. 
-	/// </summary>
-	private void LoseMinion ( bool isFromAttack )
-	{
-		// Update unit data for single
-		UpdateUnitData ( singleData );
+		/// <summary>
+		/// Makes all of the necessary changes to the hero when Armor's duration expires or Self-Destruct is used. 
+		/// </summary>
+		private void LoseMinion ( bool isFromAttack )
+		{
+			// Update unit data for single
+			UpdateUnitData ( singleData );
 
-		// Change sprite
-		displaySprite = InstanceData.Portrait;
-		sprite.sprite = InstanceData.Portrait;
+			// Change sprite
+			displaySprite = InstanceData.Portrait;
+			sprite.sprite = InstanceData.Portrait;
 
-		// Update player HUD
-		if ( !isFromAttack )
+			// Update player HUD
+			if ( !isFromAttack )
+				GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( this );
+
+			// Expire Armor's duration
+			if ( !isFromAttack )
+				InstanceData.Ability1.CurrentDuration = 0;
+
+			// Set Recall cooldown
+			StartCooldown ( InstanceData.Ability2, !isFromAttack );
+			StartCooldown ( InstanceData.Ability3, !isFromAttack );
+		}
+
+		/// <summary>
+		/// Makes all of the necessary changes to the hero when Recall is used.
+		/// </summary>
+		private void GainMinion ( )
+		{
+			// Update unit data for duo
+			UpdateUnitData ( duoData );
+
+			// Change sprite
+			displaySprite = InstanceData.Portrait;
+			sprite.sprite = InstanceData.Portrait;
 			GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( this );
 
-		// Expire Armor's duration
-		if ( !isFromAttack )
-			InstanceData.Ability1.CurrentDuration = 0;
+			// Replenish Armor's duration
+			if ( InstanceData.Ability1.IsEnabled )
+				InstanceData.Ability1.CurrentDuration = InstanceData.Ability1.Duration;
+		}
 
-		// Set Recall cooldown
-		StartCooldown ( InstanceData.Ability2, !isFromAttack );
-		StartCooldown ( InstanceData.Ability3, !isFromAttack );
-	}
-
-	/// <summary>
-	/// Makes all of the necessary changes to the hero when Recall is used.
-	/// </summary>
-	private void GainMinion ( )
-	{
-		// Update unit data for duo
-		UpdateUnitData ( duoData );
-
-		// Change sprite
-		displaySprite = InstanceData.Portrait;
-		sprite.sprite = InstanceData.Portrait;
-		GM.UI.matchInfoMenu.GetPlayerHUD ( this ).UpdatePortrait ( this );
-
-		// Replenish Armor's duration
-		if ( InstanceData.Ability1.IsEnabled )
-			InstanceData.Ability1.CurrentDuration = InstanceData.Ability1.Duration;
-	}
-
-	/// <summary>
-	/// Reomves Hero 1's Recall.
-	/// </summary>
-	private void EndReconstruct ( )
-	{
-		// Create animation
-		Tween t1 = currentRecall.transform.DOScale ( new Vector3 ( 5, 5, 5 ), MOVE_ANIMATION_TIME )
-			.OnComplete ( ( ) =>
-			{
+		/// <summary>
+		/// Reomves Hero 1's Recall.
+		/// </summary>
+		private void EndReconstruct ( )
+		{
+			// Create animation
+			Tween t1 = currentRecall.transform.DOScale ( new Vector3 ( 5, 5, 5 ), MOVE_ANIMATION_TIME )
+				.OnComplete ( ( ) =>
+				{
 				// Mark that the ability is no longer active
 				InstanceData.Ability3.IsActive = false;
 
@@ -496,14 +499,15 @@ public class Armor : HeroUnit
 
 				// Cancel Recall
 				isRecalling = false;
-				currentRecall = null;
-			} );
-		Tween t2 = currentRecall.Icon.DOFade ( 0, MOVE_ANIMATION_TIME );
+					currentRecall = null;
+				} );
+			Tween t2 = currentRecall.Icon.DOFade ( 0, MOVE_ANIMATION_TIME );
 
-		// Add animations to queue
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t1, true ) );
-		GM.AnimationQueue.Add ( new GameManager.TurnAnimation ( t2, false ) );
+			// Add animations to queue
+			GM.AnimationQueue.Add ( new Match.GameManager.TurnAnimation ( t1, true ) );
+			GM.AnimationQueue.Add ( new Match.GameManager.TurnAnimation ( t2, false ) );
+		}
+
+		#endregion // Private Functions
 	}
-
-	#endregion // Private Functions
 }

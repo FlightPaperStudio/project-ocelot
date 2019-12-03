@@ -3,111 +3,114 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MatchTypeMenu : Menu
+namespace ProjectOcelot.Menues
 {
-	// UI elements
-	public RectTransform [ ] buttons;
-	public GameObject [ ] outlines;
-
-	// Menu information
-	public LoadingScreen load;
-
-	/// <summary>
-	/// Opens the menu.
-	/// Use this for going down a layer (e.g. from a parent menu to a sub menu).
-	/// </summary>
-	public override void OpenMenu ( bool closeParent = true )
+	public class MatchTypeMenu : Menu
 	{
-		// Open the menu
-		base.OpenMenu ( closeParent );
+		// UI elements
+		public RectTransform [ ] buttons;
+		public GameObject [ ] outlines;
 
-		// Reset each button
-		for ( int i = 0; i < buttons.Length; i++ )
-			MouseExit ( i );
-	}
+		// Menu information
+		public LoadingScreen load;
 
-	/// <summary>
-	/// Highlights the game mode button.
-	/// </summary>
-	public void MouseEnter ( int index )
-	{
-		// Increase the size of the button
-		buttons [ index ].offsetMax = new Vector2 ( 5f, 5f );
-		buttons [ index ].offsetMin = new Vector2 ( -5f, -5f );
-
-		// Display outline
-		outlines [ index ].SetActive ( true );
-	}
-
-	/// <summary>
-	/// Unhighlights the game mode button.
-	/// </summary>
-	public void MouseExit ( int index )
-	{
-		// Decrease the size of the button
-		buttons [ index ].offsetMax = Vector2.zero;
-		buttons [ index ].offsetMin = Vector2.zero;
-
-		// Hide outline
-		outlines [ index ].SetActive ( false );
-	}
-
-	/// <summary>
-	/// Selects and loads a match for the given game mode.
-	/// </summary>
-	public void MouseClick ( int index )
-	{
-		// Check match type
-		switch ( index )
+		/// <summary>
+		/// Opens the menu.
+		/// Use this for going down a layer (e.g. from a parent menu to a sub menu).
+		/// </summary>
+		public override void OpenMenu ( bool closeParent = true )
 		{
-		case 0:
-			LoadClassicMatch ( );
-			break;
-		case 1:
-			LoadMirrorMatch ( );
-			break;
-		case 2:
-			LoadRumbleMatch ( );
-			break;
+			// Open the menu
+			base.OpenMenu ( closeParent );
+
+			// Reset each button
+			for ( int i = 0; i < buttons.Length; i++ )
+				MouseExit ( i );
 		}
-	}
 
-	private void LoadClassicMatch ( )
-	{
-		// Begin loading 
-		load.BeginLoad ( );
+		/// <summary>
+		/// Highlights the game mode button.
+		/// </summary>
+		public void MouseEnter ( int index )
+		{
+			// Increase the size of the button
+			buttons [ index ].offsetMax = new Vector2 ( 5f, 5f );
+			buttons [ index ].offsetMin = new Vector2 ( -5f, -5f );
 
-		// Set the match settings
-		MatchSettings.SetMatchSettings ( MatchType.Classic );
+			// Display outline
+			outlines [ index ].SetActive ( true );
+		}
 
-		// Load classic match
-		load.LoadScene ( Scenes.MATCH_SETUP );
-	}
+		/// <summary>
+		/// Unhighlights the game mode button.
+		/// </summary>
+		public void MouseExit ( int index )
+		{
+			// Decrease the size of the button
+			buttons [ index ].offsetMax = Vector2.zero;
+			buttons [ index ].offsetMin = Vector2.zero;
 
-	private void LoadMirrorMatch ( )
-	{
-		// Begin loading 
-		load.BeginLoad ( );
+			// Hide outline
+			outlines [ index ].SetActive ( false );
+		}
 
-		// Set the match settings
-		MatchSettings.SetMatchSettings ( MatchType.Mirror );
+		/// <summary>
+		/// Selects and loads a match for the given game mode.
+		/// </summary>
+		public void MouseClick ( int index )
+		{
+			// Check match type
+			switch ( index )
+			{
+			case 0:
+				LoadClassicMatch ( );
+				break;
+			case 1:
+				LoadMirrorMatch ( );
+				break;
+			case 2:
+				LoadRumbleMatch ( );
+				break;
+			}
+		}
 
-		// Load classic match
-		load.LoadScene ( Scenes.MATCH_SETUP );
-	}
+		private void LoadClassicMatch ( )
+		{
+			// Begin loading 
+			load.BeginLoad ( );
 
-	/// <summary>
-	/// Loads a rumble match.
-	/// </summary>
-	private void LoadRumbleMatch ( )
-	{
-		// Begin loading 
-		load.BeginLoad ( );
+			// Set the match settings
+			Match.MatchSettings.SetMatchSettings ( Match.MatchType.Classic );
 
-		// Set the match settings
-		MatchSettings.SetMatchSettings ( MatchType.Rumble );
+			// Load classic match
+			load.LoadScene ( Scenes.MATCH_SETUP );
+		}
 
-		// Load rumble match
-		load.LoadScene ( Scenes.MATCH_SETUP );
+		private void LoadMirrorMatch ( )
+		{
+			// Begin loading 
+			load.BeginLoad ( );
+
+			// Set the match settings
+			Match.MatchSettings.SetMatchSettings ( Match.MatchType.Inferno );
+
+			// Load classic match
+			load.LoadScene ( Scenes.MATCH_SETUP );
+		}
+
+		/// <summary>
+		/// Loads a rumble match.
+		/// </summary>
+		private void LoadRumbleMatch ( )
+		{
+			// Begin loading 
+			load.BeginLoad ( );
+
+			// Set the match settings
+			Match.MatchSettings.SetMatchSettings ( Match.MatchType.Rumble );
+
+			// Load rumble match
+			load.LoadScene ( Scenes.MATCH_SETUP );
+		}
 	}
 }

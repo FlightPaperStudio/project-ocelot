@@ -12,8 +12,13 @@ public class Settings : MonoBehaviour
 	/// This setting determines whether or not the game is displayed in full screen or in a window.
 	/// </summary>
 	public static bool Display;
+
+	/// <summary>
+	/// The default display setting value.
+	/// </summary>
+	public const bool DISPLAY_DEFAULT = true;
+
 	private const string DISPLAY = "display";
-	private const bool DISPLAY_DEFAULT = true;
 
 	/// <summary>
 	/// These settings determine the resolution.
@@ -27,15 +32,26 @@ public class Settings : MonoBehaviour
 	/// This setting determines the graphical quality of assets rendered in game.
 	/// </summary>
 	public static int Quality;
+
+	/// <summary>
+	/// The default graphical quality setting.
+	/// </summary>
+	public const int QUALITY_DEFAULT = 3;
+
 	private const string QUALITY = "quality";
-	private const int QUALITY_DEFAULT = 3;
 
 	/// <summary>
 	/// This setting determines whether or not V-Sync is active.
 	/// </summary>
 	public static int Vsync;
+
+	/// <summary>
+	/// The default V-Sync setting.
+	/// </summary>
+	public const int VSYNC_DEFAULT = 1;
+
 	private const string VSYNC = "vsync";
-	private const int VSYNC_DEFAULT = 1;
+	
 
 	/// <summary>
 	/// This setting determines the absolute volume for the entire game.

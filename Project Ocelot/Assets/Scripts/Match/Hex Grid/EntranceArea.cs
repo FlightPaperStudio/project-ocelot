@@ -2,29 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EntranceArea : MonoBehaviour
+namespace ProjectOcelot.Match.Arena
 {
-	#region Entrance Data
-
-	public Hex [ ] Hexes;
-
-	#endregion // Entrance Data
-
-	#region Public Functions
-
-	/// <summary>
-	/// Sets the border colors of each tile in the area.
-	/// </summary>
-	/// <param name="teamColor"> The color of the team entering in this area. </param>
-	public void SetColor ( Player.TeamColor teamColor )
+	public class EntranceArea : MonoBehaviour
 	{
-		// Set each border color
-		for ( int i = 0; i < Hexes.Length; i++ )
-		{
-			// Set border color
-			Hexes [ i ].Tile.SetBorderColor ( Util.TeamColor ( teamColor ) );
-		}
-	}
+		#region Entrance Data
 
-	#endregion // Public Functions
+		public Hex [ ] Hexes;
+
+		#endregion // Entrance Data
+
+		#region Public Functions
+
+		/// <summary>
+		/// Sets the border colors of each tile in the area.
+		/// </summary>
+		/// <param name="teamColor"> The color of the team entering in this area. </param>
+		public void SetColor ( Player.TeamColor teamColor )
+		{
+			// Set each border color
+			for ( int i = 0; i < Hexes.Length; i++ )
+			{
+				// Set border color
+				Hexes [ i ].Tile.SetBorderColor ( Tools.Util.TeamColor ( teamColor ) );
+			}
+		}
+
+		#endregion // Public Functions
+	}
 }
