@@ -7,52 +7,31 @@ namespace ProjectOcelot.Menues
 {
 	public class OptionsMenu : Menu
 	{
-		// UI elements
-		public RectTransform [ ] buttons;
-		public GameObject [ ] outlines;
+		#region UI Elements
 
-		// Menu information
-		public LoadingScreen load;
+		[SerializeField]
+		private UI.CardButton [ ] buttons;
 
-		/// <summary>
-		/// Opens the menu.
-		/// Use this for going down a layer (e.g. from a parent menu to a sub menu).
-		/// </summary>
-		public override void OpenMenu ( bool closeParent = true )
+		[SerializeField]
+		private LoadingScreen load;
+
+		#endregion // UI Elements
+
+		#region Menu Override Functions
+
+		public override void CloseMenu ( bool openParent = true )
 		{
-			// Open the menu
-			base.OpenMenu ( closeParent );
-
-			// Reset each button
+			// Reset buttons
 			for ( int i = 0; i < buttons.Length; i++ )
-				MouseExit ( i );
+				buttons [ i ].ForceEnlarge ( false, false );
+
+			// Close menu
+			base.CloseMenu ( openParent );
 		}
 
-		/// <summary>
-		/// Highlights the game mode button.
-		/// </summary>
-		public void MouseEnter ( int index )
-		{
-			// Increase the size of the button
-			buttons [ index ].offsetMax = new Vector2 ( 5f, 5f );
-			buttons [ index ].offsetMin = new Vector2 ( -5f, -5f );
+		#endregion // Menu Override Functions
 
-			// Display outline
-			outlines [ index ].SetActive ( true );
-		}
-
-		/// <summary>
-		/// Unhighlights the game mode button.
-		/// </summary>
-		public void MouseExit ( int index )
-		{
-			// Decrease the size of the button
-			buttons [ index ].offsetMax = Vector2.zero;
-			buttons [ index ].offsetMin = Vector2.zero;
-
-			// Hide outline
-			outlines [ index ].SetActive ( false );
-		}
+		#region Public Functions
 
 		/// <summary>
 		/// Opens the credits scene.
@@ -62,5 +41,7 @@ namespace ProjectOcelot.Menues
 			// Load the credits
 			load.LoadScene ( Scenes.CREDITS );
 		}
+
+		#endregion // Public Functions
 	}
 }

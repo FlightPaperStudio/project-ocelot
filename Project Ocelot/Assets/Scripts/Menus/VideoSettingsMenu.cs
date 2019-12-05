@@ -104,7 +104,7 @@ namespace ProjectOcelot.Menues
 		/// Sets the current quality setting.
 		/// Use this as a button event wrapper.
 		/// </summary>
-		private void SetQuality ( )
+		public void SetQuality ( )
 		{
 			// Store the current quality setting
 			qualityValue = quality.OptionIndex;
@@ -146,7 +146,7 @@ namespace ProjectOcelot.Menues
 			}
 
 			// Apply any quality setting or vsync setting change
-			if ( qualityValue != Settings.Quality || ( vsyncValue && Settings.Vsync == 0 ) || ( !vsync && Settings.Vsync == 1 ) )
+			if ( qualityValue != Settings.Quality || ( vsyncValue && Settings.Vsync == 0 ) || ( !vsyncValue && Settings.Vsync == 1 ) )
 			{
 				// Store quality setting change
 				Settings.Quality = qualityValue;
@@ -169,6 +169,9 @@ namespace ProjectOcelot.Menues
 
 			// Make the applay button inactive
 			apply.interactable = false;
+
+			// Set if reset button is active
+			reset.interactable = SettingDefaultCheck ( );
 		}
 
 		/// <summary>

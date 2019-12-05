@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ namespace ProjectOcelot.Menues
 		public Match.Setup.TeamSetup setup;
 		private PopUpMenu popUp;
 		private LoadingScreen load;
-		public PopUpMenu.PopUpDelegate popUpDelegate;
+		public Action<bool> popUpDelegate;
 
 		/// <summary>
 		/// Gets the UI information dependent on the scene.
@@ -56,7 +57,7 @@ namespace ProjectOcelot.Menues
 			popUpDelegate += ReturnToMainMenu;
 
 			// Prompt user
-			popUp.SetConfirmationPopUp ( "Are you sure you want to leave the match?\n<size=75%>(All progress in your current match will be lost!)", popUpDelegate, null );
+			popUp.SetConfirmationPopUp ( "Are you sure you want to leave the match?\n<size=75%>(All progress in your current match will be lost!)", popUpDelegate );
 			popUp.OpenMenu ( false );
 		}
 
@@ -64,10 +65,11 @@ namespace ProjectOcelot.Menues
 		/// Returns to the Main Menu.
 		/// Use this as a delegate for the Pop Up Menu.
 		/// </summary>
-		private void ReturnToMainMenu ( )
+		private void ReturnToMainMenu ( bool value )
 		{
 			// Load the main menu
-			load.LoadScene ( Scenes.MENUS );
+			if ( value )
+				load.LoadScene ( Scenes.MENUS );
 		}
 
 		/// <summary>
@@ -88,10 +90,11 @@ namespace ProjectOcelot.Menues
 		/// Quits to desktop.
 		/// Use this as a delegate for the Pop Up Menu.
 		/// </summary>
-		private void QuitToDesktop ( )
+		private void QuitToDesktop ( bool value )
 		{
 			// Quit the game
-			Application.Quit ( );
+			if ( value )
+				Application.Quit ( );
 		}
 	}
 }

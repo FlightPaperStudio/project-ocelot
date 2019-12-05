@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,16 +18,23 @@ namespace ProjectOcelot.Menues
 		private GameObject acknowledgeControls;
 
 		[SerializeField]
+		private TextMeshProUGUI acknowledgeText;
+
+		[SerializeField]
 		private GameObject confirmControls;
+
+		[SerializeField]
+		private TextMeshProUGUI confirmText;
+
+		[SerializeField]
+		private TextMeshProUGUI denyText;
 
 		#endregion // UI Elements
 
 		#region Pop Up Menu Data
 
-		public delegate void PopUpDelegate ( );
-		private PopUpDelegate acknowledgeDelegate;
-		private PopUpDelegate confirmDelegate;
-		private PopUpDelegate denyDelegate;
+		private Action acknowledgeDelegate;
+		private Action<bool> confirmDelegate;
 
 		private bool isAcknowledgePopUp;
 
@@ -103,7 +111,7 @@ namespace ProjectOcelot.Menues
 		{
 			// Check for delegate
 			if ( confirmDelegate != null )
-				confirmDelegate ( );
+				confirmDelegate ( true );
 			else
 				base.CloseMenu ( );
 		}
@@ -116,8 +124,8 @@ namespace ProjectOcelot.Menues
 		public void OnDeny ( )
 		{
 			// Check for delegate
-			if ( denyDelegate != null )
-				denyDelegate ( );
+			if ( confirmDelegate != null )
+				confirmDelegate ( false );
 			else
 				base.CloseMenu ( );
 		}
@@ -131,11 +139,13 @@ namespace ProjectOcelot.Menues
 		/// Be sure to call this function BEFORE calling OpenMenu().
 		/// </summary>
 		/// <param name="prompt"> The text to display in the popup menu. </param>
-		/// <param name="acknowledge"> What should happen when the player clicks the acknowledge button. </param>
-		public void SetAcknowledgementPopUp ( string prompt, PopUpDelegate acknowledge )
+		/// <param name="callback"> What should happen when the player clicks the acknowledge button. </param>
+		/// <param name="acknowledge"> The text to display in the acknowledge button. </param>
+		public void SetAcknowledgementPopUp ( string prompt, Action callback, string acknowledge = "OK" )
 		{
 			// Display prompt
 			promptText.text = prompt;
+			acknowledgeText.text = acknowledge;
 
 			// Display acknowledge controls
 			acknowledgeControls.SetActive ( true );
@@ -144,10 +154,9 @@ namespace ProjectOcelot.Menues
 			// Clear previous delegates
 			acknowledgeDelegate = null;
 			confirmDelegate = null;
-			denyDelegate = null;
 
 			// Set acknowledge delegate
-			acknowledgeDelegate += acknowledge;
+			acknowledgeDelegate += callback;
 		}
 
 		/// <summary>
@@ -155,12 +164,15 @@ namespace ProjectOcelot.Menues
 		/// Be sure to call this function BEFORE calling OpenMenu().
 		/// </summary>
 		/// <param name="prompt"> The text to display in the popup menu. </param>
-		/// <param name="confirm"> What should happen when the player clicks the confirm button. </param>
-		/// <param name="deny"> What should happen when the player clicks the deny button. </param>
-		public void SetConfirmationPopUp ( string prompt, PopUpDelegate confirm, PopUpDelegate deny )
+		/// <param name="callback"> What should happen when the player clicks the confirm button (true) or the deny button (false). </param>
+		/// <param name="confirm"> The text to display in the confirm button. </param>
+		/// <param name="deny"> The text to display in the deny button. </param>
+		public void SetConfirmationPopUp ( string prompt, Action<bool> callback, string confirm = "Yes", string deny = "No" )
 		{
 			// Display prompt
 			promptText.text = prompt;
+			confirmText.text = confirm;
+			denyText.text = deny;
 
 			// Display confirm controls
 			acknowledgeControls.SetActive ( false );
@@ -169,11 +181,9 @@ namespace ProjectOcelot.Menues
 			// Clear previous delegates
 			acknowledgeDelegate = null;
 			confirmDelegate = null;
-			denyDelegate = null;
 
 			// Set acknowledge delegate
-			confirmDelegate += confirm;
-			denyDelegate += deny;
+			confirmDelegate += callback;
 		}
 
 		#endregion // Public Functions

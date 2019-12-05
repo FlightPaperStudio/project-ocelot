@@ -73,7 +73,7 @@ namespace ProjectOcelot.Menues
 		public void ExitGame ( )
 		{
 			// Prompt user
-			popUp.SetConfirmationPopUp ( "Are you sure?", QuitToDesktop, null );
+			popUp.SetConfirmationPopUp ( "Are you sure?", QuitToDesktop );
 			popUp.OpenMenu ( false );
 		}
 
@@ -106,10 +106,11 @@ namespace ProjectOcelot.Menues
 		/// <summary>
 		/// Quits to the desktop.
 		/// </summary>
-		private void QuitToDesktop ( )
+		private void QuitToDesktop ( bool value )
 		{
 			// Quit the game
-			Application.Quit ( );
+			if ( value )
+				Application.Quit ( );
 		}
 
 		#endregion // Private Functions

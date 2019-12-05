@@ -7,110 +7,59 @@ namespace ProjectOcelot.Menues
 {
 	public class MatchTypeMenu : Menu
 	{
-		// UI elements
-		public RectTransform [ ] buttons;
-		public GameObject [ ] outlines;
+		#region UI Elements
 
-		// Menu information
-		public LoadingScreen load;
+		[SerializeField]
+		private UI.CardButton [ ] buttons;
 
-		/// <summary>
-		/// Opens the menu.
-		/// Use this for going down a layer (e.g. from a parent menu to a sub menu).
-		/// </summary>
-		public override void OpenMenu ( bool closeParent = true )
+		[SerializeField]
+		private PlayerMenu playerMenu;
+
+		[SerializeField]
+		private LoadingScreen load;
+
+		#endregion // UI Elements
+
+		#region Menu Override Functions
+
+		public override void CloseMenu ( bool openParent = true )
 		{
-			// Open the menu
-			base.OpenMenu ( closeParent );
-
-			// Reset each button
+			// Reset buttons
 			for ( int i = 0; i < buttons.Length; i++ )
-				MouseExit ( i );
+				buttons [ i ].ForceEnlarge ( false, false );
+
+			// Close menu
+			base.CloseMenu ( openParent );
 		}
+
+		#endregion // Menu Override Functions
+
+		#region Public Functions
 
 		/// <summary>
-		/// Highlights the game mode button.
+		/// Begins a Classic Match
 		/// </summary>
-		public void MouseEnter ( int index )
+		public void LoadClassicMatch ( )
 		{
-			// Increase the size of the button
-			buttons [ index ].offsetMax = new Vector2 ( 5f, 5f );
-			buttons [ index ].offsetMin = new Vector2 ( -5f, -5f );
-
-			// Display outline
-			outlines [ index ].SetActive ( true );
-		}
-
-		/// <summary>
-		/// Unhighlights the game mode button.
-		/// </summary>
-		public void MouseExit ( int index )
-		{
-			// Decrease the size of the button
-			buttons [ index ].offsetMax = Vector2.zero;
-			buttons [ index ].offsetMin = Vector2.zero;
-
-			// Hide outline
-			outlines [ index ].SetActive ( false );
-		}
-
-		/// <summary>
-		/// Selects and loads a match for the given game mode.
-		/// </summary>
-		public void MouseClick ( int index )
-		{
-			// Check match type
-			switch ( index )
-			{
-			case 0:
-				LoadClassicMatch ( );
-				break;
-			case 1:
-				LoadMirrorMatch ( );
-				break;
-			case 2:
-				LoadRumbleMatch ( );
-				break;
-			}
-		}
-
-		private void LoadClassicMatch ( )
-		{
-			// Begin loading 
-			load.BeginLoad ( );
-
 			// Set the match settings
 			Match.MatchSettings.SetMatchSettings ( Match.MatchType.Classic );
 
-			// Load classic match
-			load.LoadScene ( Scenes.MATCH_SETUP );
-		}
-
-		private void LoadMirrorMatch ( )
-		{
-			// Begin loading 
-			load.BeginLoad ( );
-
-			// Set the match settings
-			Match.MatchSettings.SetMatchSettings ( Match.MatchType.Inferno );
-
-			// Load classic match
-			load.LoadScene ( Scenes.MATCH_SETUP );
+			// Open player menu
+			playerMenu.OpenMenu ( );
 		}
 
 		/// <summary>
-		/// Loads a rumble match.
+		/// Begins a Classic Match
 		/// </summary>
-		private void LoadRumbleMatch ( )
+		public void LoadRumbleMatch ( )
 		{
-			// Begin loading 
-			load.BeginLoad ( );
-
 			// Set the match settings
 			Match.MatchSettings.SetMatchSettings ( Match.MatchType.Rumble );
 
-			// Load rumble match
-			load.LoadScene ( Scenes.MATCH_SETUP );
+			// Open player menu
+			playerMenu.OpenMenu ( );
 		}
+
+		#endregion // Public Functions
 	}
 }

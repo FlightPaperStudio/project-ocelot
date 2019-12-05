@@ -58,6 +58,9 @@ namespace ProjectOcelot.Menues
 		[SerializeField]
 		private PlayerCard [ ] cards;
 
+		[SerializeField]
+		private LoadingScreen load;
+
 		#endregion // UI Elements
 
 		#region Menu Data
@@ -139,9 +142,15 @@ namespace ProjectOcelot.Menues
 		/// </summary>
 		public void ConfirmPlayers ( )
 		{
+			// Begin loading
+			load.BeginLoad ( );
+
 			// Set each player
 			for ( int i = 0; i < Match.MatchSettings.Players.Count; i++ )
 				Match.MatchSettings.Players [ i ].Control = cards [ i ].IsPlayer ? Match.Player.PlayerControl.LOCAL_PLAYER : Match.Player.PlayerControl.LOCAL_BOT;
+
+			// Load setup
+			load.LoadScene ( Scenes.MATCH_SETUP );
 		}
 
 		#endregion // Public Functions

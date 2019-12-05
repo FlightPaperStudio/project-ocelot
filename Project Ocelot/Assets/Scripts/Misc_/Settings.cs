@@ -57,29 +57,49 @@ public class Settings : MonoBehaviour
 	/// This setting determines the absolute volume for the entire game.
 	/// </summary>
 	public static bool MuteVolume;
+
+	/// <summary>
+	/// The default mute setting.
+	/// </summary>
+	public const bool MUTE_VOLUME_DEFAULT = false;
+
 	private const string MUTE_VOLUME = "muteVolume";
-	private const bool MUTE_VOLUME_DEFAULT = false;
 
 	/// <summary>
 	/// This setting determines the volume of the music.
 	/// </summary>
 	public static float MusicVolume;
+
+	/// <summary>
+	/// The default music volume setting.
+	/// </summary>
+	public const float MUSIC_VOLUME_DEFAULT = 1.0f;
+
 	private const string MUSIC_VOLUME = "musicVolume";
-	private const float MUSIC_VOLUME_DEFAULT = 1.0f;
 
 	/// <summary>
 	/// This setting determines the volume of the sound effects.
 	/// </summary>
 	public static float SoundVolume;
+
+	/// <summary>
+	/// The default sound volume setting.
+	/// </summary>
+	public const float SOUND_VOLUME_DEFAULT = 1.0f;
+
 	private const string SOUND_VOLUME = "soundVolume";
-	private const float SOUND_VOLUME_DEFAULT = 1.0f;
 
 	/// <summary>
 	/// This setting determines the absolute volume for the entire game.
 	/// </summary>
 	public static float UIVolume;
+
+	/// <summary>
+	/// The default UI volume setting.
+	/// </summary>
+	public const float UI_VOLUME_DEFAULT = 1.0f;
+
 	private const string UI_VOLUME = "uiVolume";
-	private const float UI_VOLUME_DEFAULT = 1.0f;
 
 	#endregion // Settings Data
 

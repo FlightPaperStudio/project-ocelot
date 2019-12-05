@@ -33,6 +33,9 @@ namespace ProjectOcelot.Menues
 		[SerializeField]
 		private SettingSlider uiSetting;
 
+		[SerializeField]
+		private Button reset;
+
 		#endregion // UI Elements
 
 		#region Menu Data
@@ -67,6 +70,34 @@ namespace ProjectOcelot.Menues
 
 				// Return that no settings have changed
 				return false;
+			}
+		}
+
+		/// <summary>
+		/// Whether or not the audio settings are set to the default settings.
+		/// </summary>
+		private bool IsDefaultSettings
+		{
+			get
+			{
+				// Check if mute setting is default
+				if ( Settings.MuteVolume != Settings.MUTE_VOLUME_DEFAULT )
+					return false;
+
+				// Check if music setting is default
+				if ( Settings.MusicVolume != Settings.MUSIC_VOLUME_DEFAULT )
+					return false;
+
+				// Check if sfx setting is default
+				if ( Settings.SoundVolume != Settings.SOUND_VOLUME_DEFAULT )
+					return false;
+
+				// Check if ui setting is default
+				if ( Settings.UIVolume != Settings.UI_VOLUME_DEFAULT )
+					return false;
+
+				// Return that all settings are at default
+				return true;
 			}
 		}
 
@@ -132,6 +163,9 @@ namespace ProjectOcelot.Menues
 			// Update volume
 			MusicManager.Instance.AdjustVolume ( );
 			SFXManager.Instance.UpdateSound ( );
+
+			// Set if reset is active
+			reset.interactable = !IsDefaultSettings;
 		}
 
 		/// <summary>
@@ -151,6 +185,9 @@ namespace ProjectOcelot.Menues
 
 			// Update volume
 			MusicManager.Instance.AdjustVolume ( );
+
+			// Set if reset is active
+			reset.interactable = !IsDefaultSettings;
 		}
 
 		/// <summary>
@@ -170,6 +207,9 @@ namespace ProjectOcelot.Menues
 
 			// Update volume
 			SFXManager.Instance.UpdateSound ( );
+
+			// Set if reset is active
+			reset.interactable = !IsDefaultSettings;
 		}
 
 		/// <summary>
@@ -186,6 +226,9 @@ namespace ProjectOcelot.Menues
 
 			// Display value
 			uiSetting.Text.text = ( (int)( value * 100 ) ).ToString ( );
+
+			// Set if reset is active
+			reset.interactable = !IsDefaultSettings;
 		}
 
 		/// <summary>
@@ -207,6 +250,9 @@ namespace ProjectOcelot.Menues
 
 			// Set ui volume slider
 			SetUIVolume ( Settings.UIVolume );
+
+			// Set reset as inactive
+			reset.interactable = false;
 		}
 
 		#endregion // Public Functions
@@ -225,6 +271,9 @@ namespace ProjectOcelot.Menues
 
 			// Set carousel
 			muteSetting.SetOption ( value, playAnimation );
+
+			// Set if reset is active
+			reset.interactable = !IsDefaultSettings;
 		}
 
 		#endregion // Private Functions
