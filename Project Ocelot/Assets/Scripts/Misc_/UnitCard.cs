@@ -11,7 +11,10 @@ namespace ProjectOcelot.UI
 		#region UI Elements
 
 		[SerializeField]
-		private RectTransform container;
+		private GameObject unselectedContainer;
+
+		[SerializeField]
+		private GameObject selectedContainer;
 
 		[SerializeField]
 		private Image border;
@@ -23,19 +26,20 @@ namespace ProjectOcelot.UI
 		private Image unitPortrait;
 
 		[SerializeField]
-		private Image [ ] unitSlots;
+		private TextMeshProUGUI unitRole;
 
 		#endregion // UI Elements
 
 		#region Card Data
 
-		private UnitSettingData unitData;
-		private Match.Player.TeamColor teamColor;
 		private bool isEnabled;
-		private bool isAvailable;
+		private bool isCardOccupied;
 
-		private readonly Color32 UNAVAILABLE_COLOR = Color.grey;
-		private readonly Color32 SLOT_COLOR = new Color32 ( 255, 210, 75, 255 );
+		private const string LEADER_ICON = "";
+		private const string OFFENSE_ICON = "";
+		private const string DEFENSE_ICON = "";
+		private const string SUPPORT_ICON = "";
+		private const string GRUNT_ICON = "";
 
 		/// <summary>
 		/// Whether or not the card is to be displayed.
@@ -53,31 +57,19 @@ namespace ProjectOcelot.UI
 				isEnabled = value;
 
 				// Display or hide card
-				container.gameObject.SetActive ( isEnabled );
+				gameObject.SetActive ( isEnabled );
 			}
 		}
 
 		/// <summary>
-		/// Whether or not the card is selectable.
+		/// Whether or not the card is displaying a unit.
 		/// </summary>
-		public bool IsAvailable
+		public bool IsCardOccupied
 		{
 			get
 			{
 				// Return value
-				return isAvailable;
-			}
-			set
-			{
-				// Store value
-				isAvailable = value;
-
-				// Set card color
-				border.color = isAvailable ? Tools.Util.TeamColor ( teamColor ) : UNAVAILABLE_COLOR;
-				unitName.color = isAvailable ? (Color32)Color.white : UNAVAILABLE_COLOR;
-				unitPortrait.color = isAvailable ? Tools.Util.TeamColor ( teamColor ) : UNAVAILABLE_COLOR;
-				for ( int i = 0; i < unitSlots.Length; i++ )
-					unitSlots [ i ].color = isAvailable ? SLOT_COLOR : UNAVAILABLE_COLOR;
+				return isCardOccupied;
 			}
 		}
 
@@ -90,42 +82,66 @@ namespace ProjectOcelot.UI
 		/// </summary>
 		/// <param name="unit"> The unit to be displayed in the card. </param>
 		/// <param name="team"> The unit's team. </param>
-		public void SetCard ( UnitSettingData unit, Match.Player.TeamColor team )
+		public void SetCardWithUnit ( UnitSettingData unit, Match.Player.TeamColor team )
 		{
-			// Store unit and team
-			unitData = unit;
-			teamColor = team;
-
 			// Display card
 			IsEnabled = true;
-			IsAvailable = true;
+			isCardOccupied = true;
+			unselectedContainer.SetActive ( false );
+			selectedContainer.SetActive ( true );
+
+			// Set team color
+			border.color = Tools.Util.TeamColor ( team );
+			unitPortrait.color = Tools.Util.TeamColor ( team );
 
 			// Display unit data
-			unitName.text = unitData.UnitName;
-			unitPortrait.sprite = unitData.Portrait;
-			for ( int i = 0; i < unitSlots.Length; i++ )
-				unitSlots [ i ].gameObject.SetActive ( i < unitData.Slots );
+			unitName.text = unit.UnitName;
+			unitPortrait.sprite = unit.Portrait;
+			switch ( unit.Role )
+			{
+			case UnitData.UnitRole.LEADER:
+				unitRole.text = LEADER_ICON;
+				break;
+			case UnitData.UnitRole.OFFENSE:
+				unitRole.text = OFFENSE_ICON;
+				break;
+			case UnitData.UnitRole.DEFENSE:
+				unitRole.text = DEFENSE_ICON;
+				break;
+			case UnitData.UnitRole.SUPPORT:
+				unitRole.text = SUPPORT_ICON;
+				break;
+			case UnitData.UnitRole.PAWN:
+				unitRole.text = GRUNT_ICON;
+				break;
+			}
 		}
 
 		/// <summary>
-		/// Reset the card to its default size.
+		/// Initializes the card to display no unit.
 		/// </summary>
-		public void ResetSize ( )
+		/// <param name="team"> The team color. </param>
+		public void SetCardWithoutUnit ( Match.Player.TeamColor team )
 		{
-			// Set default size
-			container.offsetMax = Vector2.zero;
-			container.offsetMin = Vector2.zero;
+			// Display card
+			IsEnabled = true;
+			isCardOccupied = false;
+			unselectedContainer.SetActive ( true );
+			selectedContainer.SetActive ( false );
+
+			// Set team color
+			border.color = Tools.Util.TeamColor ( team );
 		}
 
 		/// <summary>
-		/// Increases or decreases the size of the card based on its current size.
+		/// Sets the border of the card to be highlighted or a team color.
 		/// </summary>
-		/// <param name="offset"> How much the card's size should uniformly change. Positive values make it bigger and negative values make it smaller. </param>
-		public void ChangeSize ( float offset )
+		/// <param name="isHighlight"> Whether or not the border should be highlighted. </param>
+		/// <param name="team"> The team color. </param>
+		public void SetCardHighlight ( bool isHighlight, Match.Player.TeamColor team )
 		{
-			// Set card size
-			container.offsetMax = new Vector2 ( offset, offset );
-			container.offsetMin = new Vector2 ( -1 * offset, -1 * offset );
+			// Set border color
+			border.color = isHighlight ? Tools.Util.AccentColor ( team ) : Tools.Util.TeamColor ( team );
 		}
 
 		#endregion // Public Functions

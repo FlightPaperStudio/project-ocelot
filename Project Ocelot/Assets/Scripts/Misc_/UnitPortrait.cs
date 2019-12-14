@@ -28,6 +28,7 @@ namespace ProjectOcelot.UI
 		private bool isAvailable;
 		private bool isBorderHighlighted;
 
+		private readonly Color32 DISABLED_COLOR = Color.black;
 		private readonly Color32 UNAVAILABLE_COLOR = Color.grey;
 
 		/// <summary>
@@ -45,8 +46,9 @@ namespace ProjectOcelot.UI
 				// Store value
 				isEnabled = value;
 
-				// Display or hide portrait
-				container.gameObject.SetActive ( isEnabled );
+				// Set portrait color
+				border.color = isEnabled ? Tools.Util.TeamColor ( teamColor ) : DISABLED_COLOR;
+				unitPortrait.color = isEnabled ? Tools.Util.TeamColor ( teamColor ) : DISABLED_COLOR;
 			}
 		}
 

@@ -13,83 +13,6 @@ namespace ProjectOcelot.Match.Setup
 		#region Private Classes
 
 		[System.Serializable]
-		private class FormationCards
-		{
-			public UI.UnitCard Card;
-			public Button UndoButton;
-
-			private bool isEnabled;
-			private bool isSelected;
-			private bool isLastSelected;
-
-			/// <summary>
-			/// Whether or not the cards are to be displayed for units.
-			/// </summary>
-			public bool IsEnabled
-			{
-				get
-				{
-					// Return value
-					return isEnabled;
-				}
-				set
-				{
-					// Store value
-					isEnabled = value;
-
-					// Display or hide card
-					Card.IsEnabled = isEnabled && isSelected;
-
-					// Display or hide button
-					UndoButton.gameObject.SetActive ( isEnabled ? isLastSelected : false );
-				}
-			}
-
-			/// <summary>
-			/// Whether or not the cards should be displayed for units already positioned.
-			/// </summary>
-			public bool IsSelected
-			{
-				get
-				{
-					// Return value
-					return isSelected;
-				}
-				set
-				{
-					// Store value
-					isSelected = value;
-
-					// Display or hide card
-					Card.IsEnabled = isSelected && isEnabled;
-
-					// Display or hide button
-					UndoButton.gameObject.SetActive ( isSelected ? isLastSelected : false );
-				}
-			}
-
-			/// <summary>
-			/// Whether or not the undo button should be displayed for the last unit positioned.
-			/// </summary>
-			public bool IsLastSelected
-			{
-				get
-				{
-					// Return value
-					return isLastSelected;
-				}
-				set
-				{
-					// Store value
-					isLastSelected = value;
-
-					// Display or hide button
-					UndoButton.gameObject.SetActive ( isLastSelected );
-				}
-			}
-		}
-
-		[System.Serializable]
 		private class FormationTiles
 		{
 			public SpriteRenderer Tile;
@@ -124,25 +47,16 @@ namespace ProjectOcelot.Match.Setup
 		#region UI Elements
 
 		[SerializeField]
-		private GameObject cardsPanel;
+		private Button undoButton;
 
 		[SerializeField]
-		private UI.UnitCard _currentCard;
-
-		[SerializeField]
-		private FormationCards [ ] _previousCards;
-
-		[SerializeField]
-		private GameObject portaitsPanel;
-
-		[SerializeField]
-		private GameObject confirmPanel;
-
-		[SerializeField]
-		private UI.UnitPortrait [ ] portraits;
+		private Button randomButton;
 
 		[SerializeField]
 		private Button selectButton;
+
+		[SerializeField]
+		private Button confirmButton;
 
 		#endregion // UI Elements
 
@@ -161,6 +75,8 @@ namespace ProjectOcelot.Match.Setup
 		[SerializeField]
 		private TeamSetup setupManager;
 
+		private int cardIndex = 0;
+		private int unitIndex = 0;
 		private int selectTileIndex = -1;
 
 		/// <summary>
@@ -180,12 +96,6 @@ namespace ProjectOcelot.Match.Setup
 
 		#endregion // Menu Data
 
-		#region Player Data
-
-		private int unitIndex;
-
-		#endregion // Player Data
-
 		#region Menu Override Functions
 
 		/// <summary>
@@ -196,25 +106,10 @@ namespace ProjectOcelot.Match.Setup
 		{
 			// Open the menu
 			base.OpenMenu ( closeParent );
-			cardsPanel.SetActive ( true );
-			portaitsPanel.SetActive ( true );
-			confirmPanel.SetActive ( false );
 			teamFormationObjs.SetActive ( true );
 
-			// Set unit portraits
-			for ( int i = 0; i < portraits.Length; i++ )
-			{
-				// Set whether or not the portrait has a unit to display
-				portraits [ i ].IsEnabled = i < setupManager.CurrentPlayer.Units.Count;
-				portraits [ i ].gameObject.SetActive ( i < setupManager.CurrentPlayer.Units.Count );
-
-				// Check for portrait
-				if ( portraits [ i ].IsEnabled )
-				{
-					// Display unit in portrait
-					portraits [ i ].SetPortrait ( setupManager.CurrentPlayer.Units [ i ], setupManager.CurrentPlayer.Team );
-				}
-			}
+			// Set instructions
+			setupManager.DisplayInstructions ( "Select your formation" );
 
 			// Set tiles
 			for ( int i = 0; i < tiles.Length; i++ )
@@ -226,25 +121,21 @@ namespace ProjectOcelot.Match.Setup
 				tiles [ i ].HasUnit = false;
 			}
 
-			// Set unit index
+			// Set indexes
+			cardIndex = 0;
 			unitIndex = 0;
 
-			// Display leader
-			tiles [ 0 ].HasUnit = true;
-			tiles [ 0 ].Unit.sprite = setupManager.CurrentPlayer.Units [ unitIndex ].Portrait;
-			tiles [ 0 ].Unit.color = Tools.Util.TeamColor ( setupManager.CurrentPlayer.Team );
+			// Display first unit
+			setupManager.DisplayUnit ( setupManager.CurrentPlayer.Units [ unitIndex ], setupManager.CurrentPlayer.Team );
 
-			// Move to next unit
-			unitIndex++;
+			// Highlight first unit
+			setupManager.HighlightCardInLineup ( cardIndex, true, setupManager.CurrentPlayer.Team );
 
-			// Set portraits for current unit
-			SetPortraits ( unitIndex );
-
-			// Set cards for current unit
-			SetCards ( unitIndex );
-
-			// Disable selection button until a tile is selected for the unit
+			// Enable/disable buttons until a tile is selected for the unit
+			undoButton.interactable = false;
+			randomButton.interactable = true;
 			selectButton.interactable = false;
+			confirmButton.interactable = false;
 
 			// Display prompt
 			setupManager.Splash.Slide ( "<size=75%>" + setupManager.CurrentPlayer.PlayerName + "</size>\n<color=white>Team Formation", Tools.Util.TeamColor ( setupManager.CurrentPlayer.Team ), true );
@@ -261,13 +152,13 @@ namespace ProjectOcelot.Match.Setup
 
 		#endregion // Menu Functions
 
-		#region Event Trigger Functions
+		#region Public Functions
 
 		/// <summary>
 		/// Highlights an available tile when the mouse starts hovering over the tile.
 		/// </summary>
 		/// <param name="index"> The tile's index in the array. </param>
-		public void OnPointerEnter ( int index )
+		public void MouseEnter ( int index )
 		{
 			// Check if unit is currently being displayed at this tile
 			if ( !tiles [ index ].HasUnit && !IsFormationComplete )
@@ -283,7 +174,7 @@ namespace ProjectOcelot.Match.Setup
 		/// Unhighlights an available tile when the mouse stops hovering over the tile.
 		/// </summary>
 		/// <param name="index"> The tile's index in the array. </param>
-		public void OnPointerExit ( int index )
+		public void MouseExit ( int index )
 		{
 			// Check if unit currently being displayed at this tile
 			if ( !tiles [ index ].HasUnit && !IsFormationComplete )
@@ -297,7 +188,7 @@ namespace ProjectOcelot.Match.Setup
 		/// Selects the starting position for the current unit.
 		/// </summary>
 		/// <param name="index"> The tile's index in the array. </param>
-		public void OnPointerClick ( int index )
+		public void SelectPosition ( int index )
 		{
 			// Check if unit is currently being displayed at this tile
 			if ( !tiles [ index ].HasUnit && !IsFormationComplete )
@@ -328,50 +219,55 @@ namespace ProjectOcelot.Match.Setup
 			}
 		}
 
-		#endregion // Event Trigger Functions
-
-		#region Public Functions
-
 		/// <summary>
-		/// Confirms the starting position for the current unit.
+		/// Undoes the last unit placement.
 		/// </summary>
-		public void SelectPosition ( )
+		public void Undo ( )
 		{
-			// Store tile as the current unit's starting position
-			setupManager.CurrentPlayer.UnitFormation.Add ( setupManager.CurrentPlayer.Units [ unitIndex ], selectTileIndex );
-
-			// Remove highlight from tile
-			tiles [ selectTileIndex ].Tile.color = UNSELECTED_TILE;
-
-			// Reset selected tile
-			selectTileIndex = -1;
-
-			// Move to the next unit
-			unitIndex++;
-
-			// Disable select button for next unit
-			selectButton.interactable = false;
-
-			// Check if all units are positioned
-			if ( IsFormationComplete )
+			// Check if a tile has been selected for the current unit
+			if ( selectTileIndex != -1 )
 			{
-				// Display the confirm panel
-				cardsPanel.SetActive ( false );
-				portaitsPanel.SetActive ( false );
-				confirmPanel.SetActive ( true );
+				// Remove unit
+				tiles [ selectTileIndex ].HasUnit = false;
+
+				// Remove highlight
+				tiles [ selectTileIndex ].Tile.color = UNSELECTED_TILE;
 			}
-			else
-			{
-				// Update cards and portraits for current unit
-				SetPortraits ( unitIndex );
-				SetCards ( unitIndex );
-			}
+
+			// Unhighlight current unit
+			setupManager.HighlightCardInLineup ( cardIndex, false, setupManager.CurrentPlayer.Team );
+
+			// Move to the previous unit
+			cardIndex -= setupManager.CurrentPlayer.Units [ unitIndex ].Slots;
+			unitIndex--;
+
+			// Display previous unit
+			setupManager.DisplayUnit ( setupManager.CurrentPlayer.Units [ unitIndex ], setupManager.CurrentPlayer.Team );
+
+			// Highlight previous unit
+			setupManager.HighlightCardInLineup ( cardIndex, true, setupManager.CurrentPlayer.Team );
+
+			// Store the tile of the previous unit
+			selectTileIndex = setupManager.CurrentPlayer.UnitFormation [ setupManager.CurrentPlayer.Units [ unitIndex ] ];
+
+			// Highlight the tile of the previous unit
+			tiles [ selectTileIndex ].HasUnit = false;
+			SelectPosition ( selectTileIndex );
+
+			// Remove previous unit from the formation
+			setupManager.CurrentPlayer.UnitFormation.Remove ( setupManager.CurrentPlayer.Units [ unitIndex ] );
+
+			// Enable/disable buttons
+			undoButton.interactable = unitIndex > 0;
+			randomButton.interactable = true;
+			selectButton.interactable = true;
+			confirmButton.interactable = false;
 		}
 
 		/// <summary>
 		/// Randomly selects a tile to place the next unit.
 		/// </summary>
-		public void RandomPlacement ( )
+		public void RandomPosition ( )
 		{
 			// Get the subset of remaining tiles without a unit positioned
 			FormationTiles [ ] availableTiles = tiles.Where ( x => !x.HasUnit ).ToArray ( );
@@ -383,51 +279,46 @@ namespace ProjectOcelot.Match.Setup
 				FormationTiles randomTile = availableTiles [ Random.Range ( 0, availableTiles.Length ) ];
 
 				// Select the random tile for the current unit
-				OnPointerClick ( System.Array.IndexOf ( tiles, randomTile ) );
-				SelectPosition ( );
+				SelectPosition ( System.Array.IndexOf ( tiles, randomTile ) );
 			}
 		}
 
 		/// <summary>
-		/// Unselects the position for the last unit that was positioned.
+		/// Confirms the starting position for the current unit.
 		/// </summary>
-		public void UnselectPosition ( )
+		public void ConfirmPosition ( )
 		{
-			// Check if team confirmation is being cancelled
-			if ( IsFormationComplete )
+			// Store tile as the current unit's starting position
+			setupManager.CurrentPlayer.UnitFormation.Add ( setupManager.CurrentPlayer.Units [ unitIndex ], selectTileIndex );
+
+			// Remove highlight from tile
+			tiles [ selectTileIndex ].Tile.color = UNSELECTED_TILE;
+
+			// Reset selected tile
+			selectTileIndex = -1;
+
+			// Unhighlight current
+			setupManager.HighlightCardInLineup ( cardIndex, false, setupManager.CurrentPlayer.Team );
+
+			// Move to the next unit
+			cardIndex += setupManager.CurrentPlayer.Units [ unitIndex ].Slots;
+			unitIndex++;
+
+			// Check for completion
+			if ( !IsFormationComplete )
 			{
-				// Hide confirm panel
-				cardsPanel.SetActive ( true );
-				portaitsPanel.SetActive ( true );
-				confirmPanel.SetActive ( false );
+				// Display the next unit
+				setupManager.DisplayUnit ( setupManager.CurrentPlayer.Units [ unitIndex ], setupManager.CurrentPlayer.Team );
+
+				// Highlight next unit
+				setupManager.HighlightCardInLineup ( cardIndex, true, setupManager.CurrentPlayer.Team );
 			}
 
-			// Check if a tile has been selected for the current unit
-			if ( selectTileIndex != -1 )
-			{
-				// Remove unit
-				tiles [ selectTileIndex ].HasUnit = false;
-
-				// Remove highlight
-				tiles [ selectTileIndex ].Tile.color = UNSELECTED_TILE;
-			}
-
-			// Move to the previous unit
-			unitIndex--;
-
-			// Store the tile of the previous unit
-			selectTileIndex = setupManager.CurrentPlayer.UnitFormation [ setupManager.CurrentPlayer.Units [ unitIndex ] ];
-
-			// Highlight the tile of the previous unit
-			tiles [ selectTileIndex ].HasUnit = false;
-			OnPointerClick ( selectTileIndex );
-
-			// Remove previous unit from the formation
-			setupManager.CurrentPlayer.UnitFormation.Remove ( setupManager.CurrentPlayer.Units [ unitIndex ] );
-
-			// Update cards and portraits to the previous unit
-			SetCards ( unitIndex );
-			SetPortraits ( unitIndex );
+			// Enable/disable buttons upon completion
+			undoButton.interactable = true;
+			randomButton.interactable = !IsFormationComplete;
+			selectButton.interactable = false;
+			confirmButton.interactable = IsFormationComplete;
 		}
 
 		/// <summary>
@@ -440,61 +331,5 @@ namespace ProjectOcelot.Match.Setup
 		}
 
 		#endregion // Public Functions
-
-		#region Private Functions
-
-		/// <summary>
-		/// Sets the size and color of each unit portrait for the current unit being positioned.
-		/// </summary>
-		/// <param name="index"> The index of the unit being positioned in the player settings unit list. </param>
-		private void SetPortraits ( int index )
-		{
-			// Set each portrait to the appropriate size and color
-			for ( int i = 0; i < setupManager.CurrentPlayer.Units.Count; i++ )
-			{
-				// Set size of the portrait to be larger if its the current unit
-				if ( i == index )
-					portraits [ i ].ChangeSize ( 5 );
-				else
-					portraits [ i ].ResetSize ( );
-
-				// Set the color of the border to be highlighted if its the current unit
-				portraits [ i ].IsBorderHighlighted = i == index;
-			}
-		}
-
-		/// <summary>
-		/// Displays or hides all cards in the menu for the current unit being positioned.
-		/// </summary>
-		/// <param name="index"> The index of the unit being positioned in the player settings unit list. </param>
-		private void SetCards ( int index )
-		{
-			// Display current unit in main card
-			_currentCard.SetCard ( setupManager.CurrentPlayer.Units [ index ], setupManager.CurrentPlayer.Team );
-
-			// Display each previous unit in the previous cards
-			for ( int i = 0; i < _previousCards.Length; i++ )
-			{
-				// Set whether or not the card will display a unit
-				_previousCards [ i ].IsEnabled = i < setupManager.CurrentPlayer.Units.Count - 2;
-
-				// Check for card
-				if ( _previousCards [ i ].IsEnabled )
-				{
-					// Set whether or not the unit has been positioned for this card
-					_previousCards [ i ].IsSelected = i <= index - 2;
-					_previousCards [ i ].IsLastSelected = i == index - 2;
-
-					// Check if the card is displayed
-					if ( _previousCards [ i ].IsSelected )
-					{
-						// Display unit
-						_previousCards [ i ].Card.SetCard ( setupManager.CurrentPlayer.Units [ i + 1 ], setupManager.CurrentPlayer.Team );
-					}
-				}
-			}
-		}
-
-		#endregion // Private Functions
 	}
 }

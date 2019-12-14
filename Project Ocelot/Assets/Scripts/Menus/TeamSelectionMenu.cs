@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
-using TMPro;
 
 namespace ProjectOcelot.Match.Setup
 {
@@ -13,75 +11,7 @@ namespace ProjectOcelot.Match.Setup
 		#region Private Classes
 
 		[System.Serializable]
-		private class SelectionCards
-		{
-			[HideInInspector]
-			public Player.TeamColor Team;
-
-			public UI.UnitCard Card;
-			public RectTransform PromptContainer;
-			public Image PromptBorder;
-			public TextMeshProUGUI PromptText;
-			public TextMeshProUGUI PromptNumber;
-			public Button RandomButton;
-			public Button UnselectButton;
-
-			public enum CardState
-			{
-				DISABLED,
-				UNAVAILABLE,
-				SELECTED,
-				LAST_SELECTED,
-				ON_DECK,
-				UNSELECTED
-			}
-
-			private CardState state;
-
-			/// <summary>
-			/// Sets how the card should be displayed during selection.
-			/// </summary>
-			public CardState State
-			{
-				get
-				{
-					// Return value
-					return state;
-				}
-				set
-				{
-					// Store value
-					state = value;
-
-					// Display or hide card
-					Card.gameObject.SetActive ( state != CardState.DISABLED );
-
-					// Display or hide unit card
-					Card.IsEnabled = state == CardState.SELECTED || state == CardState.LAST_SELECTED || state == CardState.ON_DECK;
-
-					// Display or hide card prompt
-					PromptContainer.gameObject.SetActive ( state == CardState.UNAVAILABLE || state == CardState.UNSELECTED );
-
-					// Display or hide random button
-					RandomButton.gameObject.SetActive ( state == CardState.ON_DECK );
-
-					// Display or hide unselect button
-					UnselectButton.gameObject.SetActive ( state == CardState.LAST_SELECTED );
-
-					// Set card prompt size
-					PromptContainer.offsetMax = state == CardState.UNAVAILABLE ? new Vector2 ( -10f, -10f ) : Vector2.zero;
-					PromptContainer.offsetMin = state == CardState.UNAVAILABLE ? new Vector2 ( 10f, 10f ) : Vector2.zero;
-
-					// Set card prompt colors
-					PromptBorder.color = state == CardState.UNAVAILABLE ? (Color32)Color.grey : Tools.Util.TeamColor ( Team );
-					PromptText.color = state == CardState.UNAVAILABLE ? Color.grey : Color.white;
-					PromptNumber.color = state == CardState.UNAVAILABLE ? Color.grey : Color.white;
-				}
-			}
-		}
-
-		[System.Serializable]
-		private class SelectionPortraits
+		private class HeroPortraits
 		{
 			public UI.UnitPortrait Portrait;
 			public int UnitID;
@@ -92,16 +22,22 @@ namespace ProjectOcelot.Match.Setup
 		#region UI Elements
 
 		[SerializeField]
-		private SelectionCards [ ] cards;
+		private HeroPortraits [ ] heroes;
 
 		[SerializeField]
-		private SelectionPortraits [ ] portraits;
+		private UI.UnitPortrait [ ] grunts;
 
 		[SerializeField]
-		private GameObject selectPanel;
+		private TextMeshProUGUI heroLimit;
 
 		[SerializeField]
-		private GameObject confirmPanel;
+		private Button undoButton;
+
+		[SerializeField]
+		private Button randomButton;
+
+		[SerializeField]
+		private Button selectButton;
 
 		#endregion // UI Elements
 
@@ -113,9 +49,16 @@ namespace ProjectOcelot.Match.Setup
 		[SerializeField]
 		private Menues.Menu teamFormationMenu;
 
-		private UnitSettingData selectedHero;
-		private int confirmedHeroesCounter;
-		private int slotDeficitCounter;
+		[SerializeField]
+		private Menues.PopUpMenu popup;
+
+		private UnitSettingData [ ] gruntData;
+		private UnitSettingData selectedUnit;
+		private int lineupStart = 0;
+		private int lineupCounter = 0;
+		private int heroLimitCounter = 0;
+
+		private const float PORTRAIT_OFFSET = 5f;
 
 		#endregion // Menu Data
 
@@ -130,32 +73,40 @@ namespace ProjectOcelot.Match.Setup
 			// Open the menu
 			base.OpenMenu ( closeParent );
 
-			// Set prompts
-			selectPanel.SetActive ( true );
-			confirmPanel.SetActive ( false );
+			// Set instructions
+			setupManager.DisplayInstructions ( "Select your lineup" );
 
-			// Set team color for cards
-			for ( int i = 0; i < cards.Length; i++ )
-				cards [ i ].Team = setupManager.CurrentPlayer.Team;
+			// Display hero limit
+			lineupStart = setupManager.CurrentPlayer.Units.Count;
+			lineupCounter = lineupStart;
+			heroLimitCounter = 0;
+			DisplayHeroLimit ( heroLimitCounter );
 
-			// Set unit selection portraits
-			for ( int i = 0; i < portraits.Length; i++ )
+			// Display heroes
+			for ( int i = 0; i < heroes.Length; i++ )
 			{
-				// Set unit to portrait
-				portraits [ i ].Portrait.SetPortrait ( MatchSettings.GetHero ( portraits [ i ].UnitID ), setupManager.CurrentPlayer.Team );
-
-				// Set whether or not the hero is available from the settings
-				portraits [ i ].Portrait.IsEnabled = true;
-				portraits [ i ].Portrait.IsAvailable = MatchSettings.GetUnitData ( portraits [ i ].UnitID ).IsEnabled;
+				// Display portrait
+				heroes [ i ].Portrait.SetPortrait ( MatchSettings.GetHero ( heroes [ i ].UnitID ), setupManager.CurrentPlayer.Team );
+				heroes [ i ].Portrait.IsEnabled = MatchSettings.GetHero ( heroes [ i ].UnitID ).IsEnabled;
 			}
 
-			// Set cards for the first hero selection
-			confirmedHeroesCounter = 0;
-			slotDeficitCounter = 0;
-			SetCardState ( confirmedHeroesCounter );
+			// Initialize grunts
+			gruntData = new UnitSettingData [ grunts.Length ];
+			for ( int i = 0; i < grunts.Length; i++ )
+			{
+				// Generate grunt
+				gruntData [ i ] = MatchSettings.GetPawn ( );
+
+				// Display grunt
+				grunts [ i ].SetPortrait ( gruntData [ i ], setupManager.CurrentPlayer.Team );
+			}
+
+			// Enable buttons
+			randomButton.interactable = true;
+			selectButton.interactable = true;
 
 			// Start by selecting a random hero
-			SelectRandomUnit ( false );
+			SelectRandomUnit ( );
 
 			// Display prompt
 			setupManager.Splash.Slide ( "<size=75%>" + setupManager.CurrentPlayer.PlayerName + "</size>\n<color=white>Team Selection", Tools.Util.TeamColor ( setupManager.CurrentPlayer.Team ), true );
@@ -163,84 +114,266 @@ namespace ProjectOcelot.Match.Setup
 
 		#endregion // Menu Override Functions
 
-		#region Event Trigger Functions
-
-		public void OnPointerEnter ( int index )
-		{
-			// Check if the portrait is interactable
-			if ( portraits [ index ].Portrait.IsAvailable )
-			{
-				// Enlarge the portrait to indicate that portrait is being interacted with
-				portraits [ index ].Portrait.ChangeSize ( 5 );
-			}
-		}
-
-		public void OnPointerExit ( int index )
-		{
-			// Check if the portrait is interable and not selected
-			if ( portraits [ index ].Portrait.IsAvailable && portraits [ index ].UnitID != selectedHero.ID )
-			{
-				// Reset the portrait to its default size to indicate that the portrait is no longer being interacted with
-				portraits [ index ].Portrait.ResetSize ( );
-			}
-		}
-
-		#endregion // Event Trigger Functions
-
 		#region Public Functions
 
 		/// <summary>
-		/// Selects the unit for display and potential addition to the team.
+		/// Previews a hero on mouse enter of the hero's portrait.
 		/// </summary>
-		public void SelectUnit ( int index )
+		/// <param name="index"> The index of the hero. </param>
+		public void MouseEnterHero ( int index )
 		{
-			// Check if the hero is available via its portrait
-			if ( portraits [ index ].Portrait.IsAvailable )
+			// Check if hero is available
+			if ( heroes [ index ].Portrait.IsEnabled && heroes [ index ].Portrait.IsAvailable )
 			{
-				// Unselect the previously selected hero
-				if ( selectedHero != null )
+				// Display hero
+				DisplayUnit ( MatchSettings.GetHero ( heroes [ index ].UnitID ) );
+			}
+		}
+
+		/// <summary>
+		/// Previews a grunt on mouse enter of the grunt's portrait.
+		/// </summary>
+		/// <param name="index"> The index of the grunt. </param>
+		public void MouseEnterGrunt ( int index )
+		{
+			// Check if grunt is available
+			if ( grunts [ index ].IsEnabled && grunts [ index ].IsAvailable )
+			{
+				// Display grunt
+				DisplayUnit ( gruntData [ index ] );
+			}
+		}
+
+		/// <summary>
+		/// Ends preview of hero on mouse exit of the hero's portrait.
+		/// </summary>
+		/// <param name="index"> The index of the hero. </param>
+		public void MouseExitHero ( int index )
+		{
+			// Check if hero is available
+			if ( heroes [ index ].Portrait.IsEnabled && heroes [ index ].Portrait.IsAvailable && selectedUnit.ID != heroes [ index ].UnitID )
+			{
+				// Reset portrait
+				heroes [ index ].Portrait.ResetSize ( );
+
+				// Display selected unit
+				DisplayUnit ( selectedUnit );
+			}
+		}
+
+		/// <summary>
+		/// Ends preview of grunt on mouse exit of the grunt's portrait.
+		/// </summary>
+		/// <param name="index"> The index of the grunt. </param>
+		public void MouseExitGrunt ( int index )
+		{
+			// Check if grunt is available
+			if ( grunts [ index ].IsEnabled && grunts [ index ].IsAvailable && selectedUnit != gruntData [ index ] )
+			{
+				// Reset portrait
+				grunts [ index ].ResetSize ( );
+
+				// Display selected unit
+				DisplayUnit ( selectedUnit );
+			}
+		}
+
+		/// <summary>
+		/// Selects a hero to be potentially added to the team.
+		/// </summary>
+		/// <param name="index"> The index of the hero. </param>
+		public void SelectHero ( int index )
+		{
+			// Check if hero is available
+			if ( heroes [ index ].Portrait.IsEnabled && heroes [ index ].Portrait.IsAvailable && selectedUnit.ID != heroes [ index ].UnitID )
+			{
+				// Reset previous selection
+				if ( selectedUnit != null )
 				{
-					SelectionPortraits p = portraits.First ( x => x.UnitID == selectedHero.ID );
-					p.Portrait.ResetSize ( );
-					p.Portrait.IsBorderHighlighted = false;
+					// Check for grunt
+					if ( selectedUnit.Role == UnitData.UnitRole.PAWN )
+					{
+						// Get portrait
+						UI.UnitPortrait previousGrunt = GetGruntPortrait ( selectedUnit );
+
+						// Reset portrait
+						previousGrunt.ResetSize ( );
+						previousGrunt.IsBorderHighlighted = false;
+					}
+					else
+					{
+						// Get portrait
+						HeroPortraits previousHero = GetHeroPortrait ( selectedUnit );
+
+						// Reset portrait
+						previousHero.Portrait.ResetSize ( );
+						previousHero.Portrait.IsBorderHighlighted = false;
+					}
 				}
 
+				// Store unit
+				selectedUnit = MatchSettings.GetHero ( heroes [ index ].UnitID );
 
-				// Store the currently selected hero
-				selectedHero = MatchSettings.GetHero ( portraits [ index ].UnitID );
+				// Display selected unit
+				DisplayUnit ( selectedUnit );
 
-				// Enlarge the portrait to indicate that the hero is selected
-				portraits [ index ].Portrait.ChangeSize ( 5 );
-
-				// Highlight border
-				portraits [ index ].Portrait.IsBorderHighlighted = true;
-
-				// Display hero in card
-				cards [ confirmedHeroesCounter ].Card.SetCard ( selectedHero, setupManager.CurrentPlayer.Team );
-
-				// Preview the amount of slots the unit would add
-				setupManager.SlotMeter.PreviewSlots ( selectedHero.Slots );
+				// Highlight portrait
+				heroes [ index ].Portrait.IsBorderHighlighted = true;
 			}
+		}
+
+		/// <summary>
+		/// Selects a grunt to be potentially added to the team.
+		/// </summary>
+		/// <param name="index"> The index of the grunt. </param>
+		public void SelectGrunt ( int index )
+		{
+			// Check if grunt is available
+			if ( grunts [ index ].IsEnabled && grunts [ index ].IsAvailable && selectedUnit != gruntData [ index ] )
+			{
+				// Reset previous selection
+				if ( selectedUnit != null )
+				{
+					// Check for grunt
+					if ( selectedUnit.Role == UnitData.UnitRole.PAWN )
+					{
+						// Get portrait
+						UI.UnitPortrait previousGrunt = GetGruntPortrait ( selectedUnit );
+
+						// Reset portrait
+						previousGrunt.ResetSize ( );
+						previousGrunt.IsBorderHighlighted = false;
+					}
+					else
+					{
+						// Get portrait
+						HeroPortraits previousHero = GetHeroPortrait ( selectedUnit );
+
+						// Reset portrait
+						previousHero.Portrait.ResetSize ( );
+						previousHero.Portrait.IsBorderHighlighted = false;
+					}
+				}
+
+				// Store unit
+				selectedUnit = gruntData [ index ];
+
+				// Display selected unit
+				DisplayUnit ( selectedUnit );
+
+				// Highlight portrait
+				grunts [ index ].IsBorderHighlighted = true;
+			}
+		}
+
+		/// <summary>
+		/// Undoes the last unit confirmation.
+		/// </summary>
+		public void Undo ( )
+		{
+			// Check if currently selected unit is a hero
+			if ( selectedUnit != null && selectedUnit.Role != UnitData.UnitRole.PAWN )
+			{
+				// Reset portrait
+				HeroPortraits currentHero = GetHeroPortrait ( selectedUnit );
+				currentHero.Portrait.ResetSize ( );
+				currentHero.Portrait.IsBorderHighlighted = false;
+			}
+			else
+			{
+				// Reset portrait
+				UI.UnitPortrait currentGrunt = GetGruntPortrait ( selectedUnit );
+				currentGrunt.ResetSize ( );
+				currentGrunt.IsBorderHighlighted = false;
+			}
+
+			// Get last unit
+			selectedUnit = setupManager.CurrentPlayer.Units [ setupManager.CurrentPlayer.Units.Count - 1 ];
+
+			// Remove last unit from lineup
+			setupManager.CurrentPlayer.Units.Remove ( selectedUnit );
+			lineupCounter--;
+
+			// Check if last unit is a hero
+			if ( selectedUnit.Role != UnitData.UnitRole.PAWN )
+			{
+				// Update hero limit
+				heroLimitCounter--;
+				DisplayHeroLimit ( heroLimitCounter );
+			}
+
+			// Enable heroes
+			for ( int i = 0; i < heroes.Length; i++ )
+			{
+				// Check if the hero was enabled for the match
+				if ( !heroes [ i ].Portrait.IsEnabled )
+					continue;
+
+				// Check if the hero is on the team
+				if ( MatchSettings.HeroLimit && setupManager.CurrentPlayer.Units.Contains ( MatchSettings.GetHero ( heroes [ i ].UnitID ) ) )
+					continue;
+
+				// Check if 2 slot heroes can be selected
+				if ( lineupCounter == MatchSettings.TEAM_SIZE - 1 && MatchSettings.GetHero ( heroes [ i ].UnitID ).Slots > 1 )
+					continue;
+
+				// Enable hero
+				heroes [ i ].Portrait.IsAvailable = true;
+			}
+
+			// Enable grunts
+			for ( int i = 0; i < grunts.Length; i++ )
+			{
+				// Check if the hero is on the team
+				if ( MatchSettings.HeroLimit && setupManager.CurrentPlayer.Units.Contains ( gruntData [ i ] ) )
+					continue;
+
+				// Enable grunt
+				grunts [ i ].IsAvailable = true;
+			}
+
+			// Display last unit
+			DisplayUnit ( selectedUnit );
+
+			// Highlight portrait
+			if ( selectedUnit.Role != UnitData.UnitRole.PAWN )
+				GetHeroPortrait ( selectedUnit ).Portrait.IsBorderHighlighted = true;
+			else
+				GetGruntPortrait ( selectedUnit ).IsBorderHighlighted = true;
+
+			// Enable selection buttons
+			randomButton.interactable = true;
+			selectButton.interactable = true;
+
+			// Enable undo button if not back at start
+			undoButton.interactable = lineupCounter > lineupStart;
 		}
 
 		/// <summary>
 		/// Selects an available unit at random.
 		/// </summary>
-		/// <param name="confirmSelection"> Whether or not the randomly selected hero should be confirmed. </param>
-		public void SelectRandomUnit ( bool confirmSelection )
+		public void SelectRandomUnit ( )
 		{
-			// Get the subset of remaining available heroes based on their portraits
-			SelectionPortraits [ ] availableHeroes = portraits.Where ( x => x.Portrait.IsEnabled && x.Portrait.IsAvailable ).ToArray ( );
+			// Get available heroes
+			List<HeroPortraits> availableHeroes = new List<HeroPortraits> ( );
+			for ( int i = 0; i < heroes.Length; i++ )
+				if ( heroes [ i ].Portrait.IsEnabled && heroes [ i ].Portrait.IsAvailable )
+					availableHeroes.Add ( heroes [ i ] );
 
-			// Get a random hero from that subset
-			SelectionPortraits randomHero = availableHeroes [ Random.Range ( 0, availableHeroes.Length ) ];
+			// Get available grunts
+			List<UI.UnitPortrait> availableGrunts = new List<UI.UnitPortrait> ( );
+			for ( int i = 0; i < grunts.Length; i++ )
+				if ( grunts [ i ].IsEnabled && grunts [ i ].IsAvailable )
+					availableGrunts.Add ( grunts [ i ] );
 
-			// Select the random hero with the index of the portrait
-			SelectUnit ( System.Array.IndexOf ( portraits, randomHero ) );
+			// Get a random selection
+			int rng = Random.Range ( 0, availableHeroes.Count + availableGrunts.Count );
 
-			// Check if the random hero should be confirmed as well
-			if ( confirmSelection )
-				ConfirmUnit ( );
+			// Check if a hero was selected
+			if ( rng < availableHeroes.Count )
+				SelectHero ( System.Array.IndexOf ( heroes, availableHeroes [ rng ] ) );
+			else
+				SelectGrunt ( System.Array.IndexOf ( grunts, availableGrunts [ rng - availableHeroes.Count ] ) );
 		}
 
 		/// <summary>
@@ -248,110 +381,102 @@ namespace ProjectOcelot.Match.Setup
 		/// </summary>
 		public void ConfirmUnit ( )
 		{
-			// Add hero to the team
-			setupManager.CurrentPlayer.Units.Add ( selectedHero );
+			// Add unit to lineup
+			setupManager.CurrentPlayer.Units.Add ( selectedUnit );
+			lineupCounter += selectedUnit.Slots;
 
-			// Update slot meter
-			setupManager.SlotMeter.SetMeter ( setupManager.SlotMeter.FilledSlots + selectedHero.Slots );
-
-			// Increment the selected hero counter
-			confirmedHeroesCounter++;
-
-			// Increment the slot deficit if the hero occupies multiple slots
-			if ( selectedHero.Slots > 1 )
-				slotDeficitCounter += selectedHero.Slots - 1;
-
-			// Set whether or not the confirmed hero is still available for selection based on the match's stacking setting
-			portraits.First ( x => x.UnitID == selectedHero.ID ).Portrait.IsAvailable = !MatchSettings.HeroLimit;
-
-			// Set the cards for the next selection
-			SetCardState ( confirmedHeroesCounter );
-
-			// Set the portraits of any heros over the limit as unavailable
-			for ( int i = 0; i < portraits.Length; i++ )
-				if ( MatchSettings.GetUnitData ( portraits [ i ].UnitID ).Slots + setupManager.SlotMeter.FilledSlots > setupManager.SlotMeter.TotalSlots )
-					portraits [ i ].Portrait.IsAvailable = false;
-
-			// Check if more heroes can be selected
-			if ( confirmedHeroesCounter < MatchSettings.HeroesPerTeam && confirmedHeroesCounter < cards.Length - slotDeficitCounter )
+			// Check if added unit is a hero
+			if ( selectedUnit.Role != UnitData.UnitRole.PAWN )
 			{
-				// Select a hero at random to start the next selection
-				SelectRandomUnit ( false );
+				// Reset portrait
+				HeroPortraits previousHero = GetHeroPortrait ( selectedUnit );
+				previousHero.Portrait.ResetSize ( );
+				previousHero.Portrait.IsBorderHighlighted = false;
+
+				// Make unit unavailable if cloning is not enabled
+				previousHero.Portrait.IsAvailable = !MatchSettings.HeroLimit;
+
+				// Increment hero limit
+				heroLimitCounter++;
+				DisplayHeroLimit ( heroLimitCounter );
+
+				// Check if the hero limit has been reached
+				if ( heroLimitCounter == MatchSettings.HeroesPerTeam )
+					for ( int i = 0; i < heroes.Length; i++ )
+						if ( heroes [ i ].Portrait.IsEnabled )
+							heroes [ i ].Portrait.IsAvailable = false;
 			}
 			else
 			{
-				// Hide unselect card from the last card
-				SetCardState ( confirmedHeroesCounter - 1 );
-				cards [ confirmedHeroesCounter - 1 ].State = SelectionCards.CardState.SELECTED;
-				cards [ confirmedHeroesCounter - 2 ].State = SelectionCards.CardState.SELECTED;
+				// Reset portrait
+				UI.UnitPortrait previousGrunt = GetGruntPortrait ( selectedUnit );
+				previousGrunt.ResetSize ( );
+				previousGrunt.IsBorderHighlighted = false;
 
-				// Display confirmation button
-				selectPanel.SetActive ( false );
-				confirmPanel.SetActive ( true );
+				// Make unit unavailable if cloning is not enabled
+				previousGrunt.IsAvailable = !MatchSettings.HeroLimit;
+			}
 
+			// Clear selected unit
+			selectedUnit = null;
+
+			// Enable undo
+			undoButton.interactable = true;
+
+			// Check remaining slots
+			if ( lineupCounter == MatchSettings.TEAM_SIZE )
+			{
+				// Disable buttons
+				randomButton.interactable = false;
+				selectButton.interactable = false;
+
+				// Disable all units
+				for ( int i = 0; i < heroes.Length; i++ )
+					if ( heroes [ i ].Portrait.IsEnabled )
+						heroes [ i ].Portrait.IsAvailable = false;
+				for ( int i = 0; i < grunts.Length; i++ )
+					if ( grunts [ i ].IsEnabled )
+						grunts [ i ].IsAvailable = false;
+			}
+			else if ( lineupCounter == MatchSettings.TEAM_SIZE - 1 )
+			{
+				// Disable 2 slot heroes
+				for ( int i = 0; i < heroes.Length; i++ )
+					if ( heroes [ i ].Portrait.IsEnabled && MatchSettings.GetHero ( heroes [ i ].UnitID ).Slots > 1 )
+						heroes [ i ].Portrait.IsAvailable = false;
+
+				// Select another unit
+				SelectRandomUnit ( );
+			}
+			else
+			{
+				// Select another unit
+				SelectRandomUnit ( );
 			}
 		}
 
 		/// <summary>
-		/// Removes the last unit added to the team.
+		/// Confirms the team lineup selected.
 		/// </summary>
-		public void UnselectUnit ( )
+		public void ConfirmLineup ( )
 		{
-			// Display selection panel
-			selectPanel.SetActive ( true );
-			confirmPanel.SetActive ( false );
-
-			// Decrement hero counter
-			confirmedHeroesCounter--;
-
-			// Get last confirmed hero
-			UnitSettingData previousHero = setupManager.CurrentPlayer.Units [ confirmedHeroesCounter + 1 ];
-
-			// Remove hero from the player's roster
-			setupManager.CurrentPlayer.Units.Remove ( previousHero );
-
-			// Decrement slot deficit if the hero occupies multiple slots
-			if ( previousHero.Slots > 1 )
-				slotDeficitCounter -= previousHero.Slots - 1;
-
-			// Remove the hero from the slot meter
-			setupManager.SlotMeter.SetMeter ( setupManager.SlotMeter.FilledSlots - previousHero.Slots );
-
-			// Set cards to previous selection
-			SetCardState ( confirmedHeroesCounter );
-
-			// Enable any portraits that were disabled for being over the limit from the previous hero
-			for ( int i = 0; i < portraits.Length; i++ )
+			// Check for full lineup
+			if ( lineupCounter < MatchSettings.TEAM_SIZE )
 			{
-				if ( MatchSettings.GetUnitData ( portraits [ i ].UnitID ).Slots + setupManager.SlotMeter.FilledSlots <= setupManager.SlotMeter.TotalSlots && ( !MatchSettings.HeroLimit || ( MatchSettings.HeroLimit && !setupManager.CurrentPlayer.Units.Exists ( x => x.ID == portraits [ i ].UnitID ) ) ) )
-				{
-					portraits [ i ].Portrait.IsAvailable = true;
-					portraits [ i ].Portrait.IsBorderHighlighted = false;
-				}
+				// Open popup
+				popup.SetConfirmationPopUp ( "Confirm lineup?\n<size=75%>(Your lineup is not full yet!)",
+											 ( confirm ) =>
+											 {
+												 // Continue to team formation menu
+												 if ( confirm )
+													 teamFormationMenu.OpenMenu ( );
+											 } );
 			}
-
-
-			// Select previous hero
-			SelectUnit ( System.Array.IndexOf ( portraits, portraits.First ( x => x.UnitID == previousHero.ID ) ) );
-		}
-
-		/// <summary>
-		/// Confirms the team selection.
-		/// </summary>
-		public void ConfirmTeam ( )
-		{
-			// Add remaining pawns to team
-			for ( int i = 0; i < setupManager.SlotMeter.TotalSlots - setupManager.SlotMeter.FilledSlots; i++ )
+			else
 			{
-				// Get new unit data
-				UnitSettingData newPawn = MatchSettings.GetPawn ( );
-
-				// Add unit to team
-				setupManager.CurrentPlayer.Units.Add ( newPawn );
+				// Open the team formation menu
+				teamFormationMenu.OpenMenu ( );
 			}
-
-			// Open the team formation menu
-			teamFormationMenu.OpenMenu ( );
 		}
 
 		#endregion // Public Functions
@@ -359,51 +484,59 @@ namespace ProjectOcelot.Match.Setup
 		#region Private Functions
 
 		/// <summary>
-		/// Sets the states of each card based on how many heroes have been selected thus far.
+		/// Displays the hero limit prompt.
 		/// </summary>
-		/// <param name="index"> The index for the hero currently being selected. </param>
-		private void SetCardState ( int index )
+		/// <param name="currentHeroes"> The number of heroes current selected. </param>
+		private void DisplayHeroLimit ( int currentHeroes )
 		{
-			// Set the state of each card
-			for ( int i = 0; i < cards.Length; i++ )
-			{
-				// Check if the card is for more than the number of heroes for the match 
-				if ( i >= MatchSettings.HeroesPerTeam )
-				{
-					// Set the card to disabled
-					cards [ i ].State = SelectionCards.CardState.DISABLED;
-				}
-				// Check if the card is unavailable from there not being enough slots remaining
-				else if ( i >= cards.Length - slotDeficitCounter )
-				{
-					// Set the card to unavailable
-					cards [ i ].State = SelectionCards.CardState.UNAVAILABLE;
-				}
-				// Check if the card for the hero that is currently being selected
-				else if ( i == index )
-				{
-					// Set the card to on deck
-					cards [ i ].State = SelectionCards.CardState.ON_DECK;
-				}
-				// Check if the card is for the hero that was last selected
-				else if ( i == index - 1 && index - 1 >= 0 )
-				{
-					// Set the card to last selected
-					cards [ i ].State = SelectionCards.CardState.LAST_SELECTED;
-				}
-				// Check if the card is for a hero that has been selected
-				else if ( i < index && index < cards.Length )
-				{
-					// Set the card to selected
-					cards [ i ].State = SelectionCards.CardState.SELECTED;
-				}
-				// Set all leftover cards to display the prompt
-				else
-				{
-					// Set the card to unselected
-					cards [ i ].State = SelectionCards.CardState.UNSELECTED;
-				}
-			}
+			// Display prompt
+			heroLimit.text = "Hero Limit: ";
+
+			// Change color for max
+			if ( currentHeroes == MatchSettings.HeroesPerTeam )
+				heroLimit.text += "<color=#FFD24B>";
+
+			// Display limit
+			heroLimit.text += currentHeroes + " / " + MatchSettings.HeroesPerTeam;
+		}
+
+		/// <summary>
+		/// Gets the corrisponding portrait for a hero.
+		/// </summary>
+		/// <param name="unit"> The data for the hero. </param>
+		/// <returns> The hero's portrait. </returns>
+		private HeroPortraits GetHeroPortrait ( UnitSettingData unit )
+		{
+			return heroes.First ( x => x.UnitID == unit.ID );
+		}
+
+		/// <summary>
+		/// Gets the corrisponding portrait for a grunt.
+		/// </summary>
+		/// <param name="unit"> The data for the grunt. </param>
+		/// <returns> The grunt's portrait. </returns>
+		private UI.UnitPortrait GetGruntPortrait ( UnitSettingData unit )
+		{
+			return grunts [ System.Array.IndexOf ( gruntData, unit ) ];
+		}
+
+		/// <summary>
+		/// Previews a unit in the HUD.
+		/// </summary>
+		/// <param name="unit"> The data for the unit. </param>
+		private void DisplayUnit ( UnitSettingData unit )
+		{
+			// Increase the size of the portrait
+			if ( unit.Role == UnitData.UnitRole.PAWN )
+				GetGruntPortrait ( unit ).ChangeSize ( PORTRAIT_OFFSET );
+			else
+				GetHeroPortrait ( unit ).Portrait.ChangeSize ( PORTRAIT_OFFSET );
+
+			// Display unit
+			setupManager.DisplayUnit ( unit, setupManager.CurrentPlayer.Team );
+
+			// Update lineup
+			setupManager.SetCardInLineup ( lineupCounter, unit, setupManager.CurrentPlayer.Team );
 		}
 
 		#endregion // Private Functions

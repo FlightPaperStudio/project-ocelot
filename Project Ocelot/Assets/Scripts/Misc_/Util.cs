@@ -8,6 +8,34 @@ namespace ProjectOcelot.Tools
 	public class Util
 	{
 		/// <summary>
+		/// Return the name of the team for a given team color.
+		/// </summary>
+		/// <param name="team"> The team color of the team. </param>
+		/// <returns> The name of the team. </returns>
+		public static string TeamName ( Match.Player.TeamColor team )
+		{
+			// Get team
+			switch ( team )
+			{
+			case Match.Player.TeamColor.BLUE:
+				return "Blue Team";
+			case Match.Player.TeamColor.GREEN:
+				return "Green Team";
+			case Match.Player.TeamColor.YELLOW:
+				return "Yellow Team";
+			case Match.Player.TeamColor.ORANGE:
+				return "Orange Team";
+			case Match.Player.TeamColor.PINK:
+				return "Pink Team";
+			case Match.Player.TeamColor.PURPLE:
+				return "Purple Team";
+			}
+
+			// Return no team
+			return "";
+		}
+
+		/// <summary>
 		/// Returns the appropriate color value for the given team color.
 		/// </summary>
 		public static Color32 TeamColor ( Match.Player.TeamColor team, int factor = 0 )

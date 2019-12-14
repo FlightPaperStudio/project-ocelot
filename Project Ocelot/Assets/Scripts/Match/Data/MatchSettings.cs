@@ -47,7 +47,8 @@ namespace ProjectOcelot.Match
 		}
 
 		/// <summary>
-		/// This setting determines if dublicate heroes are allowed on the same team.
+		/// This setting determines whether or not dublicate heroes are not allowed on the same team.
+		/// (i.e. true = no dublicates, false = dublicates)
 		/// </summary>
 		public static bool HeroLimit
 		{
