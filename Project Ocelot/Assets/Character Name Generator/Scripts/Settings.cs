@@ -1,4 +1,4 @@
-﻿/* Character Name Generator v.1.0.0
+﻿/* Character Name Generator v.1.0.2
  * --------------------------------------------------------------------------------------------------------------------------------------------------
  * 
  * This file is part of Character Name Generator which is released under the Unity Asset Store End User License Agreement.
@@ -39,25 +39,25 @@ namespace CNG
 		/// The probability of a character/name will be randomly generated to have a prefix in their name.
 		/// This setting should be set between 0f and 1.0f to function properly.
 		/// </summary>
-		public static float NamePrefixChance = NAME_PREFIX_CHANCE_DEFAULT;
+		public static float NamePrefixChance = 0.05f;
 
 		/// <summary>
 		/// The probability of a character/name will be randomly generated to have a suffix in their name.
 		/// This setting should be set between 0f and 1.0f to function properly.
 		/// </summary>
-		public static float NameSuffixChance = NAME_SUFFIX_CHANCE_DEFAULT;
+		public static float NameSuffixChance = 0.05f;
 
 		/// <summary>
 		/// The probability of a character/name will be randomly generated to have two given names (e.g. Elizabeth Marie Smith).
 		/// This setting should be set between 0f and 1.0f to function properly.
 		/// </summary>
-		public static float DoubleGivenNameChance = DOUBLE_GIVEN_NAME_CHANCE_DEFAULT;
+		public static float DoubleGivenNameChance = 0.05f;
 
 		/// <summary>
 		/// The probability of a character/name will be randomly generated to have two family names (e.g. Jacob Washington Smith).
 		/// This setting should be set between 0f and 1.0f to function properly.
 		/// </summary>
-		public static float DoubleFamilyNameChance = DOUBLE_FAMILY_NAME_CHANCE_DEFAULT;
+		public static float DoubleFamilyNameChance = 0.05f;
 
 		/// <summary>
 		/// The probability of a character/name will be randomly generated to match the origin of an existing or provided origin.
@@ -98,6 +98,18 @@ namespace CNG
 		/// </summary>
 		public static bool PreventRecentRepeats = PREVENT_RECENT_REPEATS_DEFAULT;
 
+		/// <summary>
+		/// Whether or not the generator should generate an origin based on its weighted percentage.
+		/// Weighted percentages for origins by default are calculated based on the number of available given, family, nicknames, suffixes, and prefixes that fall under an origin.
+		/// </summary>
+		public static bool EnableWeightedOrigins = ENABLE_WEIGHTED_ORIGINS_DEFAULT;
+
+		/// <summary>
+		/// Whether or not the generator should output performance reports to the log.
+		/// Performance reports log the amount of time in milliseconds it takes to generate a name.
+		/// </summary>
+		public static bool OutputPerformance = OUTPUT_PERFORMANCE_DEFAULT;
+
 		#endregion // Settings Data
 
 		#region Settings Defaults
@@ -130,12 +142,12 @@ namespace CNG
 		/// <summary>
 		/// The default value for the Double Given Name Chance Setting.
 		/// </summary>
-		public const float DOUBLE_GIVEN_NAME_CHANCE_DEFAULT = 0.2f;
+		public const float DOUBLE_GIVEN_NAME_CHANCE_DEFAULT = 0.1f;
 
 		/// <summary>
 		/// The default value for the Double Family Name Chance Setting.
 		/// </summary>
-		public const float DOUBLE_FAMILY_NAME_CHANCE_DEFAULT = 0.2f;
+		public const float DOUBLE_FAMILY_NAME_CHANCE_DEFAULT = 0.1f;
 
 		/// <summary>
 		/// The default value for the Origin Tolerance Setting.
@@ -166,6 +178,16 @@ namespace CNG
 		/// The default value for the Recent Repeat Setting.
 		/// </summary>
 		public const bool PREVENT_RECENT_REPEATS_DEFAULT = true;
+
+		/// <summary>
+		/// The default value for the Weighted Origins Setting.
+		/// </summary>
+		public const bool ENABLE_WEIGHTED_ORIGINS_DEFAULT = true;
+
+		/// <summary>
+		/// The default value for the Output Performance Setting.
+		/// </summary>
+		public const bool OUTPUT_PERFORMANCE_DEFAULT = true;
 
 		#endregion // Settings Defaults
 	}

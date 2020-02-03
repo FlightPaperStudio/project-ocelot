@@ -74,6 +74,9 @@ namespace ProjectOcelot.Match.Setup
 		[SerializeField]
 		private Menues.Menu [ ] menus;
 
+		[SerializeField]
+		private int [ ] heroes;
+
 		public SplashPrompt Splash;
 		public Menues.PopUpMenu PopUp;
 		public LoadingScreen Load;
@@ -81,6 +84,7 @@ namespace ProjectOcelot.Match.Setup
 		private bool isPaused = false;
 		private int playerIndex = 0;
 		private UnitSettingData displayedUnit;
+		private UnitSettingData [ ] grunts;
 
 		private const string CLASSIC_ICON = "";
 		private const string CONTROL_ICON = "";
@@ -136,27 +140,35 @@ namespace ProjectOcelot.Match.Setup
 			case MatchType.Classic:
 			case MatchType.CustomClassic:
 				matchTypeIcon.text = CLASSIC_ICON;
-				matchType.text += "Classic Match";
+				matchType.text = "Classic Match";
 				break;
 			case MatchType.Control:
 			case MatchType.CustomControl:
 				matchTypeIcon.text = CONTROL_ICON;
-				matchType.text += "Control Match";
+				matchType.text = "Control Match";
 				break;
 			case MatchType.Rumble:
 			case MatchType.CustomRumble:
 				matchTypeIcon.text = RUMBLE_ICON;
-				matchType.text += "Rumble Match";
+				matchType.text = "Rumble Match";
 				break;
 			case MatchType.Inferno:
 			case MatchType.CustomInferno:
 				matchTypeIcon.text = INFERNO_ICON;
-				matchType.text += "Inferno Match";
+				matchType.text = "Inferno Match";
 				break;
 			}
 
+			// Generate grunts for selection
+			grunts = new UnitSettingData [ MatchSettings.Players.Count * 6 ];
+			for ( int i = 0; i < grunts.Length; i++ )
+				grunts [ i ] = MatchSettings.GetPawn ( );
+
 			// Begin team selection
-			debateMenu.OpenMenu ( );
+			if ( CurrentPlayer.Control == Player.PlayerControl.LOCAL_BOT || CurrentPlayer.Control == Player.PlayerControl.ONLINE_BOT )
+				AutoAssignCurrentPlayer ( );
+			else
+				debateMenu.OpenMenu ( );
 		}
 
 		/// <summary>
@@ -355,12 +367,21 @@ namespace ProjectOcelot.Match.Setup
 			// Check if players remain
 			if ( playerIndex < MatchSettings.playerSettings.Count )
 			{
-				// Display name of current player
-				playerName.text = CurrentPlayer.PlayerName;
+				// Check if next player is a bot
+				if ( MatchSettings.Players [ playerIndex ].Control == Player.PlayerControl.LOCAL_BOT || MatchSettings.Players [ playerIndex ].Control == Player.PlayerControl.ONLINE_BOT )
+				{
+					// Select team for bot
+					AutoAssignCurrentPlayer ( );
+				}
+				else
+				{
+					// Display name of current player
+					playerName.text = CurrentPlayer.PlayerName;
 
-				// Begin the setup process for player
-				formationMenu.CloseMenu ( false );
-				debateMenu.OpenMenu ( );
+					// Begin the setup process for player
+					formationMenu.CloseMenu ( false );
+					debateMenu.OpenMenu ( );
+				}
 			}
 			else
 			{
@@ -371,6 +392,23 @@ namespace ProjectOcelot.Match.Setup
 				// Begin match
 				BeginMatch ( );
 			}
+		}
+
+		/// <summary>
+		/// Gets the available grunts for team selection.
+		/// </summary>
+		/// <returns> The list of grunts generated for the team. </returns>
+		public UnitSettingData [ ] GetAvailableGrunts ( )
+		{
+			// Create temporary list
+			UnitSettingData [ ] temp = new UnitSettingData [ 6 ];
+
+			// Populate list
+			for ( int i = 0; i < temp.Length; i++ )
+				temp [ i ] = grunts [ ( playerIndex * 6 ) + i ];
+
+			// Return list
+			return temp;
 		}
 
 		/// <summary>
@@ -430,6 +468,102 @@ namespace ProjectOcelot.Match.Setup
 				// Hide tag
 				unitAbilities [ index ].Container.SetActive ( false );
 			}
+		}
+
+		/// <summary>
+		/// Automatically assigns a team for the current player.
+		/// </summary>
+		private void AutoAssignCurrentPlayer ( )
+		{
+			// Get a list of available leaders
+			List<int> availableLeaders = new List<int> ( );
+			for ( int i = 0; i < 6; i++ )
+				if ( MatchSettings.MatchDebate.GetLeaderResponse ( (Player.TeamColor)i ).HasStance && !MatchSettings.Players.Exists ( x => x.Team == (Player.TeamColor)i ) )
+					availableLeaders.Add ( i );
+
+			// Assign a leader at random
+			int leader = Random.Range ( 0, availableLeaders.Count );
+			CurrentPlayer.Team = (Player.TeamColor)leader;
+			CurrentPlayer.Units.Add ( MatchSettings.GetLeader ( (Player.TeamColor)leader ) );
+
+			// Track hero limits
+			int totalHeroes = 0;
+			int totalSlots = 1;
+
+			// Get a list of available heroes
+			List<int> availableHeroes = new List<int> ( );
+			for ( int i = 0; i < heroes.Length; i++ )
+				if ( MatchSettings.GetHero ( heroes [ i ] ).IsEnabled )
+					availableHeroes.Add ( heroes [ i ] );
+
+			// Assign heroes at random
+			while ( totalHeroes < MatchSettings.HeroesPerTeam && totalSlots < MatchSettings.TEAM_SIZE )
+			{
+				// Get random hero
+				int hero = Random.Range ( 0, availableHeroes.Count );
+
+				// Add hero to team
+				CurrentPlayer.Units.Add ( MatchSettings.GetHero ( hero ) );
+
+				// Increment counters
+				totalHeroes++;
+				totalSlots += CurrentPlayer.Units [ CurrentPlayer.Units.Count - 1 ].Slots;
+
+				// Check for completion
+				if ( totalHeroes < MatchSettings.HeroesPerTeam && totalSlots < MatchSettings.TEAM_SIZE )
+				{
+					// Remove duplicates
+					if ( MatchSettings.HeroLimit )
+						availableHeroes.Remove ( hero );
+
+					// Remove 2 slot heroes
+					if ( totalSlots + 1 == MatchSettings.TEAM_SIZE )
+						availableHeroes.RemoveAll ( x => MatchSettings.GetHero ( x ).Slots > 1 );
+				}
+			}
+
+			// Get a list of available grunts
+			List<UnitSettingData> availableGrunts = new List<UnitSettingData> ( );
+			for ( int i = 0; i < 6; i++ )
+				availableGrunts.Add ( grunts [ ( playerIndex * 6 ) + i ] );
+
+			// Assign grunts at random
+			while ( totalSlots < MatchSettings.TEAM_SIZE )
+			{
+				// Get random grunt
+				UnitSettingData grunt = availableGrunts [ Random.Range ( 0, availableGrunts.Count ) ];
+
+				// Add grunt to team
+				CurrentPlayer.Units.Add ( grunt );
+				totalSlots++;
+
+				// Check for completion
+				if ( totalSlots < MatchSettings.TEAM_SIZE )
+				{
+					// Remove duplicates
+					if ( MatchSettings.HeroLimit )
+						availableGrunts.Remove ( grunt );
+				}
+			}
+
+			// Get a list of available positions
+			List<int> availablePositions = new List<int> { 0, 1, 2, 3, 4, 5 };
+
+			// Assign formation at random
+			for ( int i = 0; i < CurrentPlayer.Units.Count; i++ )
+			{
+				// Get random position
+				int pos = availablePositions [ Random.Range ( 0, availablePositions.Count ) ];
+
+				// Add unit to position
+				CurrentPlayer.UnitFormation.Add ( CurrentPlayer.Units [ i ], pos );
+
+				// Remove position
+				availablePositions.Remove ( pos );
+			}
+
+			// Continue to the next player
+			SetNextPlayer ( );
 		}
 
 		#endregion // Private Functions

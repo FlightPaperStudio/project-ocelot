@@ -1,4 +1,4 @@
-﻿/* Character Name Generator v.1.0.0
+﻿/* Character Name Generator v.1.0.2
  * --------------------------------------------------------------------------------------------------------------------------------------------------
  * 
  * This file is part of Character Name Generator which is released under the Unity Asset Store End User License Agreement.
@@ -68,6 +68,11 @@ namespace CNG
 		#region Origin Data
 
 		/// <summary>
+		/// The ID of the origin.
+		/// </summary>
+		public int ID = 0;
+
+		/// <summary>
 		/// The name of the origin.
 		/// </summary>
 		public string Name = "None";
@@ -81,6 +86,11 @@ namespace CNG
 		/// The type of the origin's category.
 		/// </summary>
 		public CategoryType Category = CategoryType.NONE;
+
+		/// <summary>
+		/// The weighted percentage value of this origin.
+		/// </summary>
+		public float Weight = 0f;
 
 		#endregion // Origin Data
 

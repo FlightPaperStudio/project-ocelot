@@ -1,4 +1,4 @@
-﻿/* Character Name Generator v.1.0.0
+﻿/* Character Name Generator v.1.0.2
  * --------------------------------------------------------------------------------------------------------------------------------------------------
  * 
  * This file is part of Character Name Generator which is released under the Unity Asset Store End User License Agreement.
@@ -90,9 +90,12 @@ public class Example : MonoBehaviour
 
 	#endregion // Example Data
 
-	#region MonoBehaviour Functions
+	#region Public Functions
 
-	private void Start ( )
+	/// <summary>
+	/// Loads the name generator.
+	/// </summary>
+	public void Load ( )
 	{
 		// Load generator
 		NameData.LoadNameData ( );
@@ -108,10 +111,6 @@ public class Example : MonoBehaviour
 		// Display stats
 		DisplayStats ( );
 	}
-
-	#endregion // MonoBehaviour Functions
-
-	#region Public Functions
 
 	/// <summary>
 	/// Sets the gender filter.
@@ -230,6 +229,9 @@ public class Example : MonoBehaviour
 	/// </summary>
 	public void GenerateCharacters ( )
 	{
+		// Track performance
+		var performanceTracker = System.Diagnostics.Stopwatch.StartNew ( );
+
 		// Generate 10 characters
 		for ( int i = 0; i < displays.Length; i++ )
 		{
@@ -263,6 +265,11 @@ public class Example : MonoBehaviour
 				displays [ i ].DisplayCharacter ( NameGenerator.GetCharacter ( Origin.CategoryType.NONE, genderFilter ) );
 			}
 		}
+
+		// Output performance
+		performanceTracker.Stop ( );
+		Debug.Log ( displays.Length + " characters generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
+		Debug.Log ( "Average character generation: " + ( performanceTracker.ElapsedMilliseconds / displays.Length ) + " ms" );
 	}
 
 	#endregion // Public Functions

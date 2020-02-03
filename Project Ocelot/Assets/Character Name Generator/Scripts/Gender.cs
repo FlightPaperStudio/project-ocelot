@@ -1,4 +1,4 @@
-﻿/* Character Name Generator v.1.0.0
+﻿/* Character Name Generator v.1.0.2
  * --------------------------------------------------------------------------------------------------------------------------------------------------
  * 
  * This file is part of Character Name Generator which is released under the Unity Asset Store End User License Agreement.

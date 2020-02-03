@@ -224,22 +224,26 @@ namespace ProjectOcelot.Match.Setup
 		/// </summary>
 		public void Undo ( )
 		{
-			// Check if a tile has been selected for the current unit
-			if ( selectTileIndex != -1 )
+			// Check for completion
+			if ( cardIndex < MatchSettings.TEAM_SIZE && unitIndex < setupManager.CurrentPlayer.Units.Count )
 			{
-				// Remove unit
-				tiles [ selectTileIndex ].HasUnit = false;
+				// Check if a tile has been selected for the current unit
+				if ( selectTileIndex != -1 )
+				{
+					// Remove unit
+					tiles [ selectTileIndex ].HasUnit = false;
 
-				// Remove highlight
-				tiles [ selectTileIndex ].Tile.color = UNSELECTED_TILE;
+					// Remove highlight
+					tiles [ selectTileIndex ].Tile.color = UNSELECTED_TILE;
+				}
+
+				// Unhighlight current unit
+				setupManager.HighlightCardInLineup ( cardIndex, false, setupManager.CurrentPlayer.Team );
 			}
 
-			// Unhighlight current unit
-			setupManager.HighlightCardInLineup ( cardIndex, false, setupManager.CurrentPlayer.Team );
-
 			// Move to the previous unit
-			cardIndex -= setupManager.CurrentPlayer.Units [ unitIndex ].Slots;
 			unitIndex--;
+			cardIndex -= setupManager.CurrentPlayer.Units [ unitIndex ].Slots;
 
 			// Display previous unit
 			setupManager.DisplayUnit ( setupManager.CurrentPlayer.Units [ unitIndex ], setupManager.CurrentPlayer.Team );

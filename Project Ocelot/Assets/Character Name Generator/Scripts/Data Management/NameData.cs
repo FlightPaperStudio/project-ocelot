@@ -1,4 +1,4 @@
-﻿/* Character Name Generator v.1.0.0
+﻿/* Character Name Generator v.1.0.2
  * --------------------------------------------------------------------------------------------------------------------------------------------------
  * 
  * This file is part of Character Name Generator which is released under the Unity Asset Store End User License Agreement.
@@ -18,7 +18,17 @@ namespace CNG
 	/// </summary>
 	public static class NameData
 	{
-		#region Public Structures
+		#region Public Structures and Enums
+
+		public enum EntryDataset
+		{
+			NONE,
+			GIVEN_NAMES,
+			FAMILY_NAMES,
+			NICKNAMES,
+			NAME_PREFIXES,
+			NAME_SUFFIXES
+		}
 
 		/// <summary>
 		/// A data structure for storing the data of each name.
@@ -36,6 +46,13 @@ namespace CNG
 		#endregion // Public Classes
 
 		#region Private Classes
+
+		[System.Serializable]
+		private struct FilteredEntries
+		{
+			public Dictionary<int, List<NameEntry>> OriginEntries;
+			public NameEntry [ ] AllEntries;
+		}
 
 		/// <summary>
 		/// A wrapper class for converting JSON elements into a Name Entry.
@@ -78,9 +95,11 @@ namespace CNG
 		[System.Serializable]
 		public class OriginWrapper
 		{
+			public int ID;
 			public string Name;
 			public string Category;
 			public string Subcategory;
+			public float Weight;
 		}
 
 		#endregion // Private Classes
@@ -88,11 +107,11 @@ namespace CNG
 		#region Name Data
 
 		private static bool isLoaded = false;
-		private static NameEntry [ ] givenNames;
-		private static NameEntry [ ] familyNames;
-		private static NameEntry [ ] nicknames;
-		private static NameEntry [ ] namePrefixes;
-		private static NameEntry [ ] nameSuffixes;
+		private static FilteredEntries givenNames;
+		private static FilteredEntries familyNames;
+		private static FilteredEntries nicknames;
+		private static FilteredEntries namePrefixes;
+		private static FilteredEntries nameSuffixes;
 		private static Origin [ ] origins;
 
 		private const string GIVEN_NAME_JSON_FILE = "Character Name Generator - Given Names";
@@ -125,7 +144,7 @@ namespace CNG
 					LoadNameData ( );
 
 				// Return given names
-				return givenNames;
+				return givenNames.AllEntries;
 			}
 		}
 
@@ -141,7 +160,7 @@ namespace CNG
 					LoadNameData ( );
 
 				// Return family names
-				return familyNames;
+				return familyNames.AllEntries;
 			}
 		}
 
@@ -157,7 +176,7 @@ namespace CNG
 					LoadNameData ( );
 
 				// Return nicknames
-				return nicknames;
+				return nicknames.AllEntries;
 			}
 		}
 
@@ -173,7 +192,7 @@ namespace CNG
 					LoadNameData ( );
 
 				// Return name prefixes
-				return namePrefixes;
+				return namePrefixes.AllEntries;
 			}
 		}
 
@@ -189,7 +208,7 @@ namespace CNG
 					LoadNameData ( );
 
 				// Return name suffixes
-				return nameSuffixes;
+				return nameSuffixes.AllEntries;
 			}
 		}
 
@@ -218,6 +237,9 @@ namespace CNG
 		/// </summary>
 		public static void LoadNameData ( )
 		{
+			// Track performance
+			System.Diagnostics.Stopwatch performanceTracker = System.Diagnostics.Stopwatch.StartNew ( );
+
 			// Load origins
 			string originsJson = JsonManager.GetJsonFromResources ( ORIGIN_JSON_FILE );
 			OriginWrapper [ ] originWrapper = JsonManager.FromJson<OriginWrapper> ( originsJson );
@@ -226,35 +248,163 @@ namespace CNG
 			// Load given names
 			string givenNamesJson = JsonManager.GetJsonFromResources ( GIVEN_NAME_JSON_FILE );
 			GenderedNonTypedEntryWrapper [ ] givenNamesWrapper = JsonManager.FromJson<GenderedNonTypedEntryWrapper> ( givenNamesJson );
-			givenNames = ConvertWrapper ( givenNamesWrapper );
+			givenNames = Filter ( ConvertWrapper ( givenNamesWrapper ) );
 
-			// Load family names
+			//// Load family names
 			string familyNamesJson = JsonManager.GetJsonFromResources ( FAMILY_NAME_JSON_FILE );
 			NonGenderedNonTypedEntryWrapper [ ] familyNamesWrapper = JsonManager.FromJson<NonGenderedNonTypedEntryWrapper> ( familyNamesJson );
-			familyNames = ConvertWrapper ( familyNamesWrapper );
+			familyNames = Filter ( ConvertWrapper ( familyNamesWrapper ) );
 
-			// Load nicknames
+			//// Load nicknames
 			string nicknamesJson = JsonManager.GetJsonFromResources ( NICKNAME_JSON_FILE );
 			GenderedTypedEntryWrapper [ ] nicknamesWrapper = JsonManager.FromJson<GenderedTypedEntryWrapper> ( nicknamesJson );
-			nicknames = ConvertWrapper ( nicknamesWrapper );
+			nicknames = Filter ( ConvertWrapper ( nicknamesWrapper ) );
 
-			// Load name prefixes
+			//// Load name prefixes
 			string prefixesJson = JsonManager.GetJsonFromResources ( NAME_PREFIX_JSON_FILE );
 			GenderedNonTypedEntryWrapper [ ] prefixesWrapper = JsonManager.FromJson<GenderedNonTypedEntryWrapper> ( prefixesJson );
-			namePrefixes = ConvertWrapper ( prefixesWrapper );
+			namePrefixes = Filter ( ConvertWrapper ( prefixesWrapper ) );
 
-			// Load name suffixes
+			//// Load name suffixes
 			string suffixesJson = JsonManager.GetJsonFromResources ( NAME_SUFFIX_JSON_FILE );
 			NonGenderedNonTypedEntryWrapper [ ] suffixesWrapper = JsonManager.FromJson<NonGenderedNonTypedEntryWrapper> ( suffixesJson );
-			nameSuffixes = ConvertWrapper ( suffixesWrapper );
+			nameSuffixes = Filter ( ConvertWrapper ( suffixesWrapper ) );
 
 			// Store that the data is loaded
 			isLoaded = true;
+
+			// Output performance
+			performanceTracker.Stop ( );
+			if ( Settings.OutputPerformance )
+				Debug.Log ( "Name Data loaded in " + performanceTracker.ElapsedMilliseconds + " ms" );
+			
+		}
+
+		/// <summary>
+		/// Gets the filtered name entries from a specific dataset.
+		/// </summary>
+		/// <param name="dataset"> The dataset to filter from. </param>
+		/// <returns> The filtered dataset of name entries. </returns>
+		public static NameEntry [ ] GetFilteredEntries ( EntryDataset dataset )
+		{
+			// Check dataset
+			switch ( dataset )
+			{
+			// Return the filtered given names
+			case EntryDataset.GIVEN_NAMES:
+				return givenNames.AllEntries;
+
+			// Return the filtered family names
+			case EntryDataset.FAMILY_NAMES:
+				return familyNames.AllEntries;
+
+			// Return the filtered nicknames
+			case EntryDataset.NICKNAMES:
+				return nicknames.AllEntries;
+
+			// Return the filtered name prefixes
+			case EntryDataset.NAME_PREFIXES:
+				return namePrefixes.AllEntries;
+
+			// Return the filtered name suffixes
+			case EntryDataset.NAME_SUFFIXES:
+				return nameSuffixes.AllEntries;
+			}
+
+			// Return null as error
+			return null;
+		}
+
+		/// <summary>
+		/// Gets the filtered name entries from a specific dataset by origin.
+		/// </summary>
+		/// <param name="dataset"> The dataset to filter from. </param>
+		/// <param name="origin"> The origin to filter by. </param>
+		/// <returns> The filtered subset of name entries. </returns>
+		public static NameEntry [ ] GetFilteredEntries ( EntryDataset dataset, Origin origin )
+		{
+			// Check dataset
+			switch ( dataset )
+			{
+			// Return the filtered given names
+			case EntryDataset.GIVEN_NAMES:
+				if ( origin.ID == 0 || !givenNames.OriginEntries.ContainsKey ( origin.ID ) )
+					return givenNames.AllEntries;
+				else
+					return givenNames.OriginEntries [ origin.ID ].ToArray ( );
+
+			// Return the filtered family names
+			case EntryDataset.FAMILY_NAMES:
+				if ( origin.ID == 0 || !familyNames.OriginEntries.ContainsKey ( origin.ID ) )
+					return familyNames.AllEntries;
+				else
+					return familyNames.OriginEntries [ origin.ID ].ToArray ( );
+
+			// Return the filtered nicknames
+			case EntryDataset.NICKNAMES:
+				if ( origin.ID == 0 || !nicknames.OriginEntries.ContainsKey ( origin.ID ) )
+					return nicknames.AllEntries;
+				else
+					return nicknames.OriginEntries [ origin.ID ].ToArray ( );
+
+			// Return the filtered name prefixes
+			case EntryDataset.NAME_PREFIXES:
+				if ( origin.ID == 0 || !namePrefixes.OriginEntries.ContainsKey ( origin.ID ) )
+					return namePrefixes.AllEntries;
+				else
+					return namePrefixes.OriginEntries [ origin.ID ].ToArray ( );
+
+			// Return the filtered name suffixes
+			case EntryDataset.NAME_SUFFIXES:
+				if ( origin.ID == 0 || !nameSuffixes.OriginEntries.ContainsKey ( origin.ID ) )
+					return nameSuffixes.AllEntries;
+				else
+					return nameSuffixes.OriginEntries [ origin.ID ].ToArray ( );
+			}
+
+			// Return null as error
+			return null;
 		}
 
 		#endregion // Public Functions
 
 		#region Private Functions
+
+		/// <summary>
+		/// Filters a set of name entries into subsets of dictionaries based on origin, subcategory, and category.
+		/// </summary>
+		/// <param name="entries"> The set of name entries. </param>
+		/// <returns> The filtered set of name entries. </returns>
+		private static FilteredEntries Filter ( NameEntry [ ] entries )
+		{
+			// Declare data structure
+			FilteredEntries data = new FilteredEntries
+			{
+				OriginEntries = new Dictionary<int, List<NameEntry>> ( ),
+				//SubcategoryEntries = new Dictionary<Origin.SubcategoryType, List<NameEntry>> ( ),
+				//CategoryEntries = new Dictionary<Origin.CategoryType, List<NameEntry>> ( ),
+				AllEntries = entries
+			};
+
+			// Add each origin
+			for ( int i = 0; i < origins.Length; i++ )
+				data.OriginEntries.Add ( origins [ i ].ID, new List<NameEntry> ( ) );
+
+			// Filter each entry
+			for ( int i = 0; i < entries.Length; i++ )
+			{
+				// Filter each origin
+				for ( int j = 0; j < entries [ i ].Origins.Length; j++ )
+				{
+					// Add value to origin key
+					if ( data.OriginEntries.ContainsKey ( entries [ i ].Origins [ j ].ID ) )
+						data.OriginEntries [ entries [ i ].Origins [ j ].ID ].Add ( entries [ i ] );
+				}
+			}
+
+			// Return filtered entries
+			return data;
+		}
 
 		/// <summary>
 		/// Gets an origin by name.
@@ -267,6 +417,7 @@ namespace CNG
 			if ( origin == "" || origin == "Any" || origin == "None" )
 				return new Origin
 				{
+					ID = 0,
 					Name = "Any",
 					Subcategory = Origin.SubcategoryType.NONE,
 					Category = Origin.CategoryType.NONE
@@ -280,6 +431,7 @@ namespace CNG
 			// Return that no origin was found
 			return new Origin
 			{
+				ID = 0,
 				Name = "Error",
 				Subcategory = Origin.SubcategoryType.NONE,
 				Category = Origin.CategoryType.NONE
@@ -392,9 +544,11 @@ namespace CNG
 			for ( int i = 0; i < wrapper.Length; i++ )
 				data [ i ] = new Origin
 				{
+					ID = wrapper [ i ].ID,
 					Name = wrapper [ i ].Name,
 					Subcategory = Origin.SubcategoryFromString ( wrapper [ i ].Subcategory ),
-					Category = Origin.CategoryFromString ( wrapper [ i ].Category )
+					Category = Origin.CategoryFromString ( wrapper [ i ].Category ),
+					Weight = wrapper [ i ].Weight
 				};
 
 			// Return the converted data

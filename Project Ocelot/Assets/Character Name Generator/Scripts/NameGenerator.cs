@@ -1,4 +1,4 @@
-﻿/* Character Name Generator v.1.0.0
+﻿/* Character Name Generator v.1.0.2
  * --------------------------------------------------------------------------------------------------------------------------------------------------
  * 
  * This file is part of Character Name Generator which is released under the Unity Asset Store End User License Agreement.
@@ -35,6 +35,21 @@ namespace CNG
 
 		#endregion // Public Enums
 
+		#region Private Classes
+
+		/// <summary>
+		/// A class for filtering and story subsets of name entries for the generator.
+		/// </summary>
+		private class EntrySubset
+		{
+			public List<NameData.NameEntry> Entries = new List<NameData.NameEntry> ( );
+			public NameData.EntryDataset FilteredDataset = NameData.EntryDataset.NONE;
+			public Gender.Label FilterdGender = Gender.Label.NONE;
+			public int FilteredOrigin = 0;
+		}
+
+		#endregion // Private Classes
+
 		#region Generator Data
 
 		private static string [ ] recentGivenNames = new string [ 100 ];
@@ -46,10 +61,10 @@ namespace CNG
 		private static int recentNicknameIndex = 0;
 
 		private static List<Origin> origins = new List<Origin> ( );
-		private static List<NameData.NameEntry> originSubset = new List<NameData.NameEntry> ( );
-		private static List<NameData.NameEntry> subcategorySubset = new List<NameData.NameEntry> ( );
-		private static List<NameData.NameEntry> categorySubset = new List<NameData.NameEntry> ( );
-		private static List<NameData.NameEntry> anySubset = new List<NameData.NameEntry> ( );
+		private static EntrySubset originSubset = new EntrySubset ( );
+		private static EntrySubset subcategorySubset = new EntrySubset ( );
+		private static EntrySubset categorySubset = new EntrySubset ( );
+		private static EntrySubset anySubset = new EntrySubset ( );
 
 		#endregion // Generator Data
 
@@ -113,6 +128,9 @@ namespace CNG
 		/// <returns> The generated character. </returns>
 		public static Character GetCharacter ( Origin origin, Gender.Label gender = Gender.Label.NONE, Format format = Format.NONE )
 		{
+			// Track performance
+			System.Diagnostics.Stopwatch performanceTracker = System.Diagnostics.Stopwatch.StartNew ( );
+
 			// Create a new character
 			Character character = new Character ( );
 
@@ -139,6 +157,11 @@ namespace CNG
 
 			// Assign nickname
 			character.Nickname = GetNickname ( character.Origin, character.Gender, format );
+
+			// Output performance
+			performanceTracker.Stop ( );
+			if ( Settings.OutputPerformance )
+				Debug.Log ( "Character " + character.WesternNameOrder + " generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
 
 			// Return the newly created character
 			return character;
@@ -220,15 +243,40 @@ namespace CNG
 						};
 			}
 
-			// Get random origin
-			int random = Random.Range ( 0, NameData.Origins.Length );
+			// Store random origin index
+			int index = 0;
+
+			// Check weighted setting
+			if ( Settings.EnableWeightedOrigins )
+			{
+				// Generate origin by weighted values
+				float random = Random.Range ( 0.0f, 1.0f );
+
+				// Find the generated origin from its weight
+				for ( int i = 0; i < NameData.Origins.Length; i++ )
+				{
+					// Check if the random value falls within the weighted range
+					random -= NameData.Origins [ i ].Weight;
+					if ( random <= 0.0f )
+					{
+						// Store random index
+						index = i;
+						break;
+					}
+				}
+			}
+			else
+			{
+				// Generate origin with evenly weighted values
+				index = Random.Range ( 0, NameData.Origins.Length );
+			}
 
 			// Return origin
 			return new Origin
 			{
-				Name = NameData.Origins [ random ].Name,
-				Subcategory = NameData.Origins [ random ].Subcategory,
-				Category = NameData.Origins [ random ].Category
+				Name = NameData.Origins [ index ].Name,
+				Subcategory = NameData.Origins [ index ].Subcategory,
+				Category = NameData.Origins [ index ].Category
 			};
 		}
 
@@ -250,32 +298,89 @@ namespace CNG
 				origins.Clear ( );
 
 				// Get subset of origins
+				float weightedTotal = 0f;
 				for ( int i = 0; i < NameData.Origins.Length; i++ )
+				{
 					if ( NameData.Origins [ i ].Subcategory == subcategory )
+					{
 						origins.Add ( NameData.Origins [ i ] );
+						weightedTotal += NameData.Origins [ i ].Weight;
+					}
+						
+				}
 
-				// Get random origin
-				int random = Random.Range ( 0, origins.Count );
+				// Store random origin index
+				int index = 0;
+
+				// Check weighted setting
+				if ( Settings.EnableWeightedOrigins )
+				{
+					// Generate origin by weighted values
+					float random = Random.Range ( 0.0f, weightedTotal );
+
+					// Find the generated origin from its weight
+					for ( int i = 0; i < origins.Count; i++ )
+					{
+						// Check if the random value falls within the weighted range
+						random -= origins [ i ].Weight;
+						if ( random <= 0.0f )
+						{
+							// Store random index
+							index = i;
+							break;
+						}
+					}
+				}
+				else
+				{
+					// Generate origin with evenly weighted values
+					index = Random.Range ( 0, origins.Count );
+				}
 
 				// Return origin
 				return new Origin
 				{
-					Name = origins [ random ].Name,
-					Subcategory = origins [ random ].Subcategory,
-					Category = origins [ random ].Category
+					Name = origins [ index ].Name,
+					Subcategory = origins [ index ].Subcategory,
+					Category = origins [ index ].Category
 				};
 			}
 			else
 			{
-				// Get random origin
-				int random = Random.Range ( 0, NameData.Origins.Length );
+				// Store random origin index
+				int index = 0;
+
+				// Check weighted setting
+				if ( Settings.EnableWeightedOrigins )
+				{
+					// Generate origin by weighted values
+					float random = Random.Range ( 0.0f, 1.0f );
+
+					// Find the generated origin from its weight
+					for ( int i = 0; i < NameData.Origins.Length; i++ )
+					{
+						// Check if the random value falls within the weighted range
+						random -= NameData.Origins [ i ].Weight;
+						if ( random <= 0.0f )
+						{
+							// Store random index
+							index = i;
+							break;
+						}
+					}
+				}
+				else
+				{
+					// Generate origin with evenly weighted values
+					index = Random.Range ( 0, NameData.Origins.Length );
+				}
 
 				// Return origin
 				return new Origin
 				{
-					Name = NameData.Origins [ random ].Name,
-					Subcategory = NameData.Origins [ random ].Subcategory,
-					Category = NameData.Origins [ random ].Category
+					Name = NameData.Origins [ index ].Name,
+					Subcategory = NameData.Origins [ index ].Subcategory,
+					Category = NameData.Origins [ index ].Category
 				};
 			}
 		}
@@ -294,33 +399,93 @@ namespace CNG
 			// Check for defined origin
 			if ( category != Origin.CategoryType.NONE )
 			{
-				// Get subset of origins
-				for ( int i = 0; i < NameData.Origins.Length; i++ )
-					if ( NameData.Origins [ i ].Category == category )
-						origins.Add ( NameData.Origins [ i ] );
+				// Clear previous origins
+				origins.Clear ( );
 
-				// Get random origin
-				int random = Random.Range ( 0, origins.Count );
+				// Get subset of origins
+				float weightedTotal = 0f;
+				for ( int i = 0; i < NameData.Origins.Length; i++ )
+				{
+					if ( NameData.Origins [ i ].Category == category )
+					{
+						origins.Add ( NameData.Origins [ i ] );
+						weightedTotal += NameData.Origins [ i ].Weight;
+					}
+
+				}
+
+				// Store random origin index
+				int index = 0;
+
+				// Check weighted setting
+				if ( Settings.EnableWeightedOrigins )
+				{
+					// Generate origin by weighted values
+					float random = Random.Range ( 0.0f, weightedTotal );
+
+					// Find the generated origin from its weight
+					for ( int i = 0; i < origins.Count; i++ )
+					{
+						// Check if the random value falls within the weighted range
+						random -= origins [ i ].Weight;
+						if ( random <= 0.0f )
+						{
+							// Store random index
+							index = i;
+							break;
+						}
+					}
+				}
+				else
+				{
+					// Generate origin with evenly weighted values
+					index = Random.Range ( 0, origins.Count );
+				}
 
 				// Return origin
 				return new Origin
 				{
-					Name = origins [ random ].Name,
-					Subcategory = origins [ random ].Subcategory,
-					Category = origins [ random ].Category
+					Name = origins [ index ].Name,
+					Subcategory = origins [ index ].Subcategory,
+					Category = origins [ index ].Category
 				};
 			}
 			else
 			{
-				// Get random origin
-				int random = Random.Range ( 0, NameData.Origins.Length );
+				// Store random origin index
+				int index = 0;
+
+				// Check weighted setting
+				if ( Settings.EnableWeightedOrigins )
+				{
+					// Generate origin by weighted values
+					float random = Random.Range ( 0.0f, 1.0f );
+
+					// Find the generated origin from its weight
+					for ( int i = 0; i < NameData.Origins.Length; i++ )
+					{
+						// Check if the random value falls within the weighted range
+						random -= NameData.Origins [ i ].Weight;
+						if ( random <= 0.0f )
+						{
+							// Store random index
+							index = i;
+							break;
+						}
+					}
+				}
+				else
+				{
+					// Generate origin with evenly weighted values
+					index = Random.Range ( 0, NameData.Origins.Length );
+				}
 
 				// Return origin
 				return new Origin
 				{
-					Name = NameData.Origins [ random ].Name,
-					Subcategory = NameData.Origins [ random ].Subcategory,
-					Category = NameData.Origins [ random ].Category
+					Name = NameData.Origins [ index ].Name,
+					Subcategory = NameData.Origins [ index ].Subcategory,
+					Category = NameData.Origins [ index ].Category
 				};
 			}
 		}
@@ -420,6 +585,9 @@ namespace CNG
 			if ( !NameData.IsNameDataLoaded )
 				NameData.LoadNameData ( );
 
+			// Track performance
+			System.Diagnostics.Stopwatch performanceTracker = System.Diagnostics.Stopwatch.StartNew ( );
+
 			// Randomly generate origin tolerance
 			float tolerance = Random.Range ( 0, Settings.OriginTolerance + Settings.OriginSubcategoryTolerance + Settings.OriginCategoryTolerance + Settings.OriginAnyTolerance );
 			bool useOrigin = tolerance <= Settings.OriginTolerance;
@@ -438,74 +606,116 @@ namespace CNG
 			if ( gender == Gender.Label.NONE )
 				gender = GetGender ( );
 
-			// Check for a successful filter
-			if ( !Filter ( NameData.NamePrefixes, gender, origin ) )
-			{
-				// Generate random prefix
-				random = Random.Range ( 0, NameData.NamePrefixes.Length );
-				prefix = NameData.NamePrefixes [ random ].Name;
-
-				// Return generated prefix
-				return UnicodeManager.SpecialCharacterCheck ( prefix ) ? UnicodeManager.ConvertSpecialCharacter ( prefix, Settings.UseUnicodeCharacters ) : prefix;
-			}
-
 			// Check for matching origin
 			if ( useOrigin )
 			{
+				// Filter data
+				Filter ( NameData.EntryDataset.NAME_PREFIXES, originSubset, gender, origin );
+
 				// Check data set
-				if ( originSubset.Count > 0 )
+				if ( originSubset.Entries.Count > 0 )
 				{
 					// Generate random prefix
-					random = Random.Range ( 0, originSubset.Count );
-					prefix = originSubset [ random ].Name;
+					random = Random.Range ( 0, originSubset.Entries.Count );
+					prefix = originSubset.Entries [ random ].Name;
+
+					// Convert special characters
+					if ( UnicodeManager.SpecialCharacterCheck ( prefix ) )
+						prefix = UnicodeManager.ConvertSpecialCharacter ( prefix, Settings.UseUnicodeCharacters );
+
+					// Output performance
+					performanceTracker.Stop ( );
+					if ( Settings.OutputPerformance )
+						Debug.Log ( "Prefix " + prefix + " generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
 
 					// Return generated prefix
-					return UnicodeManager.SpecialCharacterCheck ( prefix ) ? UnicodeManager.ConvertSpecialCharacter ( prefix, Settings.UseUnicodeCharacters ) : prefix;
+					return prefix;
 				}
 			}
 
 			// Check for matching subcategory
 			if ( useSubcategory )
 			{
+				// Filter data
+				Filter ( NameData.EntryDataset.NAME_PREFIXES, subcategorySubset, gender, origin.Subcategory );
+
 				// Check data set
-				if ( subcategorySubset.Count > 0 )
+				if ( subcategorySubset.Entries.Count > 0 )
 				{
 					// Generate random prefix
-					random = Random.Range ( 0, subcategorySubset.Count );
-					prefix = subcategorySubset [ random ].Name;
+					random = Random.Range ( 0, subcategorySubset.Entries.Count );
+					prefix = subcategorySubset.Entries [ random ].Name;
+
+					// Convert special characters
+					if ( UnicodeManager.SpecialCharacterCheck ( prefix ) )
+						prefix = UnicodeManager.ConvertSpecialCharacter ( prefix, Settings.UseUnicodeCharacters );
+
+					// Output performance
+					performanceTracker.Stop ( );
+					if ( Settings.OutputPerformance )
+						Debug.Log ( "Prefix " + prefix + " generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
 
 					// Return generated prefix
-					return UnicodeManager.SpecialCharacterCheck ( prefix ) ? UnicodeManager.ConvertSpecialCharacter ( prefix, Settings.UseUnicodeCharacters ) : prefix;
+					return prefix;
 				}
 			}
 
 			// Check for matching category
 			if ( useCategory )
 			{
+				// Filter data
+				Filter ( NameData.EntryDataset.NAME_PREFIXES, categorySubset, gender, origin.Category );
+
 				// Check data set
-				if ( categorySubset.Count > 0 )
+				if ( categorySubset.Entries.Count > 0 )
 				{
 					// Generate random prefix
-					random = Random.Range ( 0, categorySubset.Count );
-					prefix = categorySubset [ random ].Name;
+					random = Random.Range ( 0, categorySubset.Entries.Count );
+					prefix = categorySubset.Entries [ random ].Name;
+
+					// Convert special characters
+					if ( UnicodeManager.SpecialCharacterCheck ( prefix ) )
+						prefix = UnicodeManager.ConvertSpecialCharacter ( prefix, Settings.UseUnicodeCharacters );
+
+					// Output performance
+					performanceTracker.Stop ( );
+					if ( Settings.OutputPerformance )
+						Debug.Log ( "Prefix " + prefix + " generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
 
 					// Return generated prefix
-					return UnicodeManager.SpecialCharacterCheck ( prefix ) ? UnicodeManager.ConvertSpecialCharacter ( prefix, Settings.UseUnicodeCharacters ) : prefix;
+					return prefix;
 				}
 			}
 
+			// Filter data
+			Filter ( NameData.EntryDataset.NAME_PREFIXES, anySubset, gender );
+
 			// Check data set
-			if ( anySubset.Count > 0 )
+			if ( anySubset.Entries.Count > 0 )
 			{
 				// Generate random prefix
-				random = Random.Range ( 0, anySubset.Count );
-				prefix = anySubset [ random ].Name;
+				random = Random.Range ( 0, anySubset.Entries.Count );
+				prefix = anySubset.Entries [ random ].Name;
+
+				// Convert special characters
+				if ( UnicodeManager.SpecialCharacterCheck ( prefix ) )
+					prefix = UnicodeManager.ConvertSpecialCharacter ( prefix, Settings.UseUnicodeCharacters );
+
+				// Output performance
+				performanceTracker.Stop ( );
+				if ( Settings.OutputPerformance )
+					Debug.Log ( "Prefix " + prefix + " generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
 
 				// Return generated prefix
-				return UnicodeManager.SpecialCharacterCheck ( prefix ) ? UnicodeManager.ConvertSpecialCharacter ( prefix, Settings.UseUnicodeCharacters ) : prefix;
+				return prefix;
 			}
 			else
 			{
+				// Output performance
+				performanceTracker.Stop ( );
+				if ( Settings.OutputPerformance )
+					Debug.Log ( "No prefix generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
+
 				// Return no prefix
 				return "";
 			}
@@ -577,6 +787,9 @@ namespace CNG
 			if ( !NameData.IsNameDataLoaded )
 				NameData.LoadNameData ( );
 
+			// Track performance
+			System.Diagnostics.Stopwatch performanceTracker = System.Diagnostics.Stopwatch.StartNew ( );
+
 			// Randomly generate origin tolerance
 			float tolerance = Random.Range ( 0, Settings.OriginTolerance + Settings.OriginSubcategoryTolerance + Settings.OriginCategoryTolerance + Settings.OriginAnyTolerance );
 			bool useOrigin = tolerance <= Settings.OriginTolerance;
@@ -603,78 +816,34 @@ namespace CNG
 			// Generate given name format
 			bool useDouble = format == Format.GIVEN_GIVEN_FAMILY || format == Format.GIVEN_GIVEN_FAMILY_FAMILY;
 			
-			// Filter data
-			if ( Settings.PreventRecentRepeats )
-			{
-				// Check for successful filter
-				if ( !Filter ( NameData.GivenNames, gender, origin, recentFamilyNames ) )
-				{
-					// Generate all given names
-					for ( int i = 0; i < ( useDouble ? 2 : 1 ); i++ )
-					{
-						// Generate random given name
-						random = Random.Range ( 0, NameData.GivenNames.Length );
-						given = NameData.GivenNames [ random ].Name;
-
-						// Add name to recent list
-						recentGivenNames [ recentGivenNameIndex ] = given;
-						recentGivenNameIndex++;
-						if ( recentGivenNameIndex >= recentGivenNames.Length )
-							recentGivenNameIndex = 0;
-
-						// Add given name
-						name += ( i > 0 ) ? " " + given : given;
-					}
-
-					// Return given name
-					return UnicodeManager.SpecialCharacterCheck ( name ) ? UnicodeManager.ConvertSpecialCharacter ( name, Settings.UseUnicodeCharacters ) : name;
-				}
-			}
-			else
-			{
-				// Check for successful filter
-				if ( !Filter ( NameData.GivenNames, gender, origin ) )
-				{
-					// Generate all given names
-					for ( int i = 0; i < ( useDouble ? 2 : 1 ); i++ )
-					{
-						// Generate random given name
-						random = Random.Range ( 0, NameData.GivenNames.Length );
-						given = NameData.GivenNames [ random ].Name;
-
-						// Add name to recent list
-						recentGivenNames [ recentGivenNameIndex ] = given;
-						recentGivenNameIndex++;
-						if ( recentGivenNameIndex >= recentGivenNames.Length )
-							recentGivenNameIndex = 0;
-
-						// Add given name
-						name += ( i > 0 ) ? " " + given : given;
-					}
-
-					// Return given name
-					return UnicodeManager.SpecialCharacterCheck ( name ) ? UnicodeManager.ConvertSpecialCharacter ( name, Settings.UseUnicodeCharacters ) : name;
-				}
-			}
-			
 			// Generate all given names
 			for ( int i = 0; i < ( useDouble ? 2 : 1 ); i++ )
 			{
 				// Check for matching origin
 				if ( useOrigin )
 				{
+					// Filter data
+					if ( Settings.PreventRecentRepeats )
+						Filter ( NameData.EntryDataset.GIVEN_NAMES, originSubset, gender, origin, recentGivenNames );
+					else
+						Filter ( NameData.EntryDataset.GIVEN_NAMES, originSubset, gender, origin );
+
 					// Check data set
-					if ( originSubset.Count > 0 )
+					if ( originSubset.Entries.Count > 0 )
 					{
 						// Generate random given name
-						random = Random.Range ( 0, originSubset.Count );
-						given = originSubset [ random ].Name;
+						random = Random.Range ( 0, originSubset.Entries.Count );
+						given = originSubset.Entries [ random ].Name;
 
 						// Add name to recent list
 						recentGivenNames [ recentGivenNameIndex ] = given;
 						recentGivenNameIndex++;
 						if ( recentGivenNameIndex >= recentGivenNames.Length )
 							recentGivenNameIndex = 0;
+
+						// Reset subset if recent names have been added
+						if ( Settings.PreventRecentRepeats )
+							originSubset.FilteredDataset = NameData.EntryDataset.NONE;
 
 						// Return generated given name
 						name += ( i > 0 ) ? " " + given : given;
@@ -685,18 +854,28 @@ namespace CNG
 				// Check for matching subcategory
 				if ( useSubcategory )
 				{
+					// Filter data
+					if ( Settings.PreventRecentRepeats )
+						Filter ( NameData.EntryDataset.GIVEN_NAMES, subcategorySubset, gender, origin.Subcategory, recentGivenNames );
+					else
+						Filter ( NameData.EntryDataset.GIVEN_NAMES, subcategorySubset, gender, origin.Subcategory );
+
 					// Check data set
-					if ( subcategorySubset.Count > 0 )
+					if ( subcategorySubset.Entries.Count > 0 )
 					{
 						// Generate random given name
-						random = Random.Range ( 0, subcategorySubset.Count );
-						given = subcategorySubset [ random ].Name;
+						random = Random.Range ( 0, subcategorySubset.Entries.Count );
+						given = subcategorySubset.Entries [ random ].Name;
 
 						// Add name to recent list
 						recentGivenNames [ recentGivenNameIndex ] = given;
 						recentGivenNameIndex++;
 						if ( recentGivenNameIndex >= recentGivenNames.Length )
 							recentGivenNameIndex = 0;
+
+						// Reset subset if recent names have been added
+						if ( Settings.PreventRecentRepeats )
+							subcategorySubset.FilteredDataset = NameData.EntryDataset.NONE;
 
 						// Return generated given name
 						name += ( i > 0 ) ? " " + given : given;
@@ -707,12 +886,18 @@ namespace CNG
 				// Check for matching category
 				if ( useCategory )
 				{
+					// Filter data
+					if ( Settings.PreventRecentRepeats )
+						Filter ( NameData.EntryDataset.GIVEN_NAMES, categorySubset, gender, origin.Category, recentGivenNames );
+					else
+						Filter ( NameData.EntryDataset.GIVEN_NAMES, categorySubset, gender, origin.Category );
+
 					// Check data set
-					if ( categorySubset.Count > 0 )
+					if ( categorySubset.Entries.Count > 0 )
 					{
 						// Generate random given name
-						random = Random.Range ( 0, categorySubset.Count );
-						given = categorySubset [ random ].Name;
+						random = Random.Range ( 0, categorySubset.Entries.Count );
+						given = categorySubset.Entries [ random ].Name;
 
 						// Add name to recent list
 						recentGivenNames [ recentGivenNameIndex ] = given;
@@ -720,18 +905,28 @@ namespace CNG
 						if ( recentGivenNameIndex >= recentGivenNames.Length )
 							recentGivenNameIndex = 0;
 
+						// Reset subset if recent names have been added
+						if ( Settings.PreventRecentRepeats )
+							categorySubset.FilteredDataset = NameData.EntryDataset.NONE;
+
 						// Return generated given name
 						name += ( i > 0 ) ? " " + given : given;
 						continue;
 					}
 				}
 
+				// Filter data
+				if ( Settings.PreventRecentRepeats )
+					Filter ( NameData.EntryDataset.GIVEN_NAMES, anySubset, gender, recentGivenNames );
+				else
+					Filter ( NameData.EntryDataset.GIVEN_NAMES, anySubset, gender );
+
 				// Check data set
-				if ( anySubset.Count > 0 )
+				if ( anySubset.Entries.Count > 0 )
 				{
 					// Generate random given name
-					random = Random.Range ( 0, anySubset.Count );
-					given = anySubset [ random ].Name;
+					random = Random.Range ( 0, anySubset.Entries.Count );
+					given = anySubset.Entries [ random ].Name;
 
 					// Add name to recent list
 					recentGivenNames [ recentGivenNameIndex ] = given;
@@ -739,14 +934,27 @@ namespace CNG
 					if ( recentGivenNameIndex >= recentGivenNames.Length )
 						recentGivenNameIndex = 0;
 
+					// Reset subset if recent names have been added
+					if ( Settings.PreventRecentRepeats )
+						anySubset.FilteredDataset = NameData.EntryDataset.NONE;
+
 					// Return generated given name
 					name += ( i > 0 ) ? " " + given : given;
 					continue;
 				}
 			}
 
-			// Return given name
-			return UnicodeManager.SpecialCharacterCheck ( name ) ? UnicodeManager.ConvertSpecialCharacter ( name, Settings.UseUnicodeCharacters ) : name;
+			// Convert special characters
+			if ( UnicodeManager.SpecialCharacterCheck ( name ) )
+				name = UnicodeManager.ConvertSpecialCharacter ( name, Settings.UseUnicodeCharacters );
+
+			// Output performance
+			performanceTracker.Stop ( );
+			if ( Settings.OutputPerformance )
+				Debug.Log ( "Given name " + name + " generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
+
+			// Return generated given name
+			return name;
 		}
 
 		#endregion // Public Given Name Generation Functions
@@ -815,6 +1023,9 @@ namespace CNG
 			if ( !NameData.IsNameDataLoaded )
 				NameData.LoadNameData ( );
 
+			// Track performance
+			System.Diagnostics.Stopwatch performanceTracker = System.Diagnostics.Stopwatch.StartNew ( );
+
 			// Randomly generate origin tolerance
 			float tolerance = Random.Range ( 0, Settings.OriginTolerance + Settings.OriginSubcategoryTolerance + Settings.OriginCategoryTolerance + Settings.OriginAnyTolerance );
 			bool useOrigin = tolerance <= Settings.OriginTolerance;
@@ -841,78 +1052,34 @@ namespace CNG
 			// Generate family name format
 			bool useDouble = format == Format.GIVEN_FAMILY_FAMILY || format == Format.GIVEN_GIVEN_FAMILY_FAMILY;
 
-			// Filter data
-			if ( Settings.PreventRecentRepeats )
-			{
-				// Check for successful filter
-				if ( !Filter ( NameData.FamilyNames, gender, origin, recentFamilyNames ) )
-				{
-					// Generate all family names
-					for ( int i = 0; i < ( useDouble ? 2 : 1 ); i++ )
-					{
-						// Generate random family name
-						random = Random.Range ( 0, NameData.FamilyNames.Length );
-						family = NameData.FamilyNames [ random ].Name;
-
-						// Add name to recent list
-						recentFamilyNames [ recentFamilyNameIndex ] = family;
-						recentFamilyNameIndex++;
-						if ( recentFamilyNameIndex >= recentFamilyNames.Length )
-							recentFamilyNameIndex = 0;
-
-						// Add family name
-						name += ( i > 0 ) ? " " + family : family;
-					}
-
-					// Return family name
-					return UnicodeManager.SpecialCharacterCheck ( name ) ? UnicodeManager.ConvertSpecialCharacter ( name, Settings.UseUnicodeCharacters ) : name;
-				}
-			}
-			else
-			{
-				// Check for successful filter
-				if ( !Filter ( NameData.FamilyNames, gender, origin ) )
-				{
-					// Generate all family names
-					for ( int i = 0; i < ( useDouble ? 2 : 1 ); i++ )
-					{
-						// Generate random family name
-						random = Random.Range ( 0, NameData.FamilyNames.Length );
-						family = NameData.FamilyNames [ random ].Name;
-
-						// Add name to recent list
-						recentFamilyNames [ recentFamilyNameIndex ] = family;
-						recentFamilyNameIndex++;
-						if ( recentFamilyNameIndex >= recentFamilyNames.Length )
-							recentFamilyNameIndex = 0;
-
-						// Add family name
-						name += ( i > 0 ) ? " " + family : family;
-					}
-
-					// Return family name
-					return UnicodeManager.SpecialCharacterCheck ( name ) ? UnicodeManager.ConvertSpecialCharacter ( name, Settings.UseUnicodeCharacters ) : name;
-				}
-			}
-
 			// Generate all family names
 			for ( int i = 0; i < ( useDouble ? 2 : 1 ); i++ )
 			{
 				// Check for matching origin
 				if ( useOrigin )
 				{
+					// Filter data
+					if ( Settings.PreventRecentRepeats )
+						Filter ( NameData.EntryDataset.FAMILY_NAMES, originSubset, gender, origin, recentFamilyNames );
+					else
+						Filter ( NameData.EntryDataset.FAMILY_NAMES, originSubset, gender, origin );
+
 					// Check data set
-					if ( originSubset.Count > 0 )
+					if ( originSubset.Entries.Count > 0 )
 					{
 						// Generate random family name
-						random = Random.Range ( 0, originSubset.Count );
-						family = originSubset [ random ].Name;
+						random = Random.Range ( 0, originSubset.Entries.Count );
+						family = originSubset.Entries [ random ].Name;
 
 						// Add name to recent list
 						recentFamilyNames [ recentFamilyNameIndex ] = family;
 						recentFamilyNameIndex++;
 						if ( recentFamilyNameIndex >= recentFamilyNames.Length )
 							recentFamilyNameIndex = 0;
+
+						// Reset subset if recent names have been added
+						if ( Settings.PreventRecentRepeats )
+							originSubset.FilteredDataset = NameData.EntryDataset.NONE;
 
 						// Return generated family name
 						name += ( i > 0 ) ? " " + family : family;
@@ -923,18 +1090,28 @@ namespace CNG
 				// Check for matching subcategory
 				if ( useSubcategory )
 				{
+					// Filter data
+					if ( Settings.PreventRecentRepeats )
+						Filter ( NameData.EntryDataset.FAMILY_NAMES, subcategorySubset, gender, origin.Subcategory, recentFamilyNames );
+					else
+						Filter ( NameData.EntryDataset.FAMILY_NAMES, subcategorySubset, gender, origin.Subcategory );
+
 					// Check data set
-					if ( subcategorySubset.Count > 0 )
+					if ( subcategorySubset.Entries.Count > 0 )
 					{
 						// Generate random family name
-						random = Random.Range ( 0, subcategorySubset.Count );
-						family = subcategorySubset [ random ].Name;
+						random = Random.Range ( 0, subcategorySubset.Entries.Count );
+						family = subcategorySubset.Entries [ random ].Name;
 
 						// Add name to recent list
 						recentFamilyNames [ recentFamilyNameIndex ] = family;
 						recentFamilyNameIndex++;
 						if ( recentFamilyNameIndex >= recentFamilyNames.Length )
 							recentFamilyNameIndex = 0;
+
+						// Reset subset if recent names have been added
+						if ( Settings.PreventRecentRepeats )
+							subcategorySubset.FilteredDataset = NameData.EntryDataset.NONE;
 
 						// Return generated family name
 						name += ( i > 0 ) ? " " + family : family;
@@ -945,12 +1122,18 @@ namespace CNG
 				// Check for matching category
 				if ( useCategory )
 				{
+					// Filter data
+					if ( Settings.PreventRecentRepeats )
+						Filter ( NameData.EntryDataset.FAMILY_NAMES, categorySubset, gender, origin.Category, recentFamilyNames );
+					else
+						Filter ( NameData.EntryDataset.FAMILY_NAMES, categorySubset, gender, origin.Category );
+
 					// Check data set
-					if ( categorySubset.Count > 0 )
+					if ( categorySubset.Entries.Count > 0 )
 					{
 						// Generate random family name
-						random = Random.Range ( 0, categorySubset.Count );
-						family = categorySubset [ random ].Name;
+						random = Random.Range ( 0, categorySubset.Entries.Count );
+						family = categorySubset.Entries [ random ].Name;
 
 						// Add name to recent list
 						recentFamilyNames [ recentFamilyNameIndex ] = family;
@@ -958,18 +1141,28 @@ namespace CNG
 						if ( recentFamilyNameIndex >= recentFamilyNames.Length )
 							recentFamilyNameIndex = 0;
 
+						// Reset subset if recent names have been added
+						if ( Settings.PreventRecentRepeats )
+							categorySubset.FilteredDataset = NameData.EntryDataset.NONE;
+
 						// Return generated family name
 						name += ( i > 0 ) ? " " + family : family;
 						continue;
 					}
 				}
 
+				// Filter data
+				if ( Settings.PreventRecentRepeats )
+					Filter ( NameData.EntryDataset.FAMILY_NAMES, anySubset, gender, recentFamilyNames );
+				else
+					Filter ( NameData.EntryDataset.FAMILY_NAMES, anySubset, gender );
+
 				// Check data set
-				if ( anySubset.Count > 0 )
+				if ( anySubset.Entries.Count > 0 )
 				{
 					// Generate random family name
-					random = Random.Range ( 0, anySubset.Count );
-					family = anySubset [ random ].Name;
+					random = Random.Range ( 0, anySubset.Entries.Count );
+					family = anySubset.Entries [ random ].Name;
 
 					// Add name to recent list
 					recentFamilyNames [ recentFamilyNameIndex ] = family;
@@ -977,14 +1170,27 @@ namespace CNG
 					if ( recentFamilyNameIndex >= recentFamilyNames.Length )
 						recentFamilyNameIndex = 0;
 
+					// Reset subset if recent names have been added
+					if ( Settings.PreventRecentRepeats )
+						anySubset.FilteredDataset = NameData.EntryDataset.NONE;
+
 					// Return generated family name
 					name += ( i > 0 ) ? " " + family : family;
 					continue;
 				}
 			}
 
-			// Return family name
-			return UnicodeManager.SpecialCharacterCheck ( name ) ? UnicodeManager.ConvertSpecialCharacter ( name, Settings.UseUnicodeCharacters ) : name;
+			// Convert special characters
+			if ( UnicodeManager.SpecialCharacterCheck ( name ) )
+				name = UnicodeManager.ConvertSpecialCharacter ( name, Settings.UseUnicodeCharacters );
+
+			// Output performance
+			performanceTracker.Stop ( );
+			if ( Settings.OutputPerformance )
+				Debug.Log ( "Family name " + name + " generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
+
+			// Return generated family name
+			return name;
 		}
 
 		#endregion // Public Family Name Generation Functions
@@ -1053,6 +1259,9 @@ namespace CNG
 			if ( !NameData.IsNameDataLoaded )
 				NameData.LoadNameData ( );
 
+			// Track performance
+			System.Diagnostics.Stopwatch performanceTracker = System.Diagnostics.Stopwatch.StartNew ( );
+
 			// Randomly generate origin tolerance
 			float tolerance = Random.Range ( 0, Settings.OriginTolerance + Settings.OriginSubcategoryTolerance + Settings.OriginCategoryTolerance + Settings.OriginAnyTolerance );
 			bool useOrigin = tolerance <= Settings.OriginTolerance;
@@ -1071,74 +1280,116 @@ namespace CNG
 			if ( gender == Gender.Label.NONE )
 				gender = GetGender ( );
 
-			// Check for a successful filter
-			if ( !Filter ( NameData.NameSuffixes, gender, origin ) )
-			{
-				// Generate random suffix
-				random = Random.Range ( 0, NameData.NameSuffixes.Length );
-				suffix = NameData.NameSuffixes [ random ].Name;
-
-				// Return generated suffix
-				return UnicodeManager.SpecialCharacterCheck ( suffix ) ? UnicodeManager.ConvertSpecialCharacter ( suffix, Settings.UseUnicodeCharacters ) : suffix;
-			}
-
 			// Check for matching origin
 			if ( useOrigin )
 			{
+				// Filter data
+				Filter ( NameData.EntryDataset.NAME_SUFFIXES, originSubset, gender, origin );
+
 				// Check data set
-				if ( originSubset.Count > 0 )
+				if ( originSubset.Entries.Count > 0 )
 				{
 					// Generate random suffix
-					random = Random.Range ( 0, originSubset.Count );
-					suffix = originSubset [ random ].Name;
+					random = Random.Range ( 0, originSubset.Entries.Count );
+					suffix = originSubset.Entries [ random ].Name;
+
+					// Convert special characters
+					if ( UnicodeManager.SpecialCharacterCheck ( suffix ) )
+						suffix = UnicodeManager.ConvertSpecialCharacter ( suffix, Settings.UseUnicodeCharacters );
+
+					// Output performance
+					performanceTracker.Stop ( );
+					if ( Settings.OutputPerformance )
+						Debug.Log ( "Suffix " + suffix + " generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
 
 					// Return generated suffix
-					return UnicodeManager.SpecialCharacterCheck ( suffix ) ? UnicodeManager.ConvertSpecialCharacter ( suffix, Settings.UseUnicodeCharacters ) : suffix;
+					return suffix;
 				}
 			}
 
 			// Check for matching subcategory
 			if ( useSubcategory )
 			{
+				// Filter data
+				Filter ( NameData.EntryDataset.NAME_SUFFIXES, subcategorySubset, gender, origin.Subcategory );
+
 				// Check data set
-				if ( subcategorySubset.Count > 0 )
+				if ( subcategorySubset.Entries.Count > 0 )
 				{
 					// Generate random suffix
-					random = Random.Range ( 0, subcategorySubset.Count );
-					suffix = subcategorySubset [ random ].Name;
+					random = Random.Range ( 0, subcategorySubset.Entries.Count );
+					suffix = subcategorySubset.Entries [ random ].Name;
+
+					// Convert special characters
+					if ( UnicodeManager.SpecialCharacterCheck ( suffix ) )
+						suffix = UnicodeManager.ConvertSpecialCharacter ( suffix, Settings.UseUnicodeCharacters );
+
+					// Output performance
+					performanceTracker.Stop ( );
+					if ( Settings.OutputPerformance )
+						Debug.Log ( "Suffix " + suffix + " generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
 
 					// Return generated suffix
-					return UnicodeManager.SpecialCharacterCheck ( suffix ) ? UnicodeManager.ConvertSpecialCharacter ( suffix, Settings.UseUnicodeCharacters ) : suffix;
+					return suffix;
 				}
 			}
 
 			// Check for matching category
 			if ( useCategory )
 			{
+				// Filter data
+				Filter ( NameData.EntryDataset.NAME_SUFFIXES, categorySubset, gender, origin.Category );
+
 				// Check data set
-				if ( categorySubset.Count > 0 )
+				if ( categorySubset.Entries.Count > 0 )
 				{
 					// Generate random suffix
-					random = Random.Range ( 0, categorySubset.Count );
-					suffix = categorySubset [ random ].Name;
+					random = Random.Range ( 0, categorySubset.Entries.Count );
+					suffix = categorySubset.Entries [ random ].Name;
+
+					// Convert special characters
+					if ( UnicodeManager.SpecialCharacterCheck ( suffix ) )
+						suffix = UnicodeManager.ConvertSpecialCharacter ( suffix, Settings.UseUnicodeCharacters );
+
+					// Output performance
+					performanceTracker.Stop ( );
+					if ( Settings.OutputPerformance )
+						Debug.Log ( "Suffix " + suffix + " generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
 
 					// Return generated suffix
-					return UnicodeManager.SpecialCharacterCheck ( suffix ) ? UnicodeManager.ConvertSpecialCharacter ( suffix, Settings.UseUnicodeCharacters ) : suffix;
+					return suffix;
 				}
 			}
 
+			// Filter data
+			Filter ( NameData.EntryDataset.NAME_SUFFIXES, anySubset, gender );
+
 			// Check data set
-			if ( anySubset.Count > 0 )
+			if ( anySubset.Entries.Count > 0 )
 			{
 				// Generate random suffix
-				random = Random.Range ( 0, anySubset.Count );
-				suffix = anySubset [ random ].Name;
+				random = Random.Range ( 0, anySubset.Entries.Count );
+				suffix = anySubset.Entries [ random ].Name;
+
+				// Convert special characters
+				if ( UnicodeManager.SpecialCharacterCheck ( suffix ) )
+					suffix = UnicodeManager.ConvertSpecialCharacter ( suffix, Settings.UseUnicodeCharacters );
+
+				// Output performance
+				performanceTracker.Stop ( );
+				if ( Settings.OutputPerformance )
+					Debug.Log ( "Suffix " + suffix + " generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
 
 				// Return generated suffix
-				return UnicodeManager.SpecialCharacterCheck ( suffix ) ? UnicodeManager.ConvertSpecialCharacter ( suffix, Settings.UseUnicodeCharacters ) : suffix;
+				return suffix;
 			}
 			else
 			{
+				// Output performance
+				performanceTracker.Stop ( );
+				if ( Settings.OutputPerformance )
+					Debug.Log ( "No suffix generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
+
 				// Return no suffix
 				return "";
 			}
@@ -1210,6 +1461,9 @@ namespace CNG
 			if ( !NameData.IsNameDataLoaded )
 				NameData.LoadNameData ( );
 
+			// Track performance
+			System.Diagnostics.Stopwatch performanceTracker = System.Diagnostics.Stopwatch.StartNew ( );
+
 			// Randomly generate origin tolerance
 			float tolerance = Random.Range ( 0, Settings.OriginTolerance + Settings.OriginSubcategoryTolerance + Settings.OriginCategoryTolerance + Settings.OriginAnyTolerance );
 			bool useOrigin = tolerance <= Settings.OriginTolerance;
@@ -1232,60 +1486,21 @@ namespace CNG
 			if ( format == Format.NONE )
 				format = GetFormat ( );
 
-			// Filter data
-			if ( Settings.PreventRecentRepeats )
-			{
-				// Check for successful filter
-				if ( !Filter ( NameData.Nicknames, gender, origin, recentNicknames ) )
-				{
-					// Populate subset
-					for ( int i = 0; i < NameData.Nicknames.Length; i++ )
-						if ( FilterByRecent ( NameData.Nicknames [ i ], recentNicknames ) )
-							anySubset.Add ( NameData.Nicknames [ i ] );
-
-					// Generate random nickname
-					random = Random.Range ( 0, anySubset.Count );
-					nickname = anySubset [ random ].Name;
-
-					// Add name to recent list
-					recentNicknames [ recentNicknameIndex ] = nickname;
-					recentNicknameIndex++;
-					if ( recentNicknameIndex >= recentNicknames.Length )
-						recentNicknameIndex = 0;
-
-					// Return generated nickname
-					return UnicodeManager.SpecialCharacterCheck ( nickname ) ? UnicodeManager.ConvertSpecialCharacter ( nickname, Settings.UseUnicodeCharacters ) : nickname;
-				}
-			}
-			else
-			{
-				// Check for successful filter
-				if ( !Filter ( NameData.Nicknames, gender, origin ) )
-				{
-					// Generate random nickname
-					random = Random.Range ( 0, NameData.Nicknames.Length );
-					nickname = NameData.Nicknames [ random ].Name;
-
-					// Add name to recent list
-					recentNicknames [ recentNicknameIndex ] = nickname;
-					recentNicknameIndex++;
-					if ( recentNicknameIndex >= recentNicknames.Length )
-						recentNicknameIndex = 0;
-
-					// Return generated nickname
-					return UnicodeManager.SpecialCharacterCheck ( nickname ) ? UnicodeManager.ConvertSpecialCharacter ( nickname, Settings.UseUnicodeCharacters ) : nickname;
-				}
-			}
-
 			// Check for matching origin
 			if ( useOrigin )
 			{
+				// Filter data
+				if ( Settings.PreventRecentRepeats )
+					Filter ( NameData.EntryDataset.NICKNAMES, originSubset, gender, origin, recentNicknames );
+				else
+					Filter ( NameData.EntryDataset.NICKNAMES, originSubset, gender, origin );
+
 				// Check data set
-				if ( originSubset.Count > 0 )
+				if ( originSubset.Entries.Count > 0 )
 				{
 					// Generate random nickname
-					random = Random.Range ( 0, originSubset.Count );
-					nickname = originSubset [ random ].Name;
+					random = Random.Range ( 0, originSubset.Entries.Count );
+					nickname = originSubset.Entries [ random ].Name;
 
 					// Add name to recent list
 					recentNicknames [ recentNicknameIndex ] = nickname;
@@ -1293,20 +1508,39 @@ namespace CNG
 					if ( recentNicknameIndex >= recentNicknames.Length )
 						recentNicknameIndex = 0;
 
+					// Reset subset if recent names have been added
+					if ( Settings.PreventRecentRepeats )
+						originSubset.FilteredDataset = NameData.EntryDataset.NONE;
+
+					// Convert special characters
+					if ( UnicodeManager.SpecialCharacterCheck ( nickname ) )
+						nickname = UnicodeManager.ConvertSpecialCharacter ( nickname, Settings.UseUnicodeCharacters );
+
+					// Output performance
+					performanceTracker.Stop ( );
+					if ( Settings.OutputPerformance )
+						Debug.Log ( "Nickname " + nickname + " generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
+
 					// Return generated nickname
-					return UnicodeManager.SpecialCharacterCheck ( nickname ) ? UnicodeManager.ConvertSpecialCharacter ( nickname, Settings.UseUnicodeCharacters ) : nickname;
+					return nickname;
 				}
 			}
 
 			// Check for matching subcategory
 			if ( useSubcategory )
 			{
+				// Filter data
+				if ( Settings.PreventRecentRepeats )
+					Filter ( NameData.EntryDataset.NICKNAMES, subcategorySubset, gender, origin.Subcategory, recentNicknames );
+				else
+					Filter ( NameData.EntryDataset.NICKNAMES, subcategorySubset, gender, origin.Subcategory );
+
 				// Check data set
-				if ( subcategorySubset.Count > 0 )
+				if ( subcategorySubset.Entries.Count > 0 )
 				{
 					// Generate random nickname
-					random = Random.Range ( 0, subcategorySubset.Count );
-					nickname = subcategorySubset [ random ].Name;
+					random = Random.Range ( 0, subcategorySubset.Entries.Count );
+					nickname = subcategorySubset.Entries [ random ].Name;
 
 					// Add name to recent list
 					recentNicknames [ recentNicknameIndex ] = nickname;
@@ -1314,20 +1548,39 @@ namespace CNG
 					if ( recentNicknameIndex >= recentNicknames.Length )
 						recentNicknameIndex = 0;
 
+					// Reset subset if recent names have been added
+					if ( Settings.PreventRecentRepeats )
+						subcategorySubset.FilteredDataset = NameData.EntryDataset.NONE;
+
+					// Convert special characters
+					if ( UnicodeManager.SpecialCharacterCheck ( nickname ) )
+						nickname = UnicodeManager.ConvertSpecialCharacter ( nickname, Settings.UseUnicodeCharacters );
+
+					// Output performance
+					performanceTracker.Stop ( );
+					if ( Settings.OutputPerformance )
+						Debug.Log ( "Nickname " + nickname + " generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
+
 					// Return generated nickname
-					return UnicodeManager.SpecialCharacterCheck ( nickname ) ? UnicodeManager.ConvertSpecialCharacter ( nickname, Settings.UseUnicodeCharacters ) : nickname;
+					return nickname;
 				}
 			}
 
 			// Check for matching category
 			if ( useCategory )
 			{
+				// Filter data
+				if ( Settings.PreventRecentRepeats )
+					Filter ( NameData.EntryDataset.NICKNAMES, categorySubset, gender, origin.Category, recentNicknames );
+				else
+					Filter ( NameData.EntryDataset.NICKNAMES, categorySubset, gender, origin.Category );
+
 				// Check data set
-				if ( categorySubset.Count > 0 )
+				if ( categorySubset.Entries.Count > 0 )
 				{
 					// Generate random nickname
-					random = Random.Range ( 0, categorySubset.Count );
-					nickname = categorySubset [ random ].Name;
+					random = Random.Range ( 0, categorySubset.Entries.Count );
+					nickname = categorySubset.Entries [ random ].Name;
 
 					// Add name to recent list
 					recentNicknames [ recentNicknameIndex ] = nickname;
@@ -1335,17 +1588,36 @@ namespace CNG
 					if ( recentNicknameIndex >= recentNicknames.Length )
 						recentNicknameIndex = 0;
 
+					// Reset subset if recent names have been added
+					if ( Settings.PreventRecentRepeats )
+						categorySubset.FilteredDataset = NameData.EntryDataset.NONE;
+
+					// Convert special characters
+					if ( UnicodeManager.SpecialCharacterCheck ( nickname ) )
+						nickname = UnicodeManager.ConvertSpecialCharacter ( nickname, Settings.UseUnicodeCharacters );
+
+					// Output performance
+					performanceTracker.Stop ( );
+					if ( Settings.OutputPerformance )
+						Debug.Log ( "Nickname " + nickname + " generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
+
 					// Return generated nickname
-					return UnicodeManager.SpecialCharacterCheck ( nickname ) ? UnicodeManager.ConvertSpecialCharacter ( nickname, Settings.UseUnicodeCharacters ) : nickname;
+					return nickname;
 				}
 			}
 
+			// Filter data
+			if ( Settings.PreventRecentRepeats )
+				Filter ( NameData.EntryDataset.NICKNAMES, anySubset, gender, recentNicknames );
+			else
+				Filter ( NameData.EntryDataset.NICKNAMES, anySubset, gender );
+
 			// Check data set
-			if ( anySubset.Count > 0 )
+			if ( anySubset.Entries.Count > 0 )
 			{
 				// Generate random nickname
-				random = Random.Range ( 0, anySubset.Count );
-				nickname = anySubset [ random ].Name;
+				random = Random.Range ( 0, anySubset.Entries.Count );
+				nickname = anySubset.Entries [ random ].Name;
 
 				// Add name to recent list
 				recentNicknames [ recentNicknameIndex ] = nickname;
@@ -1353,12 +1625,30 @@ namespace CNG
 				if ( recentNicknameIndex >= recentNicknames.Length )
 					recentNicknameIndex = 0;
 
+				// Reset subset if recent names have been added
+				if ( Settings.PreventRecentRepeats )
+					anySubset.FilteredDataset = NameData.EntryDataset.NONE;
+
+				// Convert special characters
+				if ( UnicodeManager.SpecialCharacterCheck ( nickname ) )
+					nickname = UnicodeManager.ConvertSpecialCharacter ( nickname, Settings.UseUnicodeCharacters );
+
+				// Output performance
+				performanceTracker.Stop ( );
+				if ( Settings.OutputPerformance )
+					Debug.Log ( "Nickname " + nickname + " generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
+
 				// Return generated nickname
-				return UnicodeManager.SpecialCharacterCheck ( nickname ) ? UnicodeManager.ConvertSpecialCharacter ( nickname, Settings.UseUnicodeCharacters ) : nickname;
+				return nickname;
 			}
 			else
 			{
-				// Return no family
+				// Output performance
+				performanceTracker.Stop ( );
+				if ( Settings.OutputPerformance )
+					Debug.Log ( "No nickname generated in " + performanceTracker.ElapsedMilliseconds + " ms" );
+
+				// Return no nickname
 				return "";
 			}
 		}
@@ -1368,164 +1658,366 @@ namespace CNG
 		#region Private Functions
 
 		/// <summary>
-		/// Filters a set of name entries into the appropriate subsets based on gender and origin.
+		/// Filters a set of name entries into the appropriate subsets based on gender.
 		/// </summary>
-		/// <param name="dataSet"> The set of name entries being filtered. </param>
+		/// <param name="dataset"> The set of name entries being filtered. </param>
+		/// <param name="subset"> The subset of name entries used for filtering. </param>
 		/// <param name="gender"> The gender to filter name entries by. </param>
-		/// <param name="origin"> The origin to filter name entries by. </param>
-		/// <returns> Whether or not the name entries where filtered into subsets. </returns>
-		private static bool Filter ( NameData.NameEntry [ ] dataSet, Gender.Label gender, Origin origin )
+		private static void Filter ( NameData.EntryDataset dataset, EntrySubset subset, Gender.Label gender )
 		{
-			// Clear previous subsets
-			originSubset.Clear ( );
-			subcategorySubset.Clear ( );
-			categorySubset.Clear ( );
-			anySubset.Clear ( );
-
-			// Prevent duplicates
-			bool isCategoryAdded = false;
-			bool isSubcategoryAdded = false;
-
-			// Check if filtering is necessary
-			if ( gender == Gender.Label.NONE && origin.Category == Origin.CategoryType.NONE )
-				return false;
-
-			// Filter data
-			for ( int i = 0; i < dataSet.Length; i++ )
+			// Check if the same filter is being used as the last filter
+			if ( subset.FilteredDataset == dataset &&
+				 subset.FilteredDataset != NameData.EntryDataset.NONE &&
+				 subset.FilterdGender == gender &&
+				 subset.FilterdGender != Gender.Label.NONE )
 			{
-				// Filter by gender
-				if ( FilterByGender ( dataSet [ i ], gender ) )
-				{
-					// Passed the any filter
-					anySubset.Add ( dataSet [ i ] );
+				// Reuse the same subsets as the last filter
+				return;
+			}
+			else
+			{
+				// Clear previous subsets
+				subset.Entries.Clear ( );
 
-					// Reset bools
-					isCategoryAdded = false;
-					isSubcategoryAdded = false;
-
-					// Check origins
-					for ( int j = 0; j < dataSet [ i ].Origins.Length; j++ )
-					{
-						// Filter by category
-						if ( dataSet [ i ].Origins [ j ].Category == origin.Category )
-						{
-							// Check for duplicate
-							if ( !isCategoryAdded )
-							{
-								// Passed the category filter
-								categorySubset.Add ( dataSet [ i ] );
-								isCategoryAdded = true;
-							}
-
-							// Filter by subcategory
-							if ( dataSet [ i ].Origins [ j ].Subcategory == origin.Subcategory )
-							{
-								// Check for duplicate
-								if ( !isSubcategoryAdded )
-								{
-									// Passed the subcategory filter
-									subcategorySubset.Add ( dataSet [ i ] );
-									isSubcategoryAdded = true;
-								}
-
-								// Filter by origin
-								if ( dataSet [ i ].Origins [ j ].Name == origin.Name || dataSet [ i ].Origins [ j ].Name == "Any" || origin.Name == "Any" )
-								{
-									// Passed the origin filter
-									originSubset.Add ( dataSet [ i ] );
-									break;
-								}
-							}
-						}
-					}
-				}
+				// Store filter
+				subset.FilteredDataset = dataset;
+				subset.FilterdGender = gender;
+				subset.FilteredOrigin = 0;
 			}
 
-			// Return that filters were applied
-			return true;
+			// Get pre-filtered entries
+			NameData.NameEntry [ ] temp = NameData.GetFilteredEntries ( dataset );
+
+			// Filter data
+			for ( int i = 0; i < temp.Length; i++ )
+			{
+				// Filter by gender
+				if ( FilterByGender ( temp [ i ], gender ) )
+					subset.Entries.Add ( temp [ i ] );
+			}
+		}
+
+		/// <summary>
+		/// Filters a set of name entries into the appropriate subsets based on gender and recently used name entries.
+		/// </summary>
+		/// <param name="dataset"> The set of name entries being filtered. </param>
+		/// <param name="subset"> The subset of name entries used for filtering. </param>
+		/// <param name="gender"> The gender to filter name entries by. </param>
+		/// <param name="origin"> The origin to filter name entries by. </param>
+		/// <param name="recent"> The set of recently used name entries. </param>
+		private static void Filter ( NameData.EntryDataset dataset, EntrySubset subset, Gender.Label gender, string [ ] recent )
+		{
+			// Check if the same filter is being used as the last filter
+			if ( subset.FilteredDataset == dataset &&
+				 subset.FilteredDataset != NameData.EntryDataset.NONE &&
+				 subset.FilterdGender == gender &&
+				 subset.FilterdGender != Gender.Label.NONE )
+			{
+				// Reuse the same subsets as the last filter
+				return;
+			}
+			else
+			{
+				// Clear previous subsets
+				subset.Entries.Clear ( );
+
+				// Store filter
+				subset.FilteredDataset = dataset;
+				subset.FilterdGender = gender;
+				subset.FilteredOrigin = 0;
+			}
+
+			// Get pre-filtered entries
+			NameData.NameEntry [ ] temp = NameData.GetFilteredEntries ( dataset );
+
+			// Filter data
+			for ( int i = 0; i < temp.Length; i++ )
+			{
+				// Filter by recent
+				if ( !FilterByRecent ( temp [ i ], recent ) )
+					continue;
+
+				// Filter by gender
+				if ( FilterByGender ( temp [ i ], gender ) )
+					subset.Entries.Add ( temp [ i ] );
+			}
+		}
+
+		/// <summary>
+		/// Filters a set of name entries into the appropriate subsets based on gender and origin.
+		/// </summary>
+		/// <param name="dataset"> The set of name entries being filtered. </param>
+		/// <param name="subset"> The subset of name entries used for filtering. </param>
+		/// <param name="gender"> The gender to filter name entries by. </param>
+		/// <param name="origin"> The origin to filter name entries by. </param>
+		private static void Filter ( NameData.EntryDataset dataset, EntrySubset subset, Gender.Label gender, Origin origin )
+		{
+			// Check if the same filter is being used as the last filter
+			if ( subset.FilteredDataset == dataset &&
+				 subset.FilteredDataset != NameData.EntryDataset.NONE &&
+				 subset.FilterdGender == gender &&
+				 subset.FilterdGender != Gender.Label.NONE &&
+				 subset.FilteredOrigin == origin.ID && 
+				 subset.FilteredOrigin != 0 )
+			{
+				// Reuse the same subsets as the last filter
+				return;
+			}
+			else
+			{
+				// Clear previous subsets
+				subset.Entries.Clear ( );
+
+				// Store filter
+				subset.FilteredDataset = dataset;
+				subset.FilterdGender = gender;
+				subset.FilteredOrigin = origin.ID;
+			}
+
+			// Get pre-filtered entries
+			NameData.NameEntry [ ] temp = NameData.GetFilteredEntries ( dataset, origin );
+
+			// Filter data
+			for ( int i = 0; i < temp.Length; i++ )
+			{
+				// Filter by gender
+				if ( FilterByGender ( temp [ i ], gender ) )
+					subset.Entries.Add ( temp [ i ] );
+			}
 		}
 
 		/// <summary>
 		/// Filters a set of name entries into the appropriate subsets based on gender, origin, and recently used name entries.
 		/// </summary>
-		/// <param name="dataSet"> The set of name entries being filtered. </param>
+		/// <param name="dataset"> The set of name entries being filtered. </param>
+		/// <param name="subset"> The subset of name entries used for filtering. </param>
 		/// <param name="gender"> The gender to filter name entries by. </param>
 		/// <param name="origin"> The origin to filter name entries by. </param>
 		/// <param name="recent"> The set of recently used name entries. </param>
-		/// <returns> Whether or not the name entries where filtered into subsets. </returns>
-		private static bool Filter ( NameData.NameEntry [ ] dataSet, Gender.Label gender, Origin origin, string [ ] recent )
+		private static void Filter ( NameData.EntryDataset dataset, EntrySubset subset, Gender.Label gender, Origin origin, string [ ] recent )
 		{
-			// Clear previous subsets
-			originSubset.Clear ( );
-			subcategorySubset.Clear ( );
-			categorySubset.Clear ( );
-			anySubset.Clear ( );
+			// Check if the same filter is being used as the last filter
+			if ( subset.FilteredDataset == dataset &&
+				 subset.FilteredDataset != NameData.EntryDataset.NONE &&
+				 subset.FilterdGender == gender &&
+				 subset.FilterdGender != Gender.Label.NONE &&
+				 subset.FilteredOrigin == origin.ID &&
+				 subset.FilteredOrigin != 0 )
+			{
+				// Reuse the same subsets as the last filter
+				return;
+			}
+			else
+			{
+				// Clear previous subsets
+				subset.Entries.Clear ( );
 
-			// Prevent duplicates
-			bool isCategoryAdded = false;
-			bool isSubcategoryAdded = false;
+				// Store filter
+				subset.FilteredDataset = dataset;
+				subset.FilterdGender = gender;
+				subset.FilteredOrigin = origin.ID;
+			}
 
-			// Check if filtering is necessary
-			if ( gender == Gender.Label.NONE && origin.Category == Origin.CategoryType.NONE )
-				return false;
+			// Get pre-filtered entries
+			NameData.NameEntry [ ] temp = NameData.GetFilteredEntries ( dataset, origin );
 
 			// Filter data
-			for ( int i = 0; i < dataSet.Length; i++ )
+			for ( int i = 0; i < temp.Length; i++ )
 			{
 				// Filter by recent
-				if ( !FilterByRecent ( dataSet [ i ], recent ) )
+				if ( !FilterByRecent ( temp [ i ], recent ) )
 					continue;
 
 				// Filter by gender
-				if ( FilterByGender ( dataSet [ i ], gender ) )
-				{
-					// Passed the any filter
-					anySubset.Add ( dataSet [ i ] );
+				if ( FilterByGender ( temp [ i ], gender ) )
+					subset.Entries.Add ( temp [ i ] );
+			}
+		}
 
-					// Reset bools
-					isCategoryAdded = false;
-					isSubcategoryAdded = false;
+		/// <summary>
+		/// Filters a set of name entries into the appropriate subsets based on gender and origin subcategory.
+		/// </summary>
+		/// <param name="dataset"> The set of name entries being filtered. </param>
+		/// <param name="subset"> The subset of name entries used for filtering. </param>
+		/// <param name="gender"> The gender to filter name entries by. </param>
+		/// <param name="subcategory"> The origin subcategory to filter name entries by. </param>
+		private static void Filter ( NameData.EntryDataset dataset, EntrySubset subset, Gender.Label gender, Origin.SubcategoryType subcategory )
+		{
+			// Check if the same filter is being used as the last filter
+			if ( subset.FilteredDataset == dataset &&
+				 subset.FilteredDataset != NameData.EntryDataset.NONE &&
+				 subset.FilterdGender == gender &&
+				 subset.FilterdGender != Gender.Label.NONE &&
+				 subset.FilteredOrigin == ( int ) subcategory &&
+				 subset.FilteredOrigin != ( int ) Origin.SubcategoryType.NONE )
+			{
+				// Reuse the same subsets as the last filter
+				return;
+			}
+			else
+			{
+				// Clear previous subsets
+				subset.Entries.Clear ( );
 
-					// Check origins
-					for ( int j = 0; j < dataSet [ i ].Origins.Length; j++ )
-					{
-						// Filter by category
-						if ( dataSet [ i ].Origins [ j ].Category == origin.Category )
-						{
-							// Check for duplicate
-							if ( !isCategoryAdded )
-							{
-								// Passed the category filter
-								categorySubset.Add ( dataSet [ i ] );
-								isCategoryAdded = true;
-							}
-
-							// Filter by subcategory
-							if ( dataSet [ i ].Origins [ j ].Subcategory == origin.Subcategory )
-							{
-								// Check for duplicate
-								if ( !isSubcategoryAdded )
-								{
-									// Passed the subcategory filter
-									subcategorySubset.Add ( dataSet [ i ] );
-									isSubcategoryAdded = true;
-								}
-
-								// Filter by origin
-								if ( dataSet [ i ].Origins [ j ].Name == origin.Name || dataSet [ i ].Origins [ j ].Name == "Any" || origin.Name == "Any" )
-								{
-									// Passed the origin filter
-									originSubset.Add ( dataSet [ i ] );
-									break;
-								}
-							}
-						}
-					}
-				}
+				// Store filter
+				subset.FilteredDataset = dataset;
+				subset.FilterdGender = gender;
+				subset.FilteredOrigin = ( int )subcategory;
 			}
 
-			// Return that filters were applied
-			return true;
+			// Get pre-filtered entries
+			Origin origin = GetOrigin ( subcategory );
+			NameData.NameEntry [ ] temp = NameData.GetFilteredEntries ( dataset, origin );
+
+			// Filter data
+			for ( int i = 0; i < temp.Length; i++ )
+			{
+				// Filter by gender
+				if ( FilterByGender ( temp [ i ], gender ) )
+					subset.Entries.Add ( temp [ i ] );
+			}
+		}
+
+		/// <summary>
+		/// Filters a set of name entries into the appropriate subsets based on gender, origin subcategory, and recently used name entries.
+		/// </summary>
+		/// <param name="dataset"> The set of name entries being filtered. </param>
+		/// <param name="subset"> The subset of name entries used for filtering. </param>
+		/// <param name="gender"> The gender to filter name entries by. </param>
+		/// <param name="subcategory"> The origin subcategory to filter name entries by. </param>
+		/// <param name="recent"> The set of recently used name entries. </param>
+		private static void Filter ( NameData.EntryDataset dataset, EntrySubset subset, Gender.Label gender, Origin.SubcategoryType subcategory, string [ ] recent )
+		{
+			// Check if the same filter is being used as the last filter
+			if ( subset.FilteredDataset == dataset &&
+				 subset.FilteredDataset != NameData.EntryDataset.NONE &&
+				 subset.FilterdGender == gender &&
+				 subset.FilterdGender != Gender.Label.NONE &&
+				 subset.FilteredOrigin == ( int ) subcategory &&
+				 subset.FilteredOrigin != ( int ) Origin.SubcategoryType.NONE )
+			{
+				// Reuse the same subsets as the last filter
+				return;
+			}
+			else
+			{
+				// Clear previous subsets
+				subset.Entries.Clear ( );
+
+				// Store filter
+				subset.FilteredDataset = dataset;
+				subset.FilterdGender = gender;
+				subset.FilteredOrigin = ( int ) subcategory;
+			}
+
+			// Get pre-filtered entries
+			Origin origin = GetOrigin ( subcategory );
+			NameData.NameEntry [ ] temp = NameData.GetFilteredEntries ( dataset, origin );
+
+			// Filter data
+			for ( int i = 0; i < temp.Length; i++ )
+			{
+				// Filter by recent
+				if ( !FilterByRecent ( temp [ i ], recent ) )
+					continue;
+
+				// Filter by gender
+				if ( FilterByGender ( temp [ i ], gender ) )
+					subset.Entries.Add ( temp [ i ] );
+			}
+		}
+
+		/// <summary>
+		/// Filters a set of name entries into the appropriate subsets based on gender and origin category.
+		/// </summary>
+		/// <param name="dataset"> The set of name entries being filtered. </param>
+		/// <param name="subset"> The subset of name entries used for filtering. </param>
+		/// <param name="gender"> The gender to filter name entries by. </param>
+		/// <param name="category"> The origin category to filter name entries by. </param>
+		private static void Filter ( NameData.EntryDataset dataset, EntrySubset subset, Gender.Label gender, Origin.CategoryType category )
+		{
+			// Check if the same filter is being used as the last filter
+			if ( subset.FilteredDataset == dataset &&
+				 subset.FilteredDataset != NameData.EntryDataset.NONE &&
+				 subset.FilterdGender == gender &&
+				 subset.FilterdGender != Gender.Label.NONE &&
+				 subset.FilteredOrigin == ( int ) category &&
+				 subset.FilteredOrigin != ( int ) Origin.CategoryType.NONE )
+			{
+				// Reuse the same subsets as the last filter
+				return;
+			}
+			else
+			{
+				// Clear previous subsets
+				subset.Entries.Clear ( );
+
+				// Store filter
+				subset.FilteredDataset = dataset;
+				subset.FilterdGender = gender;
+				subset.FilteredOrigin = ( int ) category;
+			}
+
+			// Get pre-filtered entries
+			Origin origin = GetOrigin ( category );
+			NameData.NameEntry [ ] temp = NameData.GetFilteredEntries ( dataset, origin );
+
+			// Filter data
+			for ( int i = 0; i < temp.Length; i++ )
+			{
+				// Filter by gender
+				if ( FilterByGender ( temp [ i ], gender ) )
+					subset.Entries.Add ( temp [ i ] );
+			}
+		}
+
+		/// <summary>
+		/// Filters a set of name entries into the appropriate subsets based on gender, origin category, and recently used name entries.
+		/// </summary>
+		/// <param name="dataset"> The set of name entries being filtered. </param>
+		/// <param name="subset"> The subset of name entries used for filtering. </param>
+		/// <param name="gender"> The gender to filter name entries by. </param>
+		/// <param name="category"> The origin category to filter name entries by. </param>
+		/// <param name="recent"> The set of recently used name entries. </param>
+		private static void Filter ( NameData.EntryDataset dataset, EntrySubset subset, Gender.Label gender, Origin.CategoryType category, string [ ] recent )
+		{
+			// Check if the same filter is being used as the last filter
+			if ( subset.FilteredDataset == dataset &&
+				 subset.FilteredDataset != NameData.EntryDataset.NONE &&
+				 subset.FilterdGender == gender &&
+				 subset.FilterdGender != Gender.Label.NONE &&
+				 subset.FilteredOrigin == ( int ) category &&
+				 subset.FilteredOrigin != ( int ) Origin.CategoryType.NONE )
+			{
+				// Reuse the same subsets as the last filter
+				return;
+			}
+			else
+			{
+				// Clear previous subsets
+				subset.Entries.Clear ( );
+
+				// Store filter
+				subset.FilteredDataset = dataset;
+				subset.FilterdGender = gender;
+				subset.FilteredOrigin = ( int ) category;
+			}
+
+			// Get pre-filtered entries
+			Origin origin = GetOrigin ( category );
+			NameData.NameEntry [ ] temp = NameData.GetFilteredEntries ( dataset, origin );
+
+			// Filter data
+			for ( int i = 0; i < temp.Length; i++ )
+			{
+				// Filter by recent
+				if ( !FilterByRecent ( temp [ i ], recent ) )
+					continue;
+
+				// Filter by gender
+				if ( FilterByGender ( temp [ i ], gender ) )
+					subset.Entries.Add ( temp [ i ] );
+			}
 		}
 
 		/// <summary>

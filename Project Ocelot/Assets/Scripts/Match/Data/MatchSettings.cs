@@ -74,6 +74,7 @@ namespace ProjectOcelot.Match
 		private static UnitSettingData [ ] unitSettings;
 		private static Dictionary<int, UnitSettingData> unitSettingsDictionary = new Dictionary<int, UnitSettingData> ( );
 
+		public const int TEAM_SIZE = 6;
 		private const int PAWN_UNIT_ID = 1;
 
 		#endregion // Settings Data
@@ -665,7 +666,6 @@ namespace ProjectOcelot.Match
 		private static Dictionary<int, HeroSettings> dic = new Dictionary<int, HeroSettings> ( );
 		private static ReadOnlyDictionary<int, HeroSettings> readOnlyDic = new ReadOnlyDictionary<int, HeroSettings> ( dic );
 
-		public const int TEAM_SIZE = 6;
 		public const int NO_UNIT = -2;
 		public const int LEADER_UNIT = -1;
 		public const int PAWN_UNIT = 0;

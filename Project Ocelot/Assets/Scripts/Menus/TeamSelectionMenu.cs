@@ -91,17 +91,18 @@ namespace ProjectOcelot.Match.Setup
 			}
 
 			// Initialize grunts
-			gruntData = new UnitSettingData [ grunts.Length ];
+			gruntData = setupManager.GetAvailableGrunts ( );
+
+			// Display grunts
 			for ( int i = 0; i < grunts.Length; i++ )
 			{
-				// Generate grunt
-				gruntData [ i ] = MatchSettings.GetPawn ( );
-
-				// Display grunt
-				grunts [ i ].SetPortrait ( gruntData [ i ], setupManager.CurrentPlayer.Team );
+				grunts [ i ].IsEnabled = i < gruntData.Length;
+				if ( i < gruntData.Length )
+					grunts [ i ].SetPortrait ( gruntData [ i ], setupManager.CurrentPlayer.Team );
 			}
 
 			// Enable buttons
+			undoButton.interactable = false;
 			randomButton.interactable = true;
 			selectButton.interactable = true;
 
@@ -185,7 +186,7 @@ namespace ProjectOcelot.Match.Setup
 		public void SelectHero ( int index )
 		{
 			// Check if hero is available
-			if ( heroes [ index ].Portrait.IsEnabled && heroes [ index ].Portrait.IsAvailable && selectedUnit.ID != heroes [ index ].UnitID )
+			if ( heroes [ index ].Portrait.IsEnabled && heroes [ index ].Portrait.IsAvailable && ( selectedUnit == null || selectedUnit.ID != heroes [ index ].UnitID ) )
 			{
 				// Reset previous selection
 				if ( selectedUnit != null )
@@ -271,28 +272,35 @@ namespace ProjectOcelot.Match.Setup
 		/// </summary>
 		public void Undo ( )
 		{
-			// Check if currently selected unit is a hero
-			if ( selectedUnit != null && selectedUnit.Role != UnitData.UnitRole.PAWN )
+			// Check for selected unit
+			if ( selectedUnit != null )
 			{
-				// Reset portrait
-				HeroPortraits currentHero = GetHeroPortrait ( selectedUnit );
-				currentHero.Portrait.ResetSize ( );
-				currentHero.Portrait.IsBorderHighlighted = false;
-			}
-			else
-			{
-				// Reset portrait
-				UI.UnitPortrait currentGrunt = GetGruntPortrait ( selectedUnit );
-				currentGrunt.ResetSize ( );
-				currentGrunt.IsBorderHighlighted = false;
+				// Check if currently selected unit is a hero
+				if ( selectedUnit != null && selectedUnit.Role != UnitData.UnitRole.PAWN )
+				{
+					// Reset portrait
+					HeroPortraits currentHero = GetHeroPortrait ( selectedUnit );
+					currentHero.Portrait.ResetSize ( );
+					currentHero.Portrait.IsBorderHighlighted = false;
+				}
+				else
+				{
+					// Reset portrait
+					UI.UnitPortrait currentGrunt = GetGruntPortrait ( selectedUnit );
+					currentGrunt.ResetSize ( );
+					currentGrunt.IsBorderHighlighted = false;
+				}
+
+				// Reset card in lineup
+				setupManager.ResetCardInLineup ( lineupCounter );
 			}
 
 			// Get last unit
 			selectedUnit = setupManager.CurrentPlayer.Units [ setupManager.CurrentPlayer.Units.Count - 1 ];
 
 			// Remove last unit from lineup
+			lineupCounter -= selectedUnit.Slots;
 			setupManager.CurrentPlayer.Units.Remove ( selectedUnit );
-			lineupCounter--;
 
 			// Check if last unit is a hero
 			if ( selectedUnit.Role != UnitData.UnitRole.PAWN )
@@ -310,7 +318,7 @@ namespace ProjectOcelot.Match.Setup
 					continue;
 
 				// Check if the hero is on the team
-				if ( MatchSettings.HeroLimit && setupManager.CurrentPlayer.Units.Contains ( MatchSettings.GetHero ( heroes [ i ].UnitID ) ) )
+				if ( MatchSettings.HeroLimit && setupManager.CurrentPlayer.Units.Exists ( x => x.ID == heroes [ i ].UnitID ) )
 					continue;
 
 				// Check if 2 slot heroes can be selected
@@ -424,7 +432,7 @@ namespace ProjectOcelot.Match.Setup
 			undoButton.interactable = true;
 
 			// Check remaining slots
-			if ( lineupCounter == MatchSettings.TEAM_SIZE )
+			if ( lineupCounter >= MatchSettings.TEAM_SIZE )
 			{
 				// Disable buttons
 				randomButton.interactable = false;
