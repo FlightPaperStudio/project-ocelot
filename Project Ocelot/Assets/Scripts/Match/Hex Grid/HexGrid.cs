@@ -7,39 +7,55 @@ namespace ProjectOcelot.Match.Arena
 {
 	public class HexGrid : MonoBehaviour
 	{
+		#region Public Classes
+
+		[System.Serializable]
+		public class PlayerArea
+		{
+			public EntranceArea Entrance;
+			public ObjectiveArea Objective;
+		}
+
+		#endregion // Public Classes
+
 		#region Grid Data
 
-		[SerializeField]
-		private GameManager GM;
-
+		public PlayerArea [ ] PlayerAreas;
 		public Hex [ ] Grid;
 
+		private GameManager GM;
+		private bool isInitialized = false;
 		private Dictionary<Hex.AxialCoord, Hex> gridDictionary = new Dictionary<Hex.AxialCoord, Hex> ( );
 
 		#endregion // Grid Data
 
-		#region MonoBehaviour Functions
+		#region Public Functions
 
-		private void Start ( )
+		/// <summary>
+		/// Initializes the grid.
+		/// </summary>
+		/// <param name="gm"></param>
+		public void Initialize ( GameManager gm )
 		{
+			// Store game manager
+			GM = gm;
+
 			// Get all hexes
 			Grid = GetComponentsInChildren<Hex> ( );
 
 			// Store each hex in the grid for easy access
 			for ( int i = 0; i < Grid.Length; i++ )
 			{
+				// Set manager
+				Grid [ i ].Tile.GM = gm;
+
 				// Hide border
 				Grid [ i ].Tile.SetBorderActive ( false );
 
 				// Add hex to grid
 				gridDictionary.Add ( Grid [ i ].Axial, Grid [ i ] );
 			}
-
 		}
-
-		#endregion // MonoBehaviour Functions
-
-		#region Public Functions
 
 		/// <summary>
 		/// Get a specified hex by its axial coordinate.

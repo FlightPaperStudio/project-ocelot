@@ -500,11 +500,11 @@ namespace ProjectOcelot.Match.Setup
 			while ( totalHeroes < MatchSettings.HeroesPerTeam && totalSlots < MatchSettings.TEAM_SIZE )
 			{
 				// Get random hero
-				int hero = Random.Range ( 0, availableHeroes.Count );
-
+				int hero = availableHeroes [ Random.Range ( 0, availableHeroes.Count ) ];
+				
 				// Add hero to team
 				CurrentPlayer.Units.Add ( MatchSettings.GetHero ( hero ) );
-
+				
 				// Increment counters
 				totalHeroes++;
 				totalSlots += CurrentPlayer.Units [ CurrentPlayer.Units.Count - 1 ].Slots;

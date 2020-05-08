@@ -36,10 +36,13 @@ namespace ProjectOcelot.Match
 		#region Match Data
 
 		[SerializeField]
+		private HexGrid [ ] gridPrefabs;
+
+		[SerializeField]
 		private Player [ ] players;
 
 		[SerializeField]
-		private UnitPrefab [ ] prefabs;
+		private UnitPrefab [ ] unitPrefabs;
 
 		private int playerIndex = 0;
 		private Dictionary<int, Units.Unit> unitPrefabDictionary = new Dictionary<int, Units.Unit> ( );
@@ -78,7 +81,8 @@ namespace ProjectOcelot.Match
 			UNIT_SELECTED,
 			COMMAND_SELECTED,
 			MOVE_SELECTED,
-			ANIMATING
+			ANIMATING,
+			OPPONENT
 		}
 
 		/// <summary>
@@ -203,9 +207,13 @@ namespace ProjectOcelot.Match
 
 		private void Start ( )
 		{
+			// Randomize grid
+			Grid = Instantiate ( gridPrefabs [ Random.Range ( 0, gridPrefabs.Length ) ] );
+			Grid.Initialize ( this );
+
 			// Set prefab dictionary
-			for ( int i = 0; i < prefabs.Length; i++ )
-				unitPrefabDictionary.Add ( prefabs [ i ].ID, prefabs [ i ].Unit );
+			for ( int i = 0; i < unitPrefabs.Length; i++ )
+				unitPrefabDictionary.Add ( unitPrefabs [ i ].ID, unitPrefabs [ i ].Unit );
 
 			// Start the match
 			StartMatch ( );
@@ -239,6 +247,8 @@ namespace ProjectOcelot.Match
 				players [ i ].TeamDirection = MatchSettings.Players [ i ].TeamDirection;
 
 				// Set goal area
+				players [ i ].Entrance = Grid.PlayerAreas [ i ].Entrance;
+				players [ i ].Objective = Grid.PlayerAreas [ i ].Objective;
 				players [ i ].Objective.SetColor ( players [ i ].Team );
 
 				// Set unit data
@@ -396,18 +406,30 @@ namespace ProjectOcelot.Match
 				UI.WinPrompt ( CurrentPlayer );
 			}
 
-			// Get moves
-			GetTeamMoves ( );
+			// Check for player
+			if ( CurrentPlayer.IsBot )
+			{
+				// Get move
+				GetBotMove ( );
 
-			// Display units for selection
-			DisplayAvailableUnits ( );
-			BringPlayerToTheFront ( CurrentPlayer );
-			SelectedUnit = null;
-			SelectedMove = null;
+				// Execute move
+				ExecuteMove ( false );
+			}
+			else
+			{
+				// Get moves
+				GetTeamMoves ( );
 
-			// Start turn timer
-			if ( MatchSettings.TurnTimer )
-				UI.timer.StartTimer ( );
+				// Display units for selection
+				DisplayAvailableUnits ( );
+				BringPlayerToTheFront ( CurrentPlayer );
+				SelectedUnit = null;
+				SelectedMove = null;
+
+				// Start turn timer
+				if ( MatchSettings.TurnTimer )
+					UI.timer.StartTimer ( );
+			}
 		}
 
 		/// <summary>
@@ -760,6 +782,27 @@ namespace ProjectOcelot.Match
 		#endregion // Mid-Turn - Public Functions
 
 		#region Mid-Turn - Private Functions
+
+		/// <summary>
+		/// Gets the move for the bot this turn.
+		/// </summary>
+		private void GetBotMove ( )
+		{
+			// Reset turn data
+			SelectedUnit = null;
+			SelectedMove = null;
+
+			// Search for unit with best move
+			for ( int i = 0; i < CurrentPlayer.UnitInstances.Count; i++ )
+			{
+				if ( SelectedUnit == null || CurrentPlayer.UnitInstances [ i ].BestMove.FinalValue > SelectedMove.FinalValue )
+				{
+					// Store unit with best move
+					SelectedUnit = CurrentPlayer.UnitInstances [ i ];
+					SelectedMove = CurrentPlayer.UnitInstances [ i ].BestMove;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Displays the available moves for the selected unit and any selected prerequisite moves.

@@ -10,8 +10,7 @@ namespace ProjectOcelot.Match.Arena
 	{
 		#region Tile Data
 
-		[SerializeField]
-		private GameManager GM;
+		public GameManager GM;
 
 		[SerializeField]
 		private SpriteRenderer tileRender;
